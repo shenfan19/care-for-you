@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>头像预览</title>
+<link rel="stylesheet" href="../style.css">
+<style>.sheet{display:flex;flex-wrap:wrap;gap:6px;padding:10px}.sheet div{width:150px;text-align:center;font-size:12px}.sheet svg{width:150px;height:195px}</style>
+<div class="sheet" id="s"></div>
+<script src="../vendor/js-yaml.min.js"></script><script src="../src/ini.js"></script><script src="../src/content.js"></script><script src="../src/avatar.js"></script>
+<script>
+const C = CY.content;
+document.getElementById('s').innerHTML = C.archetypes.map(a => `<div>${CY.avatarPreview(a, a.look)}${a.role}</div>`).join('') +
+  [0,1,2,3,4,5].map(s => `<div>${CY.avatarPreview(C.archOf('mom'), Object.assign({}, C.archOf('mom').look, {skin: s, hair_style: ['short','long','bob','ponytail','bun','curly'][s]}))}肤色${s}</div>`).join('') +
+  `<div>${CY.avatarPreview(C.archOf('grandpa'), Object.assign({}, C.archOf('grandpa').look, {beard:true, hair_style:'short'}))}胡子</div>`;
+</script>

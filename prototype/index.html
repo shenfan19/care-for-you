@@ -3,161 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Care You</title>
-<style>
-  :root { --bg:#f6f1e8; --card:#fffdf8; --ink:#33302b; --mute:#8a8378; --accent:#c8794a; --line:#e4dccd; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#201e1b; --card:#2b2825; --ink:#ece6da; --mute:#9a9286; --accent:#e09468; --line:#3c3833; } }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.6 system-ui,"PingFang SC","Microsoft YaHei",sans-serif; }
-  main { max-width:720px; margin:0 auto; padding:24px 16px 48px; }
-  h1 { font-size:20px; margin:0 0 4px; }
-  .sub { color:var(--mute); margin:0 0 20px; }
-  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
-  button, select, input { font:inherit; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 12px; }
-  button { cursor:pointer; } button:hover { border-color:var(--accent); }
-  #card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; min-height:150px; }
-  #face { font-size:44px; line-height:1; }
-  #said { margin:8px 0 12px; min-height:48px; }
-  #acts { display:flex; gap:8px; flex-wrap:wrap; }
-  #timer { height:3px; background:var(--accent); width:0; transition:width .25s linear; border-radius:2px; margin-top:12px; }
-  .stats { color:var(--mute); margin:12px 0; }
-  #log { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; max-height:240px; overflow:auto; color:var(--mute); }
-  #log div { padding:2px 0; }
-</style>
+<title>Care for You</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-  <h1>Care You</h1>
-  <p class="sub">原型 v0：一个需要你照看的人，不定时打断你。没有分数。</p>
-  <div class="row">
-    <label>照看对象
-      <select id="who">
-        <option value="爷爷|👴">爷爷</option><option value="奶奶|👵">奶奶</option>
-        <option value="爸爸|👨">爸爸</option><option value="妈妈|👩">妈妈</option>
-        <option value="宝宝|👶">宝宝</option><option value="猫猫|🐱">猫猫</option>
-      </select>
-    </label>
-    <label>打断间隔
-      <select id="pace">
-        <option value="15">15 到 40 秒，试玩</option>
-        <option value="300">5 到 15 分钟</option>
-        <option value="1200">20 到 60 分钟</option>
-      </select>
-    </label>
-    <button id="start">开始</button>
-    <button id="pip">浮动小窗</button>
-    <button id="quiet">免打扰 30 分钟</button>
-  </div>
-  <div id="card">
-    <div id="face">🙂</div>
-    <div id="said">还没有人叫你。</div>
-    <div id="acts"></div>
-    <div id="timer"></div>
-  </div>
-  <div class="stats" id="stats"></div>
-  <div class="sub">记忆</div>
-  <div id="log"></div>
-</main>
-<script>
-const $ = id => document.getElementById(id);
-const KEY = 'care-you-v0';
-let state = { cared: 0, missed: 0, gifts: 0, log: [] };
-try { state = Object.assign(state, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
-const rnd = (a, b) => a + Math.random() * (b - a);
-const pick = a => a[Math.floor(Math.random() * a.length)];
-let timer = null, pending = null, quietUntil = 0, running = false;
-
-/* 事件库。需要类事件要在限时内回应，问话类事件把回答记进记忆，沉默和礼物是稀少的正反馈 */
-const EVENTS = {
-  need: [
-    { say: '我有点渴。', acts: ['递一杯水'], ok: '谢谢，慢慢喝了一口。' },
-    { say: '该吃药了吧，我记不清了。', acts: ['陪他吃药'], ok: '吃完了，点点头。' },
-    { say: '坐久了，腰有点疼。', acts: ['扶他起来走走'], ok: '走了两步，说好多了。' },
-    { say: '有点冷。', acts: ['拿件外套'], ok: '裹紧了外套。' },
-  ],
-  ask: [
-    { say: '你小时候，有一次也这样闹过，还记得吗？', prompt: '你记得他说的那次吗，写下你的回忆：' },
-    { say: '我跟你说过没有，我年轻的时候……', prompt: '他没说完，你想接什么：' },
-    { say: '你最近睡得好吗？', prompt: '你怎么回答他：' },
-    { say: '晚上吃什么？你想吃什么？', prompt: '你想吃什么，他想吃什么：' },
-  ],
-  glance: ['他从门口看了你一眼，没说话，又走开了。', '他在不远处坐着，只是看着你。', '他轻轻咳了一声，像是想说什么，又没说。'],
-  gift: ['他放了一杯水在你手边，什么也没说。', '他悄悄把你的灯调亮了一点。', '他递过来一块洗好的水果。'],
-};
-
-function say(face, text, acts) {
-  $('face').textContent = face;
-  $('said').textContent = text;
-  const box = $('acts'); box.innerHTML = '';
-  (acts || []).forEach(a => { const b = document.createElement('button'); b.textContent = a.t; b.onclick = a.f; box.appendChild(b); });
-}
-function note(text) {
-  const [name] = $('who').value.split('|');
-  state.log.unshift(new Date().toLocaleString() + '　' + name + '：' + text);
-  state.log = state.log.slice(0, 200);
-  save(); render();
-}
-function render() {
-  $('stats').textContent = `照看到 ${state.cared} 次，没赶上 ${state.missed} 次，收到小心意 ${state.gifts} 次`;
-  $('log').innerHTML = state.log.slice(0, 40).map(l => '<div>' + l.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])) + '</div>').join('') || '还没有记忆。';
-}
-function bar(sec) {
-  const t = $('timer'); t.style.transition = 'none'; t.style.width = '100%';
-  requestAnimationFrame(() => { t.style.transition = `width ${sec}s linear`; t.style.width = '0'; });
-}
-function clearBar() { const t = $('timer'); t.style.transition = 'none'; t.style.width = '0'; }
-function settle() { pending = null; clearBar(); setTimeout(() => { if (!pending) say($('who').value.split('|')[1], '……'); }, 4000); schedule(); }
-
-function fire() {
-  if (!running) return;
-  if (Date.now() < quietUntil) return schedule();
-  const face = $('who').value.split('|')[1];
-  const r = Math.random();
-  if (r < 0.5) {
-    const e = pick(EVENTS.need);
-    say('😟', e.say, [{ t: e.acts[0], f: () => { clearTimeout(pending); state.cared++; say(face, e.ok); note('照顾了：' + e.say); settle(); } }]);
-    bar(25);
-    pending = setTimeout(() => { state.missed++; say('😔', '……没事，我自己来吧。'); note('没赶上：' + e.say); settle(); }, 25000);
-  } else if (r < 0.75) {
-    const e = pick(EVENTS.ask);
-    say('🙂', e.say, [{ t: '回答', f: () => {
-      const a = prompt(e.prompt);
-      if (a) { state.cared++; note('说起来：' + e.say + ' 你答：' + a); say(face, '嗯。'); } else { say(face, '……'); }
-      settle();
-    } }, { t: '等一下', f: () => { say(face, '好，你忙。'); settle(); } }]);
-  } else if (r < 0.9) {
-    say(face, pick(EVENTS.glance)); note('在旁边看了你一眼'); settle();
-  } else {
-    state.gifts++; say('🙂', pick(EVENTS.gift)); note('给了你一点小心意'); settle();
-  }
-}
-function schedule() {
-  clearTimeout(timer);
-  const base = +$('pace').value;
-  const [lo, hi] = base === 15 ? [15, 40] : [base, base * 3];
-  timer = setTimeout(fire, rnd(lo, hi) * 1000);
-}
-
-$('start').onclick = () => {
-  running = !running;
-  $('start').textContent = running ? '暂停' : '开始';
-  if (running) { say($('who').value.split('|')[1], '我在这儿，有事叫我。'); schedule(); } else { clearTimeout(timer); clearTimeout(pending); pending = null; clearBar(); }
-};
-$('who').onchange = () => say($('who').value.split('|')[1], '……');
-$('quiet').onclick = () => { quietUntil = Date.now() + 30 * 60000; $('quiet').textContent = '免打扰中'; setTimeout(() => $('quiet').textContent = '免打扰 30 分钟', 30 * 60000); };
-$('pip').onclick = async () => {
-  if (!('documentPictureInPicture' in window)) { alert('这个浏览器不支持文档画中画，请用桌面版 Chrome 或 Edge。'); return; }
-  const w = await documentPictureInPicture.requestWindow({ width: 340, height: 260 });
-  for (const sheet of document.styleSheets) {
-    try { const s = w.document.createElement('style'); s.textContent = [...sheet.cssRules].map(r => r.cssText).join('\n'); w.document.head.appendChild(s); } catch (e) {}
-  }
-  w.document.body.style.cssText = 'margin:0;padding:8px;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,sans-serif';
-  const card = $('card'), home = card.parentNode, next = card.nextSibling;
-  w.document.body.appendChild(card);
-  w.addEventListener('pagehide', () => home.insertBefore(card, next));
-};
-say($('who').value.split('|')[1], '还没有人叫你。');
-render();
-</script>
+<div id="gate" class="gate" style="display:none"></div>
+<div id="app" style="display:none">
+  <header>
+    <h1>Care for You</h1>
+    <span class="mute">原型 v0.3</span>
+    <span class="tools">
+      <span id="clockTxt" class="mute"></span>
+      <select id="timeMode" title="时间流逝"><option value="real">真实时间</option><option value="compressed">压缩时间</option><option value="paused">暂停</option></select>
+      <button id="floatBtn" title="把角色浮出成一个置顶小窗">浮出小窗</button>
+      <button id="dlBtn" title="下载全部数据">下载</button>
+      <button id="gearBtn" title="设置" class="icon">⚙</button>
+    </span>
+  </header>
+  <main>
+    <div id="roomSlot"><div id="room" class="room"></div></div>
+    <div id="floatNote" class="card" style="display:none">角色现在在浮出的小窗里。<button id="unfloatBtn">收回到这里</button></div>
+    <div id="roomBar" class="row bar2"></div>
+    <section id="feed"></section>
+    <section id="said"></section>
+  </main>
+</div>
+<div id="modal" class="modal"></div>
+<script src="vendor/js-yaml.min.js"></script>
+<script src="src/ini.js"></script>
+<script src="src/store.js"></script>
+<script src="src/content.js"></script>
+<script src="src/seed.js"></script>
+<script src="src/ai.js"></script>
+<script src="src/game.js"></script>
+<script src="src/avatar.js"></script>
+<script src="src/ui_room.js"></script>
+<script src="src/ui_home.js"></script>
+<script src="src/main.js"></script>
 </body>
 </html>
