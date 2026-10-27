@@ -25,6 +25,7 @@
     async read(p) { const v = await tx(this.db, FILES, 'readonly', s => s.get(p)); return v === undefined ? null : v; }
     write(p, t) { return tx(this.db, FILES, 'readwrite', s => s.put(t, p)); }
     list() { return tx(this.db, FILES, 'readonly', s => s.getAllKeys()).then(k => k.filter(x => !x.startsWith('_backup/'))); }
+    wipe() { return tx(this.db, FILES, 'readwrite', s => s.clear()); }
   }
 
   class FolderBackend {
@@ -39,6 +40,9 @@
       const d = await this.dir(parts, true);
       const w = await (await d.getFileHandle(f, { create: true })).createWritable();
       await w.write(text); await w.close();
+    }
+    async wipe() {
+      for (const n of ['people', 'templates', '_backup', 'settings.ini', 'world.yaml', 'README.txt']) { try { await this.root.removeEntry(n, { recursive: true }); } catch (e) {} }
     }
     async list() {
       const out = [];
@@ -83,6 +87,33 @@
     e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true);
     e.setUint32(12, cd, true); e.setUint32(16, off, true);
     return new Blob([...parts, ...central, new Uint8Array(e.buffer)], { type: 'application/zip' });
+  }
+
+  /* 读 zip：支持不压缩和 deflate 两种，别的软件打的包也能读。返回 [{name, data}] */
+  async function readZip(buf) {
+    const u8 = buf instanceof Uint8Array ? buf : new Uint8Array(buf), dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength), dec = new TextDecoder();
+    let e = -1;
+    for (let i = u8.length - 22; i >= Math.max(0, u8.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { e = i; break; }
+    if (e < 0) throw new Error('not a zip');
+    const n = dv.getUint16(e + 10, true); let p = dv.getUint32(e + 16, true);
+    const out = [];
+    for (let k = 0; k < n; k++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) throw new Error('bad zip');
+      const flags = dv.getUint16(p + 8, true), method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nlen = dv.getUint16(p + 28, true), xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), off = dv.getUint32(p + 42, true);
+      const name = dec.decode(u8.subarray(p + 46, p + 46 + nlen));
+      p += 46 + nlen + xlen + clen;
+      if (name.endsWith('/')) continue;
+      const lh = off + 30 + dv.getUint16(off + 26, true) + dv.getUint16(off + 28, true);
+      const raw = u8.subarray(lh, lh + csize);
+      let data;
+      if (method === 0) data = raw;
+      else if (method === 8) {
+        const ds = new DecompressionStream('deflate-raw');
+        data = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(ds)).arrayBuffer());
+      } else throw new Error('unsupported zip method ' + method);
+      out.push({ name, data });
+    }
+    return out;
   }
 
   const S = CY.store = {
@@ -146,6 +177,7 @@
       for (const p in extras || {}) files.push({ name: 'careforyou-data/' + p, data: enc.encode(extras[p]) });
       return zip(files);
     },
-    zip,
+    zip, readZip,
+    async wipe() { await S.backend.wipe(); S.lastBackup = {}; },
   };
 })(globalThis.CY = globalThis.CY || {});

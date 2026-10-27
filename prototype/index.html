@@ -11,30 +11,39 @@
 <div id="app" style="display:none">
   <header>
     <h1>Care for You</h1>
-    <span class="mute">原型 v0.3</span>
+    <span class="mute" id="verTxt"></span>
     <span class="tools">
-      <span id="clockTxt" class="mute"></span>
-      <select id="timeMode" title="时间流逝"><option value="real">真实时间</option><option value="compressed">压缩时间</option><option value="paused">暂停</option></select>
-      <button id="floatBtn" title="把角色浮出成一个置顶小窗">浮出小窗</button>
-      <button id="dlBtn" title="下载全部数据">下载</button>
-      <button id="gearBtn" title="设置" class="icon">⚙</button>
+      <span id="elapsed" class="mute"></span>
+      <span id="nowClock" class="clock"></span>
+      <select id="timeMode" data-i18n-title="hdr.time_tip"><option value="real" data-i18n="time.real"></option><option value="compressed" data-i18n="time.compressed"></option><option value="paused" data-i18n="time.paused"></option></select>
+      <button id="floatBtn" data-i18n="hdr.float" data-i18n-title="hdr.float_tip"></button>
+      <button id="dlBtn" data-i18n="hdr.save" data-i18n-title="hdr.save_tip"></button>
+      <button id="gearBtn" class="icon" data-i18n-title="hdr.settings">⚙</button>
+      <button id="aboutBtn" class="icon" data-i18n-title="hdr.about">ⓘ</button>
     </span>
   </header>
   <main>
     <div id="roomSlot"><div id="room" class="room"></div></div>
-    <div id="floatNote" class="card" style="display:none">角色现在在浮出的小窗里。<button id="unfloatBtn">收回到这里</button></div>
+    <div id="floatNote" class="card" style="display:none"><span data-i18n="float.note"></span> <button id="unfloatBtn" data-i18n="float.back"></button></div>
     <div id="roomBar" class="row bar2"></div>
     <section id="feed"></section>
     <section id="said"></section>
+    <footer class="foot mute"><span id="footTxt"></span> <a href="#" id="footAbout" data-i18n="hdr.about"></a></footer>
   </main>
 </div>
 <div id="modal" class="modal"></div>
 <script src="vendor/js-yaml.min.js"></script>
+<script src="src/meta.js"></script>
+<script src="src/i18n.js"></script>
+<script src="locales/zh-CN.js"></script>
+<script src="locales/en.js"></script>
 <script src="src/ini.js"></script>
 <script src="src/store.js"></script>
+<script src="src/archive.js"></script>
 <script src="src/content.js"></script>
 <script src="src/seed.js"></script>
 <script src="src/ai.js"></script>
+<script src="src/account.js"></script>
 <script src="src/game.js"></script>
 <script src="src/avatar.js"></script>
 <script src="src/ui_room.js"></script>

@@ -117,6 +117,7 @@ events:
       const out = Object.assign({}, F);
       for (const v in C.voices) out[`templates/voices/${v}.yaml`] = '# 这种声线的角色默认会说的话。角色自己的 person.yaml 里 lines 写了同名项时，以角色自己的为准。\n' + dump(Object.assign({ version: 1, id: v }, C.voices[v]));
       out['templates/library/sayings.yaml'] = '# 可挑选的“说过的话”。游戏偶尔会问你：某某会对你说哪句。你选了哪句就记哪句的编号和原文。\n' + dump({ version: 1, items: C.sayings });
+      out['templates/library/asks.yaml'] = '# 问答库。每个问题有三个预设回答，游戏里另有一个自己写的回答。voice、stage、pronoun 限制谁会问这个问题，sensitive 为 true 的需要在设置里打开。\n' + dump({ version: 1, items: C.asks });
       out['templates/library/nudges.yaml'] = '# 偶尔出现的现实提醒，轻轻鼓励你联系现实里的人。\n' + dump({ version: 1, items: C.nudges });
       out['templates/ai/persona.yaml'] = '# AI 接入时共用的规则。引擎会用 forbidden_patterns 过滤 AI 的输出。\n' + dump(aiPersona);
       for (const k in aiSkills) out[`templates/ai/skills/${k}.yaml`] = '# AI 只能做这一件事，输入输出都受限。\n' + dump(aiSkills[k]);
