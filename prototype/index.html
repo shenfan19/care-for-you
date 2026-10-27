@@ -15,7 +15,10 @@
     <span class="tools">
       <span id="elapsed" class="mute"></span>
       <span id="nowClock" class="clock"></span>
+      <select id="langSel" data-i18n-title="hdr.lang_tip"></select>
+      <button id="themeBtn" class="icon" data-i18n-title="hdr.theme_tip">◐</button>
       <select id="timeMode" data-i18n-title="hdr.time_tip"><option value="real" data-i18n="time.real"></option><option value="compressed" data-i18n="time.compressed"></option><option value="paused" data-i18n="time.paused"></option></select>
+      <select id="ratioSel"></select>
       <button id="floatBtn" data-i18n="hdr.float" data-i18n-title="hdr.float_tip"></button>
       <button id="dlBtn" data-i18n="hdr.save" data-i18n-title="hdr.save_tip"></button>
       <button id="gearBtn" class="icon" data-i18n-title="hdr.settings">⚙</button>
@@ -23,6 +26,7 @@
     </span>
   </header>
   <main>
+    <div id="lifeBar" class="lifebar" style="display:none"></div>
     <div id="roomSlot"><div id="room" class="room"></div></div>
     <div id="floatNote" class="card" style="display:none"><span data-i18n="float.note"></span> <button id="unfloatBtn" data-i18n="float.back"></button></div>
     <div id="roomBar" class="row bar2"></div>
@@ -41,6 +45,7 @@
 <script src="src/store.js"></script>
 <script src="src/archive.js"></script>
 <script src="src/content.js"></script>
+<script src="src/content_more.js"></script>
 <script src="src/seed.js"></script>
 <script src="src/ai.js"></script>
 <script src="src/account.js"></script>

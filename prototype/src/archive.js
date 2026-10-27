@@ -9,7 +9,7 @@
 
   /* 运行包里的文件，测试会核对它和 index.html 里的脚本一致 */
   A.APP_FILES = ['index.html', 'style.css', 'start_web.cmd', 'start_web.sh', 'vendor/js-yaml.min.js',
-    'src/meta.js', 'src/i18n.js', 'src/ini.js', 'src/store.js', 'src/archive.js', 'src/content.js', 'src/seed.js', 'src/ai.js', 'src/account.js', 'src/game.js', 'src/avatar.js', 'src/ui_room.js', 'src/ui_home.js', 'src/main.js',
+    'src/meta.js', 'src/i18n.js', 'src/ini.js', 'src/store.js', 'src/archive.js', 'src/content.js', 'src/content_more.js', 'src/seed.js', 'src/ai.js', 'src/account.js', 'src/game.js', 'src/avatar.js', 'src/ui_room.js', 'src/ui_home.js', 'src/main.js',
     'locales/zh-CN.js', 'locales/en.js'];
 
   const DATA_OK = /^(people\/[^/]+\/(person|state|story|sayings)\.yaml|people\/[^/]+\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|world\.yaml|README\.txt)$/;

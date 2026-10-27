@@ -4,24 +4,22 @@
 
 ## 当前状态
 
-原型 v0.4，纯网页，没有后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
+原型 v0.5，纯网页，没有后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
 
-![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![宝宝玩球](media_ai/baby_play.gif) ![狗](media_ai/dog_walk.gif)
+![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 
-- 一页式主页：房间里是角色，下面是发生的事和说过的话，设置在右上角齿轮，另有存档与下载、关于
-- 第一次进来有引导页，三个推荐组合，或从十四种人和三种动物里选，外观可调并有预览
-- 点角色出环形菜单，长按动作，长按时有进度环，每种动作有自己的动画
+核心是照顾的代价：你居家办公，家里还有人要照顾，每次照顾都从别处挤出来。
+
+- 两种代价：长按占用你现实里的时间，点击花掉游戏里的时间
+- 完整体验：工作时段赚钱，照顾要用食材、药品、尿布、玩具，可以请保姆，保姆在场效果会打折
+- 轻量体验：只有长按，没有钱
+- 年龄是数字，婴儿幼儿儿童少年成人老人各不相同，动作按阶段和种类限定，婴儿没人管会一直哭，老人能自己照顾自己一阵
+- 十八种人，八种宠物，三种花草，六种基础疾病
+- 一页式主页，点角色出环形菜单，每种动作有动画
 - 回答问题直接是四个选项，三个预设加一个自己写的，倒计时默认二十秒
-- 问答按角色的身份、年龄和称呼筛选，较私密的话题默认关闭
-- 顶栏显示已陪伴的时间和现在几点，昼夜可跟随系统时钟或用游戏内时钟
-- 页面明暗和五种背景色调，简体中文和英文界面
-- 存档下载、本地运行包下载、存档导入，设置里可删除全部本地数据
-- 关于页面含隐私与免责，账号功能预留接口，目前没有服务器
-- 浮出小窗：整个房间搬进置顶小窗，仍可操作
-- 打断设置：保留、倒计时自动处理、倒计时自动消除，静音时段，间隔跟随时间模式
-- 每个角色的节奏学习，偶尔的现实提醒，偶尔问你某个角色会说哪句话
-- AI 接口层：任意兼容 /chat/completions 的服务，技能清单、上下文白名单、输出校验、调用上限，默认关闭
-- 数据全部是明文 YAML 和 settings.ini，可选择真实文件夹，也可用浏览器内部存储
+- 形象默认简洁抽象，可切换细致画法，页面明暗、背景、语言、压缩比例都在顶栏或设置里
+- 存档下载、本地运行包下载、存档导入，关于页面含隐私与免责
+- 数据全部是明文 YAML 和 settings.ini，AI 接口默认关闭，账号只预留
 
 ## 运行
 
@@ -45,7 +43,7 @@ node tests/logic_test.js
 ## 目录
 
 - prototype/index.html、style.css：页面
-- prototype/src：meta、i18n、ini、store、archive、content、seed、ai、account、game、avatar、ui_room、ui_home、main
+- prototype/src：meta、i18n、ini、store、archive、content、content_more、seed、ai、account、game、avatar、ui_room、ui_home、main
 - prototype/locales：语言包，一个语言一个文件
 - prototype/tests：逻辑测试，avatar_sheet.html 看全部角色形象，gif_stage.html 用来取动画帧
 - media_ai：动作动画预览

@@ -22,19 +22,23 @@
     if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => U.applyTheme());
     U.buildRoom($('room'));
     U.onFloatChange = () => U.renderBar();
-    U.renderBar(); U.renderFeed(true); U.renderSaid(true); U.renderClock();
+    U.renderBar(); U.renderFeed(true); U.renderSaid(true); U.renderClock(); U.renderControls(); U.renderLife();
     let lastFeed = 0;
     G.on(() => {
       U.renderRoom(false);
       U.renderClock();
       U.renderBar();
+      U.renderLife();
       if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); U.renderSaid(false); }
     });
     $('timeMode').onchange = async e => {
       G.cfg.time = G.cfg.time || {}; G.cfg.time.mode = e.target.value;
       await store.write('settings.ini', ini.stringify(G.cfg));
-      U.renderClock();
+      U.renderClock(); U.renderControls();
     };
+    $('themeBtn').onclick = () => U.cycleTheme();
+    $('langSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.language = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.applyLang(); U.renderControls(); };
+    $('ratioSel').onchange = async e => { G.cfg.time = G.cfg.time || {}; G.cfg.time.compress_ratio = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.renderControls(); };
     $('floatBtn').onclick = () => U.floatToggle();
     $('unfloatBtn').onclick = () => U.floatToggle();
     $('dlBtn').onclick = () => U.saveDialog();
@@ -44,6 +48,7 @@
     document.addEventListener('visibilitychange', () => { if (document.hidden) G.save(true); });
     window.addEventListener('pagehide', () => G.save(true));
     if (!G.people.length && q.get('onboard') !== '0') U.onboard();
+    else if (G.people.length && !G.world.intro_done && q.get('onboard') !== '0') U.introDialog();
   }
 
   async function boot() {

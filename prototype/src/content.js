@@ -4,33 +4,9 @@
 (function (CY) {
   /* ---------- 角色原型：添加角色时的预设 ---------- */
   const L = (look) => look;
-  const archetypes = [
-    { id: 'grandpa', group: 'family', role: '爷爷', species: 'human', age_stage: 'elder', voice: 'elder', pronoun: '他', look: L({ skin: 2, hair_style: 'bald', hair_color: 'white', glasses: 'round', beard: false, cloth: '#7f9580' }) },
-    { id: 'grandma', group: 'family', role: '奶奶', species: 'human', age_stage: 'elder', voice: 'elder', pronoun: '她', look: L({ skin: 2, hair_style: 'bun', hair_color: 'gray', glasses: 'none', beard: false, cloth: '#b58aa5' }) },
-    { id: 'waigong', group: 'family', role: '外公', species: 'human', age_stage: 'elder', voice: 'elder', pronoun: '他', look: L({ skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'square', beard: false, cloth: '#7d8fa8' }) },
-    { id: 'waipo', group: 'family', role: '外婆', species: 'human', age_stage: 'elder', voice: 'elder', pronoun: '她', look: L({ skin: 1, hair_style: 'bob', hair_color: 'gray', glasses: 'none', beard: false, cloth: '#c28a6e' }) },
-    { id: 'dad', group: 'family', role: '爸爸', species: 'human', age_stage: 'adult', voice: 'parent', pronoun: '他', look: L({ skin: 2, hair_style: 'short', hair_color: 'black', glasses: 'square', beard: false, cloth: '#6f86a0' }) },
-    { id: 'mom', group: 'family', role: '妈妈', species: 'human', age_stage: 'adult', voice: 'parent', pronoun: '她', look: L({ skin: 2, hair_style: 'bob', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#c07a6b' }) },
-    { id: 'aunt', group: 'family', role: '姑姑', species: 'human', age_stage: 'adult', voice: 'aunt', pronoun: '她', look: L({ skin: 2, hair_style: 'curly', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#d4a24c' }) },
-    { id: 'uncle', group: 'family', role: '舅舅', species: 'human', age_stage: 'adult', voice: 'aunt', pronoun: '他', look: L({ skin: 3, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f8a7a' }) },
-    { id: 'brother', group: 'family', role: '哥哥', species: 'human', age_stage: 'adult', voice: 'sibling', pronoun: '他', look: L({ skin: 2, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#4f6d8f' }) },
-    { id: 'sister', group: 'family', role: '姐姐', species: 'human', age_stage: 'adult', voice: 'sibling', pronoun: '她', look: L({ skin: 2, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#b5677a' }) },
-    { id: 'daughter', group: 'family', role: '女儿', species: 'human', age_stage: 'child', voice: 'child', pronoun: '她', look: L({ skin: 1, hair_style: 'ponytail', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e7a6a1' }) },
-    { id: 'son', group: 'family', role: '儿子', species: 'human', age_stage: 'child', voice: 'child', pronoun: '他', look: L({ skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#8fbf9f' }) },
-    { id: 'nephew', group: 'family', role: '侄子', species: 'human', age_stage: 'child', voice: 'child', pronoun: '他', look: L({ skin: 2, hair_style: 'curly', hair_color: 'black', glasses: 'round', beard: false, cloth: '#e0b062' }) },
-    { id: 'friend', group: 'family', role: '朋友', species: 'human', age_stage: 'adult', voice: 'sibling', pronoun: '她', look: L({ skin: 2, hair_style: 'long', hair_color: 'auburn', glasses: 'none', beard: false, cloth: '#7aa5b8' }) },
-    { id: 'cat', group: 'animal', role: '猫', species: 'cat', age_stage: 'adult', voice: 'cat', pronoun: '它', look: L({ coat: 'orange' }) },
-    { id: 'dog', group: 'animal', role: '狗', species: 'dog', age_stage: 'adult', voice: 'dog', pronoun: '它', look: L({ coat: 'tan' }) },
-    { id: 'snake', group: 'animal', role: '蛇', species: 'snake', age_stage: 'adult', voice: 'snake', pronoun: '它', look: L({ coat: 'green' }) },
-  ];
-
-  /* 推荐组合：第一次进来时一键开始 */
-  const presets = [
-    { id: 'trio', label: '试试看：爷爷、宝宝和一只猫', note: '三种不同的节奏，适合先熟悉一下', members: [
-      { arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'daughter', name: '宝宝' }, { arch: 'cat', name: '团子' }] },
-    { id: 'elder', label: '一位需要陪伴的老人', note: '有糖尿病，会有吃药和饮食的小选择', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }] },
-    { id: 'pet', label: '只养一只猫', note: '最轻的开始', members: [{ arch: 'cat', name: '团子' }] },
-  ];
+  /* 角色原型和推荐组合在 content_more.js 里，这里先放空数组，由那边填充 */
+  const archetypes = [];
+  const presets = [];
 
   /* ---------- 声线：每种角色默认会说的话 ---------- */
   const voices = {};

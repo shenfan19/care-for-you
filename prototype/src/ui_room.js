@@ -17,7 +17,9 @@
   const FX = {
     pet: () => heart(34, 40, 0) + heart(50, 30, 0.35) + heart(66, 42, 0.7),
     hand: () => `<g transform="translate(50 84)"><path class="p pulse" d="M0 14 C-22 -6 -10 -22 0 -10 C10 -22 22 -6 0 14Z" fill="#e8707e"/></g>`,
-    water: sp => sp === 'human'
+    water: sp => ['succulent', 'flower', 'tree'].includes(sp)
+      ? [38, 50, 62].map((x, i) => `<g transform="translate(${x} 40)"><path class="p rise" style="animation-delay:${i * 0.25}s;animation-name:fall" d="M0 -5 q-4 6 0 9 q4 -3 0 -9Z" fill="#7ec0ee"/></g>`).join('')
+      : sp === 'human'
       ? `<g class="p cup"><rect x="0" y="0" width="13" height="15" rx="2.5" fill="#cfe9f5" stroke="#6aa6c4" stroke-width="1.6"/><rect x="1.5" y="6" width="10" height="7" rx="1.5" fill="#7fc3e6" opacity=".8"/><path d="M13 4 q6 1 0 8" fill="none" stroke="#6aa6c4" stroke-width="1.6"/></g>`
       : bowl('#9fc4d8', `<ellipse class="p ripple" cx="50" cy="119" rx="10" ry="2.5" fill="none" stroke="#e6f6ff" stroke-width="1.5"/>`),
     feed: sp => sp === 'human'
@@ -29,10 +31,15 @@
     medicine: () => `<g class="p pill"><rect x="-8" y="-4" width="16" height="8" rx="4" fill="#fff" stroke="#d8d4cc"/><path d="M0 -4 H4 A4 4 0 0 1 4 4 H0Z" fill="#e8707e"/></g><path class="p spark" d="M30 40 l2 4 4 2 -4 2 -2 4 -2 -4 -4 -2 4 -2z" fill="#f4d36a"/>`,
     warm: () => `<circle class="p glow" cx="50" cy="70" r="22" fill="#ffb55a" opacity=".35"/><circle class="p glow" style="animation-delay:.6s" cx="50" cy="70" r="22" fill="none" stroke="#ffb55a" stroke-width="2"/>`,
     walk: () => [22, 50, 78].map((x, i) => `<g transform="translate(${x} 124)"><g class="p paw" style="animation-delay:${i * 0.4}s"><circle cx="0" cy="0" r="3.4" fill="#8a7d6b"/><circle cx="-5" cy="-5" r="1.7" fill="#8a7d6b"/><circle cx="0" cy="-7" r="1.7" fill="#8a7d6b"/><circle cx="5" cy="-5" r="1.7" fill="#8a7d6b"/></g></g>`).join(''),
+    sun: () => `<g class="p glow" style="animation-iteration-count:infinite"><circle cx="18" cy="20" r="9" fill="#ffd25a"/></g>` + [0, 1, 2, 3, 4].map(i => `<path class="p fade" style="animation-delay:${i * 0.2}s" d="M${24 + i * 4} ${30 + i * 4} L${34 + i * 6} ${46 + i * 7}" stroke="#ffd25a" stroke-width="2" stroke-linecap="round"/>`).join(''),
+    fertilize: () => [32, 50, 68].map((x, i) => `<g transform="translate(${x} 90)"><path class="p spark" style="animation-delay:${i * 0.3}s" d="M0 -5 l1.5 3.5 3.5 1.5 -3.5 1.5 -1.5 3.5 -1.5 -3.5 -3.5 -1.5 3.5 -1.5z" fill="#9ccf6a"/></g>`).join(''),
+    clean: () => [34, 50, 66].map((x, i) => `<g transform="translate(${x} 100)"><circle class="p rise" style="animation-delay:${i * 0.35}s" r="${4 - i * 0.6}" fill="none" stroke="#9cc9de" stroke-width="1.6"/></g>`).join(''),
     talk: () => `<g class="dots"><circle class="p dot" cx="72" cy="30" r="2.6" fill="#8a8378"/><circle class="p dot" style="animation-delay:.2s" cx="80" cy="30" r="2.6" fill="#8a8378"/><circle class="p dot" style="animation-delay:.4s" cx="88" cy="30" r="2.6" fill="#8a8378"/></g>`,
   };
   U.fxMarkup = (act, species) => `<svg viewBox="0 0 100 130">${(FX[act] || FX.pet)(species)}</svg>`;
   U.fxDuration = 3200;
+  /* 游戏分钟显示成几分钟或几小时 */
+  U.fmtMinutes = m => (m >= 60 ? t('unit.hour', { n: +(m / 60).toFixed(1) }) : t('unit.min', { n: Math.round(m) }));
 
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
@@ -60,6 +67,7 @@
     if (!stage) return;
     U.renderTint();
     const people = G.activePeople();
+    const topP = people.slice().sort((a, b) => G.urgency(b) - G.urgency(a))[0], topId = topP && G.urgency(topP) > 0.7 ? topP.id : null;
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
     $r('#roomEmpty') && $r('#roomEmpty').remove();
     if (!people.length) { const d = doc().createElement('div'); d.id = 'roomEmpty'; d.className = 'mute'; d.textContent = t('room.empty'); stage.appendChild(d); }
@@ -67,13 +75,16 @@
       let c = stage.querySelector(`.cx[data-id="${p.id}"]`);
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
-        c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
+        c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
         c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away')) return; U.sel = p.id; U.openRing(p.id); };
         stage.appendChild(c);
       }
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3);
       if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
+      c.classList.toggle('crying', !!G.crying[p.id]);
+      c.classList.toggle('top', topId === p.id);
+      c.classList.toggle('nanny', G.economyOn() && G.hasNanny(p));
       c.classList.toggle('sel', U.sel === p.id);
       const nmSig = p.person.name + Math.round(p.state.mood * 20) + Math.round(p.state.frailty * 20) + p.story.care_total + CY.i18n.lang;
       if (c.dataset.nm !== nmSig) {
@@ -150,8 +161,12 @@
       const b = doc().createElement('button');
       b.dataset.x = Math.sin(ang) * Rx; b.dataset.y = -Math.cos(ang) * Ry - 14;
       const sec = G.holdSeconds(a);
-      b.innerHTML = esc(a.label) + (ini.bool(G.cfg, 'interaction', 'click_instead_of_hold') ? '' : `<small>${t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec })}</small>`);
-      if (ini.bool(G.cfg, 'interaction', 'click_instead_of_hold')) b.onclick = () => { G.perform(pid, a.id); U.closeRing(); };
+      const click = G.inputMode() === 'click' || ini.bool(G.cfg, 'interaction', 'click_instead_of_hold');
+      const cost = G.inputMode() === 'click' ? U.fmtMinutes(a.min) : t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec });
+      const lack = G.lacking(a);
+      b.innerHTML = esc(a.label) + (G.inputMode() === 'hold' && ini.bool(G.cfg, 'interaction', 'click_instead_of_hold') ? '' : `<small>${esc(cost)}</small>`) + (lack ? `<small class="lack" title="${esc(t('ring.lack', { item: G.item(lack).label }))}">${G.item(lack).icon}</small>` : '');
+      if (lack) b.classList.add('dim');
+      if (click) b.onclick = () => { if (G.inputMode() === 'click') G.startAction(pid, a.id); else G.perform(pid, a.id); U.closeRing(); };
       else {
         b.onpointerdown = e => { e.preventDefault(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
         b.onpointerup = b.onpointercancel = () => U.endHold(false);

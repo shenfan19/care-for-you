@@ -158,3 +158,22 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .clock { font-variant-numeric:tabular-nums; }
 
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
+
+/* 照顾的代价 */
+.lifebar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:var(--soft); border:1px solid var(--line); border-radius:12px; padding:6px 12px; margin-bottom:10px; font-size:14px; }
+.lifebar .money, .money.big { font-weight:600; font-variant-numeric:tabular-nums; } .money.big { font-size:18px; margin-bottom:6px; }
+.lifebar .busy { display:inline-flex; gap:6px; align-items:center; } .lifebar .busy .bar { width:90px; } .lifebar .wfh { margin-right:auto; }
+.shoprow { display:flex; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); flex-wrap:wrap; } .shoprow .ic { font-size:18px; } .shoprow .nm { min-width:90px; font-weight:600; }
+.shoprow .pr { margin-left:auto; font-variant-numeric:tabular-nums; } .shoprow .bar { width:90px; flex:none; }
+.stagenote { font-size:12px; margin:-2px 0 6px; }
+.ring button.dim { opacity:.55; } .ring button .lack { margin-left:4px; }
+.cx .tears { display:none; position:absolute; left:0; right:0; top:0; height:178px; pointer-events:none; z-index:3; }
+.cx .tears svg { width:100%; height:100%; } .cx .tears .drop { fill:#7ec0ee; animation:tear 1s ease-in infinite; } .cx .tears .d2 { animation-delay:.4s; }
+.cx.crying .tears { display:block; } .cx.crying .av { animation:shake .35s ease-in-out infinite; }
+.cx.top .nm b::after { content:" ●"; color:var(--accent); font-size:10px; }
+.cx.nanny .nm b::before { content:"👩 "; font-size:11px; }
+.bubble.cry { border-color:#7ec0ee; }
+@keyframes tear { 0% { transform:translateY(0); opacity:0; } 20% { opacity:1; } 100% { transform:translateY(26px); opacity:0; } }
+@keyframes shake { 25% { transform:translateX(-1.5px) rotate(-1deg); } 75% { transform:translateX(1.5px) rotate(1deg); } }
+
+@keyframes fall { 0% { transform:translateY(0); opacity:0; } 20% { opacity:1; } 100% { transform:translateY(44px); opacity:0; } }

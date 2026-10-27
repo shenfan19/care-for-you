@@ -5,7 +5,7 @@
   const U = CY.ui = CY.ui || {};
   const esc = U.esc;
   const $ = id => document.getElementById(id);
-  const TYPES = ['care', 'talk', 'missed', 'cares_back', 'glance', 'event', 'frail', 'recovered', 'reveal', 'picked', 'nudge'];
+  const TYPES = ['care', 'talk', 'missed', 'cares_back', 'glance', 'event', 'frail', 'recovered', 'reveal', 'picked', 'nudge', 'cry', 'self'];
   const typeName = k => (TYPES.includes(k) ? t('type.' + k) : k);
   const fmtT = ts => { const d = new Date(ts); return t('fmt.datetime', { m: d.getMonth() + 1, d: d.getDate(), hh: String(d.getHours()).padStart(2, '0'), mm: String(d.getMinutes()).padStart(2, '0') }); };
   const view = { who: '', more: 40 };
@@ -16,6 +16,27 @@
     if (th !== 'light' && th !== 'dark') th = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const bg = ini.get(G.cfg, 'ui', 'background');
     for (const d of [document, U.pipDoc]) if (d) { d.documentElement.dataset.theme = th; d.documentElement.dataset.bg = bg; }
+    const style = ini.get(G.cfg, 'ui', 'avatar_style') === 'detailed' ? 'detailed' : 'simple';
+    if (CY.avatarStyle !== style) { CY.avatarStyle = style; if (U.room) U.renderRoom(true); }
+    const tb = $('themeBtn');
+    if (tb) { const m = ini.get(G.cfg, 'ui', 'theme'); tb.textContent = m === 'light' ? '☀' : m === 'dark' ? '☾' : '◐'; tb.title = t('hdr.theme_tip', { mode: t('theme.' + (m === 'light' || m === 'dark' ? m : 'auto')) }); }
+  };
+  /* 顶栏上的快捷控件：明暗、语言、压缩比例 */
+  U.cycleTheme = async function () {
+    const order = ['auto', 'light', 'dark'], cur = ini.get(G.cfg, 'ui', 'theme');
+    G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.theme = order[(order.indexOf(cur) + 1) % 3] || 'auto';
+    await saveCfg(); U.applyTheme();
+  };
+  U.renderControls = function () {
+    const ls = $('langSel'), names = I.names;
+    const langs = Object.keys(I.packs);
+    const sig = langs.join() + I.lang;
+    if (ls.dataset.sig !== sig) { ls.dataset.sig = sig; ls.innerHTML = langs.map(l => `<option value="${l}" ${l === I.lang ? 'selected' : ''}>${esc(names[l] || l)}</option>`).join(''); }
+    const rs = $('ratioSel'), mode = ini.get(G.cfg, 'time', 'mode'), ratio = ini.num(G.cfg, 'time', 'compress_ratio');
+    rs.style.display = mode === 'compressed' ? '' : 'none';
+    const list = [...new Set([10, 30, 60, 120, 360, ratio])].sort((a, b) => a - b);
+    const rsig = list.join() + ratio + I.lang;
+    if (rs.dataset.sig !== rsig) { rs.dataset.sig = rsig; rs.title = t('hdr.ratio_tip'); rs.innerHTML = list.map(v => `<option value="${v}" ${v === ratio ? 'selected' : ''}>${esc(t('ratio.label', { n: v }))}</option>`).join(''); }
   };
   U.syncTheme = U.applyTheme;
   U.applyLang = function () {
@@ -111,40 +132,45 @@
   U.addDialog = function (archId, done) {
     const O = CY.avatarOptions;
     const arch0 = C.archOf(archId) || C.archetypes[0];
-    const st = { arch: arch0.id, name: '', pronoun: arch0.pronoun, age_stage: arch0.age_stage, look: Object.assign({}, arch0.look), cond: '' };
+    const st = { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '' };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
+    const GROUPS = ['family', 'animal', 'plant'];
     function render() {
       const arch = C.archOf(st.arch), human = arch.species === 'human';
-      const archSel = ['family', 'animal'].map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
-      const look = st.look;
-      const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look)}</div><div>
+      const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
+      const look = st.look, stage = C.stageOf(st.age);
+      const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look, st.age)}</div><div>
         <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa">${archSel}</select></div>
-        ${human ? `<div class="row">${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)} ${esc(t('add.age'))} ${sel('age_stage', ['child', 'adult', 'elder'], [t('age.child'), t('age.adult'), t('age.elder')], st.age_stage)}
-          ${esc(t('add.glasses'))} ${sel('glasses', O.glasses, O.glasses.map(g => t('glasses.' + g)), look.glasses === true ? 'round' : look.glasses || 'none')}
+        ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="0.5" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
+          ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
+          <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
+          <div class="row">${esc(t('add.glasses'))} ${sel('glasses', O.glasses, O.glasses.map(g => t('glasses.' + g)), look.glasses === true ? 'round' : look.glasses || 'none')}
           <label><input type="checkbox" id="abeard" ${look.beard ? 'checked' : ''}> ${esc(t('add.beard'))}</label></div>
           <div class="row">${esc(t('add.skin'))} ${sw('skin', [0, 1, 2, 3, 4, 5], look.skin, v => O.skin[v])} ${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])}</div>
           <div class="row">${esc(t('add.hair'))} ${sel('hair_style', O.hairStyle, O.hairStyle.map(h => t('hair.' + h)), look.hair_style)} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
-        : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div>`}
+        : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
         <div class="row" style="justify-content:flex-end;margin:12px 0 0"><button id="acancel">${esc(t('btn.cancel'))}</button><button id="aok" class="primary">${esc(t('add.ok'))}</button></div></div></div>`, true);
       dlg.querySelector('#an').oninput = e => { st.name = e.target.value; };
       dlg.querySelector('#aa').onchange = e => {
-        const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age_stage = a.age_stage; st.look = Object.assign({}, a.look);
+        const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age = a.age; st.look = Object.assign({}, a.look);
         if (a.species !== 'human') st.cond = '';
         render();
       };
+      const ag = dlg.querySelector('#aage');
+      if (ag) ag.onchange = () => { const v = parseFloat(ag.value); st.age = isNaN(v) ? 35 : Math.min(110, Math.max(0, v)); render(); };
       dlg.querySelectorAll('.sw').forEach(s => s.onclick = () => { st.look[s.dataset.k] = s.dataset.k === 'skin' ? +s.dataset.v : s.dataset.v; render(); });
       dlg.querySelectorAll('select[data-s]').forEach(s => s.onchange = () => {
         const k = s.dataset.s;
-        if (k === 'pronoun' || k === 'age_stage' || k === 'cond') st[k] = s.value; else st.look[k] = s.value;
+        if (k === 'pronoun' || k === 'cond') st[k] = s.value; else st.look[k] = s.value;
         render();
       });
       const bd = dlg.querySelector('#abeard'); if (bd) bd.onchange = () => { st.look.beard = bd.checked; render(); };
       dlg.querySelector('#acancel').onclick = () => { U.closeDialog(); done && done(false); };
       dlg.querySelector('#aok').onclick = async () => {
         const a = C.archOf(st.arch), role = U.archName(a.id);
-        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age_stage: st.age_stage, look: st.look, conditions: st.cond ? [st.cond] : [] });
+        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, conditions: st.cond ? [st.cond] : [] });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }
@@ -163,21 +189,22 @@
         <h3>${esc(t('ob.recommend'))}</h3>${C.presets.map(p => `<button class="preset" data-p="${p.id}"><b>${esc(t('preset.' + p.id + '.label'))}</b><br><span class="mute">${esc(t('preset.' + p.id + '.note'))}</span></button>`).join('')}
         <h3>${esc(t('add.group_family'))}</h3><div class="chips">${C.archetypes.filter(a => a.group === 'family').map(chip).join('')}</div>
         <h3>${esc(t('add.group_animal'))}</h3><div class="chips">${C.archetypes.filter(a => a.group === 'animal').map(chip).join('')}</div>
+        <h3>${esc(t('add.group_plant'))}</h3><div class="chips">${C.archetypes.filter(a => a.group === 'plant').map(chip).join('')}</div>
         <div class="row" style="margin-top:14px;justify-content:space-between"><span class="mute">${added.length ? esc(t('ob.added', { names: added.join(t('sep.list')) })) : ''}</span>
           <button id="obgo" class="primary">${esc(t(added.length ? 'ob.start' : 'ob.skip'))}</button></div>`, true);
       dlg.querySelectorAll('.chip').forEach(b => b.onclick = () => U.addDialog(b.dataset.a, ok => { if (ok) added.push(G.people[G.people.length - 1].person.name); render(); }));
       dlg.querySelectorAll('.preset').forEach(b => b.onclick = async () => {
         const pr = C.presets.find(x => x.id === b.dataset.p);
         for (const m of pr.members) await G.createPerson({ arch: m.arch, name: t('preset.name.' + m.arch), roleText: U.archName(m.arch), conditions: m.conditions });
-        await G.load(); U.closeDialog(); U.afterPeopleChange();
+        await G.load(); U.closeDialog(); U.afterPeopleChange(); U.maybeIntro();
       });
-      dlg.querySelector('#obgo').onclick = () => { U.closeDialog(); U.afterPeopleChange(); };
+      dlg.querySelector('#obgo').onclick = () => { U.closeDialog(); U.afterPeopleChange(); if (G.people.length) U.maybeIntro(); };
     }
     render();
   };
 
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'time.daynight': ['auto', 'system', 'game'], 'interaction.input': ['hold', 'click'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['ui.theme', 'ui.background', 'ui.language']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
@@ -305,5 +332,71 @@
       <div class="aboutbody">${body[tab]}</div><div class="row" style="justify-content:flex-end;margin-top:10px"><button id="aclose">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelectorAll('.chip').forEach(b => b.onclick = () => U.aboutDialog(b.dataset.t));
     dlg.querySelector('#aclose').onclick = U.closeDialog;
+  };
+  /* ---------- 照顾的代价：居家办公的提示条、钱、商店、家人与保姆、体验选择 ---------- */
+  U.renderLife = function () {
+    const bar = $('lifeBar'), eco = G.economyOn(), people = G.activePeople(), busy = G.world.busy;
+    const show = ini.bool(G.cfg, 'ui', 'wfh_notice') && people.length > 0;
+    bar.style.display = show ? '' : 'none';
+    if (!show) return;
+    const mode = G.inputMode(), work = G.isWorkTime();
+    const sig = [eco, mode, work, Math.floor(G.world.money), people.length, busy && busy.label, I.lang, JSON.stringify(G.world.inv || {})].join('|');
+    if (bar.dataset.sig !== sig) {
+      bar.dataset.sig = sig;
+      const n = people.length;
+      bar.innerHTML = `<span class="wfh">💼 ${esc(t(eco ? (work ? 'life.working' : 'life.offwork') : 'life.wfh', { n }))}</span>` +
+        (eco ? `<span class="money" title="${esc(t('life.money_tip'))}">💰 ${Math.floor(G.world.money)}</span>` : '') +
+        `<button class="chip" id="modeBtn" title="${esc(t('life.mode_tip'))}">${esc(t(mode === 'click' ? 'life.mode_click' : 'life.mode_hold'))}</button>` +
+        (busy ? `<span class="busy">⏳ ${esc(t('life.busy', { what: busy.label }))}<span class="bar"><i id="busyBar"></i></span><button id="busyCancel" class="chip">${esc(t('btn.cancel'))}</button></span>` : '') +
+        (eco ? `<button id="shopBtn">${esc(t('life.shop'))}</button>` : '') + `<button id="homeBtn">${esc(t('life.household'))}</button>`;
+      $('modeBtn').onclick = async () => { G.cfg.interaction = G.cfg.interaction || {}; G.cfg.interaction.input = G.inputMode() === 'click' ? 'hold' : 'click'; await saveCfg(); U.renderLife(); };
+      if ($('shopBtn')) $('shopBtn').onclick = () => U.shopDialog();
+      $('homeBtn').onclick = () => U.householdDialog();
+      if ($('busyCancel')) $('busyCancel').onclick = () => G.cancelAction();
+    }
+    const bb = $('busyBar');
+    if (bb && busy) bb.style.width = Math.min(100, (G.world.game_minutes - busy.start) / (busy.end - busy.start) * 100) + '%';
+  };
+
+  U.shopDialog = function () {
+    const items = G.tpl.items.items || {};
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('shop.title'))}</h2><div class="mute" style="margin-bottom:6px">${esc(t('shop.note'))}</div>
+      <div class="money big">💰 ${Math.floor(G.world.money)}</div>
+      ${Object.keys(items).map(k => `<div class="shoprow"><span class="ic">${items[k].icon}</span><span class="nm">${esc(CY.tOr('item.' + k, items[k].label))}</span><span class="mute">${esc(t('shop.have', { n: G.world.inv[k] || 0 }))}</span><span class="pr">${items[k].price}</span>
+        <button data-b="${k}" data-n="1" ${G.world.money < items[k].price ? 'disabled' : ''}>＋1</button><button data-b="${k}" data-n="5" ${G.world.money < items[k].price * 5 ? 'disabled' : ''}>＋5</button></div>`).join('')}
+      <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="shclose">${esc(t('btn.close'))}</button></div>`, true);
+    dlg.querySelectorAll('[data-b]').forEach(b => b.onclick = () => { G.buy(b.dataset.b, +b.dataset.n); U.shopDialog(); U.renderLife(); });
+    dlg.querySelector('#shclose').onclick = U.closeDialog;
+  };
+
+  /* 家人与保姆：按谁最需要你排列，保姆能分担，但在场的效果打折 */
+  U.householdDialog = function () {
+    const eco = G.economyOn();
+    const list = G.activePeople().slice().sort((a, b) => G.urgency(b) - G.urgency(a));
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('home.title'))}</h2><div class="mute" style="margin-bottom:6px">${esc(t('home.note'))}</div>
+      ${list.map(p => { const cl = G.classKey(p), u = G.urgency(p);
+        return `<div class="shoprow"><span class="nm">${esc(p.person.name)}</span><span class="pill">${esc(t('class.' + cl))}</span>
+          <span class="bar" title="${esc(t('home.urgency'))}"><i style="width:${Math.min(100, Math.round(u / 3 * 100))}%"></i></span>
+          <span class="mute">${esc(t('home.self', { n: Math.round(G.classOf(p).self_care * 100) }))}</span>
+          ${eco ? `<label><input type="checkbox" data-nn="${p.id}" ${G.hasNanny(p) ? 'checked' : ''}> ${esc(t('home.nanny'))}</label>` : ''}</div>`; }).join('')}
+      ${eco ? `<div class="mute" style="margin-top:8px">${esc(t('home.nanny_note', { cost: G.nannyCostPerHour() }))}</div>` : ''}
+      <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="hclose">${esc(t('btn.close'))}</button></div>`, true);
+    dlg.querySelectorAll('[data-nn]').forEach(c => c.onchange = () => { G.setNanny(c.dataset.nn, c.checked); U.renderLife(); });
+    dlg.querySelector('#hclose').onclick = U.closeDialog;
+  };
+
+  /* 第一次有了角色之后，讲清楚照顾的代价，并让玩家选择体验方式 */
+  U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
+  U.introDialog = function () {
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('intro.title'))}</h2><p>${esc(t('intro.p1'))}</p><p>${esc(t('intro.p2'))}</p>
+      <button class="preset" data-m="light"><b>${esc(t('intro.light'))}</b><br><span class="mute">${esc(t('intro.light_note'))}</span></button>
+      <button class="preset" data-m="life"><b>${esc(t('intro.life'))}</b><br><span class="mute">${esc(t('intro.life_note'))}</span></button>
+      <div class="mute">${esc(t('intro.later'))}</div>`, true);
+    dlg.querySelectorAll('[data-m]').forEach(b => b.onclick = async () => {
+      const life = b.dataset.m === 'life';
+      G.cfg.play = G.cfg.play || {}; G.cfg.interaction = G.cfg.interaction || {};
+      G.cfg.play.economy = life ? 'true' : 'false'; G.cfg.interaction.input = life ? 'click' : 'hold';
+      G.world.intro_done = true; G.save(true); await saveCfg(); U.closeDialog(); U.renderLife(); U.renderRoom(true);
+    });
   };
 })(globalThis.CY = globalThis.CY || {});
