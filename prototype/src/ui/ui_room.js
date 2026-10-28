@@ -127,11 +127,11 @@
       c.classList.toggle('top', topId === p.id);
       c.classList.toggle('needy', G.needy(p));
       c.classList.toggle('sel', U.sel === p.id);
-      const nmSig = p.person.name + Math.round(p.state.mood * 20) + Math.round(p.state.frailty * 20) + p.story.care_total + CY.i18n.lang + G.isSleeping(p) + (p.person.conditions || []).length;
+      const nmSig = (p === G.protagonist() ? '★' : '') + p.person.name + Math.round(p.state.mood * 20) + Math.round(p.state.frailty * 20) + p.story.care_total + CY.i18n.lang + G.isSleeping(p) + (p.person.conditions || []).length;
       if (c.dataset.nm !== nmSig) {
         c.dataset.nm = nmSig;
         const pct = v => Math.round(v * 100);
-        c.querySelector('.nm').innerHTML = `<b>${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span class="zzz" title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${(p.person.conditions || []).length ? '<span class="sick" title="' + esc((p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ')) + '">🩺</span>' : ''}<span class="edit" title="${esc(t('room.edit', { name: p.person.name }))}">✎</span><span class="info" title="${esc(t('room.info', { name: p.person.name }))}">ⓘ</span><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
+        c.querySelector('.nm').innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span class="zzz" title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${(p.person.conditions || []).length ? '<span class="sick" title="' + esc((p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ')) + '">🩺</span>' : ''}<span class="edit" title="${esc(t('room.edit', { name: p.person.name }))}">✎</span><span class="info" title="${esc(t('room.info', { name: p.person.name }))}">ⓘ</span><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
           <div class="bar mood" title="${esc(t('room.bar', { mood: pct(p.state.mood), frail: pct(p.state.frailty) }))}"><i style="width:${pct(p.state.mood)}%"></i></div>`;
         c.querySelector('.away').onclick = e => { e.stopPropagation(); G.setActive(p.id, false); };
         c.querySelector('.info').onclick = e => { e.stopPropagation(); U.statusDialog(p.id); };
@@ -200,7 +200,7 @@
       c.querySelector('.body').innerHTML = CY.avatar(PLAYER); stage.appendChild(c);
     }
     c.querySelector('b').textContent = t('player.name');
-    const pages = U.PAGES(), show = v.place === U.viewPlace && U.viewPlace !== 'family' && pages.length > 0 && !v.traveling;
+    const pages = U.PAGES(), show = !G.protagonist() && v.place === U.viewPlace && U.viewPlace !== 'family' && pages.length > 0 && !v.traveling;
     c.style.display = show ? '' : 'none';
     if (show) U.moveFig(c, v.place, v.gx, v.gy);
   };
@@ -283,26 +283,22 @@
     const layer = doc().createElement('div');
     layer.id = 'ringLayer'; layer.className = 'ring';
     layer.style.left = ox + 'px'; layer.style.top = oy + 'px';
-    const click = ini.bool(G.cfg, 'interaction', 'click_instead_of_hold');
     const label = doc().createElement('div'); label.className = 'ringlabel';
     const home = () => { label.innerHTML = `<b>${esc(p.person.name)}</b>`; };
     home(); layer.appendChild(label);
     acts.forEach((a, i) => {
       const ang = (-90 + 360 * i / n) * Math.PI / 180;
       const sec = G.holdSeconds(a), cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec }), lack = G.lacking(a), urgent = U.actUrgent(p, a);
-      const text = a.label + (click ? '' : ' · ' + cost) + (lack ? ' · ' + t('ring.lack', { item: G.item(lack).label }) : '');
+      const text = a.label + ' · ' + cost + (lack ? ' · ' + t('ring.lack', { item: G.item(lack).label }) : '');
       const b = doc().createElement('button');
       b.className = 'ico ' + (urgent ? 'urgent' : 'calm') + (lack ? ' dim' : '');
       b.style.left = (R * Math.cos(ang)) + 'px'; b.style.top = (R * Math.sin(ang)) + 'px';
       b.title = text; b.setAttribute('aria-label', text);
       b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>` + (lack ? `<i class="lk">${G.item(lack).icon}</i>` : '');
-      const show = () => { label.innerHTML = `<b>${esc(a.label)}</b>${click ? '' : `<small>${esc(cost)}</small>`}${lack ? `<small class="lack">${esc(t('ring.lack', { item: G.item(lack).label }))}</small>` : ''}`; };
+      const show = () => { label.innerHTML = `<b>${esc(a.label)}</b><small>${esc(cost)}</small>${lack ? `<small class="lack">${esc(t('ring.lack', { item: G.item(lack).label }))}</small>` : ''}`; };
       b.onpointerenter = show; b.onfocus = show; b.onpointerleave = home; b.onblur = home;
-      if (click) b.onclick = () => { G.perform(pid, a.id); U.closeRing(); };
-      else {
-        b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
-        b.onpointerup = b.onpointercancel = () => U.endHold(false);
-      }
+      b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
+      b.onpointerup = b.onpointercancel = () => U.endHold(false);
       layer.appendChild(b);
     });
     U.room.appendChild(layer);

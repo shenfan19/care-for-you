@@ -330,3 +330,7 @@ CY.i18n.register("zh-CN", {"me.work_start": "到了工作时间，你在书房�
 CY.i18n.register("zh-CN", {"loc.park": "公园", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "马路", "act.park": "带去公园", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一会儿就回来。", "me.away": "为了{label}，你离开书桌 {min} 分钟，少赚了 {lost}。", "log.outing_start": "{name}出门去{place}了。", "log.outing_back": "{name}回来了。", "log.nanny_hired": "雇了一位保姆，{n} 天。", "log.nanny_end": "保姆的合同到期了。", "log.nanny_left": "保姆走了，因为欠薪太多。", "log.assist": "{who}替你照顾了{name}：{label}", "assist.nanny": "保姆"});
 
 CY.i18n.register("zh-CN", {"nanny.title": "保姆", "nanny.note": "雇一位保姆，每天付一次工资，日薪 {n}。付够她就自动处理零碎的照顾，满效率是你自己的八成。欠得多效率会掉，欠够两天她就走。", "nanny.hire": "雇 {n} 天", "nanny.status": "还剩 {d} 天，欠薪 {owed}，效率 {eff}%", "nanny.pay": "付 {n}", "nanny.paid": "今天已付 {n}", "nanny.fire": "辞退", "nanny.helpers": "{names}在家办公，自己赚一份钱，也自动帮着照顾，不用付工资。", "add.helper": "在家办公，自动赚钱，也分担照顾"});
+
+CY.i18n.register("zh-CN", {"intro.p2": "离开书桌去照顾人，那段时间就赚不了钱。钱用来买物品，也可以请保姆。"});
+
+CY.i18n.register("zh-CN", {"people.lead": "设为主角", "people.lead_on": "主角，点击取消"});

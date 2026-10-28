@@ -10,7 +10,6 @@
     await G.load();
     const q = new URLSearchParams(location.search);
     if (q.get('freq')) G.cfg.interrupt.frequency = q.get('freq');
-    if (q.get('quiet') !== null) G.cfg.interrupt.quiet_hours = q.get('quiet');
     if (q.get('lang')) { G.cfg.ui.language = q.get('lang'); await G.saveCfg(); CY.i18n.set(CY.i18n.detect(q.get('lang'))); await G.reloadContent(); }
     G.start();
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));

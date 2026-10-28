@@ -7,15 +7,29 @@
   const t = (k, v) => CY.t(k, v);
   const { emit, clamp } = G._h;
 
-  const wage = () => ini.num(G.cfg, 'economy', 'wage');
-  const daily = () => Math.max(1, ini.num(G.cfg, 'economy', 'nanny_daily'));
+  const wage = () => G.wage();
+  const daily = () => G.NANNY_DAILY;
   const dayIndex = () => CY.protocol.world().date.day_index;
   G.NANNY_FULL = 0.8;        /* 保姆满效率是玩家自己做的八成 */
   G.HELPER_EFF = 0.5;        /* 分担的家人是五成 */
 
+  /* ---------- 主角：可选。没有主角时，玩家是一个看不见的成年人，在书桌前工作。
+     选了一个人做主角，玩家的手就是他的手：他站在玩家所在的位置，不睡觉，不被打扰，也能照顾自己。
+     成年主角靠工作赚钱；老人主角领固定的退休金，圈转得慢些；少年和孩子没有收入，靠家里工作的大人。 ---------- */
+  const LEAD_STAGES = ['child', 'teen', 'adult', 'elder'];
+  G.canLead = p => !!p && G.isHuman(p) && LEAD_STAGES.includes(G.stage(p));
+  G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
+  G.setProtagonist = id => {
+    const p = id ? G.get(id) : null;
+    if (id && !G.canLead(p)) return false;
+    G.world.protagonist = id || null;
+    if (p) { p.person.active = true; G.clearFlag(p, 'hospital'); G.clearFlag(p, 'outing'); }
+    G.save(); emit(); return true;
+  };
+
   /* ---------- 外出：离开书桌的代价，和带着人出门 ---------- */
   G.awayCost = (p, a) => {
-    if (!G.economyOn() || !G.isWorkTime()) return;
+    if (!G.isWorkTime()) return;
     const lost = Math.min(G.world.money, Math.round(wage() * a.min / 60));
     if (lost <= 0) return;
     G.world.money -= lost;
@@ -25,7 +39,7 @@
   G.startOuting = (p, a) => {
     const o = a.outing, W = CY.world, group = [p];
     if (o.group) for (const q of G.activePeople()) {
-      if (q.id === p.id || !G.isHuman(q) || !GROUP_STAGES.includes(G.stage(q))) continue;
+      if (q.id === p.id || q === G.protagonist() || !G.isHuman(q) || !GROUP_STAGES.includes(G.stage(q))) continue;
       if (G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || W.locationOf(q).place !== 'home') continue;
       group.push(q);
     }
@@ -38,7 +52,7 @@
 
   /* ---------- 保姆 ---------- */
   const N = () => G.world.nanny;
-  G.nannyActive = () => G.economyOn() && !!N() && N().days_left > 0;
+  G.nannyActive = () => !!N() && N().days_left > 0;
   G.nannyEff = () => {
     if (!G.nannyActive()) return 0;
     const n = N(), w = daily(), mult = n.owed <= 0 ? 1 : Math.max(0.2, 1 - 0.8 * n.owed / (2 * w));
@@ -46,7 +60,7 @@
   };
   G.nannyInfo = () => { const n = N() || {}; return { active: G.nannyActive(), days_left: n.days_left || 0, owed: Math.round(n.owed || 0), paid_today: n.paid_today || 0, efficiency: +G.nannyEff().toFixed(2), daily: daily() }; };
   G.hireNanny = days => {
-    if (!G.economyOn() || G.nannyActive()) return false;
+    if (G.nannyActive()) return false;
     G.world.nanny = { days_left: days, owed: daily(), paid_today: 0, day: dayIndex() };
     G.log('you', 'event', t('log.nanny_hired', { n: days }));
     G.save(); emit(); return true;
@@ -98,10 +112,9 @@
     G.log(p.id, 'care', txt); G.toastFor(p, txt, 'soft'); G.playFx(p.id, a.id);
   };
   const timers = { nanny: 0 };
-  G.helpers = () => (G.economyOn() ? G.activePeople().filter(p => p.person.helper && G.isHuman(p) && G.stage(p) === 'adult' && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) < 0.8) : []);
+  G.helpers = () => G.activePeople().filter(p => p.person.helper && G.isHuman(p) && G.stage(p) === 'adult' && p !== G.protagonist() && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) < 0.8);
   G.helperIncome = () => G.helpers().length * wage() * 0.5;
   G.assistTick = dt => {
-    if (!G.economyOn()) return;
     nannyDay();
     /* 保姆 */
     if (G.nannyActive()) {

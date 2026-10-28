@@ -626,7 +626,6 @@ rules:
         - { frailty: 2 }
         - { age_over: 80, mult: 1.3 }
         - { flag: nightlight, mult: 0.5 }
-        - { param: fall_scale }
       outcomes:
         - weight: 0.65
           do:
@@ -890,7 +889,7 @@ rules:
     },
   };
 
-  const CV = 2;   /* 内容文件的版本，内置内容更新了就加一，数据文件夹里旧版本的会被覆盖，旧的留在 _backup */
+  const CV = 3;   /* 内容文件的版本，内置内容更新了就加一，数据文件夹里旧版本的会被覆盖，旧的留在 _backup */
   const HEAD = {
     voice: '# 这种声线的角色默认会说的话。角色自己的 person.yaml 里 lines 写了同名项时，以角色自己的为准。\n',
     sayings: '# 可挑选的“说过的话”。游戏偶尔会问你：某某会对你说哪句。你选了哪句就记哪句的编号和原文。\n',

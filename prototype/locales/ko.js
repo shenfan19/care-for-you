@@ -146,3 +146,7 @@ CY.i18n.register("ko", {"me.work_start": "업무 시간이 되어 서재에서 �
 CY.i18n.register("ko", {"loc.park": "공원", "loc.street": "거리", "loc.lawn": "잔디밭", "loc.road": "도로", "act.park": "공원에 데려가기", "act.street": "거리 구경 가기", "toast.outing": "{name}은(는) {place}에 나가 있어요. 곧 돌아와요.", "me.away": "「{label}」을 위해 {min}분 자리를 비워 {lost}만큼 덜 벌었다.", "log.outing_start": "{name}은(는) {place}에 나갔다.", "log.outing_back": "{name}이(가) 돌아왔다.", "log.nanny_hired": "돌보미를 {n}일 고용했다.", "log.nanny_end": "돌보미 계약이 끝났다.", "log.nanny_left": "밀린 급여가 많아 돌보미가 떠났다.", "log.assist": "{who}이(가) 대신 {name}을(를) 돌봤다: {label}", "assist.nanny": "돌보미"});
 
 CY.i18n.register("ko", {"nanny.title": "돌보미", "nanny.note": "돌보미를 고용해 하루에 한 번 일당 {n}을 줍니다. 제대로 주면 자잘한 돌봄을 알아서 하고 효율은 내 8할입니다. 밀리면 효율이 떨어지고 이틀 밀리면 떠납니다.", "nanny.hire": "{n}일 고용", "nanny.status": "{d}일 남음, 밀린 급여 {owed}, 효율 {eff}%", "nanny.pay": "{n} 지급", "nanny.paid": "오늘 {n} 지급함", "nanny.fire": "그만두게 하기", "nanny.helpers": "{names}은(는) 재택근무로 수입 일부를 벌고 돌봄도 알아서 돕습니다. 급여는 필요 없습니다.", "add.helper": "재택근무로 알아서 벌고 돌봄도 나눈다"});
+
+CY.i18n.register("ko", {"intro.p2": "책상을 떠나 돌보는 동안에는 돈을 벌지 못합니다. 돈은 물품을 사거나 돌보미를 고용하는 데 씁니다."});
+
+CY.i18n.register("ko", {"people.lead": "주인공으로", "people.lead_on": "주인공, 누르면 해제"});

@@ -2,29 +2,17 @@
 (function (CY) {
   /* 节，键，默认值，说明 */
   const SCHEMA = [
-    ['interrupt', 'mode', 'countdown_default', 'keep 一直等到你回应；countdown_default 倒计时到了按角色习惯自动处理；countdown_dismiss 倒计时到了自动消除'],
     ['interrupt', 'frequency', 'normal', 'test 试玩（现实秒）；often 经常；normal 适中；rare 很少。后三档按游戏时间算，所以压缩时间下会更频繁'],
-    ['interrupt', 'countdown_seconds', '25', '倒计时秒数'],
-    ['interrupt', 'answer_seconds', '20', '问答题的倒计时秒数，到时没回答就当作没赶上，没有惩罚'],
-    ['interrupt', 'quiet_hours', '22:00-07:00', '这段现实时间内不打扰，留空表示不设'],
+    ['interrupt', 'countdown_seconds', '25', '提醒和问答的倒计时秒数，到时没赶上，能自理的自己处理，没有惩罚'],
     ['time', 'daynight', 'auto', 'auto 真实时间跟随系统时钟，压缩时间用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
-    ['time', 'offline_cap_hours', '12', '离开期间最多推算多少游戏小时'],
-    ['player', 'name', '你', '角色怎么叫你'],
-    ['player', 'title', '爸爸', '宝宝怎么称呼你'],
     ['play', 'auto_return', 'true', '为 true 时，照顾完没有别的事，主角会自己回到书桌前工作；false 时留在原地等你手动移动'],
-    ['play', 'fall_scale', '1', '夜里起夜跌倒概率的倍数，调试用。等 Life Matters 的夜尿模型接入后由模型给出'],
     ['play', 'backend_provider', 'builtin', 'builtin 是内置后端，规则和台词都在数据文件夹的明文 YAML 里；http 是把状态发给一个远程地址，由它决定谁说话、发生什么事，失败时退回内置'],
     ['play', 'backend_url', '', '远程后端的地址，只在 backend_provider 为 http 时用。发出去的只有状态快照，不含名字'],
     ['play', 'backend_timeout', '4000', '远程后端的超时，毫秒'],
     ['play', 'backend_send_names', 'false', '为 true 时，发给远程后端的快照里带角色的名字。默认不带'],
-    ['play', 'economy', 'true', 'true 为完整体验：书桌前工作赚钱，带人出去会耽误工作，照顾要用物品，可以雇保姆；false 为轻量体验，只有长按'],
     ['play', 'needs_source', 'builtin', 'builtin 是游戏自己算需求的增长；backend 是需求完全由后端用 need_set 指令给，比如接入你自己的 ODE，游戏不再自己涨'],
     ['play', 'api_bridge', 'false', '为 true 时，页面响应 postMessage 的 care.getState 和 care.apply，让外部程序读取每个人的需求和状态，也能写入。默认关闭'],
-    ['economy', 'wage', '40', '工作时间每游戏小时赚多少钱'],
     ['economy', 'work_hours', '09:00-18:00', '每天的工作时段，按昼夜时钟算'],
-    ['economy', 'nanny_daily', '120', '保姆每天的工资，每天付一次。付够效率最高，欠得多效率往下掉，欠够两天就走'],
-    ['interaction', 'click_instead_of_hold', 'false', '为 true 时，点一下就做，不用按住，适合不方便长按的人。走路的时间照常计算，只是不再占住你的手'],
-    ['interaction', 'hold_scale', '1.0', '长按时长倍率，1.5 表示比默认长一半'],
     ['interaction', 'nudges', 'true', '偶尔提醒你联系现实里的人、站起来动一动'],
     ['interaction', 'picks', 'true', '偶尔问你某个角色会说哪句话'],
     ['interaction', 'sensitive_topics', 'false', '是否出现较私密或带文化压力的话题，例如身体不适、催婚，默认关闭'],
@@ -48,6 +36,10 @@
     ['ai', 'share_replies', 'false', '是否允许把你回答过的话发给 AI 作为上下文'],
   ];
 
+  /* 已经取消的设置，旧文件里留着的也丢掉 */
+  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale'] };
+  const dropRemoved = out => { for (const s in REMOVED) if (out[s]) { for (const k of REMOVED[s]) delete out[s][k]; if (!Object.keys(out[s]).length && !SCHEMA.some(x => x[0] === s)) delete out[s]; } return out; };
+
   function parse(text) {
     const out = {};
     let sec = '';
@@ -62,7 +54,7 @@
       if (c >= 0) v = v.slice(0, c);
       (out[sec] = out[sec] || {})[l.slice(0, i).trim()] = v.trim();
     }
-    return out;
+    return dropRemoved(out);
   }
 
   function stringify(cfg) {

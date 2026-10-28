@@ -60,6 +60,7 @@
   const pickBy = (id, list) => list[hashOf(id + ':' + block()) % list.length];
   const onMat = q => G.isHuman(q) && ['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (q.state.needs.rest || 0) <= 0.55;
   W.locationOf = p => {
+    if (p === G.protagonist()) { const pl = W.player(); return { place: pl.place, room: pl.room, mode: 'stand' }; }
     const hr = G.dayMinutes() / 60, fp = flagPlace(p);
     if (fp) return { place: fp.place, room: fp.room, mode: fp.mode || 'stand' };
     if (!G.isHuman(p)) {
@@ -93,11 +94,14 @@
   W.layout = place => {
     const byRoom = {};
     for (const p of G.activePeople()) {
+      if (p === G.protagonist()) continue;
       const loc = W.locationOf(p);
       if (loc.place !== place) continue;
       (byRoom[loc.room] = byRoom[loc.room] || []).push({ p, mode: loc.mode });
     }
     const out = [];
+    const lead = G.protagonist();
+    if (lead && W.player().place === place) { const pl = W.player(); out.push({ id: lead.id, place, room: pl.room, kind: 'stand', gx: pl.gx, gy: pl.gy }); }
     for (const room in byRoom) {
       let ns = 0, nb = 0;
       for (const { p, mode } of byRoom[room]) {
@@ -109,7 +113,8 @@
     return out;
   };
   /* 哪些地点有人。没有人的地点不出现 */
-  W.occupiedPlaces = () => { const set = new Set(G.activePeople().map(p => W.locationOf(p).place)); return W.PLACE_LIST.filter(pl => set.has(pl)); };
+  W.othersPlaces = () => { const set = new Set(G.activePeople().filter(p => p !== G.protagonist()).map(p => W.locationOf(p).place)); return W.PLACE_LIST.filter(pl => set.has(pl)); };
+  W.occupiedPlaces = () => { const set = new Set(W.othersPlaces()); if (G.protagonist()) set.add(W.player().place); return W.PLACE_LIST.filter(pl => set.has(pl)); };
 
   /* ---------- 主角 ---------- */
   W.player = () => {
@@ -127,6 +132,7 @@
 
   /* 要照顾这个人：在别的地点就先去那里，同一个地点就直接出现在他旁边 */
   W.presenceNeed = p => {
+    if (p === G.protagonist()) return null;
     const of = G.flag(p, 'outing');
     if (of) return { offsite: true, outing: true, place: of.place };
     const loc = W.locationOf(p), pl = W.player();
@@ -156,7 +162,7 @@
     if (!W.enforce) return;
     const pl = W.player();
     if (W.holding) { W.lastActive = Date.now(); return; }
-    if (!W.occupiedPlaces().includes(pl.place) && G.activePeople().length) { W.moveTo(W.WORK.place, W.WORK.room); return; }
+    if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.moveTo(W.WORK.place, W.WORK.room); return; }
     if (!ini.bool(G.cfg, 'play', 'auto_return') || Date.now() - W.lastActive < W.IDLE_MS) return;
     if (pl.place !== W.WORK.place || pl.room !== W.WORK.room) { W.moveTo(W.WORK.place, W.WORK.room); }
   };

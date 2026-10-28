@@ -4,7 +4,12 @@
   const t = (k, v) => CY.t(k, v);
   const { emit, clamp, pick } = G._h;
   /* ---------- 经济：钱，物品，工作，保姆 ---------- */
-  G.economyOn = () => ini.bool(G.cfg, 'play', 'economy');
+  /* 收入的数字，每游戏小时。工资跟着工作的地方：在家，办公室，出差。现在只有在家，其余等细化 */
+  G.WAGE = { home: 40, office: 60, trip: 90 };
+  G.workMode = () => 'home';
+  G.wage = () => G.WAGE[G.workMode()];
+  G.PENSION = 4;             /* 老人主角的退休金，固定，不多，不用到书桌前 */
+  G.NANNY_DAILY = 120;       /* 保姆日薪 */
   G.item = k => (G.tpl.items.items || {})[k] || (k === 'money' ? { label: CY.tOr('item.money', '钱'), icon: '💰', price: 1 } : { label: k, icon: '•', price: 10 });
   G.workWindow = () => {
     const m = ini.get(G.cfg, 'economy', 'work_hours').match(/^(\d\d):(\d\d)-(\d\d):(\d\d)$/);
@@ -16,9 +21,8 @@
     if (G.world.money < cost) return false;
     G.world.money -= cost; G.world.inv[k] = (G.world.inv[k] || 0) + n; G.save(); emit(); return true;
   };
-  /* 动作缺什么物品或钱，完整体验才检查 */
+  /* 动作缺什么物品或钱 */
   G.lacking = a => {
-    if (!G.economyOn()) return null;
     for (const k in a.uses || {}) if ((G.world.inv[k] || 0) < a.uses[k]) return k;
     if (a.cost && a.cost.money && G.world.money < a.cost.money) return 'money';
     return null;

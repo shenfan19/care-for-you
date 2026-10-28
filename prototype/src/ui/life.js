@@ -6,11 +6,11 @@
   const esc = U.esc;
   const $ = id => document.getElementById(id);
   /* ---------- 照顾的代价：居家办公的提示条、钱、商店、家人与保姆、体验选择 ---------- */
-  /* 没有横条。只有完整体验里才有钱和商店，放在顶栏 */
+  /* 没有横条。钱和商店放在顶栏 */
   U.renderLife = function () {
-    const eco = G.economyOn(), sb = $('shopBtn'), mc = $('moneyChip');
-    sb.style.display = eco ? '' : 'none'; mc.style.display = eco ? '' : 'none';
-    if (eco) { mc.textContent = '💰 ' + Math.floor(G.world.money); mc.title = t('life.money_tip'); sb.onclick = () => U.shopDialog(); }
+    const sb = $('shopBtn'), mc = $('moneyChip');
+    sb.style.display = ''; mc.style.display = '';
+    mc.textContent = '💰 ' + Math.floor(G.world.money); mc.title = t('life.money_tip'); sb.onclick = () => U.shopDialog();
   };
 
   /* 保姆和分担的家人：保姆每天付一次工资，付够效率最高，欠得多效率掉，欠两天就走 */
@@ -38,19 +38,13 @@ ${nannyHtml()}
 
   /* 家人与保姆：按谁最需要你排列，保姆能分担，但在场的效果打折 */
 
-  /* 第一次有了角色之后，讲清楚照顾的代价，并让玩家选一种模式开始 */
+  /* 第一次有了角色之后，讲清楚照顾的代价 */
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
   U.introDialog = function () {
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('intro.title'))}</h2><p>${esc(t('intro.p1'))}</p><p>${esc(t('intro.p2'))}</p>
-      <button class="preset" data-e="light"><b>${esc(t('intro.light'))}</b><br><span class="mute">${esc(t('intro.light_note'))}</span></button>
-      <button class="preset" data-e="full"><b>${esc(t('intro.full'))}</b><br><span class="mute">${esc(t('intro.full_note'))}</span></button>
-      <div class="mute">${esc(t('intro.later'))}</div>`, true);
-    dlg.querySelectorAll('[data-e]').forEach(b => b.onclick = async () => {
-      G.cfg.play = G.cfg.play || {};
-      G.cfg.play.economy = b.dataset.e === 'full' ? 'true' : 'false';
-      G.world.intro_done = true; G.save(true); await G.saveCfg();
-      U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true);
-    });
+      <div class="mute">${esc(t('intro.later'))}</div>
+      <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="introok" class="primary">${esc(t('btn.close'))}</button></div>`, true);
+    dlg.querySelector('#introok').onclick = () => { G.world.intro_done = true; G.save(true); U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true); };
   };
 
   /* 一句话提示，几秒后消失 */

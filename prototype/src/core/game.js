@@ -204,6 +204,7 @@
     G.people.splice(i, 1);
     delete G.journal[pid]; delete G.sayings[pid];
     for (const m of [G.req, G.toast, G.fx, G.crying, G.act]) delete m[pid];
+    if (G.world.protagonist === pid) G.world.protagonist = null;
     for (const k of [...G.dirty]) if (k.split('|')[1] === pid) G.dirty.delete(k);
     await store.removeDir(`people/${pid}`);
     G.save(true);
@@ -260,19 +261,22 @@
     for (const c of p.person.conditions || []) add((G.tpl.conditions[c] || {}).actions);
     return out;
   };
-  G.actionsOf = p => { const all = G.allActionsOf(p), out = {}; for (const k in all) if (!all[k].selfonly) out[k] = all[k]; return out; };
+  /* 玩家能对这个人做的动作。主角自己的圈里多出只有自己能做的，少了要出门的 */
+  G.actionsOf = p => { const all = G.allActionsOf(p), out = {}, me = p === G.protagonist(); for (const k in all) if (me ? !all[k].away && !all[k].outing : !all[k].selfonly) out[k] = all[k]; return out; };
   G.maxNeed = p => Math.max(0, ...Object.values(p.state.needs));
   G.topNeed = p => { const d = G.needsOf(p); return Object.keys(d).sort((a, b) => p.state.needs[b] - p.state.needs[a])[0]; };
   /* 紧迫程度：最急的需求乘以类别的紧迫系数。不让玩家手动排优先级，由类别和当下的需求自然决定谁最急 */
   G.urgency = p => G.maxNeed(p) * G.classOf(p).urgency;
-  G.holdSeconds = a => (typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * ini.num(G.cfg, 'interaction', 'hold_scale');
+  /* 长按多久：动作本身的时长，乘以主角的年纪。老人手慢，圈转得慢些 */
+  const ACTOR_SLOW = { elder: 1.6 };
+  G.holdSeconds = a => { const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; return +((typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k).toFixed(1); };
   /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
   G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
   G.fmt = (s, p) => {
     const w = G.pronounWord(p), cap = /^[a-zà-ÿ]/.test(w) && CY.i18n.lang !== 'zh-CN' && CY.i18n.lang !== 'zh-TW';
-    /* 称呼和名字用设置里的，没改过就用当前语言的默认叫法 */
-    const dflt = (k, tk) => { const v = ini.get(G.cfg, 'player', k); return v === (ini.SCHEMA.find(x => x[0] === 'player' && x[1] === k) || [])[2] ? t(tk) : v; };
-    let out = String(s).replace(/\{title\}/g, dflt('title', 'player.title')).replace(/\{name\}/g, p ? p.person.name : dflt('name', 'player.name'));
+    /* 称呼和名字：有主角就用主角的名字，没有就用当前语言的默认叫法 */
+    const pr = G.protagonist();
+    let out = String(s).replace(/\{title\}/g, pr ? pr.person.name : t('player.title')).replace(/\{name\}/g, p ? p.person.name : pr ? pr.person.name : t('player.name'));
     out = out.replace(/(^|[.!?]\s+|[。！？]\s*)\{ta\}/g, (m, pre) => pre + (cap ? w.charAt(0).toUpperCase() + w.slice(1) : w));
     return out.replace(/\{ta\}/g, w);
   };
@@ -285,6 +289,7 @@
     return [22 + sh, 6.5 + sh];
   };
   G.activityOf = p => {
+    if (p === G.protagonist()) return 'awake';
     if (p.species.id !== 'human' && !NOCTURNAL.includes(p.species.id)) return 'awake';
     const [a, b] = G.sleepWindow(p), dm = G.dayMinutes();
     if (!inWindow(dm, a, b)) return 'awake';
@@ -435,7 +440,6 @@
     if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
   }
   function consume(a) {
-    if (!G.economyOn()) return;
     for (const k in a.uses || {}) G.world.inv[k] -= a.uses[k];
     if (a.cost && a.cost.money) G.world.money -= a.cost.money;
   }
@@ -462,12 +466,16 @@
     if (gmin <= 0) return;
     const hours = gmin / 60;
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
-    const eco = G.economyOn(), working = eco && G.isWorkTime();
+    const working = G.isWorkTime();
     G.world.game_minutes += gmin;
     /* 工作收入：工作时段里，人在书桌前才赚钱，离开书桌的时间没有收入；分担的家人在家办公，自己赚一份 */
     const atDesk = !CY.world || !CY.world.enforce || CY.world.atDesk();
-    if (!offline && eco && working && atDesk) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
-    if (!offline && eco && working && G.helperIncome) G.world.money += G.helperIncome() * hours;
+    if (!offline) {
+      const pst = G.protagonist() ? G.stage(G.protagonist()) : 'adult';
+      if (pst === 'elder') G.world.money += G.PENSION * hours;
+      else if (pst === 'adult' && working && atDesk) G.world.money += G.wage() * hours;
+      if (working) G.world.money += G.helperIncome() * hours;
+    }
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
     for (const p of G.activePeople()) {
       const defs = G.needsOf(p), s = p.state, mods = G.traitMods(p);
@@ -486,7 +494,7 @@
       if (prevAct === 'awake' && act === 'sleeping') G.toastFor(p, t('toast.sleep', { name: p.person.name }), 'soft');
       /* 没人管的时候，有的会自己动手：老人自己倒水做饭，孩子能做的少，婴儿什么也做不了 */
       const sc = G.classOf(p).self_care;
-      if (sc > 0 && !sleeping) for (const k in defs) {
+      if (sc > 0 && !sleeping && p !== G.protagonist()) for (const k in defs) {
         if (s.needs[k] > 0.7 && Math.random() < sc * hours * 1.2 * boost) {
           const a = selfActionFor(p, k);
           if (a && selfAct(p, a, k, offline)) break;
@@ -502,14 +510,6 @@
   }
 
   /* ---------- 打断 ---------- */
-  G.inQuiet = () => {
-    const q = ini.get(G.cfg, 'interrupt', 'quiet_hours');
-    const m = q.match(/^(\d\d):(\d\d)-(\d\d):(\d\d)$/);
-    if (!m) return false;
-    const d = new Date(), cur = d.getHours() * 60 + d.getMinutes();
-    const a = +m[1] * 60 + +m[2], b = +m[3] * 60 + +m[4];
-    return a <= b ? cur >= a && cur < b : cur >= a || cur < b;
-  };
   G.nextGapSeconds = () => {
     const f = ini.get(G.cfg, 'interrupt', 'frequency');
     if (f === 'test') return GAP_TEST[0] + Math.random() * (GAP_TEST[1] - GAP_TEST[0]);
@@ -536,8 +536,7 @@
   }
 
   const mkReq = (o) => {
-    const countdown = ini.get(G.cfg, 'interrupt', 'mode') !== 'keep';
-    return Object.assign({ since: Date.now(), deadline: countdown ? Date.now() + ini.num(G.cfg, 'interrupt', 'countdown_seconds') * 1000 : 0 }, o);
+    return Object.assign({ since: Date.now(), deadline: Date.now() + ini.num(G.cfg, 'interrupt', 'countdown_seconds') * 1000 }, o);
   };
 
   /* 候选的“说过的话”：同声线、还没选过的 */
@@ -577,9 +576,8 @@
   };
 
   function fire() {
-    if (G.inQuiet()) return;
     const awake = p => !G.isSleeping(p);
-    const free = G.activePeople().filter(p => !G.req[p.id] && awake(p));
+    const free = G.activePeople().filter(p => !G.req[p.id] && awake(p) && p !== G.protagonist());
     if (!free.length) return;
     const needy = free.filter(p => G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
     if (needy.length && Math.random() < 0.65) {
@@ -627,7 +625,7 @@
       const answers = (q.answers && q.answers.length ? q.answers : GENERIC_ANSWERS.map(k => t(k))).map(a => G.fmt(a, p));
       p.state.asked = (p.state.asked || []).concat(q.id).slice(-8);
       /* 问答题一律有倒计时，到时没答就当作没赶上 */
-      G.req[p.id] = mkReq({ pid: p.id, kind: 'ask', askId: q.id, text: G.fmt(q.say, p), answers, deadline: Date.now() + ini.num(G.cfg, 'interrupt', 'answer_seconds') * 1000 });
+      G.req[p.id] = mkReq({ pid: p.id, kind: 'ask', askId: q.id, text: G.fmt(q.say, p), answers, deadline: Date.now() + ini.num(G.cfg, 'interrupt', 'countdown_seconds') * 1000 });
       G.say(p.id, 'char', G.fmt(q.say, p));
     } else if (kind === 'pick') {
       G.req[p.id] = mkReq({ pid: p.id, kind: 'pick', text: t(p.person.kind === 'human' ? 'req.pick_human' : 'req.pick_animal', { name: p.person.name }), options: picks, deadline: 0 });
@@ -646,9 +644,8 @@
   G.fire = fire;
   /* 宝宝一直要人，需求超过一半就一直提示，隔一小会儿再叫一次；猫和狗也会隔一阵来要。别的角色安静 */
   G.nagAt = {};
-  G.needy = p => !!G.classOf(p).nag && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) > 0.5;
+  G.needy = p => p !== G.protagonist() && !!G.classOf(p).nag && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) > 0.5;
   G.nagTick = now => {
-    if (G.inQuiet()) return;
     for (const p of G.activePeople()) {
       if (!G.needy(p) || G.req[p.id] || (G.nagAt[p.id] || 0) > now) continue;
       const defs = G.needsOf(p), need = G.topNeed(p);
@@ -660,11 +657,10 @@
   };
 
   function expire(req) {
-    const p = G.get(req.pid), mode = ini.get(G.cfg, 'interrupt', 'mode');
+    const p = G.get(req.pid);
     delete G.req[req.pid];
     learn(p, req.kind, false);
     if (req.kind === 'pick' || req.kind === 'nudge') return;
-    if (mode === 'countdown_dismiss') { G.log(p.id, 'missed', t('log.called_gone', { name: p.person.name })); G.toastFor(p, t('toast.nevermind'), 'soft'); return; }
     if (req.kind === 'need') {
       /* 没赶上的时候，能自理的自己动手处理，不能自理的需求照旧 */
       const a = selfActionFor(p, req.need);
@@ -687,7 +683,7 @@
     const lack = G.lacking(a);
     if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
     const s = p.state;
-    const scale = a.bonus_item && G.economyOn() && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
+    const scale = a.bonus_item && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
     consume(a);
     applyEffects(p, a, scale);
     if (a.away && G.awayCost) G.awayCost(p, a);
@@ -729,7 +725,7 @@
 
   /* 闲谈：不用你做什么，隔一阵有人随口说一句。说什么由后端按房间，时段，旧事挑 */
   function ambientChat() {
-    const cands = G.activePeople().filter(p => !G.toast[p.id] && !G.req[p.id]);
+    const cands = G.activePeople().filter(p => !G.toast[p.id] && !G.req[p.id] && p !== G.protagonist());
     if (!cands.length) return;
     const p = pick(cands), loc = CY.world ? CY.world.locationOf(p) : { room: 'living' };
     const hr = G.dayMinutes() / 60, band = hr < 6 || hr >= 22 ? 'night' : hr < 11 ? 'morning' : hr < 17 ? 'noon' : 'evening';
@@ -836,7 +832,7 @@
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
     const last = Date.parse(G.world.last_seen);
     if (last) {
-      const cap = ini.num(G.cfg, 'time', 'offline_cap_hours') * 60;
+      const cap = 12 * 60;      /* 离开期间最多推算十二个游戏小时，需求也封顶在七成，不会等回来一团糟 */
       advance(Math.min(cap, gameMinutes((Date.now() - last) / 1000)), true);
     }
     G.lastTick = Date.now();
