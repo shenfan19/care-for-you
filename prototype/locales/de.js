@@ -160,3 +160,5 @@ CY.i18n.register("de", {"social.meal": "{n} Personen haben zusammen in der Küch
 CY.i18n.register("de", {"status.at": "Gerade: {room}; mag: {likes}"});
 
 CY.i18n.register("de", {"preset.bighouse.label": "Ein lebhafter Haushalt", "preset.bighouse.note": "Großeltern, Eltern, ein Kind, Katze und Hund, jeder geht seinen Weg und sie kümmern sich umeinander", "preset.name.dad": "Papa"});
+
+CY.i18n.register("de", {"status.at": "Gerade: {room}; mag: {likes}"});

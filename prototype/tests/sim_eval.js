@@ -25,7 +25,7 @@ const FAMILIES = {
   const Real = Date;
   ctx.Date = class extends Real { static now() { return fake; } constructor(...a) { if (a.length) super(...a); else super(fake); } };
   G.cfg.time.daynight = 'system';
-  G.lastTick = fake;
+  G.lastTick = fake; G.nextAt = fake + 4000;
 
   const stat = { ticks: 0, urgentTicks: 0, sleepSkip: 0, cryTicks: 0, awakePersonTicks: 0, reqs: 0, asks: 0, acts: 0, roomMoves: 0, hospital: 0, assists: 0, falls: 0 };
   const lastRoom = {}, seenReq = new Set(), needSum = {}, needN = {};
@@ -91,6 +91,8 @@ const FAMILIES = {
   console.log(`- 每人每小时换房间：${(stat.roomMoves / Math.max(1, G.people.length) / hours).toFixed(1)} 次`);
   console.log(`- 家人之间的互动：每人每小时 ${(social / Math.max(1, G.people.length) / hours).toFixed(2)} 次`);
   console.log(`- 住院记录：${hosp} 次`);
+  const types = {}; for (const p of G.people) for (const m of Object.values(G.journal[p.id] || {})) for (const e of m) types[e.type] = (types[e.type] || 0) + 1;
+  console.log('- 发生的事按类型：' + Object.entries(types).map(([k, v]) => k + ' ' + v).join('，'));
   console.log('- 不变量：' + (bad.length ? '失败 ' + bad.slice(0, 6).join('，') : '通过'));
   console.log('- 各人的平均最高需求：' + Object.keys(needSum).map(n => n + ' ' + (needSum[n] / needN[n]).toFixed(2)).join('，'));
   process.exit(0);

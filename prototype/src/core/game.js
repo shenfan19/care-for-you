@@ -644,15 +644,18 @@
   G.fire = fire;
   /* 宝宝一直要人，需求超过一半就一直提示，隔一小会儿再叫一次；猫和狗也会隔一阵来要。别的角色安静 */
   G.nagAt = {};
+  G.nagN = {};          /* 这一轮已经叫了几次没人理，叫得越久间隔越长，最长十六倍 */
+  G.nagLogged = {};     /* 这一轮没人管的记录只留一次，免得发生的事被刷屏 */
   G.needy = p => p !== G.protagonist() && !!G.classOf(p).nag && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) > 0.5;
   G.nagTick = now => {
     for (const p of G.activePeople()) {
-      if (!G.needy(p) || G.req[p.id] || (G.nagAt[p.id] || 0) > now) continue;
-      const defs = G.needsOf(p), need = G.topNeed(p);
+      if (!G.needy(p)) { delete G.nagN[p.id]; delete G.nagLogged[p.id]; continue; }
+      if (G.req[p.id] || (G.nagAt[p.id] || 0) > now) continue;
+      const defs = G.needsOf(p), need = G.topNeed(p), n = G.nagN[p.id] || 0;
       const text = line(p, 'request', need, t('req.need_fallback', { name: p.person.name, need: G.needLabel(need, defs[need]) }));
-      G.req[p.id] = mkReq({ pid: p.id, kind: 'need', need, text });
-      G.say(p.id, 'char', text);
-      G.nagAt[p.id] = now + G.classOf(p).nag * 1000;
+      G.req[p.id] = mkReq({ pid: p.id, kind: 'need', need, text, nag: true });
+      if (n === 0) G.say(p.id, 'char', text);
+      G.nagAt[p.id] = now + G.classOf(p).nag * 1000 * Math.min(16, Math.pow(2, n));
     }
   };
 
@@ -665,7 +668,8 @@
       /* 没赶上的时候，能自理的自己动手处理，不能自理的需求照旧 */
       const a = selfActionFor(p, req.need);
       if (a && G.classOf(p).self_care > 0 && selfAct(p, a, req.need, false)) return;
-      G.log(p.id, 'missed', t('log.missed_need_helpless', { name: p.person.name, text: req.text }));
+      if (req.nag) G.nagN[p.id] = (G.nagN[p.id] || 0) + 1;
+      if (!req.nag || !G.nagLogged[p.id]) { G.log(p.id, 'missed', t('log.missed_need_helpless', { name: p.person.name, text: req.text })); G.nagLogged[p.id] = true; }
       G.toastFor(p, t('toast.nobody'), 'soft');
     } else if (req.kind === 'choice') {
       const c = req.choices.find(x => x.liked) || req.choices[0];
@@ -681,6 +685,7 @@
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
     if (!a) return false;
     const s = p.state;
+    G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
     if (a.outing && G.startOuting) G.startOuting(p, a);
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });

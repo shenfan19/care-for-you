@@ -160,3 +160,5 @@ CY.i18n.register("ja", {"social.meal": "{n}人で台所で一緒にご飯を食�
 CY.i18n.register("ja", {"status.at": "今は{room}。好きな場所：{likes}"});
 
 CY.i18n.register("ja", {"preset.bighouse.label": "にぎやかな一家", "preset.bighouse.note": "祖父母、両親、子ども、猫と犬。それぞれ歩き回り、助け合います", "preset.name.dad": "パパ"});
+
+CY.i18n.register("ja", {"status.at": "今は{room}。好きな場所：{likes}"});

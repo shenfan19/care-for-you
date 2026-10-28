@@ -681,6 +681,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = true;
   }
 
+  /* 宝宝一直叫没人理：间隔越来越长，没人管的记录只留一次 */
+  {
+    for (const x of G.people) x.person.active = false;
+    const baby3 = await mk('baby', '没人理的宝宝'); const B3 = G.get(baby3.id); B3.person.active = true; for (const k in B3.state.needs) B3.state.needs[k] = 0.1; B3.state.needs.hunger = 0.85; G.act[B3.id] = 'awake';
+    G.cfg.time.mode = 'real'; G.nagN = {}; G.nagLogged = {}; G.nagAt = {}; G.req = {}; G.nextAt = Date.now() + 1e9;
+    const gaps = [];
+    for (let i = 0; i < 5; i++) {
+      G.nagAt = {}; G.nagTick(Date.now()); gaps.push(G.nagAt[B3.id] - Date.now());
+      G.req[B3.id].deadline = 1; G.lastTick = Date.now() - 1000; B3.state.needs.hunger = 0.85; G.tick();
+    }
+    const missed = Object.values(G.journal[B3.id] || {}).flat().filter(e => e.type === 'missed').length;
+    check('没人理的叫声间隔越来越长', gaps[4] > gaps[0] * 4 && G.nagN[B3.id] >= 4, gaps.map(x => Math.round(x / 1000)).join());
+    check('没人管的记录一轮只留一次', missed === 1, String(missed));
+    G.perform(B3.id, 'feed'); check('照顾过后重新计', G.nagN[B3.id] === 0);
+    for (const x of G.people) x.person.active = true;
+  }
+
   /* 旧设置文件里取消了的项会被丢掉 */
   {
     const old = CY.ini.parse(['[interrupt]', 'mode = keep', 'quiet_hours = 22:00-07:00', 'countdown_seconds = 30', '[play]', 'fall_scale = 9', 'economy = false', '[interaction]', 'click_instead_of_hold = true'].join(String.fromCharCode(10)));

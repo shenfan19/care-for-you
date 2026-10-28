@@ -164,3 +164,5 @@ CY.i18n.register("fr", {"social.meal": "{n} personnes ont mangé ensemble dans l
 CY.i18n.register("fr", {"status.at": "Maintenant : {room} ; aime : {likes}"});
 
 CY.i18n.register("fr", {"preset.bighouse.label": "Une maison animée", "preset.bighouse.note": "Grands-parents, parents, un enfant, un chat et un chien, chacun va et vient et s’occupe des autres", "preset.name.dad": "Papa"});
+
+CY.i18n.register("fr", {"status.at": "Maintenant : {room} ; aime : {likes}"});
