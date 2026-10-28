@@ -247,7 +247,17 @@
       ${pot}</svg>`;
   }
 
-  const DRAW = { cat, dog, rabbit, hamster, bird, fish, turtle, snake, succulent, flower, tree };
+  function cactus(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.green, wilt = p.state.mood < 0.4, col = wilt ? '#9fa65a' : c;
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(30)}
+      <path d="M50 100 L50 52 Q50 42 58 42 Q66 42 66 52 L66 100Z" fill="${col}" transform="translate(-8 0)"/>
+      <path d="M38 78 L26 78 Q20 78 20 70 L20 62 Q20 56 26 56 Q32 56 32 62 L32 68 L40 68Z" fill="${col}"/>
+      <path d="M60 86 L72 86 Q80 86 80 78 L80 68 Q80 62 74 62 Q68 62 68 68 L68 74 L60 74Z" fill="${col}"/>
+      <path d="M50 52 L50 98 M42 56 L42 96" stroke="${d}" stroke-width="1.6" opacity=".5" fill="none"/>
+      ${[[50, 60], [50, 72], [50, 84], [42, 66], [42, 80], [26, 64], [74, 70]].map(([x, y]) => `<path d="M${x - 2} ${y} l-3 -2 M${x + 2} ${y} l3 -2" stroke="#f5efc8" stroke-width="1.2" stroke-linecap="round"/>`).join('')}
+      ${wilt ? '' : '<circle cx="50" cy="40" r="4" fill="#f08aa0"/><circle cx="50" cy="40" r="1.6" fill="#f5d36a"/>'}${pot}</svg>`;
+  }
+  const DRAW = { cat, dog, rabbit, hamster, bird, fish, turtle, snake, succulent, flower, tree, cactus };
   CY.avatarStyle = 'simple';
   CY.avatar = p => (DRAW[p.species.id] || human)(p);
   /* 为添加角色对话框的预览用，不需要完整的 p */
@@ -258,6 +268,6 @@
   CY.avatarOptions = {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],
     glasses: ['none', 'round', 'square'], clothes: CLOTHES, coat: Object.keys(COAT), coatHex: Object.fromEntries(Object.entries(COAT).map(([k, v]) => [k, v[0]])),
-    coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'] },
+    coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'] },
   };
 })(globalThis.CY = globalThis.CY || {});

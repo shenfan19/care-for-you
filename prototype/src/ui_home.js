@@ -32,15 +32,18 @@
     const langs = Object.keys(I.packs);
     const sig = langs.join() + I.lang;
     if (ls.dataset.sig !== sig) { ls.dataset.sig = sig; ls.innerHTML = langs.map(l => `<option value="${l}" ${l === I.lang ? 'selected' : ''}>${esc(names[l] || l)}</option>`).join(''); }
-    const rs = $('ratioSel'), mode = ini.get(G.cfg, 'time', 'mode'), ratio = ini.num(G.cfg, 'time', 'compress_ratio');
-    rs.style.display = mode === 'compressed' ? '' : 'none';
+    const rs = $('ratioSel'), ratio = ini.num(G.cfg, 'time', 'compress_ratio');
+    rs.style.display = G.playMode() === 'story' ? '' : 'none';
+    const cur = G.isPaused() ? 'paused' : G.playMode();
+    document.querySelectorAll('#modeSeg button').forEach(b => { b.classList.toggle('on', b.dataset.m === cur); b.title = t('mode.' + b.dataset.m + '_tip'); b.textContent = t('mode.' + b.dataset.m); });
     const list = [...new Set([10, 30, 60, 120, 360, ratio])].sort((a, b) => a - b);
     const rsig = list.join() + ratio + I.lang;
     if (rs.dataset.sig !== rsig) { rs.dataset.sig = rsig; rs.title = t('hdr.ratio_tip'); rs.innerHTML = list.map(v => `<option value="${v}" ${v === ratio ? 'selected' : ''}>${esc(t('ratio.label', { n: v }))}</option>`).join(''); }
   };
   U.syncTheme = U.applyTheme;
-  U.applyLang = function () {
+  U.applyLang = async function () {
     I.set(I.detect(ini.get(G.cfg, 'ui', 'language')));
+    await G.reloadContent();
     I.applyDom(document);
     document.title = t('app.title');
     $('verTxt').textContent = t('app.proto', { v: CY.meta.version }); $('footTxt').textContent = t('foot.text');
@@ -62,27 +65,28 @@
 
   /* ---------- 顶栏：经历了多少时间，现在是几点 ---------- */
   U.renderClock = function () {
-    const c = G.clock(), mode = ini.get(G.cfg, 'time', 'mode');
+    const c = G.clock();
     const el = c.d > 0 ? t('clock.dh', { d: c.d, h: c.h }) : c.h > 0 ? t('clock.hm', { h: c.h, m: c.m }) : t('clock.m', { m: c.m });
     $('elapsed').textContent = t('clock.elapsed', { t: el });
     $('elapsed').title = t('clock.elapsed_tip');
     const now = $('nowClock');
-    now.textContent = (c.night ? '🌙 ' : '☀ ') + c.hh + ':' + c.mm + (c.src === 'game' ? '  ' + t('clock.real', { hh: c.realHh, mm: c.realMm }) : '');
+    now.textContent = (c.night ? '🌙 ' : '☀ ') + c.hh + ':' + c.mm;
     now.title = t(c.src === 'game' ? 'clock.tip_game' : 'clock.tip_system');
-    if ($('timeMode').value !== mode) $('timeMode').value = mode;
   };
 
   /* ---------- 房间下方：添加与离开中的角色 ---------- */
   U.renderBar = function () {
     const away = G.people.filter(p => p.person.active === false);
-    const sig = away.map(p => p.id + p.person.name).join() + U.floating + I.lang;
+    const sig = away.map(p => p.id + p.person.name).join() + U.floating + I.lang + ini.get(G.cfg, 'ui', 'scene');
     const bar = $('roomBar');
     if (bar.dataset.sig === sig) return;
     bar.dataset.sig = sig;
     $('floatNote').style.display = U.floating ? 'block' : 'none';
     $('roomSlot').style.display = U.floating ? 'none' : 'block';
     bar.innerHTML = `<button id="addBtn" class="primary">${esc(t('btn.add'))}</button>` +
-      away.map(p => `<span class="pill">${esc(t('bar.away', { name: p.person.name }))} <a href="#" data-id="${p.id}">${esc(t('bar.recall'))}</a></span>`).join('');
+      away.map(p => `<span class="pill">${esc(t('bar.away', { name: p.person.name }))} <a href="#" data-id="${p.id}">${esc(t('bar.recall'))}</a></span>`).join('') +
+      `<select id="sceneSel" title="${esc(t('scene.tip'))}">${['auto', ...CY.scenes.ids, 'none'].map(k => `<option value="${k}" ${k === ini.get(G.cfg, 'ui', 'scene') ? 'selected' : ''}>${esc(t('scene.' + k))}</option>`).join('')}</select>`;
+    $('sceneSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.scene = e.target.value; await saveCfg(); U.renderScene(); };
     $('addBtn').onclick = () => U.addDialog(null, () => { U.renderBar(); });
     bar.querySelectorAll('a').forEach(a => a.onclick = e => { e.preventDefault(); G.setActive(a.dataset.id, true); });
   };
@@ -132,7 +136,7 @@
   U.addDialog = function (archId, done) {
     const O = CY.avatarOptions;
     const arch0 = C.archOf(archId) || C.archetypes[0];
-    const st = { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '' };
+    const st = { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', traits: [] };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const GROUPS = ['family', 'animal', 'plant'];
@@ -151,6 +155,7 @@
           <div class="row">${esc(t('add.hair'))} ${sel('hair_style', O.hairStyle, O.hairStyle.map(h => t('hair.' + h)), look.hair_style)} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
         : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
+        <div class="row">${esc(t('add.traits'))} <span class="chips inl">${C.TRAITS.map(k => `<button class="chip ${st.traits.includes(k) ? 'on' : ''}" data-tr="${k}" title="${esc(t('trait.' + k + '_tip'))}">${esc(t('trait.' + k))}</button>`).join('')}</span></div>
         <div class="row" style="justify-content:flex-end;margin:12px 0 0"><button id="acancel">${esc(t('btn.cancel'))}</button><button id="aok" class="primary">${esc(t('add.ok'))}</button></div></div></div>`, true);
       dlg.querySelector('#an').oninput = e => { st.name = e.target.value; };
       dlg.querySelector('#aa').onchange = e => {
@@ -158,6 +163,7 @@
         if (a.species !== 'human') st.cond = '';
         render();
       };
+      dlg.querySelectorAll('[data-tr]').forEach(b => b.onclick = () => { const k = b.dataset.tr, i = st.traits.indexOf(k); if (i >= 0) st.traits.splice(i, 1); else if (st.traits.length < 2) st.traits.push(k); render(); });
       const ag = dlg.querySelector('#aage');
       if (ag) ag.onchange = () => { const v = parseFloat(ag.value); st.age = isNaN(v) ? 35 : Math.min(110, Math.max(0, v)); render(); };
       dlg.querySelectorAll('.sw').forEach(s => s.onclick = () => { st.look[s.dataset.k] = s.dataset.k === 'skin' ? +s.dataset.v : s.dataset.v; render(); });
@@ -170,7 +176,7 @@
       dlg.querySelector('#acancel').onclick = () => { U.closeDialog(); done && done(false); };
       dlg.querySelector('#aok').onclick = async () => {
         const a = C.archOf(st.arch), role = U.archName(a.id);
-        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, conditions: st.cond ? [st.cond] : [] });
+        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [] });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }
@@ -204,8 +210,8 @@
   };
 
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'time.daynight': ['auto', 'system', 'game'], 'interaction.input': ['hold', 'click'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
-  const SKIP = new Set(['ui.theme', 'ui.background', 'ui.language']);
+  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const SKIP = new Set(['ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
     let sec = '';
@@ -222,6 +228,7 @@
       <h3>${esc(t('set.look'))}</h3>
       <div class="row">${esc(t('set.theme'))} ${chips('theme', ['auto', 'light', 'dark'], [t('theme.auto'), t('theme.light'), t('theme.dark')], th)}</div>
       <div class="row">${esc(t('set.bg'))} <span class="sws">${BGS.map(b => `<span class="sw ${b === bg ? 'on' : ''}" data-ap="background" data-v="${b}" title="${esc(t('bg.' + b))}" style="background:${BG_HEX[b]}"></span>`).join('')}</span></div>
+      <div class="row">${esc(t('set.scene'))} ${chips('scene', ['auto', ...CY.scenes.ids, 'none'], ['auto', ...CY.scenes.ids, 'none'].map(k => t('scene.' + k)), ini.get(G.cfg, 'ui', 'scene'))}</div>
       <div class="row">${esc(t('set.lang'))} ${chips('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
@@ -335,27 +342,28 @@
   };
   /* ---------- 照顾的代价：居家办公的提示条、钱、商店、家人与保姆、体验选择 ---------- */
   U.renderLife = function () {
-    const bar = $('lifeBar'), eco = G.economyOn(), people = G.activePeople(), busy = G.world.busy;
+    const bar = $('lifeBar'), eco = G.economyOn(), people = G.activePeople(), tasks = G.tasks();
     const show = ini.bool(G.cfg, 'ui', 'wfh_notice') && people.length > 0;
     bar.style.display = show ? '' : 'none';
     if (!show) return;
-    const mode = G.inputMode(), work = G.isWorkTime();
-    const sig = [eco, mode, work, Math.floor(G.world.money), people.length, busy && busy.label, I.lang, JSON.stringify(G.world.inv || {})].join('|');
+    const mode = G.isPaused() ? 'paused' : G.playMode(), work = G.isWorkTime();
+    const sig = [eco, mode, work, Math.floor(G.world.money), people.length, tasks.map(x => x.pid + x.act).join(), I.lang, JSON.stringify(G.world.inv || {})].join('|');
     if (bar.dataset.sig !== sig) {
       bar.dataset.sig = sig;
       const n = people.length;
+      const taskHtml = tasks.slice().reverse().map((x, i) => {
+        const run = i === 0 && G.timeMode() === 'compressed', who = G.get(x.pid), idx = tasks.length - 1 - i;
+        return `<span class="taskrow ${run ? '' : 'paused'}">${run ? '⏳' : '⏸'} ${esc(who ? who.person.name : '')} ${esc(x.label)}<span class="bar"><i data-tb="${idx}"></i></span><button class="chip" data-tc="${idx}">${esc(t('btn.cancel'))}</button></span>`;
+      }).join('');
       bar.innerHTML = `<span class="wfh">💼 ${esc(t(eco ? (work ? 'life.working' : 'life.offwork') : 'life.wfh', { n }))}</span>` +
         (eco ? `<span class="money" title="${esc(t('life.money_tip'))}">💰 ${Math.floor(G.world.money)}</span>` : '') +
-        `<button class="chip" id="modeBtn" title="${esc(t('life.mode_tip'))}">${esc(t(mode === 'click' ? 'life.mode_click' : 'life.mode_hold'))}</button>` +
-        (busy ? `<span class="busy">⏳ ${esc(t('life.busy', { what: busy.label }))}<span class="bar"><i id="busyBar"></i></span><button id="busyCancel" class="chip">${esc(t('btn.cancel'))}</button></span>` : '') +
+        `<span class="modehint" title="${esc(t('mode.' + mode + '_tip'))}">${esc(t('mode.hint_' + mode))}</span>` + taskHtml +
         (eco ? `<button id="shopBtn">${esc(t('life.shop'))}</button>` : '') + `<button id="homeBtn">${esc(t('life.household'))}</button>`;
-      $('modeBtn').onclick = async () => { G.cfg.interaction = G.cfg.interaction || {}; G.cfg.interaction.input = G.inputMode() === 'click' ? 'hold' : 'click'; await saveCfg(); U.renderLife(); };
       if ($('shopBtn')) $('shopBtn').onclick = () => U.shopDialog();
       $('homeBtn').onclick = () => U.householdDialog();
-      if ($('busyCancel')) $('busyCancel').onclick = () => G.cancelAction();
+      bar.querySelectorAll('[data-tc]').forEach(b => b.onclick = () => G.cancelAction(+b.dataset.tc));
     }
-    const bb = $('busyBar');
-    if (bb && busy) bb.style.width = Math.min(100, (G.world.game_minutes - busy.start) / (busy.end - busy.start) * 100) + '%';
+    bar.querySelectorAll('[data-tb]').forEach(el => { const x = tasks[+el.dataset.tb]; if (x) el.style.width = Math.min(100, (x.total - x.left) / x.total * 100) + '%'; });
   };
 
   U.shopDialog = function () {
@@ -385,18 +393,50 @@
     dlg.querySelector('#hclose').onclick = U.closeDialog;
   };
 
-  /* 第一次有了角色之后，讲清楚照顾的代价，并让玩家选择体验方式 */
+  /* 第一次有了角色之后，讲清楚照顾的代价，并让玩家选一种模式开始 */
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
   U.introDialog = function () {
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('intro.title'))}</h2><p>${esc(t('intro.p1'))}</p><p>${esc(t('intro.p2'))}</p>
-      <button class="preset" data-m="light"><b>${esc(t('intro.light'))}</b><br><span class="mute">${esc(t('intro.light_note'))}</span></button>
-      <button class="preset" data-m="life"><b>${esc(t('intro.life'))}</b><br><span class="mute">${esc(t('intro.life_note'))}</span></button>
+      <button class="preset" data-m="reality"><b>${esc(t('intro.reality'))}</b><br><span class="mute">${esc(t('intro.reality_note'))}</span></button>
+      <button class="preset" data-m="story"><b>${esc(t('intro.story'))}</b><br><span class="mute">${esc(t('intro.story_note'))}</span></button>
       <div class="mute">${esc(t('intro.later'))}</div>`, true);
     dlg.querySelectorAll('[data-m]').forEach(b => b.onclick = async () => {
-      const life = b.dataset.m === 'life';
-      G.cfg.play = G.cfg.play || {}; G.cfg.interaction = G.cfg.interaction || {};
-      G.cfg.play.economy = life ? 'true' : 'false'; G.cfg.interaction.input = life ? 'click' : 'hold';
-      G.world.intro_done = true; G.save(true); await saveCfg(); U.closeDialog(); U.renderLife(); U.renderRoom(true);
+      const story = b.dataset.m === 'story';
+      G.cfg.play = G.cfg.play || {};
+      G.cfg.play.economy = story ? 'true' : 'false';
+      G.world.intro_done = true; G.save(true); await G.setPlayMode(story ? 'story' : 'reality');
+      U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true);
     });
+  };
+
+  /* 切换模式时的说明：说清楚时间怎么走，动作怎么做，故事里没做完的事怎么处理 */
+  U.switchMode = async function (m) {
+    if (m === 'story' && G.economyOn() === false && !G.world.mode_hint_seen) { G.world.mode_hint_seen = true; }
+    await G.setPlayMode(m);
+    U.renderControls(); U.renderLife(); U.renderClock();
+    const el = $('modeToast');
+    el.textContent = t('mode.switched_' + m, { n: ini.num(G.cfg, 'time', 'compress_ratio'), k: G.tasks().length });
+    el.style.display = 'block'; clearTimeout(U._mt); U._mt = setTimeout(() => { el.style.display = 'none'; }, 6000);
+  };
+
+  /* ---------- 角色的状态和需求 ---------- */
+  U.statusDialog = function (pid) {
+    const p = G.get(pid); if (!p) return;
+    const st = G.statusOf(p), defs = G.needsOf(p), cls = G.classKey(p);
+    const sig = () => U.statusDialog(pid);
+    const bars = Object.keys(defs).sort((a, b) => p.state.needs[b] - p.state.needs[a]).map(k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.needLabel(k, defs[k]))}</span><div class="bar"><i style="width:${Math.round(p.state.needs[k] * 100)}%"></i></div></div>`).join('');
+    const selfs = Object.values(G.allActionsOf(p)).filter(a => a.self && (a.self === true || a.self.includes(G.stage(p)))).map(a => `<span class="tag">${esc(a.label)}</span>`).join('');
+    const made = (G.journal[p.id] ? Object.values(G.journal[p.id]).flat() : []).filter(e => e.type === 'self').slice(-3).reverse().map(e => `<div class="mute" style="font-size:12px">${esc(e.text)}</div>`).join('');
+    const dlg = U.dialog(`<div class="statgrid"><div class="prev">${CY.avatar(p)}</div><div>
+      <h2 style="margin:0 0 4px">${esc(p.person.name)} <span class="pill">${esc(p.person.role || '')}</span></h2>
+      <div class="mute">${esc(t('class.' + cls))}${G.isHuman(p) ? ' · ' + esc(t('status.age', { n: +G.age(p).toFixed(1) })) : ''}</div>
+      <div style="margin:6px 0"><span class="tag">${esc(t('mood.' + st.mood))}</span><span class="tag">${esc(t('act.' + st.activity))}</span>${st.crying ? `<span class="tag">${esc(t('status.crying'))}</span>` : ''}${st.nanny ? `<span class="tag">${esc(t('status.nanny'))}</span>` : ''}
+        ${st.conditions.map(k => `<span class="tag">🩺 ${esc(CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k))}</span>`).join('')}${st.traits.map(k => `<span class="tag">${esc(t('trait.' + k))}</span>`).join('')}</div>
+      <div class="srow2"><span class="l">${esc(t('status.mood'))}</span><div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div></div>
+      <div class="srow2"><span class="l">${esc(t('status.frailty'))}</span><div class="bar"><i style="width:${Math.round(p.state.frailty * 100)}%"></i></div></div>
+      <h3>${esc(t('status.needs'))}</h3>${bars}
+      <h3>${esc(t('status.selfdo', { n: Math.round(st.self_care * 100) }))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
+    dlg.querySelector('#stclose').onclick = U.closeDialog;
   };
 })(globalThis.CY = globalThis.CY || {});

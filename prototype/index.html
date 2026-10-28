@@ -17,7 +17,7 @@
       <span id="nowClock" class="clock"></span>
       <select id="langSel" data-i18n-title="hdr.lang_tip"></select>
       <button id="themeBtn" class="icon" data-i18n-title="hdr.theme_tip">◐</button>
-      <select id="timeMode" data-i18n-title="hdr.time_tip"><option value="real" data-i18n="time.real"></option><option value="compressed" data-i18n="time.compressed"></option><option value="paused" data-i18n="time.paused"></option></select>
+      <span class="seg" id="modeSeg"><button data-m="reality"></button><button data-m="story"></button><button data-m="paused"></button></span>
       <select id="ratioSel"></select>
       <button id="floatBtn" data-i18n="hdr.float" data-i18n-title="hdr.float_tip"></button>
       <button id="dlBtn" data-i18n="hdr.save" data-i18n-title="hdr.save_tip"></button>
@@ -26,6 +26,7 @@
     </span>
   </header>
   <main>
+    <div id="modeToast" class="card" style="display:none"></div>
     <div id="lifeBar" class="lifebar" style="display:none"></div>
     <div id="roomSlot"><div id="room" class="room"></div></div>
     <div id="floatNote" class="card" style="display:none"><span data-i18n="float.note"></span> <button id="unfloatBtn" data-i18n="float.back"></button></div>
@@ -41,16 +42,30 @@
 <script src="src/i18n.js"></script>
 <script src="locales/zh-CN.js"></script>
 <script src="locales/en.js"></script>
+<script src="locales/zh-TW.js"></script>
+<script src="locales/fr.js"></script>
+<script src="locales/ja.js"></script>
+<script src="locales/ko.js"></script>
+<script src="locales/es.js"></script>
+<script src="locales/de.js"></script>
 <script src="src/ini.js"></script>
 <script src="src/store.js"></script>
 <script src="src/archive.js"></script>
 <script src="src/content.js"></script>
 <script src="src/content_more.js"></script>
+<script src="src/content_en.js"></script>
+<script src="locales/content_zh-TW.js"></script>
+<script src="locales/content_ja.js"></script>
+<script src="locales/content_ko.js"></script>
+<script src="locales/content_fr.js"></script>
+<script src="locales/content_es.js"></script>
+<script src="locales/content_de.js"></script>
 <script src="src/seed.js"></script>
 <script src="src/ai.js"></script>
 <script src="src/account.js"></script>
 <script src="src/game.js"></script>
 <script src="src/avatar.js"></script>
+<script src="src/scenes.js"></script>
 <script src="src/ui_room.js"></script>
 <script src="src/ui_home.js"></script>
 <script src="src/main.js"></script>

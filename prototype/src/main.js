@@ -11,7 +11,7 @@
     const q = new URLSearchParams(location.search);
     if (q.get('freq')) G.cfg.interrupt.frequency = q.get('freq');
     if (q.get('quiet') !== null) G.cfg.interrupt.quiet_hours = q.get('quiet');
-    if (q.get('lang')) G.cfg.ui.language = q.get('lang');
+    if (q.get('lang')) { G.cfg.ui.language = q.get('lang'); await G.saveCfg(); CY.i18n.set(CY.i18n.detect(q.get('lang'))); await G.reloadContent(); }
     G.start();
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     CY.i18n.applyDom(document);
@@ -31,11 +31,7 @@
       U.renderLife();
       if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); U.renderSaid(false); }
     });
-    $('timeMode').onchange = async e => {
-      G.cfg.time = G.cfg.time || {}; G.cfg.time.mode = e.target.value;
-      await store.write('settings.ini', ini.stringify(G.cfg));
-      U.renderClock(); U.renderControls();
-    };
+    document.querySelectorAll('#modeSeg button').forEach(b => { b.onclick = () => U.switchMode(b.dataset.m); });
     $('themeBtn').onclick = () => U.cycleTheme();
     $('langSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.language = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.applyLang(); U.renderControls(); };
     $('ratioSel').onchange = async e => { G.cfg.time = G.cfg.time || {}; G.cfg.time.compress_ratio = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.renderControls(); };

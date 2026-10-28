@@ -44,10 +44,18 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="stage" id="stage"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     U.renderRoom(true);
+  };
+
+  /* 房间背景：客厅、卧室、厨房、草坪、阳台，随昼夜变化 */
+  U.renderScene = function () {
+    const el = $r('#scene'); if (!el) return;
+    const h = G.dayMinutes() / 60, id = CY.scenes.resolve(ini.get(G.cfg, 'ui', 'scene'), h), ph = CY.scenes.phase(h);
+    const sig = (id || 'none') + '|' + ph;
+    if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = id ? CY.scenes.svg(id, h) : ''; U.room.classList.toggle('hasscene', !!id); }
   };
 
   /* 昼夜色调：夜里偏蓝，黄昏偏橙，清晨淡淡的暖色 */
@@ -65,7 +73,7 @@
   U.renderRoom = function (force) {
     const stage = $r('#stage');
     if (!stage) return;
-    U.renderTint();
+    U.renderTint(); U.renderScene();
     const people = G.activePeople();
     const topP = people.slice().sort((a, b) => G.urgency(b) - G.urgency(a))[0], topId = topP && G.urgency(topP) > 0.7 ? topP.id : null;
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
@@ -76,23 +84,25 @@
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
         c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
-        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away')) return; U.sel = p.id; U.openRing(p.id); };
+        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info')) return; U.sel = p.id; U.openRing(p.id); };
         stage.appendChild(c);
       }
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3);
       if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
+      c.classList.toggle('sleeping', G.isSleeping(p));
       c.classList.toggle('top', topId === p.id);
       c.classList.toggle('nanny', G.economyOn() && G.hasNanny(p));
       c.classList.toggle('sel', U.sel === p.id);
-      const nmSig = p.person.name + Math.round(p.state.mood * 20) + Math.round(p.state.frailty * 20) + p.story.care_total + CY.i18n.lang;
+      const nmSig = p.person.name + Math.round(p.state.mood * 20) + Math.round(p.state.frailty * 20) + p.story.care_total + CY.i18n.lang + G.isSleeping(p) + (p.person.conditions || []).length;
       if (c.dataset.nm !== nmSig) {
         c.dataset.nm = nmSig;
         const pct = v => Math.round(v * 100);
-        c.querySelector('.nm').innerHTML = `<b>${esc(p.person.name)}</b><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
+        c.querySelector('.nm').innerHTML = `<b>${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span class="zzz" title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${(p.person.conditions || []).length ? '<span class="sick" title="' + esc((p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ')) + '">🩺</span>' : ''}<span class="info" title="${esc(t('room.info', { name: p.person.name }))}">ⓘ</span><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
           <div class="bar mood" title="${esc(t('room.bar', { mood: pct(p.state.mood), frail: pct(p.state.frailty) }))}"><i style="width:${pct(p.state.mood)}%"></i></div>`;
         c.querySelector('.away').onclick = e => { e.stopPropagation(); G.setActive(p.id, false); };
+        c.querySelector('.info').onclick = e => { e.stopPropagation(); U.statusDialog(p.id); };
       }
       /* 动作动画 */
       const fx = G.fx[p.id];

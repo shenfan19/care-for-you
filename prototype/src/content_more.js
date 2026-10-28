@@ -149,4 +149,91 @@
   Q('ask_e10', { voice: ['elder'] }, '你结婚的时候，我给你包的红包还在吗？', ['还在，我收着呢。', '让我找找看。', '谢谢你，一直记着。']);
   Q('ask_p06', { voice: ['parent'] }, '你小时候最怕什么，还记得吗？', ['怕黑。', '怕打雷。', '不记得了，你说说。']);
   Q('ask_s07', { voice: ['sibling'] }, '爸妈那边最近怎么样？', ['挺好的，你呢？', '有点操心，一起商量？', '这周我打电话问问。']);
+  /* ---------- 更多身份：伴侣、邻居老人、室友、鹦鹉、仙人掌 ---------- */
+  C.archetypes.splice(11, 0,
+    H('husband', '丈夫', 38, 'partner', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f7f9a' }),
+    H('wife', '妻子', 36, 'partner', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c58a8f' }),
+    H('neighbor', '邻居老人', 70, 'elder', '她', { skin: 1, hair_style: 'bob', hair_color: 'white', glasses: 'round', beard: false, cloth: '#8f9fb8' }),
+    H('roommate', '室友', 25, 'sibling', '他', { skin: 1, hair_style: 'curly', hair_color: 'brown', glasses: 'round', beard: false, cloth: '#6aa08f' }),
+  );
+  C.archetypes.push(
+    P('parrot', 'animal', '鹦鹉', 'bird', 'bird', { coat: 'green' }),
+    P('cactus', 'plant', '仙人掌', 'cactus', 'plant', { coat: 'green' }),
+  );
+
+  V.partner = {
+    request: {
+      thirst: ['顺便帮我倒杯水？', '有点渴。'], hunger: ['晚饭想吃点什么？', '我有点饿了。'], rest: ['我有点累，想靠一会儿。'], company: ['你今天都没怎么跟我说话。', '过来坐坐？'],
+      hygiene: ['我想先去洗个澡。'], medicine: ['药是不是该吃了？', '你帮我看一下，药吃过没有。'],
+    },
+    thanks: { water: ['谢谢。'], meal: ['好吃，辛苦你了。'], chat: ['和你说说话，心里舒服多了。'], pet: ['嗯，这样挺好。'], default: ['谢谢你。'] },
+    glance: ['{ta}隔着房间看了你一眼，笑了笑。', '{ta}走过你身边，轻轻碰了碰你的肩。', '{ta}端着两杯茶，在你旁边坐下了。'],
+    cares_back: ['{ta}把你那份饭热好了，放在你手边。', '{ta}替你关了灯，说：早点睡。', '{ta}把你落下的外套叠好，放在椅背上。'],
+    reveal: '{ta}说：你一个人撑着太久了，今天换我来。',
+  };
+  S('partner', ['今天过得怎么样？', '你先吃，我不饿。', '别太累了。', '晚上想吃什么？', '我在呢。', '周末我们出去走走吧。']);
+  Q('ask_m01', { voice: ['partner'] }, '今天过得怎么样？', ['还不错，你呢？', '有点累，抱一下。', '先吃饭，慢慢说。']);
+  Q('ask_m02', { voice: ['partner'] }, '周末想去哪儿？', ['去公园走走。', '在家睡一天。', '你定，我陪你。']);
+  Q('ask_m03', { voice: ['partner'] }, '还记得我们第一次见面吗？', ['记得，你迟到了。', '记得一点点。', '你再讲讲那天。']);
+  Q('ask_m04', { voice: ['partner'] }, '你最近是不是心里有事？', ['有一点，晚点跟你说。', '没有，只是累。', '正想跟你聊聊。']);
+  C.sayings.push({ id: 'elder09', voice: 'elder', text: '隔壁老张今天又下棋去了。' }, { id: 'elder10', voice: 'elder', text: '年轻人，吃了没？' });
+
+  /* 补充：新增需求和动作用到的台词 */
+  Object.assign(V.elder.request, { hygiene: ['我想洗个澡。'], mobility: ['腿有点僵，想出去走一走。'] });
+  Object.assign(V.elder.thanks, { meal: ['好吃，你做的饭。'], walk: ['出来走走，舒服多了。'], bath: ['洗得真干净。'], chat: ['陪我说说话，好。'] });
+  Object.assign(V.parent.request, { hygiene: ['我先去洗个澡。'] });
+  Object.assign(V.parent.thanks, { meal: ['挺香的，你不用特意做。'], chat: ['跟你说说话，心里敞亮些。'] });
+  Object.assign(V.aunt.request, { hygiene: ['我去洗把脸，歇歇。'] });
+  Object.assign(V.aunt.thanks, { meal: ['哎呀，真好吃。'], chat: ['聊聊真痛快。'] });
+  Object.assign(V.sibling.request, { hygiene: ['我去冲个澡。'] });
+  Object.assign(V.sibling.thanks, { meal: ['行，这顿算我欠你的。'], chat: ['哈，聊完好多了。'] });
+  Object.assign(V.child.request, { hygiene: ['{title}，我要洗澡澡。'], homework: ['这题我不会。', '作业好多。'] });
+  Object.assign(V.child.thanks, { bath: ['哗啦哗啦。'], read: ['再讲一遍！'], meal: ['好吃！'], homework: ['哦，我懂了！'] });
+  Object.assign(V.toddler.request, { hygiene: ['{title}，洗澡，澡澡！'] });
+  Object.assign(V.toddler.thanks, { bath: ['哗啦哗啦！'], read: ['再来！再来！'] });
+  Object.assign(V.infant.request, { hygiene: ['{ta}身上黏黏的，该洗澡了。'] });
+  Object.assign(V.infant.thanks, { bath: ['{ta}开心地拍着水花。'] });
+  Object.assign(V.teen.request, { hygiene: ['我去洗个澡。'] });
+  Object.assign(V.teen.thanks, { game: ['行，这把挺好玩。'] });
+  Object.assign(V.cat.thanks, { groom: ['{ta}伸了个懒腰，呼噜呼噜。'], clean: ['{ta}满意地嗅了嗅。'] });
+  Object.assign(V.dog.thanks, { groom: ['{ta}整个后半身都在摇。'], walk: ['{ta}神气地走在你旁边。'] });
+  V.partner.request.mobility = ['我腰有点酸，想动一动。'];
+
+  /* ---------- 性格特征，界面里选 ---------- */
+  C.TRAITS = ['clingy', 'independent', 'nightowl', 'earlybird', 'picky', 'sickly', 'sturdy', 'grumpy', 'cheerful', 'thirsty', 'hearty'];
+
+  /* ---------- 内容包：按语言存放，缺的按回退顺序补 ----------
+     台词、说话库、问答库、提醒库、疾病文字都是内容，一个语言一份。条目的编号在各语言里相同，
+     所以挑过的说话库编号和回答过的问题编号换语言后依然有意义。 */
+  C.packs = { 'zh-CN': { voices: V, sayings: C.sayings, asks: C.asks, nudges: C.nudges, conds: {} } };
+  const CHAIN = { 'zh-CN': ['zh-CN'], 'zh-TW': ['zh-TW', 'zh-CN'] };
+  const deep = (a, b) => {
+    if (Array.isArray(b) || typeof b !== 'object' || b === null) return b;
+    const o = Object.assign({}, a && typeof a === 'object' && !Array.isArray(a) ? a : {});
+    for (const k in b) o[k] = deep(o[k], b[k]);
+    return o;
+  };
+  const byId = (lists) => {
+    const m = new Map();
+    for (const list of lists) for (const it of list || []) m.set(it.id, it);
+    return [...m.values()];
+  };
+  C.packFor = lang => {
+    const chain = (CHAIN[lang] || [lang, 'en', 'zh-CN']).filter(l => C.packs[l]), rev = chain.slice().reverse();
+    const out = { voices: {}, conds: {} };
+    for (const l of rev) { for (const v in C.packs[l].voices || {}) out.voices[v] = deep(out.voices[v], C.packs[l].voices[v]); for (const c in C.packs[l].conds || {}) out.conds[c] = deep(out.conds[c], C.packs[l].conds[c]); }
+    for (const k of ['sayings', 'asks', 'nudges']) out[k] = byId(rev.map(l => C.packs[l][k]));
+    return out;
+  };
+  C.registerPack = (lang, pack) => { C.packs[lang] = pack; };
+  /* 用简体中文内容包做结构底板，按条目编号换上译文。条件字段，例如谁会问这个问题，沿用底板，所以译文只写文字 */
+  C.buildPack = ({ voices, sayings, asks, nudges, conds }) => {
+    const base = C.packs['zh-CN'];
+    return {
+      voices, conds: conds || {},
+      sayings: Object.keys(sayings || {}).map(id => Object.assign({ voice: id.replace(/\d+$/, '') }, base.sayings.find(b => b.id === id), { id, text: sayings[id] })),
+      asks: Object.keys(asks || {}).map(id => Object.assign({}, base.asks.find(b => b.id === id), { id, say: asks[id][0], answers: asks[id][1] })),
+      nudges: Object.keys(nudges || {}).map(id => Object.assign({}, base.nudges.find(b => b.id === id), { id, text: nudges[id] })),
+    };
+  };
 })(globalThis.CY = globalThis.CY || {});

@@ -1,11 +1,11 @@
 /* 游戏逻辑，不碰界面。数据都来自 store 里的明文文件。文字都通过 CY.t 取，所以换语言不用改这里。
-   核心是照顾的代价：长按占用你现实里的时间，点击占用游戏里的时间，完整体验里工作赚钱，照顾要用物品。 */
+   核心是照顾的代价：现实模式下长按占用你现实里的时间，故事模式下点击占用游戏里的时间，完整体验里工作赚钱，照顾要用物品。 */
 (function (CY) {
   const { ini, store } = CY;
   const t = (k, v) => CY.t(k, v);
   const G = CY.game = {
-    cfg: {}, people: [], world: { game_minutes: 0 }, req: {}, toast: {}, fx: {}, crying: {}, journal: {}, sayings: {},
-    tpl: { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, items: { items: {}, start: {}, for_need: {} } },
+    cfg: {}, people: [], world: { game_minutes: 0 }, req: {}, toast: {}, fx: {}, crying: {}, act: {}, journal: {}, sayings: {},
+    tpl: { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, items: { items: {}, start: {}, for_need: {} } },
     listeners: [], timer: null, nextAt: 0, lastTick: Date.now(), dirty: new Set(),
   };
   /* 打扰间隔，单位是游戏分钟，所以真实时间下是真实分钟，压缩时间下会按比例变短。test 档单位是现实秒。 */
@@ -14,20 +14,68 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const monthKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-  const DEFAULT_VOICE = { cat: 'cat', dog: 'dog', snake: 'snake', rabbit: 'rabbit', hamster: 'hamster', bird: 'bird', fish: 'fish', turtle: 'turtle', succulent: 'plant', flower: 'plant', tree: 'plant' };
+  const DEFAULT_VOICE = { cat: 'cat', dog: 'dog', snake: 'snake', rabbit: 'rabbit', hamster: 'hamster', bird: 'bird', fish: 'fish', turtle: 'turtle', succulent: 'plant', flower: 'plant', tree: 'plant', cactus: 'plant' };
+  const PLANTS = ['succulent', 'flower', 'tree', 'cactus'];
   const CHILDLIKE = ['child', 'infant', 'toddler', 'teen'];
+  const PRON_CODE = { '他': 'm', '她': 'f', '它': 'n' };
 
   G.on = fn => G.listeners.push(fn);
   const emit = () => G.listeners.forEach(f => { try { f(); } catch (e) { console.error(e); } });
   G.emit = emit;
+  G.saveCfg = () => store.write('settings.ini', ini.stringify(G.cfg));
 
   /* ---------- 载入 ---------- */
+  const CONTENT_FILES = ['sayings', 'asks', 'nudges'];
+  /* 台词、说话库、问答库、提醒库是内容包，按语言放在 templates/content/语言 下，缺的从内置内容补上 */
+  async function loadContent(files) {
+    const L = CY.i18n.lang, dir = `templates/content/${L}/`;
+    /* 旧版本放在 templates/voices 和 templates/library 下的中文内容，搬到新位置，保住玩家改过的字 */
+    if (L === 'zh-CN') {
+      for (const p of files.slice()) {
+        let to = null;
+        const v = p.match(/^templates\/voices\/([^/]+)\.yaml$/), l = p.match(/^templates\/library\/([^/]+)\.yaml$/);
+        if (v) to = `${dir}voices/${v[1]}.yaml`; else if (l) to = `${dir}library/${l[1]}.yaml`;
+        if (to && !files.includes(to)) { await store.write(to, await store.read(p)); files.push(to); }
+      }
+    }
+    const seed = CY.seed.contentFiles(L);
+    for (const p in seed) if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); }
+    G.tpl.voices = {};
+    for (const p of files) { const m = p.match(new RegExp('^' + dir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + 'voices/([^/]+)\\.yaml$')); if (m) { const x = await store.readYaml(p); if (x) G.tpl.voices[x.id || m[1]] = x; } }
+    G.tpl.sayLib = ((await store.readYaml(dir + 'library/sayings.yaml')) || {}).items || [];
+    G.tpl.nudges = ((await store.readYaml(dir + 'library/nudges.yaml')) || {}).items || [];
+    G.tpl.asks = ((await store.readYaml(dir + 'library/asks.yaml')) || {}).items || [];
+    /* 疾病的台词和事件文字：当前语言的覆盖到疾病模板上 */
+    const conds = (await store.readYaml(dir + 'conditions.yaml')) || {};
+    for (const c in G.tpl.conditions) {
+      const tx = conds[c], cd = G.tpl.conditions[c];
+      if (!tx) continue;
+      if (tx.lines) { cd.lines = cd.lines || {}; for (const g in tx.lines) cd.lines[g] = Object.assign({}, cd.lines[g], tx.lines[g]); }
+      for (const ek in tx.events || {}) {
+        const ev = (cd.events || {})[ek]; if (!ev) continue;
+        ev.say = tx.events[ek].say || ev.say;
+        (tx.events[ek].choices || []).forEach((ch, i) => { if (ev.choices[i]) Object.assign(ev.choices[i], { label: ch.label, reply: ch.reply }); });
+      }
+    }
+    for (const p of G.people) p.voice = G.tpl.voices[p.person.voice || DEFAULT_VOICE[p.person.species] || 'sibling'] || {};
+  }
+  G.reloadContent = async function () {
+    const files = await store.list();
+    for (const p of files) {
+      const m = p.match(/^templates\/conditions\/([^/]+)\.yaml$/);
+      if (m) { const x = await store.readYaml(p); if (x) G.tpl.conditions[x.id || m[1]] = x; }
+    }
+    await loadContent(files);
+    emit();
+  };
+
   G.load = async function () {
     if (!(await store.list()).includes('settings.ini')) {
       const seed = CY.seed.files();
       for (const p in seed) await store.write(p, seed[p]);
     }
     G.cfg = ini.parse((await store.read('settings.ini')) || '');
+    CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     G.world = Object.assign({ game_minutes: 0, last_seen: '' }, await store.readYaml('world.yaml'));
     const files = await store.list();
     /* 新增的模板文件补上；内置模板的版本比文件里新，就用新的覆盖，旧的留在 _backup 里 */
@@ -35,27 +83,27 @@
     for (const p in seed) {
       if (!/^templates\//.test(p)) continue;
       if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
-      if (/^templates\/(species|conditions)\/|^templates\/(classes|economy\/items)\.yaml$/.test(p)) {
+      if (/^templates\/(species|conditions)\/|^templates\/(classes|traits|economy\/items)\.yaml$/.test(p)) {
         try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
       }
     }
-    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, items: { items: {}, start: {}, for_need: {} } };
+    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, items: { items: {}, start: {}, for_need: {} } };
     for (const p of files) {
-      const m = p.match(/^templates\/(species|conditions|voices)\/([^/]+)\.yaml$/);
+      const m = p.match(/^templates\/(species|conditions)\/([^/]+)\.yaml$/);
       if (m) { const x = await store.readYaml(p); if (x) G.tpl[m[1]][x.id || m[2]] = x; }
       const sk = p.match(/^templates\/ai\/skills\/([^/]+)\.yaml$/);
       if (sk) { const x = await store.readYaml(p); if (x) G.tpl.skills[x.id || sk[1]] = x; }
     }
-    G.tpl.sayLib = ((await store.readYaml('templates/library/sayings.yaml')) || {}).items || [];
-    G.tpl.nudges = ((await store.readYaml('templates/library/nudges.yaml')) || {}).items || [];
-    G.tpl.asks = ((await store.readYaml('templates/library/asks.yaml')) || {}).items || [];
     G.tpl.persona = await store.readYaml('templates/ai/persona.yaml');
     G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
+    G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
     G.tpl.items = Object.assign({ items: {}, start: {}, for_need: {} }, await store.readYaml('templates/economy/items.yaml'));
     const st = G.tpl.items.start || {};
     if (typeof G.world.money !== 'number') G.world.money = st.money || 0;
     if (!G.world.inv) G.world.inv = Object.assign({}, st.inv || {});
     if (!G.world.nanny) G.world.nanny = {};
+    if (!Array.isArray(G.world.tasks)) G.world.tasks = [];
+    delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
     const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();
     for (const id of ids) {
@@ -67,9 +115,8 @@
       if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || 35;
       const state = Object.assign({ version: 1, needs: {}, mood: 0.6, frailty: 0.1, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
       state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || 0.5, resp: 0, n_resp: 0, kinds: {} }, state.learn);
-      const story = Object.assign({ version: 1, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0 }, await store.readYaml(`people/${id}/story.yaml`));
-      const voiceId = person.voice || DEFAULT_VOICE[person.species] || 'sibling';
-      const p = { id, person, species, state, story, voice: G.tpl.voices[voiceId] || {} };
+      const story = Object.assign({ version: 1, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
+      const p = { id, person, species, state, story, voice: {} };
       for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 0.1 + Math.random() * 0.2;
       G.people.push(p);
       const sy = await store.readYaml(`people/${id}/sayings.yaml`);
@@ -80,7 +127,8 @@
         G.journal[id][f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || [];
       }
     }
-    G.req = {}; G.toast = {}; G.fx = {}; G.crying = {};
+    await loadContent(files);
+    G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
 
   /* ---------- 创建与停用角色 ---------- */
@@ -95,9 +143,9 @@
     const person = {
       version: 2, id, active: true, name: spec.name || spec.roleText || arch.role || '', role: spec.roleText || arch.role || '',
       archetype: spec.arch || '', voice, pronoun: spec.pronoun || arch.pronoun || (human ? '他' : '它'),
-      kind: human ? 'human' : species === 'succulent' || species === 'flower' || species === 'tree' ? 'plant' : 'animal', species,
+      kind: human ? 'human' : PLANTS.includes(species) ? 'plant' : 'animal', species,
       appearance: spec.look || arch.look || {}, personality: { talkative: 0.5, temper: '', catchphrases: [] },
-      conditions: spec.conditions || [], lines: {},
+      traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || [], lines: {},
     };
     if (human) person.age = age;
     await store.writeYaml(`people/${id}/person.yaml`, person);
@@ -117,7 +165,22 @@
   G.age = p => (typeof p.person.age === 'number' ? p.person.age : 35);
   G.stage = p => (G.isHuman(p) ? CY.content.stageOf(G.age(p)) : 'adult');
   G.classKey = p => (G.isHuman(p) ? G.stage(p) : p.species.id);
-  G.classOf = p => Object.assign({ urgency: 1, self_care: 0.3 }, G.tpl.classes[G.classKey(p)]);
+  /* 性格特征：叠加起来影响需求速度、自理、作息、效果和心情 */
+  G.traitMods = p => {
+    const m = { rate: {}, self_care: 0, sleep_shift: 0, effect: {}, frailty: 1, mood_offset: 0 };
+    for (const id of p.person.traits || []) {
+      const tr = G.tpl.traits[id]; if (!tr) continue;
+      for (const k in tr.rate || {}) m.rate[k] = (m.rate[k] || 1) * tr.rate[k];
+      for (const k in tr.effect || {}) m.effect[k] = (m.effect[k] || 1) * tr.effect[k];
+      m.self_care += tr.self_care || 0; m.sleep_shift += tr.sleep_shift || 0; m.frailty *= tr.frailty || 1; m.mood_offset += tr.mood_offset || 0;
+    }
+    return m;
+  };
+  G.classOf = p => {
+    const c = Object.assign({ urgency: 1, self_care: 0.3 }, G.tpl.classes[G.classKey(p)]);
+    c.self_care = clamp(c.self_care + G.traitMods(p).self_care, 0, 0.98);
+    return c;
+  };
   G.pronoun = p => (p ? (p.person.pronoun || (G.isHuman(p) ? '他' : '它')) : '他');
   const rateOf = (d, stage) => (typeof d.rate === 'number' ? d.rate : (d.rate && (d.rate[stage] !== undefined ? d.rate[stage] : d.rate.default)) || 0.05);
   G.needsOf = p => {
@@ -129,7 +192,8 @@
   };
   /* 需求和动作的显示名：当前语言包有就用，没有就用模板里的写法 */
   G.needLabel = (k, d) => CY.tOr('need.' + k, d.label);
-  G.actionsOf = p => {
+  /* 全部动作，含角色只能自己做的。界面上的菜单用 actionsOf，不含自己做的 */
+  G.allActionsOf = p => {
     const out = {};
     const add = (defs) => {
       for (const k in defs || {}) {
@@ -137,25 +201,54 @@
         if (d.stages && !d.stages.includes(G.stage(p))) continue;
         const own = typeof d.label === 'object' ? (d.label[G.stage(p)] || d.label.default) : d.label;
         const lab = CY.tOr('act.' + k + '.' + G.stage(p), CY.tOr('act.' + k, own));
-        out[k] = Object.assign({}, d, { label: lab, id: k, min: d.min !== undefined ? d.min : Math.max(3, d.hold * 3) });
+        out[k] = Object.assign({}, d, { label: lab, id: k, min: d.min !== undefined ? d.min : Math.max(3, (d.hold || 3) * 3) });
       }
     };
     add(p.species.actions);
     for (const c of p.person.conditions || []) add((G.tpl.conditions[c] || {}).actions);
     return out;
   };
+  G.actionsOf = p => { const all = G.allActionsOf(p), out = {}; for (const k in all) if (!all[k].selfonly) out[k] = all[k]; return out; };
   G.maxNeed = p => Math.max(0, ...Object.values(p.state.needs));
   G.topNeed = p => { const d = G.needsOf(p); return Object.keys(d).sort((a, b) => p.state.needs[b] - p.state.needs[a])[0]; };
-  /* 紧迫程度：最急的需求乘以类别的紧迫系数。不让玩家手动排优先级，由类别和需求自然决定谁最急 */
+  /* 紧迫程度：最急的需求乘以类别的紧迫系数。不让玩家手动排优先级，由类别和当下的需求自然决定谁最急 */
   G.urgency = p => G.maxNeed(p) * G.classOf(p).urgency;
   G.holdSeconds = a => a.hold * ini.num(G.cfg, 'interaction', 'hold_scale');
-  G.fmt = (s, p) => String(s).replace(/\{title\}/g, ini.get(G.cfg, 'player', 'title')).replace(/\{name\}/g, p ? p.person.name : ini.get(G.cfg, 'player', 'name'))
-    .replace(/\{ta\}/g, G.pronoun(p));
-  G.inputMode = () => (ini.get(G.cfg, 'interaction', 'input') === 'click' ? 'click' : 'hold');
+  /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
+  G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
+  G.fmt = (s, p) => {
+    const w = G.pronounWord(p), cap = /^[a-zà-ÿ]/.test(w) && CY.i18n.lang !== 'zh-CN' && CY.i18n.lang !== 'zh-TW';
+    /* 称呼和名字用设置里的，没改过就用当前语言的默认叫法 */
+    const dflt = (k, tk) => { const v = ini.get(G.cfg, 'player', k); return v === (ini.SCHEMA.find(x => x[0] === 'player' && x[1] === k) || [])[2] ? t(tk) : v; };
+    let out = String(s).replace(/\{title\}/g, dflt('title', 'player.title')).replace(/\{name\}/g, p ? p.person.name : dflt('name', 'player.name'));
+    out = out.replace(/(^|[.!?]\s+|[。！？]\s*)\{ta\}/g, (m, pre) => pre + (cap ? w.charAt(0).toUpperCase() + w.slice(1) : w));
+    return out.replace(/\{ta\}/g, w);
+  };
+
+  /* ---------- 模式：现实模式与故事模式，以及暂停 ---------- */
+  G.timeMode = () => ini.get(G.cfg, 'time', 'mode');
+  /* 现实模式：时间跟现实走，长按占用现实时间。故事模式：时间压缩，点击花掉游戏时间。暂停时记着暂停前的模式 */
+  G.playMode = () => {
+    const m = G.timeMode();
+    if (m === 'paused') return ini.get(G.cfg, 'play', 'last_mode') === 'story' ? 'story' : 'reality';
+    return m === 'compressed' ? 'story' : 'reality';
+  };
+  G.isPaused = () => G.timeMode() === 'paused';
+  G.setPlayMode = async function (m) {
+    G.cfg.time = G.cfg.time || {}; G.cfg.play = G.cfg.play || {};
+    if (m === 'paused') { G.cfg.play.last_mode = G.playMode(); G.cfg.time.mode = 'paused'; }
+    else { G.cfg.time.mode = m === 'story' ? 'compressed' : 'real'; G.cfg.play.last_mode = m; }
+    await G.saveCfg(); emit();
+  };
+  G.inputMode = () => (G.playMode() === 'story' ? 'click' : 'hold');
+  /* 故事模式里一次只能做一件事，后开始的会把先开始的压到下面暂停，做完再接着做。现实模式下故事里的事暂停 */
+  G.tasks = () => (G.world.tasks || (G.world.tasks = []));
+  G.isBusy = () => G.timeMode() === 'compressed' && G.tasks().length > 0;
+  G.runningTask = () => { const ts = G.tasks(); return ts[ts.length - 1] || null; };
 
   /* ---------- 经济：钱，物品，工作，保姆 ---------- */
   G.economyOn = () => ini.bool(G.cfg, 'play', 'economy');
-  G.item = k => (G.tpl.items.items || {})[k] || { label: k, icon: '•', price: 10 };
+  G.item = k => (G.tpl.items.items || {})[k] || (k === 'money' ? { label: CY.tOr('item.money', '钱'), icon: '💰', price: 1 } : { label: k, icon: '•', price: 10 });
   G.workWindow = () => {
     const m = ini.get(G.cfg, 'economy', 'work_hours').match(/^(\d\d):(\d\d)-(\d\d):(\d\d)$/);
     return m ? [+m[1] * 60 + +m[2], +m[3] * 60 + +m[4]] : [540, 1080];
@@ -169,10 +262,11 @@
   G.hasNanny = p => !!(G.world.nanny || {})[p.id];
   G.setNanny = (pid, on) => { G.world.nanny = G.world.nanny || {}; if (on) G.world.nanny[pid] = true; else delete G.world.nanny[pid]; G.save(); emit(); };
   G.nannyCostPerHour = () => ini.num(G.cfg, 'economy', 'nanny_wage');
-  /* 动作缺什么物品，完整体验才检查 */
+  /* 动作缺什么物品或钱，完整体验才检查 */
   G.lacking = a => {
     if (!G.economyOn()) return null;
     for (const k in a.uses || {}) if ((G.world.inv[k] || 0) < a.uses[k]) return k;
+    if (a.cost && a.cost.money && G.world.money < a.cost.money) return 'money';
     return null;
   };
 
@@ -180,7 +274,7 @@
   G.daySource = () => {
     const s = ini.get(G.cfg, 'time', 'daynight');
     if (s === 'system' || s === 'game') return s;
-    return ini.get(G.cfg, 'time', 'mode') === 'compressed' ? 'game' : 'system';
+    return G.playMode() === 'story' ? 'game' : 'system';
   };
   /* 当天已过的分钟数，0 到 1439 */
   G.dayMinutes = () => {
@@ -189,13 +283,32 @@
   };
   G.isNight = () => { const h = G.dayMinutes() / 60; return h >= 22 || h < 6; };
   G.clock = () => {
-    const el = Math.floor(G.world.game_minutes), dm = G.dayMinutes(), now = new Date(), pad = n => String(n).padStart(2, '0');
-    return {
-      d: Math.floor(el / 1440), h: Math.floor((el % 1440) / 60), m: el % 60,
-      hh: pad(Math.floor(dm / 60)), mm: pad(dm % 60), src: G.daySource(), night: G.isNight(), minutes: dm,
-      realHh: pad(now.getHours()), realMm: pad(now.getMinutes()),
-    };
+    const el = Math.floor(G.world.game_minutes), dm = G.dayMinutes(), pad = n => String(n).padStart(2, '0');
+    return { d: Math.floor(el / 1440), h: Math.floor((el % 1440) / 60), m: el % 60, hh: pad(Math.floor(dm / 60)), mm: pad(dm % 60), src: G.daySource(), night: G.isNight(), minutes: dm };
   };
+
+  /* ---------- 作息：睡觉，以及各自的状态 ---------- */
+  const inWindow = (dm, a, b) => { a = (((a % 24) + 24) % 24) * 60; b = (((b % 24) + 24) % 24) * 60; return a <= b ? dm >= a && dm < b : dm >= a || dm < b; };
+  G.sleepWindow = p => {
+    if (p.species.id === 'hamster') return [10, 18];
+    const sh = G.traitMods(p).sleep_shift;
+    return [22 + sh, 6.5 + sh];
+  };
+  G.activityOf = p => {
+    if (p.species.id !== 'human' && p.species.id !== 'hamster') return 'awake';
+    const [a, b] = G.sleepWindow(p), dm = G.dayMinutes();
+    if (!inWindow(dm, a, b)) return 'awake';
+    const st = G.stage(p);
+    if (st === 'infant') return G.maxNeed(p) > 0.9 ? 'awake' : (dm % 180) < 120 ? 'sleeping' : 'awake';
+    return G.maxNeed(p) > 0.95 ? 'awake' : 'sleeping';
+  };
+  G.isSleeping = p => G.act[p.id] === 'sleeping';
+  G.moodBand = p => (p.state.mood > 0.75 ? 'great' : p.state.mood > 0.5 ? 'ok' : p.state.mood > 0.3 ? 'low' : 'bad');
+  G.statusOf = p => ({
+    activity: G.act[p.id] || G.activityOf(p), crying: !!G.crying[p.id], nanny: G.economyOn() && G.hasNanny(p), mood: G.moodBand(p),
+    conditions: p.person.conditions || [], traits: p.person.traits || [], self_care: G.classOf(p).self_care,
+  });
+
   /* 台词来源：角色自己写的优先，其次疾病里写的，最后是声线模板。 */
   G.lines = (p, group, key) => {
     const pickFrom = src => (key === undefined || key === null) ? src : (src && !Array.isArray(src) && typeof src === 'object' ? src[key] : undefined);
@@ -221,7 +334,7 @@
     clearTimeout(saveTimer);
     const run = () => {
       G.world.last_seen = new Date().toISOString();
-      G.world.schema = CY.meta ? CY.meta.schema : 3;
+      G.world.schema = CY.meta ? CY.meta.schema : 4;
       store.writeYaml('world.yaml', G.world);
       for (const p of G.people) {
         p.state.last_seen = G.world.last_seen;
@@ -283,58 +396,95 @@
 
   /* ---------- 时间推进 ---------- */
   function gameMinutes(realSeconds) {
-    const mode = ini.get(G.cfg, 'time', 'mode');
+    const mode = G.timeMode();
     if (mode === 'paused') return 0;
     if (mode === 'real') return realSeconds / 60;
     return realSeconds / 60 * ini.num(G.cfg, 'time', 'compress_ratio');
   }
   /* 一个游戏分钟对应多少现实秒 */
   G.secPerGameMin = () => {
-    const mode = ini.get(G.cfg, 'time', 'mode');
+    const mode = G.timeMode();
     if (mode === 'paused') return Infinity;
     return mode === 'real' ? 60 : 60 / ini.num(G.cfg, 'time', 'compress_ratio');
   };
   const foodOf = p => p.species.food || 'food';
   const itemForNeed = (p, k) => (k === 'hunger' ? foodOf(p) : (G.tpl.items.for_need || {})[k]);
 
+  /* 把一个动作的效果加到角色身上，scale 是效果的比例。玩家做和角色自己做都走这里 */
+  function applyEffects(p, a, scale) {
+    const s = p.state, mods = G.traitMods(p);
+    for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] < 0 ? (mods.effect[k] || 1) : 1));
+    if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
+  }
+  function consume(a) {
+    if (!G.economyOn()) return;
+    for (const k in a.uses || {}) G.world.inv[k] -= a.uses[k];
+    if (a.cost && a.cost.money) G.world.money -= a.cost.money;
+  }
+  /* 角色自己能做的动作：需求落在动作的效果里，并且这个阶段的角色自己做得了 */
+  function selfActionFor(p, need) {
+    const st = G.stage(p);
+    return Object.values(G.allActionsOf(p)).find(a => a.self && (a.self === true || a.self.includes(st)) && a.effect && need in a.effect && a.effect[need] < 0);
+  }
+  /* 角色自己动手：效果打折，用掉物品，行动记进日志 */
+  function selfAct(p, a, need, offline) {
+    const lack = G.lacking(a);
+    if (lack) return false;
+    consume(a);
+    applyEffects(p, a, 0.7);
+    p.state.mood = clamp(p.state.mood + 0.02);
+    p.story.self_total = (p.story.self_total || 0) + 1;
+    const txt = CY.i18n.hasOwn('selfact.' + a.id) ? t('selfact.' + a.id, { name: p.person.name }) : t('log.self_did', { name: p.person.name, label: a.label });
+    if (!offline) { G.log(p.id, 'self', txt); G.toastFor(p, txt, 'self'); }
+    return true;
+  }
+  G.selfActFor = selfActionFor;
+
   function advance(gmin, offline) {
     if (gmin <= 0) return;
     const hours = gmin / 60;
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
-    const night = G.isNight(), working = G.economyOn() && G.isWorkTime();
+    const eco = G.economyOn(), working = eco && G.isWorkTime();
     G.world.game_minutes += gmin;
-    /* 工作收入：工作时段里，没有被点击动作占着手，就在赚钱 */
-    if (!offline && G.economyOn() && working && !G.world.busy) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
+    /* 工作收入：工作时段里，没有故事里的事占着手，就在赚钱 */
+    if (!offline && eco && working && !G.isBusy()) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
     for (const p of G.activePeople()) {
-      const defs = G.needsOf(p), s = p.state, nanny = G.economyOn() && working && G.hasNanny(p);
+      const defs = G.needsOf(p), s = p.state, nanny = eco && working && G.hasNanny(p), mods = G.traitMods(p);
+      const prevAct = G.act[p.id];
+      const act = G.act[p.id] = G.activityOf(p), sleeping = act === 'sleeping';
       if (nanny && !offline) G.world.money -= G.nannyCostPerHour() * hours;
-      for (const k in defs) s.needs[k] = clamp((s.needs[k] || 0) + defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1), 0, offline ? 0.7 : 1);
-      let target = 1 - 0.7 * G.maxNeed(p);
+      const night = G.isNight();
+      for (const k in defs) {
+        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1) * (sleeping ? 0.4 : 1) * (mods.rate[k] || 1);
+        s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
+      }
+      let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
       if (nanny) target = Math.min(target, 0.55);
-      s.mood = clamp(s.mood + (target - s.mood) * Math.min(1, hours * 0.5));
+      s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
       if (offline) continue;
-      /* 没人管的时候，有的会自己解决：老人自己吃饭睡觉，孩子不行 */
+      if (prevAct === 'awake' && act === 'sleeping') G.toastFor(p, t('toast.sleep', { name: p.person.name }), 'soft');
+      /* 没人管的时候，有的会自己动手：老人自己倒水做饭，孩子能做的少，婴儿什么也做不了 */
       const sc = G.classOf(p).self_care;
-      if (sc > 0) for (const k in defs) {
+      if (sc > 0 && !sleeping) for (const k in defs) {
         if (s.needs[k] > 0.7 && Math.random() < sc * hours * 1.2 * boost) {
-          const item = itemForNeed(p, k);
-          if (G.economyOn() && item && (G.world.inv[item] || 0) < 1) continue;
-          if (G.economyOn() && item) G.world.inv[item]--;
-          s.needs[k] = clamp(s.needs[k] - 0.5);
-          if (!s._selfAt || Date.now() - s._selfAt > 30000) { s._selfAt = Date.now(); G.log(p.id, 'self', t('log.self', { name: p.person.name, need: G.needLabel(k, defs[k]) })); }
+          const a = selfActionFor(p, k);
+          if (a && selfAct(p, a, k, offline)) break;
         }
       }
       const was = s.frailty;
-      if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hours * boost);
+      if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hours * boost * mods.frailty);
       else if (G.maxNeed(p) < 0.4) s.frailty = clamp(s.frailty - 0.01 * hours);
       if (was < 0.7 && s.frailty >= 0.7) { G.log(p.id, 'frail', t('log.frail', { name: p.person.name })); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
       if (was >= 0.5 && s.frailty < 0.5) G.log(p.id, 'recovered', t('log.recovered', { name: p.person.name }));
     }
     /* 请了保姆但钱花光了，保姆先走 */
     if (G.world.money < 0) { G.world.money = 0; if (Object.keys(G.world.nanny || {}).length) { G.world.nanny = {}; for (const p of G.activePeople()) G.log(p.id, 'event', t('log.nanny_left')); } }
-    /* 点击动作做完了 */
-    const b = G.world.busy;
-    if (b && G.world.game_minutes >= b.end) { G.world.busy = null; finishAction(b); }
+    /* 故事模式里，正在做的事走时间，做完了接着做压在下面的那件。现实模式和暂停时这些事停着 */
+    if (!offline && G.timeMode() === 'compressed') {
+      const top = G.runningTask();
+      if (top) { top.left -= gmin; if (top.left <= 0) { G.tasks().pop(); finishAction(top); } }
+    }
   }
 
   /* ---------- 打断 ---------- */
@@ -356,7 +506,7 @@
     const s = G.nextGapSeconds();
     G.nextAt = isFinite(s) ? Date.now() + s * 1000 : Date.now() + 5000;
   }
-  G.toastFor = (p, text, kind) => { G.toast[p.id] = { text, kind: kind || 'soft', until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : 9000) }; };
+  G.toastFor = (p, text, kind) => { G.toast[p.id] = { text, kind: kind || 'soft', until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : kind === 'self' ? 7000 : 9000) }; };
 
   /* AI 可用时替换一句台词；任何失败都回退成库里的句子 */
   function speakWithAI(p, situation, fallback, kind) {
@@ -415,9 +565,10 @@
   function fire() {
     if (G.inQuiet()) return;
     const workNanny = p => G.economyOn() && G.isWorkTime() && G.hasNanny(p);
-    const free = G.activePeople().filter(p => !G.req[p.id]);
+    const awake = p => !G.isSleeping(p);
+    const free = G.activePeople().filter(p => !G.req[p.id] && awake(p));
     if (!free.length) return;
-    const needy = free.filter(p => G.maxNeed(p) > 0.55 && !workNanny(p) && p.person.kind !== 'plant' || (p.person.kind === 'plant' && G.maxNeed(p) > 0.7 && !workNanny(p)));
+    const needy = free.filter(p => !workNanny(p) && G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
     if (needy.length && Math.random() < 0.65) {
       const p = weighted(needy, q => G.urgency(q) * needyW(q) + 0.01), defs = G.needsOf(p), need = G.topNeed(p);
       const text = line(p, 'request', need, t('req.need_fallback', { name: p.person.name, need: G.needLabel(need, defs[need]) }));
@@ -486,11 +637,11 @@
     if (req.kind === 'pick' || req.kind === 'nudge') return;
     if (mode === 'countdown_dismiss') { G.log(p.id, 'missed', t('log.called_gone', { name: p.person.name })); G.toastFor(p, t('toast.nevermind'), 'soft'); return; }
     if (req.kind === 'need') {
-      /* 没赶上的时候，能自理的自己处理一部分，婴儿没法自理，需求照旧 */
-      const relief = 0.3 * (G.classOf(p).self_care > 0 ? 1 : 0);
-      p.state.needs[req.need] = clamp(p.state.needs[req.need] - relief);
-      G.log(p.id, 'missed', t(relief ? 'log.missed_need' : 'log.missed_need_helpless', { name: p.person.name, text: req.text }));
-      G.toastFor(p, t(relief ? 'toast.self' : 'toast.nobody'), 'soft');
+      /* 没赶上的时候，能自理的自己动手处理，不能自理的需求照旧 */
+      const a = selfActionFor(p, req.need);
+      if (a && G.classOf(p).self_care > 0 && selfAct(p, a, req.need, false)) return;
+      G.log(p.id, 'missed', t('log.missed_need_helpless', { name: p.person.name, text: req.text }));
+      G.toastFor(p, t('toast.nobody'), 'soft');
     } else if (req.kind === 'choice') {
       const c = req.choices.find(x => x.liked) || req.choices[0];
       applyChoice(p, c, true);
@@ -500,7 +651,7 @@
     }
   }
 
-  /* ---------- 玩家动作：长按立刻生效，点击要花掉游戏里的时间 ---------- */
+  /* ---------- 玩家动作：现实模式长按立刻生效，故事模式点击要花掉游戏里的时间 ---------- */
   function applyAction(pid, actionId) {
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
     if (!a) return false;
@@ -508,11 +659,14 @@
     if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
     const s = p.state;
     const scale = a.bonus_item && G.economyOn() && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
-    if (G.economyOn()) for (const k in a.uses || {}) G.world.inv[k] -= a.uses[k];
-    for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale);
+    consume(a);
+    applyEffects(p, a, scale);
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
-    if (a.frailty) s.frailty = clamp(s.frailty + a.frailty);
     p.story.care_total++;
+    /* 带去看医生一类的动作直接治好某些病 */
+    for (const c of a.heals || []) {
+      if ((p.person.conditions || []).includes(c)) { p.person.conditions = p.person.conditions.filter(x => x !== c); store.writeYaml(`people/${p.id}/person.yaml`, p.person); G.log(p.id, 'recovered', t('log.healed', { name: p.person.name, cond: CY.tOr('cond.' + c, (G.tpl.conditions[c] || {}).label || c) })); }
+    }
     /* 急性的病好起来：照顾够了次数就痊愈 */
     for (const c of [...(p.person.conditions || [])]) {
       const ha = (G.tpl.conditions[c] || {}).heal_after;
@@ -538,21 +692,26 @@
   }
   G.applyAction = applyAction;
   G.perform = function (pid, actionId) { return applyAction(pid, actionId); };
-  /* 点击模式：开始做一件事，要花掉 min 个游戏分钟，期间不赚钱，也做不了别的 */
+  /* 故事模式：开始做一件事，要花掉 min 个游戏分钟。已经在做别的事，就先把那件压到下面暂停，做完这件再接着做 */
   G.startAction = function (pid, actionId) {
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
     if (!a) return false;
-    if (G.world.busy) { G.toastFor(p, t('toast.busy', { what: G.world.busy.label }), 'soft'); emit(); return false; }
+    if (G.timeMode() === 'paused') { G.toastFor(p, t('toast.paused'), 'soft'); emit(); return false; }
+    if (G.timeMode() === 'real') return applyAction(pid, actionId);
+    const ts = G.tasks();
+    if (ts.some(x => x.pid === pid && x.act === actionId)) { G.toastFor(p, t('toast.already', { what: a.label }), 'soft'); emit(); return false; }
+    if (ts.length >= 4) { G.toastFor(p, t('toast.too_many'), 'soft'); emit(); return false; }
     const lack = G.lacking(a);
     if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
-    const gm = G.world.game_minutes;
-    G.world.busy = { pid, act: actionId, label: a.label, start: gm, end: gm + a.min };
-    G.toastFor(p, t('toast.started', { what: a.label, min: a.min }), 'soft');
+    const prev = G.runningTask();
+    ts.push({ pid, act: actionId, label: a.label, total: a.min, left: a.min });
+    G.toastFor(p, prev ? t('toast.interrupt', { prev: prev.label, what: a.label }) : t('toast.started', { what: a.label, min: a.min }), 'soft');
     G.save(); emit();
     return true;
   };
   function finishAction(b) { if (G.get(b.pid)) applyAction(b.pid, b.act); }
-  G.cancelAction = () => { G.world.busy = null; emit(); };
+  G.cancelAction = (i) => { const ts = G.tasks(); if (i === undefined) ts.pop(); else ts.splice(i, 1); emit(); };
+  G.cancelAllTasks = () => { G.world.tasks = []; emit(); };
   /* 回答问答题：idx 是预设回答的序号，custom 是玩家自己写的 */
   G.answerAsk = function (pid, idx, custom) {
     const p = G.get(pid), req = G.req[pid];
@@ -631,13 +790,14 @@
   G.tick = function () {
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
+    if (G.timeMode() === 'paused') for (const p of G.activePeople()) G.act[p.id] = G.act[p.id] || G.activityOf(p);
     advance(gameMinutes(dt), false);
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
     for (const id in G.toast) if (now > G.toast[id].until) delete G.toast[id];
     /* 婴幼儿需求严重时会一直哭闹，直到有人管 */
     const was = G.crying; G.crying = {};
     for (const p of G.activePeople()) {
-      if (!G.classOf(p).cries || G.maxNeed(p) <= 0.8) continue;
+      if (!G.classOf(p).cries || G.maxNeed(p) <= 0.8 || G.isSleeping(p)) continue;
       G.crying[p.id] = true;
       if (!was[p.id]) G.log(p.id, 'cry', t('log.cry', { name: p.person.name, need: G.needLabel(G.topNeed(p), G.needsOf(p)[G.topNeed(p)]) }));
       if (!G.toast[p.id] || G.toast[p.id].kind !== 'cry') if (!G.req[p.id] || G.req[p.id].kind !== 'ask') G.toastFor(p, line(p, 'cry', null, t('line.cry')), 'cry');
@@ -646,6 +806,7 @@
     emit();
   };
   G.start = function () {
+    for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
     const last = Date.parse(G.world.last_seen);
     if (last) {
       const cap = ini.num(G.cfg, 'time', 'offline_cap_hours') * 60;

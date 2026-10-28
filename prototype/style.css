@@ -177,3 +177,25 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 @keyframes shake { 25% { transform:translateX(-1.5px) rotate(-1deg); } 75% { transform:translateX(1.5px) rotate(1deg); } }
 
 @keyframes fall { 0% { transform:translateY(0); opacity:0; } 20% { opacity:1; } 100% { transform:translateY(44px); opacity:0; } }
+
+/* 房间背景 */
+.scene { position:absolute; inset:0; border-radius:inherit; overflow:hidden; z-index:0; }
+.scene svg { width:100%; height:100%; display:block; }
+.room.hasscene { background:none; }
+.room .stage { position:relative; z-index:4; }
+.room::after { z-index:3; }
+.cx.sleeping .eyes { animation:none; transform:scaleY(.12); }
+.cx.sleeping .av { animation:none; filter:brightness(.92); }
+.cx .zzz, .cx .sick, .cx .info { font-size:11px; margin-left:3px; } .cx .info { display:none; color:var(--mute); cursor:pointer; } .cx:hover .info { display:inline; }
+.bubble.self { border-style:dashed; font-style:italic; color:var(--mute); }
+.cx .nm { text-shadow:0 0 3px var(--card), 0 0 3px var(--card); }
+/* 现实、故事、暂停 */
+.seg { display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; }
+.seg button { border:none; border-radius:0; padding:4px 12px; background:var(--card); } .seg button + button { border-left:1px solid var(--line); }
+.seg button.on { background:var(--accent); color:#fff; }
+.seg button.on[data-m=paused] { background:#8a8378; }
+#sceneSel { margin-left:auto; }
+.statgrid { display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:start; } .statgrid .prev svg { width:120px; height:156px; }
+.srow2 { display:flex; align-items:center; gap:8px; margin:3px 0; font-size:13px; } .srow2 .l { width:110px; } .srow2 .bar { flex:1; }
+.tag { font-size:12px; padding:0 8px; border-radius:10px; background:var(--soft); color:var(--ink); margin-right:4px; display:inline-block; }
+.taskrow { display:inline-flex; gap:6px; align-items:center; } .taskrow.paused { opacity:.6; } .taskrow .bar { width:80px; }
