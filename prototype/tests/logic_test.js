@@ -619,10 +619,11 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 行动者：每个人按喜好和需求慢慢换房间，悬停的人停住 */
   {
     const W = CY.world;
-    const keepDay = [G.cfg.time.daynight, G.world.clock_shift]; G.cfg.time.daynight = 'game'; G.world.clock_shift = (14 * 60 - (Math.floor(G.world.game_minutes) % 1440) + 1440) % 1440;   /* 下午两点 */
+    const keepDay = [G.cfg.time.daynight, G.world.clock_shift];
     for (const x of G.people) x.person.active = false;
     const ids = []; for (const [a2, n2] of [['grandpa', '走动爷爷'], ['mom', '走动妈妈'], ['baby', '走动宝宝'], ['cat', '走动猫']]) ids.push((await mk(a2, n2)).id);
     const [gp2, mm2, bb2, ct2] = ids.map(id => G.get(id));
+    G.cfg.time.daynight = 'game'; G.world.clock_shift = (14 * 60 - (Math.floor(G.world.game_minutes) % 1440) + 1440) % 1440;   /* 下午两点，创建角色会重新载入设置，所以放在创建之后 */
     for (const x of [gp2, mm2, bb2, ct2]) { x.person.active = true; for (const k in x.state.needs) x.state.needs[k] = 0.1; G.act[x.id] = 'awake'; }
     const seenRooms = new Set();
     for (let i = 0; i < 60; i++) { for (const k in W.agents) W.agents[k].next = 0; seenRooms.add(W.locationOf(mm2).room); }
@@ -663,6 +664,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('卡里的 prefs 决定爱去哪', r3.has('yard') && M3.person.prefs.restless === 1, [...r3].join());
     for (const x of G.people) x.person.active = true;
     G.cfg.time.daynight = keepDay[0]; G.world.clock_shift = keepDay[1];
+  }
+
+  /* 饭点全家在厨房一起吃饭 */
+  {
+    const W = CY.world, keepDay = [G.cfg.time.daynight, G.world.clock_shift];
+    for (const x of G.people) x.person.active = false;
+    const ids = []; for (const [a2, n2] of [['mom', '饭妈妈'], ['dad', '饭爸爸'], ['grandma', '饭奶奶'], ['baby', '饭宝宝']]) ids.push((await mk(a2, n2)).id);
+    const four = ids.map(id => G.get(id));
+    G.cfg.time.daynight = 'game'; G.world.clock_shift = (18.5 * 60 - (Math.floor(G.world.game_minutes) % 1440) + 1440) % 1440;
+    for (const x of four) { x.person.active = true; for (const k in x.state.needs) x.state.needs[k] = 0.1; x.state.needs.hunger = 0.8; W.agents[x.id] = { room: 'kitchen', next: Date.now() + 1e9 }; G.act[x.id] = 'awake'; }
+    check('饭点是饭点', W.isMealTime(), G.dayMinutes() + ' ' + G.daySource() + ' ' + G.world.clock_shift + ' ' + G.world.game_minutes);
+    G.socialTick(1e6);
+    check('饭点三个人在厨房就一起吃饭，婴儿不算', four.slice(0, 3).every(x => x.state.needs.hunger < 0.5) && four[3].state.needs.hunger === 0.8);
+    G.cfg.time.daynight = keepDay[0]; G.world.clock_shift = keepDay[1];
+    for (const x of G.people) x.person.active = true;
   }
 
   /* 旧设置文件里取消了的项会被丢掉 */

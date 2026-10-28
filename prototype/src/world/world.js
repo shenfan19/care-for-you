@@ -74,7 +74,7 @@
     const n = p.state.needs, hr = G.dayMinutes() / 60, st = G.classKey(p), human = G.isHuman(p);
     let w = (prefsOf(p)[room] || 0);
     const hi = k => Math.max(0, (n[k] || 0) - 0.45) * 2;
-    if (room === 'kitchen') w += (hi('hunger') + hi('thirst')) * 5 + (human && st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19)) ? 2.5 : 0);
+    if (room === 'kitchen') w += (hi('hunger') + hi('thirst')) * 5 + (human && st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19)) ? 2.5 : 0) + (human && W.isMealTime() ? 3 : 0);
     if (room === 'toilet') w += hi('toilet') * 6 + hi('hygiene') * 2;
     if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += hi('rest') * 4 + (hr >= 20.5 || hr < 6.5 ? 2 : 0);
     if (room === 'living') w += hi('company') * 2 + hi('play') * 1.5;
@@ -108,6 +108,8 @@
     else if (W.frozen.has(p.id)) A.next = Math.max(A.next, now + 3000);
     return A.room;
   };
+  /* 中午和傍晚是饭点 */
+  W.isMealTime = () => { const hr = G.dayMinutes() / 60; return (hr >= 12 && hr < 13) || (hr >= 18 && hr < 19); };
   W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
   /* 叫一个人走到某个房间去，比如大人去照顾哭的孩子。被悬停或点选的人不动 */
   W.goTo = (p, room, minutes) => {

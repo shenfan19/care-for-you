@@ -86,6 +86,13 @@
       if (p === lead || p.person.kind === 'plant' || G.isSleeping(p) || G.flag(p, 'hospital') || G.flag(p, 'outing')) continue;
       const l = W.locationOf(p); (byRoom[l.place + '/' + l.room] = byRoom[l.place + '/' + l.room] || []).push(p);
     }
+    /* 饭点厨房里有三个以上的人，就一起吃一顿：不是婴幼儿的人饿和渴降下去，每个饭点一次 */
+    const kit = byRoom['home/kitchen'] || [], eaters = kit.filter(p => G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)));
+    if (W.isMealTime() && eaters.length >= 3 && (socialCd.meal || 0) < now) {
+      socialCd.meal = now + 3 * 3600 * 1000;
+      for (const q of eaters) { lower(q, 'hunger', 0.35); lower(q, 'thirst', 0.2); q.state.mood = clamp(q.state.mood + 0.03); }
+      G.log(eaters[0].id, 'event', t('social.meal', { n: eaters.length }));
+    }
     for (const room in byRoom) {
       const L = byRoom[room]; if (L.length < 2) continue;
       const a = L[Math.floor(Math.random() * L.length)], rest = L.filter(x => x !== a), b = rest[Math.floor(Math.random() * rest.length)];

@@ -93,7 +93,7 @@
     else if (!on && el._frozen) { el._frozen = false; el._pos = null; el.style.transition = ''; }
   };
   U.hoverId = null;
-  U.frozenIds = () => { const s = new Set(); if (U.hoverId) s.add(U.hoverId); if ($r('#ringLayer') && U.sel) s.add(U.sel); if (U.holdPid) s.add(U.holdPid); return s; };
+  U.frozenIds = () => { const s = new Set(); if (U.hoverId) s.add(U.hoverId); if ($r('#ringLayer') && U.sel) s.add(U.sel); if (U.holdPid) s.add(U.holdPid); for (const id in G.req) s.add(id); return s; };
   U.syncFreeze = () => {
     const ids = U.frozenIds(), W = CY.world;
     for (const id of [...W.frozen]) if (!ids.has(id)) W.freeze(id, false);

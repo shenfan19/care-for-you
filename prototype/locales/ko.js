@@ -154,3 +154,5 @@ CY.i18n.register("ko", {"people.lead": "주인공으로", "people.lead_on": "주
 CY.i18n.register("ko", {"arch.elder": "전형적인 노인", "arch.toddler1": "1살 아이", "arch.toddler2": "2살 아이", "arch.toddler3": "3살 아이", "arch.toddler4": "4살 아이", "arch.child12": "12살 아이", "arch.woman25": "25세 여성", "arch.man25": "25세 남성", "add.helper": "집에서 돌봄을 알아서 나눈다"});
 
 CY.i18n.register("ko", {"social.chat": "{a}와(과) {b}은(는) 잠깐 이야기를 나눴다.", "social.play": "{a}이(가) {b}와(과) 한동안 놀아 주었다.", "social.pet": "{a}이(가) {b}을(를) 쓰다듬었다."});
+
+CY.i18n.register("ko", {"social.meal": "{n}명이 부엌에서 함께 밥을 먹었다."});

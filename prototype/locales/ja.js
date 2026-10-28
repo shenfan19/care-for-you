@@ -154,3 +154,5 @@ CY.i18n.register("ja", {"people.lead": "主人公にする", "people.lead_on": "
 CY.i18n.register("ja", {"arch.elder": "典型的なお年寄り", "arch.toddler1": "1歳の子", "arch.toddler2": "2歳の子", "arch.toddler3": "3歳の子", "arch.toddler4": "4歳の子", "arch.child12": "12歳の子", "arch.woman25": "25歳の女性", "arch.man25": "25歳の男性", "add.helper": "家にいて、世話を自動で分担する"});
 
 CY.i18n.register("ja", {"social.chat": "{a}と{b}は少しおしゃべりした。", "social.play": "{a}は{b}としばらく遊んだ。", "social.pet": "{a}は{b}をなでた。"});
+
+CY.i18n.register("ja", {"social.meal": "{n}人で台所で一緒にご飯を食べた。"});

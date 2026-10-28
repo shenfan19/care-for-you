@@ -154,3 +154,5 @@ CY.i18n.register("es", {"people.lead": "Ser el protagonista", "people.lead_on": 
 CY.i18n.register("es", {"arch.elder": "Persona mayor típica", "arch.toddler1": "Niño de 1 año", "arch.toddler2": "Niño de 2 años", "arch.toddler3": "Niño de 3 años", "arch.toddler4": "Niño de 4 años", "arch.child12": "Niño de 12 años", "arch.woman25": "Mujer de 25 años", "arch.man25": "Hombre de 25 años", "add.helper": "En casa, comparte los cuidados"});
 
 CY.i18n.register("es", {"social.chat": "{a} y {b} charlaron un rato.", "social.play": "{a} jugó un rato con {b}.", "social.pet": "{a} acarició a {b}."});
+
+CY.i18n.register("es", {"social.meal": "{n} personas comieron juntas en la cocina."});
