@@ -727,6 +727,16 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('取消了的设置不再写回', !/quiet_hours|fall_scale|click_instead|economy = false|answer_seconds|offline_cap|hold_scale|nanny_daily|^wage/m.test(txt) && CY.ini.num(old, 'interrupt', 'countdown_seconds') === 30);
   }
 
+  /* 卡里的专属台词是中文，英文界面不该说中文 */
+  {
+    const p = await mk('elder', '爷'), keep = CY.i18n.lang;
+    const zhLine = G.lines(p, 'request', 'thirst').join('');
+    CY.i18n.lang = 'en';
+    const enLine = G.lines(p, 'request', 'thirst').join('');
+    CY.i18n.lang = keep;
+    check('卡里的中文专属台词只在中文界面用', zhLine.includes('倒杯水') && !enLine.includes('倒杯水'), enLine.slice(0, 40));
+  }
+
   /* zip：不压缩的写出，读回内容一致 */
   const blob = CY.store.zip([{ name: 'careforyou-data/people/a.yaml', data: new TextEncoder().encode('名字: 爷爷\n') }, { name: 'careforyou-data/settings.ini', data: new TextEncoder().encode('[a]\nb = 1\n') }]);
   fs.writeFileSync(path.join(process.env.TEMP || '/tmp', 'cy_test.zip'), Buffer.from(await blob.arrayBuffer()));

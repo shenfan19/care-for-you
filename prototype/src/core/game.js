@@ -164,7 +164,7 @@
       appearance: Object.assign({}, spec.look || arch.look || {}, typeof (spec.look || arch.look || {}).skin === 'number' ? { skin_v: 2 } : {}), personality: { talkative: 0.5, temper: '', catchphrases: [] },
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
     };
-    if (spec.arch) person.card = spec.arch;
+    if (spec.arch) { person.card = spec.arch; if (Object.keys(person.lines).length) person.lines_lang = 'zh-CN'; }
     const hp = arch.help || {};
     if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : !!hp.proactive;
     if (human && (hp.efficiency || hp.interval)) person.help = { efficiency: hp.efficiency, interval: hp.interval };
@@ -342,7 +342,9 @@
   };
   G.lines = (p, group, key) => {
     const pickFrom = src => (key === undefined || key === null) ? src : (src && !Array.isArray(src) && typeof src === 'object' ? src[key] : undefined);
-    const srcs = [(p.person.lines || {})[group]];
+    /* 卡里的专属台词是中文写的，只在中文界面用，别的语言走各自的声线 */
+    const own = p.person.card && !p.person.lines_lang ? 'zh' : p.person.lines_lang, ownOk = !own || CY.i18n.lang.startsWith(own.slice(0, 2));
+    const srcs = [ownOk ? (p.person.lines || {})[group] : undefined];
     for (const c of p.person.conditions || []) srcs.push((((G.tpl.conditions[c] || {}).lines) || {})[group]);
     const band = G.ageBand(p);
     if (band && p.voice.age && p.voice.age[band]) srcs.push(p.voice.age[band][group]);
