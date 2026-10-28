@@ -19,7 +19,7 @@ vm.runInContext(`
     wipe: async () => { globalThis.__mem.clear(); },
     removeDir: async p => { for (const k of [...globalThis.__mem.keys()]) if (k.startsWith(p + '/')) globalThis.__mem.delete(k); },
   });`, ctx);
-for (const f of ['src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/http.js', 'src/backend/index.js', 'src/world/world.js', 'src/world/iso.js', 'src/world/avatar.js', 'src/world/scenes.js']) run(f);
+for (const f of ['src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/household.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/http.js', 'src/backend/index.js', 'src/backend/api.js', 'src/world/world.js', 'src/world/iso.js', 'src/world/avatar.js', 'src/world/scenes.js']) run(f);
 const CY = ctx.CY, G = CY.game;
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
@@ -29,6 +29,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 (async () => {
   CY.i18n.set('zh-CN');
   await G.load();
+  G.cfg.play.economy = 'false'; await store_write_cfg();   /* 默认是完整体验，这里的大部分测试按轻量体验写 */
   check('第一次进来没有角色，由引导页选', G.people.length === 0);
   check('种子里有声线、说话库、问答库、提醒库、AI 技能', G.tpl.voices.elder && G.tpl.sayLib.length > 30 && G.tpl.asks.length > 20 && G.tpl.nudges.length > 3 && G.tpl.skills.speak && G.tpl.persona);
   check('原型至少 15 种', CY.content.archetypes.length >= 15);
@@ -159,7 +160,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const setHour = h => { G.cfg.time.daynight = 'game'; G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
     setHour(14);
     check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room));
-    check('婴儿白天在卧室的小床里', W.locationOf(G.get(bb)).room === 'bedroom' && W.locationOf(G.get(bb)).mode === 'cradle');
+    G.get(bb).state.needs.rest = 0.2;
+    check('婴儿醒着不困，白天在客厅的玩具垫上', W.locationOf(G.get(bb)).room === 'living' && W.locationOf(G.get(bb)).mode === 'mat');
+    G.get(bb).state.needs.rest = 0.9;
+    check('婴儿困了在卧室的小床里', W.locationOf(G.get(bb)).room === 'bedroom' && W.locationOf(G.get(bb)).mode === 'cradle');
     check('没有人的地点不出现', W.occupiedPlaces().join() === 'home');
     setHour(2);
     check('夜里爷爷在老人房睡，不和婴儿一屋', W.locationOf(G.get(gp)).room === 'elder' && W.locationOf(G.get(bb)).room === 'bedroom');
@@ -225,6 +229,15 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await CY.backend.drive(CY.backend.build('tick', { minutes: 1 })).then(list => G.applyDirectives(list));
     check('远程后端回来的指令被执行且被检查', calls === 1 && G.get(body0Id()).state.mood === 1 && ctx.__lastReq.kind === 'drive' && ctx.__lastReq.v === 1);
     check('默认不把名字发出去', ctx.__lastReq.people.every(p => p.name === ''));
+    const rw = ctx.__lastReq.world;
+    check('请求里带家庭经济和玩家位置', 'money' in rw && 'nanny' in rw && 'working' in rw && rw.player && rw.player.place && ctx.__lastReq.people.every(p => p.needs && p.location));
+    /* 设了环境变量就对真实的示例后端走一遍：CARE_BACKEND_URL=http://127.0.0.1:8787/ */
+    if (process.env.CARE_BACKEND_URL) {
+      ctx.fetch = fetch; G.cfg.play.backend_url = process.env.CARE_BACKEND_URL;
+      const pe = G.activePeople()[0], k = Object.keys(pe.state.needs)[0]; pe.state.needs[k] = 0.1;
+      await CY.backend.drive(CY.backend.build('tick', { minutes: 60 })).then(list => G.applyDirectives(list));
+      check('真实远程后端的 need_set 生效', Math.abs(pe.state.needs[k] - 0.15) < 0.011 && !CY.backend.failed);
+    }
     ctx.fetch = async () => { throw new Error('offline'); };
     const r1 = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 })), r2 = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 }));
     check('远程失败退回内置，只提示一次', Array.isArray(r1) && Array.isArray(r2) && errs === 1);
@@ -424,13 +437,67 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.world.inv.food = 3; tp.state.needs.hunger = 0.9;
   check('游戏时钟下不再带现实时间', !('realHh' in G.clock()) && !('realMm' in G.clock()));
 
-  /* 保姆：需求涨得慢，花钱，没钱先走 */
-  G.world.money = 50; G.setNanny(tp.id, true);
-  tp.state.needs.rest = 0.2; const slow = tp.state.needs.rest;
-  G.nextAt = Date.now() + 1e9; G.lastTick = Date.now() - 1000; G.tick();
-  check('请了保姆工作时段要花钱', G.hasNanny(tp) && G.world.money < 50 + 1000);
-  G.world.money = -1; G.world.nanny[tp.id] = true; G.lastTick = Date.now() - 1000; G.tick();
-  check('钱花光保姆先走', !G.hasNanny(tp) && G.world.money === 0);
+  /* 保姆：雇 N 天，每天付一次，欠得多效率往下掉，欠两天就走 */
+  G.cfg.play.economy = 'true'; await store_write_cfg(); G.world.money = 1000; G.world.nanny = { days_left: 0, owed: 0, paid_today: 0, day: -1 };
+  check('没雇保姆时没有保姆', !G.nannyActive() && G.nannyEff() === 0);
+  check('可以雇保姆', G.hireNanny(3) === true && G.nannyActive() && G.nannyInfo().days_left === 3);
+  check('刚雇时欠第一天的工资，效率打折', G.nannyEff() < 0.8 && G.nannyEff() > 0.2, String(G.nannyEff()));
+  check('付一天的工资，满效率是玩家自己的八成', G.payNanny(1) === true && Math.abs(G.nannyEff() - 0.8) < 1e-9 && G.nannyInfo().owed === 0);
+  check('每天只能付一次', G.payNanny(1) === false);
+  const di0 = CY.protocol.world().date.day_index;
+  G.world.nanny.day = di0 - 1; G.assistTick(1);
+  check('过了一天，合同少一天，欠一天的工资，可以再付', G.nannyInfo().days_left === 2 && G.nannyInfo().owed === 120 && G.nannyInfo().paid_today === 0);
+  G.world.nanny.day = di0 - 1; G.assistTick(1);
+  check('欠到两天就走', !G.nannyActive());
+  G.hireNanny(3); G.payNanny(1);
+  for (const p of G.people) { p.person.active = false; }
+  tp.person.active = true; tp.state.flags = {}; G.world.inv.food = 5; tp.state.needs.hunger = 0.9;
+  let helped = false;
+  for (let i = 0; i < 60 && !helped; i++) { G.assistTick(60); helped = Object.values(G.journal[tp.id] || {}).flat().some(e => e.type === 'care' && /保姆/.test(e.text)); }
+  check('保姆自动处理零碎的照顾，并且记下来', helped && tp.state.needs.hunger < 0.9);
+  G.dismissNanny(); check('可以辞退', !G.nannyActive());
+  /* 分担的家人：妈妈在家办公，自己赚一份，也自动分担 */
+  const mom = await mk('mom', '分担妈妈'); const MM = G.get(mom.id);
+  check('妈妈默认分担', MM.person.helper === true && G.helpers().some(h => h.id === MM.id) && G.helperIncome() > 0, JSON.stringify({ h: MM.person.helper, n: G.helpers().length, inc: G.helperIncome(), eco: G.economyOn(), st: G.stage(MM), mx: G.maxNeed(MM), act: MM.person.active }));
+  const tpn = G.get(tp.id); for (const p of G.people) p.person.active = p === tpn || p === MM;
+  tpn.state.needs.hunger = 0.9; G.world.inv.food = 5; let momHelped = false;
+  for (let i = 0; i < 80 && !momHelped; i++) { G.assistTick(60); tpn.state.needs.hunger = Math.max(tpn.state.needs.hunger, 0.9); momHelped = Object.values(G.journal[tpn.id] || {}).flat().some(e => e.type === 'care' && /分担妈妈/.test(e.text)); }
+  check('分担的家人自动照顾', momHelped);
+  /* 外出和耽误的工作 */
+  G.cfg.economy.work_hours = '00:00-23:59'; G.cfg.time.daynight = 'system'; await store_write_cfg(); G.world.money = 500;
+  const elderX = await mk('grandpa', '外出爷爷'), babyX = await mk('toddler', '外出宝宝'); const EX = G.get(elderX.id), BX = G.get(babyX.id);
+  EX.state.needs.mobility = 0.9; BX.state.needs.play = 0.9; for (const p of G.people) { p.person.active = p === EX || p === BX; }
+  const mBefore = G.world.money;
+  check('带爷爷去公园', G.perform(EX.id, 'park') === true && !!G.flag(EX, 'outing') && !!G.flag(BX, 'outing'));
+  check('一起去的人在公园，公园页出现', CY.world.locationOf(EX).place === 'park' && CY.world.occupiedPlaces().includes('park'));
+  check('离开书桌耽误了工作，少赚了钱', G.world.money < mBefore, mBefore + ' -> ' + G.world.money + ' work=' + G.isWorkTime() + ' eco=' + G.economyOn() + ' away=' + JSON.stringify(G.actionsOf(EX).park && G.actionsOf(EX).park.away));
+  check('在外面的人先不能照顾', CY.world.presenceNeed(EX).outing === true);
+  G.world.game_minutes += 30; G.drive('tick', { minutes: 1 });
+  check('外出时间到了自己回来，规则收尾', !G.flag(EX, 'outing') && !G.flag(BX, 'outing') && CY.world.locationOf(EX).place === 'home');
+  /* 宝宝一直要人，猫狗会来身边 */
+  BX.state.needs.hunger = 0.8; delete G.req[BX.id]; G.nagAt = {}; G.nagTick(Date.now());
+  check('宝宝需求超过一半一直提示', G.needy(BX) && !!G.req[BX.id]);
+  const catX = await mk('cat', '要摸的猫'); const CX = G.get(catX.id); CX.state.needs.company = 0.8; CX.person.active = true;
+  check('猫想蹭人就来书桌边', CY.world.locationOf(CX).room === 'study');
+  const dogX = await mk('dog', '要出去的狗'); const DX = G.get(dogX.id); DX.state.needs.play = 0.8; DX.person.active = true;
+  check('狗想出去玩就来书桌边', CY.world.locationOf(DX).room === 'study');
+  /* 离开书桌没有收入 */
+  CY.world.enforce = true; CY.world.moveTo('home', 'kitchen'); for (const p of G.people) p.person.active = false;
+  const m2 = G.world.money; G.lastTick = Date.now() - 1000; G.nextAt = Date.now() + 1e9; G.tick();
+  check('不在书桌前不赚钱', G.world.money === m2);
+  CY.world.moveTo('home', 'study'); G.lastTick = Date.now() - 1000; G.tick();
+  check('回到书桌前才赚钱', G.world.money > m2);
+  CY.world.enforce = false;
+  /* 需求交给后端：游戏自己不涨，由 need_set 给 */
+  const BXn = G.get(babyX.id);
+  G.cfg.play.needs_source = 'backend'; BXn.person.active = true; BXn.state.needs.thirst = 0.1; G.lastTick = Date.now() - 1000; G.tick();
+  check('需求交给后端时游戏不再自己涨', BXn.state.needs.thirst === 0.1);
+  G.applyDirectives(CY.protocol.sanitize([{ op: 'need_set', person: BXn.id, need: 'thirst', value: 0.77 }]));
+  check('后端用 need_set 直接设需求', BXn.state.needs.thirst === 0.77);
+  G.cfg.play.needs_source = 'builtin';
+  for (const id of [mom.id, elderX.id, babyX.id, catX.id, dogX.id]) await G.deletePerson(id);
+  for (const p of G.people) p.person.active = true;
+  G.cfg.play.economy = 'false'; G.cfg.economy.work_hours = '09:00-18:00'; G.cfg.time.daynight = 'auto'; await store_write_cfg(); refs();
 
   /* 旧数据：缺年龄的人按阶段补年龄，旧版本的物种模板被新版覆盖 */
   const legacy = await mk('grandpa', '旧爷爷');
@@ -438,7 +505,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
-  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 3 && Object.keys(G.tpl.species.human.needs).length > 5);
+  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 4 && Object.keys(G.tpl.species.human.needs).length > 5);
   G.cfg.play.economy = 'false';
 
 

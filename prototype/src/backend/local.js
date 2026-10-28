@@ -5,7 +5,7 @@
   const L = CY.backendLocal = { name: 'builtin' };
 
   /* 规则的触发条件 */
-  const matches = (when, ps, w) => {
+  const matches = (when, ps, w, people) => {
     if (!when) return true;
     if (when.sleeping !== undefined && !!ps.sleeping !== when.sleeping) return false;
     if (when.any_condition && !when.any_condition.some(c => ps.conditions.includes(c))) return false;
@@ -23,6 +23,10 @@
     if (when.dates && w.date && !when.dates.some(x => (x.length === 5 ? x === w.date.iso.slice(5) : x === w.date.iso))) return false;
     if (when.weekday && w.date && !when.weekday.includes(w.date.weekday)) return false;
     if (when.days_together_in && !when.days_together_in.includes(w.days_together)) return false;
+    if (when.with) {
+      const ok = (people || []).some(q => q.id !== ps.id && !q.sleeping && (!when.with.stage || when.with.stage.includes(q.stage)) && (!when.with.same_room || (q.location.room === ps.location.room && q.location.place === ps.location.place)));
+      if (!ok) return false;
+    }
     return true;
   };
   const fill = (v, vars) => (typeof v === 'string' ? v.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m)) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x, vars)])) : v);
@@ -55,9 +59,9 @@
       const hours = (req.minutes || 0) / 60;
       for (const ps of req.people || []) {
         const vars = { care_total: ps.care_total, name: ps.name };
-        for (const e of (req.expired || []).filter(x => x.person === ps.id)) for (const r of rules) if (r.trigger === 'end' && r.flag === e.name && matches(r.when, ps, w)) out.push(...run(r, ps, w, vars));
+        for (const e of (req.expired || []).filter(x => x.person === ps.id)) for (const r of rules) if (r.trigger === 'end' && r.flag === e.name && matches(r.when, ps, w, req.people)) out.push(...run(r, ps, w, vars));
         for (const r of rules) {
-          if (r.trigger !== 'tick' || !matches(r.when, ps, w)) continue;
+          if (r.trigger !== 'tick' || !matches(r.when, ps, w, req.people)) continue;
           if (r.once_per_day && w.date && (ps.seen || {})[r.id] === w.date.day_index) continue;
           if (Math.random() >= Math.min(1, (r.rate_per_hour || 0) * hours)) continue;
           out.push(...run(r, ps, w, vars));

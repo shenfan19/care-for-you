@@ -15,8 +15,10 @@
     } },
     hospital: { w: 10, h: 6, rooms: { ward: { gx: 0, gy: 0, w: 10, h: 6 } } },
     office: { w: 8, h: 6, rooms: { desk: { gx: 0, gy: 0, w: 8, h: 6 } } },
+    park: { w: 10, h: 6, rooms: { lawn: { gx: 0, gy: 0, w: 10, h: 6 } } },
+    street: { w: 10, h: 6, rooms: { road: { gx: 0, gy: 0, w: 10, h: 6 } } },
   };
-  W.PLACE_LIST = ['home', 'office', 'hospital'];
+  W.PLACE_LIST = ['home', 'park', 'street', 'hospital', 'office'];
   W.project = (place, gx, gy) => {
     const P = W.PLACES[place], ox = W.VW / 2 + (P.h - P.w) * W.TW / 4;
     return { x: ox + (gx - gy) * W.TW / 2, y: 120 + (gx + gy) * W.TH / 2 };
@@ -27,11 +29,13 @@
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
     study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.5, .5] },
-    living: { stand: [[.5, .68], [.28, .8], [.74, .8], [.5, .9], [.85, .55], [.15, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
+    living: { mat: [[.5, .56]], stand: [[.5, .68], [.28, .8], [.74, .8], [.5, .9], [.85, .55], [.15, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
     desk: { stand: [[.5, .7], [.3, .8], [.7, .8]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .55] },
+    lawn: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5], [.2, .55], [.8, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
+    road: { stand: [[.5, .56], [.3, .6], [.7, .6], [.4, .4], [.6, .4], [.2, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
   };
   W.slotPoint = (place, room, kind, i) => {
     const r = W.PLACES[place].rooms[room], list = SLOTS[room][kind] || SLOTS[room].stand;
@@ -52,27 +56,34 @@
   const hashOf = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
   /* 带地点的标记优先：后端说他在医院，他就在医院 */
   const flagPlace = p => { for (const n in p.state.flags || {}) { const f = G.flag(p, n); if (f && f.place) return f; } return null; };
+  const block = () => Math.floor(G.dayMinutes() / 20);
+  const pickBy = (id, list) => list[hashOf(id + ':' + block()) % list.length];
+  const onMat = q => G.isHuman(q) && ['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (q.state.needs.rest || 0) <= 0.55;
   W.locationOf = p => {
     const hr = G.dayMinutes() / 60, fp = flagPlace(p);
     if (fp) return { place: fp.place, room: fp.room, mode: fp.mode || 'stand' };
     if (!G.isHuman(p)) {
-      const sp = p.species.id;
+      const sp = p.species.id, n = p.state.needs;
+      /* 猫想蹭人，狗想出去玩，它们就跑到书桌边来 */
+      if (!G.isSleeping(p) && ((sp === 'cat' && (n.company || 0) > 0.5) || (sp === 'dog' && ((n.play || 0) > 0.5 || (n.company || 0) > 0.6)))) return { place: 'home', room: 'study', mode: 'stand' };
       if (sp === 'dog' && !G.isSleeping(p) && hr >= 9 && hr < 17 && hashOf(p.id) % 2) return { place: 'home', room: 'yard', mode: 'stand' };
       if (sp === 'cat') return { place: 'home', room: hr >= 12 && hr < 16 ? 'bedroom' : hr >= 17 && hr < 19 ? 'kitchen' : hr >= 9 && hr < 12 && hashOf(p.id) % 2 ? 'yard' : 'living', mode: 'stand' };
       return { place: 'home', room: PET_ROOM[sp] || 'living', mode: 'stand' };
     }
     const st = G.stage(p), sleeping = G.isSleeping(p);
     if (sleeping) return { place: 'home', room: st === 'elder' ? 'elder' : 'bedroom', mode: st === 'infant' ? 'cradle' : 'sleep' };
-    if (st === 'infant') return { place: 'home', room: 'bedroom', mode: 'cradle' };
+    /* 宝宝困了在婴儿床，醒着就在玩具垫上 */
+    if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
     if (st === 'teen') return { place: 'home', room: hr >= 17 && hr < 19 ? 'study' : 'bedroom', mode: 'stand' };
+    if (st === 'toddler' && G.age(p) < 2.5) return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
     if (st === 'child' || st === 'toddler') {
       const room = hr < 9 ? 'kitchen' : hr >= 14 && hr < 17 && hashOf(p.id) % 2 ? 'yard' : hr >= 12 && hr < 14 ? 'kitchen' : hr >= 17 && hr < 19 && st === 'child' ? 'study' : hr >= 19 ? 'bedroom' : 'living';
       return { place: 'home', room, mode: 'stand' };
     }
     if (st === 'elder') {
-      const h = hr + (hashOf(p.id) % 2) * 0.5;
-      const room = h >= 7 && h < 9 ? 'kitchen' : h >= 9 && h < 11 ? 'yard' : h >= 11 && h < 12.5 ? 'kitchen' : 'living';
-      return { place: 'home', room, mode: 'stand' };
+      /* 宝宝在垫子上，爷爷常常过去陪着玩；别的时候在屋里屋外随机走动，每二十分钟换一处 */
+      if (hr >= 9 && hr < 19 && G.activePeople().some(onMat) && hashOf(p.id + ':' + block()) % 3 !== 0) return { place: 'home', room: 'living', mode: 'stand' };
+      return { place: 'home', room: hr >= 7 && hr < 20 ? pickBy(p.id, ['living', 'yard', 'kitchen', 'living', 'yard', 'elder']) : 'living', mode: 'stand' };
     }
     if (st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19))) return { place: 'home', room: 'kitchen', mode: 'stand' };
     return { place: 'home', room: 'living', mode: 'stand' };
@@ -90,7 +101,7 @@
     for (const room in byRoom) {
       let ns = 0, nb = 0;
       for (const { p, mode } of byRoom[room]) {
-        const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : 'stand';
+        const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : mode === 'mat' ? 'mat' : 'stand';
         const i = kind === 'stand' ? ns++ : kind === 'sleep' ? nb++ : 0;
         out.push({ id: p.id, place, room, kind, ...W.slotPoint(place, room, kind, i) });
       }
@@ -108,6 +119,7 @@
   W.holding = false;      /* 正在长按 */
   W.IDLE_MS = 4000;       /* 动作停下后，原地停几秒再自动回去 */
   W.lastActive = Date.now();
+  W.atDesk = () => { const pl = W.player(); return pl.place === 'home' && pl.room === 'study' && !W.holding; };
   W.where = () => ({ place: W.player().place, room: W.player().room });
   W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; W.lastActive = Date.now(); };
   W.moveTo = (place, room) => { const a = W.playerAnchor(place, room); W.setPlayer({ place, room, gx: a.gx, gy: a.gy }); };
@@ -115,6 +127,8 @@
 
   /* 要照顾这个人：在别的地点就先去那里，同一个地点就直接出现在他旁边 */
   W.presenceNeed = p => {
+    const of = G.flag(p, 'outing');
+    if (of) return { offsite: true, outing: true, place: of.place };
     const loc = W.locationOf(p), pl = W.player();
     if (pl.place !== loc.place) return { offsite: true, place: loc.place };
     return null;
@@ -123,7 +137,7 @@
   W.guard = (pid, fn) => {
     if (!W.enforce) return fn();
     const p = G.get(pid), need = p && W.presenceNeed(p);
-    if (need && need.offsite) { G.toastFor(p, t('toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); return false; }
+    if (need && need.offsite) { G.toastFor(p, t(need.outing ? 'toast.outing' : 'toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); return false; }
     if (p) W.blink(p);
     return fn();
   };

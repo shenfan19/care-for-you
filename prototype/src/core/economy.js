@@ -16,9 +16,6 @@
     if (G.world.money < cost) return false;
     G.world.money -= cost; G.world.inv[k] = (G.world.inv[k] || 0) + n; G.save(); emit(); return true;
   };
-  G.hasNanny = p => !!(G.world.nanny || {})[p.id];
-  G.setNanny = (pid, on) => { G.world.nanny = G.world.nanny || {}; if (on) G.world.nanny[pid] = true; else delete G.world.nanny[pid]; G.save(); emit(); };
-  G.nannyCostPerHour = () => ini.num(G.cfg, 'economy', 'nanny_wage');
   /* 动作缺什么物品或钱，完整体验才检查 */
   G.lacking = a => {
     if (!G.economyOn()) return null;

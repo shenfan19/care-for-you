@@ -14,7 +14,7 @@
 
    directive 是后端要游戏做的事，op 只能是下面这些，别的一律丢弃，数值会被压回范围：
      flag_set { person, name, minutes, value?, place?, room?, mode? }   flag_clear { person, name }
-     need { person, need, delta }   mood { person, delta }   frailty { person, delta }
+     need { person, need, delta }   need_set { person, need, value }   mood_set frailty_set { person, value }   mood { person, delta }   frailty { person, delta }
      condition_add { person, id }   condition_remove { person, id }   counter { person, name, delta }   seen { person, name }（记下今天已经说过，每天只触发一次的规则用）
      log { person, type, text | key, args? }    say { person, text | tkey | group+key, kind? }    （tkey 是界面文字的键，group+key 是台词库里的位置） */
 (function (CY) {
@@ -42,7 +42,8 @@
     const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {}, d = new Date();
     const pad = n => String(n).padStart(2, '0');
     const date = { month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000) };
-    return { v: P.V, date, days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
+    const eco = G.economyOn();
+    return { v: P.V, date, money: Math.floor(G.world.money || 0), economy: eco, working: G.isWorkTime(), at_desk: !CY.world || CY.world.atDesk(), nanny: G.nannyInfo ? G.nannyInfo() : null, days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
       player: { place: pl.place, room: pl.room }, params: { fall_scale: parseFloat(ini.get(G.cfg, 'play', 'fall_scale')) || 1 } };
   };
 
@@ -60,6 +61,8 @@
           if (d.place) { if (!(W && W.PLACES[d.place])) continue; o.place = d.place; o.room = W.PLACES[d.place].rooms[d.room] ? d.room : Object.keys(W.PLACES[d.place].rooms)[0]; o.mode = ['stand', 'sleep', 'cradle'].includes(d.mode) ? d.mode : 'stand'; }
           break;
         case 'flag_clear': o.name = str(d.name, 24); if (!o.name) continue; break;
+        case 'need_set': o.need = str(d.need, 24); o.value = clamp(num(d.value), 0, 1); break;
+        case 'mood_set': case 'frailty_set': o.value = clamp(num(d.value), 0, 1); break;
         case 'need': o.need = str(d.need, 24); o.delta = clamp(num(d.delta), -1, 1); break;
         case 'mood': case 'frailty': o.delta = clamp(num(d.delta), -1, 1); break;
         case 'condition_add': case 'condition_remove': o.id = str(d.id, 32); if (!G.tpl.conditions[o.id]) continue; break;

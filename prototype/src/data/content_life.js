@@ -129,5 +129,22 @@
     anniv_365: { adult: [['{ta}说：一年了，我们都不太一样了。', '{ta} said: a year, and we have both changed a little.']], elder: [['{ta}说：一年，四季都有你在。', '{ta} said: a year, with you through all four seasons.']], child: [['{ta}说：一年，我已经认得你的脚步声了。', '{ta} said: a year, and I know the sound of your steps.']] },
   };
   for (const key in ANNIV2) for (const g in ANNIV2[key]) for (const v of GROUPS[g]) addKeyed(v, 'life', key, ANNIV2[key][g]);
-  C.LIFE_KEYS = Object.keys(LIFE);
+  /* 外出回来，宝宝和爷爷一起玩 */
+  const OUT = {
+    outing_back: {
+      adult: [['{ta}从外面回来，脸上带着风。', '{ta} came back with wind on the face.'], ['{ta}把外套挂好，说：外面的空气真好。', '{ta} hung up the coat and said: the air outside was lovely.']],
+      elder: [['{ta}慢慢走回来，说：今天走了不少路。', '{ta} walked slowly back and said: I walked quite a way today.'], ['{ta}坐下来，满足地叹了口气。', '{ta} sat down and let out a contented sigh.']],
+      child: [['{ta}蹦蹦跳跳地跑回来：好玩！', '{ta} bounded back: that was fun!'], ['{ta}手里攥着一片捡来的叶子。', '{ta} held a leaf picked up along the way.']],
+    },
+  };
+  for (const key in OUT) for (const g in OUT[key]) for (const v of GROUPS[g]) addKeyed(v, 'life', key, OUT[key][g]);
+  const EXTRA = {
+    infant: { outing_back: [['{ta}回到家，趴在你肩上睡着了。', '{ta} came home and fell asleep on your shoulder.']], play_together: [['{ta}在垫子上咯咯地笑，朝老人伸着手。', '{ta} giggled on the mat, reaching for the elder.'], ['{ta}把一个玩具塞到了老人手里。', '{ta} pushed a toy into the elder’s hand.']] },
+    toddler: { outing_back: [['{ta}回到家，还在说着路上看到的狗。', '{ta} came home still talking about the dog seen on the way.']], play_together: [['{ta}把积木一块块递给老人：给！', '{ta} handed the blocks to the elder one by one: here!'], ['{ta}坐在老人腿上，笑得停不下来。', '{ta} sat on the elder’s lap, unable to stop laughing.']] },
+    elder: { play_with_baby: [['{ta}蹲在垫子边，慢慢地逗着孩子。', '{ta} crouched by the mat and slowly played with the little one.'], ['{ta}学着孩子的样子拍手，笑出了声。', '{ta} clapped like the child and laughed out loud.']] },
+    dog: { outing_back: [['{ta}回到家，喝了一大口水，趴下了。', '{ta} came home, drank a big gulp of water and lay down.']] },
+    cat: { outing_back: [['{ta}好奇地嗅着你身上带回来的外面的味道。', '{ta} sniffed curiously at the outdoor smell you brought back.']] },
+  };
+  for (const v in EXTRA) for (const key in EXTRA[v]) addKeyed(v, 'life', key, EXTRA[v][key]);
+  C.LIFE_KEYS = Object.keys(LIFE).concat('outing_back');
 })(globalThis.CY = globalThis.CY || {});

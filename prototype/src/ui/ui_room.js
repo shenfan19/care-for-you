@@ -125,7 +125,7 @@
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p));
       c.classList.toggle('top', topId === p.id);
-      c.classList.toggle('nanny', G.economyOn() && G.hasNanny(p));
+      c.classList.toggle('needy', G.needy(p));
       c.classList.toggle('sel', U.sel === p.id);
       const nmSig = p.person.name + Math.round(p.state.mood * 20) + Math.round(p.state.frailty * 20) + p.story.care_total + CY.i18n.lang + G.isSleeping(p) + (p.person.conditions || []).length;
       if (c.dataset.nm !== nmSig) {
@@ -163,7 +163,7 @@
           if (req.kind === 'ask') btn = req.answers.map((a, i) => `<button class="opt" data-a="an${i}">${esc(a)}</button>`).join('') +
             `<div class="own"><input maxlength="120" placeholder="${esc(t('ask.own'))}"><button data-a="send" class="primary">${esc(t('ask.send'))}</button></div>`;
           else if (req.kind === 'choice') btn = req.choices.map((ch, i) => `<button data-a="ch${i}">${esc(ch.label)}</button>`).join('');
-          else if (req.kind === 'pick') btn = req.options.map((o, i) => `<button class="opt" data-a="pk${i}">${esc(G.fmt(o.text, p))}</button>`).join('') + `<div class="row2"><button data-a="reroll">${esc(t('pick.reroll'))}</button><button data-a="later">${esc(t('btn.later'))}</button></div>`;
+          else if (req.kind === 'pick') btn = req.options.map((o, i) => `<button class="opt" data-a="pk${i}">${esc(G.fmt(o.text, p))}</button>`).join('') + `<div class="row2"><button data-a="later">${esc(t('pick.reroll'))}</button></div>`;
           else if (req.kind === 'nudge') btn = `<button data-a="yes">${esc(t('nudge.yes'))}</button><button data-a="no">${esc(t('nudge.no'))}</button>`;
           else btn = `<button data-a="later">${esc(t('btn.later'))}</button>`;
           slot.innerHTML = `<div class="bubble ${req.kind}"><div>${esc(req.text)}</div><div class="btns">${btn}</div>${req.deadline ? '<div class="cd"></div>' : ''}</div>`;
@@ -173,7 +173,6 @@
             if (a === 'later') G.dismiss(p.id);
             else if (a === 'send') { const v = slot.querySelector('.own input').value; if (v.trim()) G.answerAsk(p.id, null, v); }
             else if (a.startsWith('an')) G.answerAsk(p.id, +a.slice(2));
-            else if (a === 'reroll') G.rerollPick(p.id);
             else if (a === 'yes') G.answerNudge(p.id, true);
             else if (a === 'no') G.answerNudge(p.id, false);
             else if (a.startsWith('ch')) G.choose(p.id, +a.slice(2));
@@ -210,7 +209,7 @@
     const W = CY.world, at = W.where(), pages = U.PAGES(), fam = U.viewPlace === 'family';
     nav.style.display = pages.length ? '' : 'none';
     const here = t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
-    const away = !fam && at.place !== U.viewPlace;
+    const away = !fam && at.place !== U.viewPlace && ['hospital', 'office'].includes(U.viewPlace);
     const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
     const sig = [U.viewPlace, here, away, min, pages.join(), CY.i18n.lang].join('|');
     if (nav.dataset.sig === sig) return;
@@ -235,12 +234,12 @@
     const people = G.activePeople(), fam = U.viewPlace === 'family' || !U.PAGES().length;
     box.style.display = fam || !people.length ? 'none' : '';
     if (fam) return;
-    const sig = people.map(p => [p.id, p.person.name, Math.round(p.state.mood * 10), Math.round(G.maxNeed(p) * 10), !!G.req[p.id], G.topNeed(p), G.isSleeping(p), !!G.flag(p, 'hospital'), !!G.flag(p, 'hurt')].join(':')).join('|') + CY.i18n.lang;
+    const sig = people.map(p => [p.id, p.person.name, Math.round(p.state.mood * 10), Math.round(G.maxNeed(p) * 10), !!G.req[p.id], G.needy(p), G.topNeed(p), G.isSleeping(p), !!G.flag(p, 'hospital'), !!G.flag(p, 'hurt')].join(':')).join('|') + CY.i18n.lang;
     if (box.dataset.sig === sig) return;
     box.dataset.sig = sig;
     box.innerHTML = people.map(p => {
       const defs = G.needsOf(p), tn = G.topNeed(p), urgent = p.state.needs[tn] > 0.6;
-      return `<div class="rcard ${G.req[p.id] ? 'calling' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name)}"><div class="av">${CY.avatar(p)}</div>
+      return `<div class="rcard ${G.req[p.id] || G.needy(p) ? 'calling' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name)}"><div class="av">${CY.avatar(p)}</div>
         <div class="rn">${esc(p.person.name)}${G.isSleeping(p) ? ' 💤' : ''}${G.flag(p, 'hospital') ? ' 🏥' : ''}${G.flag(p, 'hurt') ? ' ❗' : ''}</div>
         <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${p.state.needs[tn] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
     }).join('');
@@ -254,7 +253,7 @@
   /* ---------- 环形菜单与长按 ---------- */
   /* 每个动作一个图标，围成一圈。悬停在中间显示名字和要按多久。有需求的动作是彩色，其余是灰色，灰色的也能点。 */
   const ACT_ICON = {
-    pet: '🤚', hug: '🤗', water: '💧', feed: '🍼', meal: '🍲', diaper: '🚼', bath: '🛁', play: '🧸', read: '📖', soothe: '🌙', homework: '📚', game: '🎮', chat: '💬', rest: '🛋', walk: '🚶', hand: '🤝', doctor: '🩺',
+    park: '🌳', street: '🏪', pet: '🤚', hug: '🤗', water: '💧', feed: '🍼', meal: '🍲', diaper: '🚼', bath: '🛁', play: '🧸', read: '📖', soothe: '🌙', homework: '📚', game: '🎮', chat: '💬', rest: '🛋', walk: '🚶', hand: '🤝', doctor: '🩺',
     groom: '✨', vet: '🏥', clean: '🧹', train: '🎓', teach: '🗣', warm: '🔥', veggie: '🥬', mist: '💦', sun: '☀', fertilize: '🌱', prune: '✂', repot: '🪴',
     medicine: '💊', sugar: '🩸', bp: '🫀', heat: '♨', massage: '💆', fever: '🌡', cool: '🧊', inhaler: '💨', air: '🌬', remind: '☝', album: '📷',
     restsit: '💺', steady: '✋', listen: '👂', walkout: '🌳', lead: '🚽', nightlight: '💡', ointment: '🧴', trimnails: '💅', painkill: '🩹', support: '🤲', rehab: '🏃',
@@ -315,7 +314,7 @@
   U.startHold = function (pid, a, x, y) {
     U.endHold(false);
     const W = CY.world, p = G.get(pid), need = W.enforce && p ? W.presenceNeed(p) : null;
-    if (need && need.offsite) { G.toastFor(p, t('toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); U.closeRing(); return; }
+    if (need && need.offsite) { G.toastFor(p, t(need.outing ? 'toast.outing' : 'toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); U.closeRing(); return; }
     W.holding = true;
     const h = $r('#hold');
     h.style.display = 'block'; h.style.left = x + 'px'; h.style.top = y + 'px';
@@ -345,7 +344,7 @@
   U.floatToggle = async function () {
     if (U.pip) { U.pip.close(); return; }
     if (!('documentPictureInPicture' in window)) { alert(t('float.unsupported')); return; }
-    const w = await documentPictureInPicture.requestWindow({ width: 480, height: 460 });
+    const w = await documentPictureInPicture.requestWindow({ width: 380, height: 340 });
     U.moveRoomTo(w.document, w);
     U.pip = w;
     w.addEventListener('pagehide', () => { U.pip = null; U.moveRoomBack(); });
@@ -356,6 +355,7 @@
     d.body.className = 'pip';
     U.pipDoc = d; U.syncTheme && U.syncTheme();
     d.body.appendChild(U.room);
+    U.prevView = U.viewPlace; U.viewPlace = 'family';
     U.floating = true; U.closeRing();
     U.onFloatChange && U.onFloatChange();
     setTimeout(() => U.renderRoom(true), 50);
@@ -363,6 +363,7 @@
   U.moveRoomBack = function () {
     U.pipDoc = null;
     document.getElementById('roomSlot').appendChild(U.room);
+    if (U.prevView) { U.viewPlace = U.prevView; U.prevView = null; }
     U.floating = false; U.closeRing();
     U.onFloatChange && U.onFloatChange();
     U.renderRoom(true);

@@ -9,7 +9,7 @@
     const to = v => clampHex(f < 1 ? v * f : v + (255 - v) * (f - 1));
     return '#' + [to(r), to(g), to(b)].map(v => v.toString(16).padStart(2, '0')).join('');
   };
-  const FLOOR = { bedroom: '#e8d2ae', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', ward: '#e2ebed', desk: '#dbd7c9' };
+  const FLOOR = { bedroom: '#e8d2ae', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', desk: '#dbd7c9' };
   const WALL = { bedroom: '#f3e6d0', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
 
@@ -49,6 +49,25 @@
         for (let i = 1; i < w; i++) lines += `M${pt(x + i, y)}L${pt(x + i, y + h)}`;
         for (let j = 1; j < h; j++) lines += `M${pt(x, y + j)}L${pt(x + w, y + j)}`;
         out.push(`<path d="${lines}" stroke="#00000014" stroke-width="1" fill="none"/>`);
+        if (name === 'lawn' || name === 'road') {
+          const f = (a, b, c, d, e, col, z) => box(x + a, y + b, c, d, e, col, z), fl = (a, b, c, d, col) => flat(x + a, y + b, c, d, col);
+          const tree = (a, b) => { f(a, b, 0.3, 0.3, 30, '#8a5a3a'); ball(x + a + 0.15, y + b + 0.15, 52, 34, 26, '#5f9a58'); ball(x + a - 0.1, y + b + 0.15, 60, 22, 18, '#74ad68'); };
+          if (name === 'lawn') {
+            fl(0, 2.5, 10, 0.9, '#e6d6b0'); fl(6.2, 0.8, 3.2, 1.6, '#8fc3e6');
+            f(1.2, 0.7, 1.8, 0.5, 10, '#a57a4a'); f(1.2, 0.6, 1.8, 0.14, 22, '#8a6540');
+            tree(0.6, 3.8); tree(8.9, 3.6); tree(4.6, 0.4); tree(9.2, 0.5);
+            for (let i = 0; i < 6; i++) ball(x + 2.4 + i * 0.5, y + 4.6, 6, 4, 4, ['#e8707e', '#f2c14e', '#fff', '#c58ae0', '#f2c14e', '#e8707e'][i]);
+          } else {
+            fl(0, 0, 10, 1.2, '#c8c4bb'); fl(0, 1.2, 10, 3.2, '#6d6d75'); fl(0, 4.4, 10, 1.6, '#c8c4bb');
+            for (let i = 0; i < 6; i++) fl(5.4, 1.3 + i * 0.5, 2.2, 0.28, '#f2f2f2');
+            f(0.4, 0.05, 2.6, 0.95, 62, '#e9b872'); f(3.3, 0.05, 2.6, 0.95, 62, '#9ec3a8'); f(6.2, 0.05, 3.2, 0.95, 62, '#d98c8c');
+            fl(0.4, 1.0, 2.6, 0.2, '#c0392b'); fl(3.3, 1.0, 2.6, 0.2, '#2e86c1'); fl(6.2, 1.0, 3.2, 0.2, '#f1c40f');
+            f(1.2, 4.9, 0.12, 0.12, 50, '#555'); f(8.6, 4.9, 0.12, 0.12, 50, '#555'); tree(9.2, 5.0);
+          }
+          const [lx, ly] = pt(x + w * 0.04, y + h * 0.97, 0).split(',');
+          out.push(`<text x="${lx}" y="${ly}" font-size="14" fill="#3a4a38" opacity=".6" font-family="system-ui,sans-serif">${t('loc.' + name)}</text>`);
+          continue;
+        }
         if (name === 'yard') continue;
         const tallBack = y === 0, tallLeft = x === 0;
         const wc = WALL[name];

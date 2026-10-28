@@ -22,7 +22,7 @@
     await G.reloadContent();
     I.applyDom(document);
     document.title = t('app.title');
-    for (const [id, k] of [['peopleBtn', 'hdr.people'], ['floatBtn', 'hdr.float'], ['dlBtn', 'hdr.save'], ['shareBtn', 'hdr.share'], ['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
+    for (const [id, k] of [['peopleBtn', 'hdr.people'], ['floatBtn', 'hdr.float'], ['shareBtn', 'hdr.share'], ['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
     $('footTxt').textContent = t('foot.text');
     for (const k of ['feed', 'said', 'roomBar']) delete $(k).dataset.sig;
     if (U.room) { U.renderRoom(true); }

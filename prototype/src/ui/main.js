@@ -35,7 +35,6 @@
     $('floatBtn').onclick = () => U.floatToggle();
     $('unfloatBtn').onclick = () => U.floatToggle();
     CY.world.enforce = true;
-    $('dlBtn').onclick = () => U.saveDialog();
     $('shareBtn').onclick = () => U.shareDialog();
     $('gearBtn').onclick = () => U.settingsDialog();
     $('aboutBtn').onclick = () => U.aboutDialog();

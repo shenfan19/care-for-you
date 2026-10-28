@@ -7,13 +7,14 @@
   const $ = id => document.getElementById(id);
   /* ---------- 添加角色 ---------- */
   U.archName = id => t('arch.' + id);
+  const HELPER_ARCH = ['mom', 'dad', 'wife', 'husband'];
   U.addDialog = function (archId, done, editPid) {
     const O = CY.avatarOptions;
     const editP = editPid && G.get(editPid);
     const arch0 = (editP && C.archOf(editP.person.archetype)) || C.archOf(archId) || C.archetypes[0];
     const st = editP
-      ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', traits: (editP.person.traits || []).slice() }
-      : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', traits: [] };
+      ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
+      : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', traits: [], helper: HELPER_ARCH.includes(arch0.id) };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const GROUPS = ['family', 'animal', 'plant'];
@@ -32,11 +33,12 @@
           <div class="row">${esc(t('add.hair'))} ${sel('hair_style', O.hairStyle, O.hairStyle.map(h => t('hair.' + h)), look.hair_style)} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
         : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
+        ${human && stage === 'adult' ? `<label class="row"><input type="checkbox" id="ahelper" ${st.helper ? 'checked' : ''}> ${esc(t('add.helper'))}</label>` : ''}
         <div class="row">${esc(t('add.traits'))} <span class="chips inl">${C.TRAITS.map(k => `<button class="chip ${st.traits.includes(k) ? 'on' : ''}" data-tr="${k}" title="${esc(t('trait.' + k + '_tip'))}">${esc(t('trait.' + k))}</button>`).join('')}</span></div>
         <div class="row" style="justify-content:flex-end;margin:12px 0 0"><button id="acancel">${esc(t('btn.cancel'))}</button><button id="aok" class="primary">${esc(t(editP ? 'btn.save' : 'add.ok'))}</button></div></div></div>`, true);
       dlg.querySelector('#an').oninput = e => { st.name = e.target.value; };
       dlg.querySelector('#aa').onchange = e => {
-        const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age = a.age; st.look = Object.assign({}, a.look);
+        const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age = a.age; st.look = Object.assign({}, a.look); st.helper = HELPER_ARCH.includes(a.id);
         if (a.species !== 'human') st.cond = '';
         render();
       };
@@ -49,6 +51,7 @@
         if (k === 'pronoun' || k === 'cond') st[k] = s.value; else st.look[k] = s.value;
         render();
       });
+      const hp = dlg.querySelector('#ahelper'); if (hp) hp.onchange = () => { st.helper = hp.checked; };
       const bd = dlg.querySelector('#abeard'); if (bd) bd.onchange = () => { st.look.beard = bd.checked; render(); };
       dlg.querySelector('#acancel').onclick = () => { U.closeDialog(); done && done(false); };
       dlg.querySelector('#aok').onclick = async () => {
@@ -56,12 +59,12 @@
           const first = (editP.person.conditions || [])[0] || '';
           let conds = (editP.person.conditions || []).slice();
           if (st.cond !== first) { conds = conds.filter(c => c !== first); if (st.cond) conds.unshift(st.cond); }
-          await G.updatePerson(editP.id, { name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds });
+          await G.updatePerson(editP.id, { name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, helper: st.helper });
           U.closeDialog(); U.afterPeopleChange(); done && done(true);
           return;
         }
         const a = C.archOf(st.arch), role = U.archName(a.id);
-        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [] });
+        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], helper: st.helper });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }

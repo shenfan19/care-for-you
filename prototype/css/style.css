@@ -86,7 +86,7 @@ body.pip { margin:0; } body.pip .room { border:none; border-radius:0; min-height
 .addgrid .prev svg { width:130px; height:170px; }
 .sws { display:inline-flex; gap:5px; flex-wrap:wrap; vertical-align:middle; }
 .sw { width:20px; height:20px; border-radius:50%; border:2px solid var(--line); cursor:pointer; } .sw.on { border-color:var(--ink); }
-.sform { max-height:52vh; overflow:auto; padding-right:6px; }
+.sform { padding-right:6px; }
 .srow { display:grid; grid-template-columns:150px 200px 1fr; gap:8px; align-items:center; margin-bottom:4px; } .srow .n { font-size:12px; line-height:1.4; }
 @media (max-width:640px) { .srow { grid-template-columns:1fr; } }
 .gate { max-width:520px; margin:80px auto; padding:0 20px; }
@@ -264,3 +264,7 @@ header h1.brand .mark { width:44px; height:44px; flex:none; }
 header h1.brand em { font-size:.58em; color:var(--accent); font-weight:500; margin:0 .08em; }
 @media (max-width: 640px) { header h1.brand { font-size:30px; } header h1.brand .mark { width:36px; height:36px; } }
 header { align-items:center; }
+
+/* 宝宝这类一直要人的角色，需求超过一半就一直亮着 */
+.cx.needy .body { filter:drop-shadow(0 0 7px var(--accent)); animation:needyglow 1.4s ease-in-out infinite; }
+@keyframes needyglow { 0%, 100% { filter:drop-shadow(0 0 3px var(--accent)); } 50% { filter:drop-shadow(0 0 11px var(--accent)); } }

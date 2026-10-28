@@ -5,7 +5,7 @@
 (function (CY) {
   const F = {};
 
-  F['templates/species/human.yaml'] = `version: 3
+  F['templates/species/human.yaml'] = `version: 4
 id: human
 label: 人
 food: food
@@ -35,8 +35,10 @@ actions:
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: -0.6 }, mood: 0.1, stages: [teen, adult, elder] }
   rest: { label: 扶去休息, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
   walk: { label: 搀着散步, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
+  park: { label: 带去公园, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, minutes: 8, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
+  street: { label: 去街上逛逛, hold: 6, min: 30, away: true, cost: { money: 30 }, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
-  doctor: { label: 带去看医生, hold: 8, min: 120, cost: { money: 80 }, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
+  doctor: { label: 带去看医生, hold: 8, min: 120, away: true, cost: { money: 80 }, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
   cook: { label: 做饭, selfonly: true, self: [teen, adult, elder], hold: 1, min: 60, uses: { food: 1 }, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
   snack: { label: 找点吃的, selfonly: true, self: [child], hold: 1, min: 10, uses: { food: 1 }, effect: { hunger: -0.6 }, stages: [child] }
@@ -49,7 +51,7 @@ actions:
 const petActions = (feedLabel, extra) => `  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
   pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
   groom: { label: 梳毛, hold: 5, min: 15, effect: { company: -0.3 }, mood: 0.1 }
-  vet: { label: 带去看兽医, hold: 8, min: 90, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 摸一摸, hold: 1, min: 2, effect: { company: -0.3 }, mood: 0.06 }
   water: { label: 换水, hold: 3, min: 3, effect: { thirst: -0.9 } }
   feed: { label: ${feedLabel}, hold: 4, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
@@ -70,7 +72,7 @@ ${petActions('喂猫粮', `  play: { label: 逗猫, hold: 8, min: 20, effect: { 
   clean: { label: 铲猫砂, hold: 4, min: 10, effect: { clean: -1 } }
   hand: { label: 抱一会儿, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1 }`)}`;
 
-  F['templates/species/dog.yaml'] = `version: 4
+  F['templates/species/dog.yaml'] = `version: 5
 id: dog
 label: 狗
 food: pet_food
@@ -81,7 +83,7 @@ needs:
   play: { label: 想出去玩, icon: "🎾", rate: 0.12 }
 actions:
 ${petActions('喂狗粮', `  play: { label: 扔球, hold: 7, min: 20, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
-  walk: { label: 遛一圈, hold: 10, min: 40, effect: { play: -1, company: -0.5 }, mood: 0.12 }
+  walk: { label: 遛一圈, hold: 10, min: 40, away: true, outing: { place: park, room: lawn, minutes: 6, group: false }, effect: { play: -1, company: -0.5 }, mood: 0.12 }
   train: { label: 教口令, hold: 6, min: 20, effect: { play: -0.4, company: -0.3 }, mood: 0.08 }`)}`;
 
   F['templates/species/rabbit.yaml'] = `version: 3
@@ -163,7 +165,7 @@ needs:
 actions:
   peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
   pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
-  vet: { label: 带去看兽医, hold: 8, min: 90, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
   warm: { label: 调保温灯, hold: 4, min: 5, effect: { warmth: -0.9 } }
   water: { label: 换水, hold: 3, min: 3, effect: { thirst: -0.9 } }
@@ -196,7 +198,7 @@ needs:
 actions:
   peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
   pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
-  vet: { label: 带去看兽医, hold: 8, min: 90, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
   warm: { label: 调保温灯, hold: 4, min: 5, effect: { warmth: -0.9 } }
   mist: { label: 喷水保湿, hold: 3, min: 5, effect: { humid: -1 } }
@@ -255,7 +257,7 @@ needs:
   hunger: { label: 饥饿, icon: "🪱", rate: 0.04 }
   clean: { label: 水该换了, icon: "🫧", rate: 0.05 }
 actions:
-  vet: { label: 带去看兽医, hold: 8, min: 90, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
   water: { label: 补水, hold: 3, min: 3, effect: { thirst: -0.9 } }
   feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
@@ -298,17 +300,17 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */
-  F['templates/classes.yaml'] = `version: 5
+  F['templates/classes.yaml'] = `version: 6
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
 classes:
-  infant: { urgency: 3.0, self_care: 0, cries: true }
-  toddler: { urgency: 2.4, self_care: 0.05, cries: true }
+  infant: { urgency: 3.0, self_care: 0, cries: true, nag: 15 }
+  toddler: { urgency: 2.4, self_care: 0.05, cries: true, nag: 20 }
   child: { urgency: 1.5, self_care: 0.35 }
   teen: { urgency: 1.0, self_care: 0.7 }
   adult: { urgency: 0.8, self_care: 0.9 }
   elder: { urgency: 1.6, self_care: 0.6 }
-  cat: { urgency: 1.0, self_care: 0.3 }
-  dog: { urgency: 1.1, self_care: 0.1 }
+  cat: { urgency: 1.0, self_care: 0.3, nag: 40 }
+  dog: { urgency: 1.1, self_care: 0.1, nag: 35 }
   rabbit: { urgency: 1.0, self_care: 0.1 }
   hamster: { urgency: 0.8, self_care: 0.15 }
   bird: { urgency: 1.0, self_care: 0.1 }
@@ -596,7 +598,7 @@ lines:
     sneeze: ["{ta}连着打了几个喷嚏，眼睛红红的。", "{ta}揉着鼻子，说这几天又过敏了。"]
 `;
 
-  F['templates/events/rules.yaml'] = `version: 2
+  F['templates/events/rules.yaml'] = `version: 3
 # 事件规则数据库。游戏本体不写死任何人或事件，谁在什么时候发生什么，都从这里读，改了就生效。
 # trigger：tick 是时间过去，action 是玩家做了一件事，end 是某个带时限的标记到期。
 # when：触发条件，可用 sleeping，any_condition，all_conditions，stage，species，hour_from，hour_to，flag，no_flag，care_total_in，min_frailty。
@@ -648,6 +650,29 @@ rules:
       - { op: counter, name: hospital_n, delta: 1 }
       - { op: log, type: recovered, key: log.discharge }
       - { op: say, kind: soft, group: events, key: discharge }
+  - id: outing_end
+    trigger: end
+    flag: outing
+    do:
+      - { op: mood, delta: 0.05 }
+      - { op: log, type: event, key: log.outing_back }
+      - { op: say, kind: soft, group: life, key: outing_back }
+  - id: play_together_baby
+    trigger: tick
+    when: { stage: [infant, toddler], sleeping: false, with: { stage: [elder], same_room: true } }
+    rate_per_hour: 6
+    do:
+      - { op: need, need: play, delta: -0.12 }
+      - { op: mood, delta: 0.02 }
+      - { op: say, kind: soft, group: life, key: play_together }
+  - id: play_together_elder
+    trigger: tick
+    when: { stage: [elder], sleeping: false, with: { stage: [infant, toddler], same_room: true } }
+    rate_per_hour: 6
+    do:
+      - { op: need, need: company, delta: -0.12 }
+      - { op: mood, delta: 0.02 }
+      - { op: say, kind: soft, group: life, key: play_with_baby }
   - id: clear_hurt
     trigger: action
     when: { flag: [hurt] }

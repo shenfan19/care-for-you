@@ -22,7 +22,7 @@
 
   G.on = fn => G.listeners.push(fn);
   const emit = () => G.listeners.forEach(f => { try { f(); } catch (e) { console.error(e); } });
-  G._h = { emit, clamp, pick };   /* 拆出去的文件用 */
+  G._h = { emit, clamp, pick, applyEffects, consume };   /* 拆出去的文件用，函数声明会提升 */
   G.emit = emit;
   G.saveCfg = () => store.write('settings.ini', ini.stringify(G.cfg));
 
@@ -108,7 +108,7 @@
     const st = G.tpl.items.start || {};
     if (typeof G.world.money !== 'number') G.world.money = st.money || 0;
     if (!G.world.inv) G.world.inv = Object.assign({}, st.inv || {});
-    if (!G.world.nanny) G.world.nanny = {};
+    if (!G.world.nanny || typeof G.world.nanny.days_left !== 'number') G.world.nanny = { days_left: 0, owed: 0, paid_today: 0, day: -1 };
     delete G.world.tasks;
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
@@ -160,6 +160,7 @@
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || [], lines: {},
     };
     if (human) person.age = age;
+    if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : ['mom', 'dad', 'wife', 'husband'].includes(spec.arch);
     await store.writeYaml(`people/${id}/person.yaml`, person);
     return id;
   };
@@ -179,6 +180,7 @@
     if (patch.pronoun) o.pronoun = patch.pronoun;
     if (patch.look) o.appearance = Object.assign({}, o.appearance, patch.look);
     if (Array.isArray(patch.traits)) o.traits = patch.traits.slice(0, 2);
+    if (typeof patch.helper === 'boolean') o.helper = patch.helper;
     if (Array.isArray(patch.conditions)) o.conditions = patch.conditions.slice();
     if (G.isHuman(p) && typeof patch.age === 'number') {
       o.age = patch.age;
@@ -293,7 +295,7 @@
   G.isSleeping = p => G.act[p.id] === 'sleeping';
   G.moodBand = p => (p.state.mood > 0.75 ? 'great' : p.state.mood > 0.5 ? 'ok' : p.state.mood > 0.3 ? 'low' : 'bad');
   G.statusOf = p => ({
-    activity: G.act[p.id] || G.activityOf(p), crying: !!G.crying[p.id], nanny: G.economyOn() && G.hasNanny(p), mood: G.moodBand(p),
+    activity: G.act[p.id] || G.activityOf(p), crying: !!G.crying[p.id], mood: G.moodBand(p),
     conditions: p.person.conditions || [], traits: p.person.traits || [], self_care: G.classOf(p).self_care,
   });
 
@@ -462,21 +464,23 @@
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
     const eco = G.economyOn(), working = eco && G.isWorkTime();
     G.world.game_minutes += gmin;
-    /* 工作收入：工作时段里，没有故事里的事占着手，就在赚钱 */
-    if (!offline && eco && working) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
+    /* 工作收入：工作时段里，人在书桌前才赚钱，离开书桌的时间没有收入；分担的家人在家办公，自己赚一份 */
+    const atDesk = !CY.world || !CY.world.enforce || CY.world.atDesk();
+    if (!offline && eco && working && atDesk) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
+    if (!offline && eco && working && G.helperIncome) G.world.money += G.helperIncome() * hours;
+    const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
     for (const p of G.activePeople()) {
-      const defs = G.needsOf(p), s = p.state, nanny = eco && working && G.hasNanny(p), mods = G.traitMods(p);
+      const defs = G.needsOf(p), s = p.state, mods = G.traitMods(p);
       const prevAct = G.act[p.id];
       const act = G.act[p.id] = G.activityOf(p), sleeping = act === 'sleeping';
-      if (nanny && !offline) G.world.money -= G.nannyCostPerHour() * hours;
       const night = G.isNight();
       for (const k in defs) {
+        if (external) continue;
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1);
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
-      if (nanny) target = Math.min(target, 0.55);
       s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
       if (offline) continue;
       if (prevAct === 'awake' && act === 'sleeping') G.toastFor(p, t('toast.sleep', { name: p.person.name }), 'soft');
@@ -494,8 +498,6 @@
       if (was < 0.7 && s.frailty >= 0.7) { G.log(p.id, 'frail', t('log.frail', { name: p.person.name })); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
       if (was >= 0.5 && s.frailty < 0.5) G.log(p.id, 'recovered', t('log.recovered', { name: p.person.name }));
     }
-    /* 请了保姆但钱花光了，保姆先走 */
-    if (G.world.money < 0) { G.world.money = 0; if (Object.keys(G.world.nanny || {}).length) { G.world.nanny = {}; for (const p of G.activePeople()) G.log(p.id, 'event', t('log.nanny_left')); } }
     if (!offline) G.driveTick(gmin);
   }
 
@@ -576,11 +578,10 @@
 
   function fire() {
     if (G.inQuiet()) return;
-    const workNanny = p => G.economyOn() && G.isWorkTime() && G.hasNanny(p);
     const awake = p => !G.isSleeping(p);
     const free = G.activePeople().filter(p => !G.req[p.id] && awake(p));
     if (!free.length) return;
-    const needy = free.filter(p => !workNanny(p) && G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
+    const needy = free.filter(p => G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
     if (needy.length && Math.random() < 0.65) {
       const p = weighted(needy, q => G.urgency(q) * needyW(q) + 0.01), defs = G.needsOf(p), need = G.topNeed(p);
       const text = line(p, 'request', need, t('req.need_fallback', { name: p.person.name, need: G.needLabel(need, defs[need]) }));
@@ -607,7 +608,9 @@
     }
     const evs = eventsOf(p);
     const asks = G.askBank(p);
-    const picks = ini.bool(G.cfg, 'interaction', 'picks') && p.person.kind !== 'plant' ? G.pickOptions(p) : [];
+    /* 还不会说话的孩子没有“平时会说哪句”可回想 */
+    const speaks = p.person.kind !== 'human' || G.age(p) >= 2;
+    const picks = ini.bool(G.cfg, 'interaction', 'picks') && p.person.kind !== 'plant' && speaks ? G.pickOptions(p) : [];
     const nudgeOk = ini.bool(G.cfg, 'interaction', 'nudges') && p.person.kind === 'human' && G.stage(p) !== 'infant' && G.tpl.nudges.length;
     const kinds = [
       ['choice', evs.length ? 0.15 : 0], ['ask', asks.length ? 0.3 : 0], ['pick', picks.length ? 0.2 : 0], ['nudge', nudgeOk ? 0.07 : 0],
@@ -641,6 +644,20 @@
     }
   }
   G.fire = fire;
+  /* 宝宝一直要人，需求超过一半就一直提示，隔一小会儿再叫一次；猫和狗也会隔一阵来要。别的角色安静 */
+  G.nagAt = {};
+  G.needy = p => !!G.classOf(p).nag && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) > 0.5;
+  G.nagTick = now => {
+    if (G.inQuiet()) return;
+    for (const p of G.activePeople()) {
+      if (!G.needy(p) || G.req[p.id] || (G.nagAt[p.id] || 0) > now) continue;
+      const defs = G.needsOf(p), need = G.topNeed(p);
+      const text = line(p, 'request', need, t('req.need_fallback', { name: p.person.name, need: G.needLabel(need, defs[need]) }));
+      G.req[p.id] = mkReq({ pid: p.id, kind: 'need', need, text });
+      G.say(p.id, 'char', text);
+      G.nagAt[p.id] = now + G.classOf(p).nag * 1000;
+    }
+  };
 
   function expire(req) {
     const p = G.get(req.pid), mode = ini.get(G.cfg, 'interrupt', 'mode');
@@ -673,6 +690,8 @@
     const scale = a.bonus_item && G.economyOn() && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
     consume(a);
     applyEffects(p, a, scale);
+    if (a.away && G.awayCost) G.awayCost(p, a);
+    if (a.outing && G.startOuting) G.startOuting(p, a);
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
     p.story.care_total++;
@@ -767,13 +786,6 @@
     learn(p, 'pick', true, (Date.now() - req.since) / 1000);
     G.save(); emit();
   };
-  G.rerollPick = function (pid) {
-    const req = G.req[pid];
-    if (!req || req.kind !== 'pick') return;
-    const opts = G.pickOptions(G.get(pid));
-    if (opts.length) req.options = opts;
-    emit();
-  };
   G.answerNudge = function (pid, yes) {
     const req = G.req[pid];
     if (!req || req.kind !== 'nudge') return;
@@ -815,6 +827,8 @@
     if (G._wk !== undefined && G._wk !== wk && G.activePeople().length) G.log('you', 'event', t(wk ? 'me.work_start' : 'me.work_end'));
     G._wk = wk;
     if (G.worldTick) G.worldTick(now);
+    G.nagTick(now);
+    if (G.assistTick) G.assistTick(dt);
     if (now >= (G.nextAmbient || 0)) { G.nextAmbient = now + 30000 + Math.random() * 40000; if (!G.isPaused() && G.activePeople().length) ambientChat(); }
     emit();
   };

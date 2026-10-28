@@ -142,3 +142,7 @@ CY.i18n.register("ja", {"intro.p2": "長押しだけの軽めの体験か、仕�
 CY.i18n.register("ja", {"about.p5": "手をマウスに置いたまま、頭をしばらく休ませてください。"});
 
 CY.i18n.register("ja", {"me.work_start": "仕事の時間になり、あなたは書斎で作業を始めた。", "me.work_end": "仕事が終わり、あなたは書斎を出た。", "me.go": "あなたは{place}へ行った。", "me.back": "あなたは家に戻った。"});
+
+CY.i18n.register("ja", {"loc.park": "公園", "loc.street": "商店街", "loc.lawn": "芝生", "loc.road": "通り", "act.park": "公園へ連れて行く", "act.street": "街へ出かける", "toast.outing": "{name}は{place}に出かけています。もうすぐ戻ります。", "me.away": "「{label}」のため、机を {min} 分離れ、{lost} 少なく稼いだ。", "log.outing_start": "{name}は{place}へ出かけた。", "log.outing_back": "{name}が戻ってきた。", "log.nanny_hired": "シッターを {n} 日間雇った。", "log.nanny_end": "シッターの契約が終わった。", "log.nanny_left": "給料の未払いが多く、シッターは去った。", "log.assist": "{who}があなたの代わりに{name}を世話した：{label}", "assist.nanny": "シッター"});
+
+CY.i18n.register("ja", {"nanny.title": "シッター", "nanny.note": "シッターを雇い、1日に1回、日給 {n} を払います。満額払えば細かな世話を自動でこなし、効率はあなたの8割です。未払いが増えると効率が落ち、2日分たまると辞めます。", "nanny.hire": "{n} 日間雇う", "nanny.status": "残り {d} 日、未払い {owed}、効率 {eff}%", "nanny.pay": "{n} 払う", "nanny.paid": "今日は {n} 払い済み", "nanny.fire": "解雇", "nanny.helpers": "{names}は在宅で働いて収入の一部を稼ぎ、世話も自動で手伝います。給料は要りません。", "add.helper": "在宅で働き、自動で稼ぎ、世話も分担する"});

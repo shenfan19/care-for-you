@@ -610,3 +610,7 @@ CY.i18n.register("zh-TW", {"intro.p2": "你可以選只有長按的輕量體驗�
 CY.i18n.register("zh-TW", {"about.p5": "讓手停在滑鼠上，讓腦子歇一會兒。"});
 
 CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
+
+CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "me.away": "為了{label}，你離開書桌 {min} 分鐘，少賺了 {lost}。", "log.outing_start": "{name}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.nanny_hired": "僱了一位保母，{n} 天。", "log.nanny_end": "保母的合約到期了。", "log.nanny_left": "保母走了，因為欠薪太多。", "log.assist": "{who}替你照顧了{name}：{label}", "assist.nanny": "保母"});
+
+CY.i18n.register("zh-TW", {"nanny.title": "保母", "nanny.note": "僱一位保母，每天付一次薪水，日薪 {n}。付夠她就自動處理零碎的照顧，滿效率是你自己的八成。欠得多效率會掉，欠夠兩天她就走。", "nanny.hire": "僱 {n} 天", "nanny.status": "還剩 {d} 天，欠薪 {owed}，效率 {eff}%", "nanny.pay": "付 {n}", "nanny.paid": "今天已付 {n}", "nanny.fire": "辭退", "nanny.helpers": "{names}在家辦公，自己賺一份錢，也自動幫著照顧，不用付薪水。", "add.helper": "在家辦公，自動賺錢，也分擔照顧"});

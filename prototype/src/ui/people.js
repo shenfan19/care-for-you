@@ -35,7 +35,7 @@
     const dlg = U.dialog(`<div class="statgrid"><div class="prev">${CY.avatar(p)}</div><div>
       <h2 style="margin:0 0 4px">${esc(p.person.name)} <span class="pill">${esc(p.person.role || '')}</span></h2>
       <div class="mute">${esc(t('class.' + cls))}${G.isHuman(p) ? ' · ' + esc(t('status.age', { n: +G.age(p).toFixed(1) })) : ''}</div>
-      <div style="margin:6px 0"><span class="tag">${esc(t('mood.' + st.mood))}</span><span class="tag">${esc(t('act.' + st.activity))}</span>${st.crying ? `<span class="tag">${esc(t('status.crying'))}</span>` : ''}${st.nanny ? `<span class="tag">${esc(t('status.nanny'))}</span>` : ''}
+      <div style="margin:6px 0"><span class="tag">${esc(t('mood.' + st.mood))}</span><span class="tag">${esc(t('act.' + st.activity))}</span>${st.crying ? `<span class="tag">${esc(t('status.crying'))}</span>` : ''}
         ${st.conditions.map(k => `<span class="tag">🩺 ${esc(CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k))}</span>`).join('')}${st.traits.map(k => `<span class="tag">${esc(t('trait.' + k))}</span>`).join('')}</div>
       <div class="srow2"><span class="l">${esc(t('status.mood'))}</span><div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div></div>
       <div class="srow2"><span class="l">${esc(t('status.frailty'))}</span><div class="bar"><i style="width:${Math.round(p.state.frailty * 100)}%"></i></div></div>

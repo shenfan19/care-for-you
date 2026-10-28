@@ -31,6 +31,9 @@
         case 'flag_set': G.setFlag(p, d.name, d); break;
         case 'flag_clear': G.clearFlag(p, d.name); break;
         case 'need': if (d.need in s.needs) s.needs[d.need] = clamp(s.needs[d.need] + d.delta); break;
+        case 'need_set': if (d.need in s.needs) s.needs[d.need] = d.value; break;
+        case 'mood_set': s.mood = d.value; break;
+        case 'frailty_set': s.frailty = d.value; break;
         case 'mood': s.mood = clamp(s.mood + d.delta); break;
         case 'frailty': s.frailty = clamp(s.frailty + d.delta); break;
         case 'condition_add':

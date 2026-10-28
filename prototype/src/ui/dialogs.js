@@ -7,7 +7,7 @@
   const $ = id => document.getElementById(id);
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'play.backend_provider': ['builtin', 'http'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
@@ -20,21 +20,21 @@
       return head + `<div class="srow"><span class="k">${k}</span>${input}<span class="mute n">${esc(CY.tOr('ini.' + key, note))}</span></div>`;
     }).join('');
     const th = ini.get(G.cfg, 'ui', 'theme'), bg = ini.get(G.cfg, 'ui', 'background'), lg = ini.get(G.cfg, 'ui', 'language');
-    const chips = (name, vals, labels, cur) => `<span class="chips inl">${vals.map((v, i) => `<button class="chip ${v === cur ? 'on' : ''}" data-ap="${name}" data-v="${v}">${esc(labels[i])}</button>`).join('')}</span>`;
+    const sel = (name, vals, labels, cur) => `<select data-ap="${name}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('set.title'))}</h2>
       <h3>${esc(t('set.look'))}</h3>
-      <div class="row">${esc(t('set.theme'))} ${chips('theme', ['auto', 'light', 'dark'], [t('theme.auto'), t('theme.light'), t('theme.dark')], th)}</div>
+      <div class="row">${esc(t('set.theme'))} ${sel('theme', ['auto', 'light', 'dark'], [t('theme.auto'), t('theme.light'), t('theme.dark')], th)}</div>
       <div class="row">${esc(t('set.bg'))} <span class="sws">${BGS.map(b => `<span class="sw ${b === bg ? 'on' : ''}" data-ap="background" data-v="${b}" title="${esc(t('bg.' + b))}" style="background:${BG_HEX[b]}"></span>`).join('')}</span></div>
-      <div class="row">${esc(t('set.scene'))} ${chips('scene', ['auto', ...CY.scenes.ids, 'none'], ['auto', ...CY.scenes.ids, 'none'].map(k => t('scene.' + k)), ini.get(G.cfg, 'ui', 'scene'))}</div>
-      <div class="row">${esc(t('set.lang'))} ${chips('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
+      <div class="row">${esc(t('set.scene'))} ${sel('scene', ['auto', ...CY.scenes.ids, 'none'], ['auto', ...CY.scenes.ids, 'none'].map(k => t('scene.' + k)), ini.get(G.cfg, 'ui', 'scene'))}</div>
+      <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
-      <div class="row"><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button></div>
+      <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button></div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="scancel">${esc(t('btn.close'))}</button><button id="sapply" class="primary">${esc(t('btn.save'))}</button></div>`, true);
-    dlg.querySelectorAll('[data-ap]').forEach(el => el.onclick = async () => {
-      const k = el.dataset.ap; G.cfg.ui = G.cfg.ui || {}; G.cfg.ui[k] = el.dataset.v;
+    dlg.querySelectorAll('[data-ap]').forEach(el => el[el.tagName === 'SELECT' ? 'onchange' : 'onclick'] = async () => {
+      const k = el.dataset.ap; G.cfg.ui = G.cfg.ui || {}; G.cfg.ui[k] = el.tagName === 'SELECT' ? el.value : el.dataset.v;
       await saveCfg(); U.applyTheme(); if (k === 'language') U.applyLang(); U.settingsDialog();
     });
     dlg.querySelector('#scancel').onclick = U.closeDialog;
@@ -43,6 +43,7 @@
       dlg.querySelectorAll('[data-k]').forEach(el => { const [s, k] = el.dataset.k.split('.'); (cfg[s] = cfg[s] || {})[k] = el.value.trim(); });
       G.cfg = cfg; await saveCfg(); U.closeDialog(); U.renderClock();
     };
+    dlg.querySelector('#dsave').onclick = () => U.saveDialog();
     dlg.querySelector('#dfolder').onclick = async () => {
       try { const had = await store.chooseFolder(); await G.load(); U.closeDialog(); U.afterPeopleChange(); alert(t(had ? 'set.folder_had' : 'set.folder_copied')); } catch (e) { alert(e.message); }
     };
