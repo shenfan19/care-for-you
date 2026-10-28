@@ -37,7 +37,7 @@
 
   /* ---------- 自动照顾 ---------- */
   const NO_AUTO = new Set(['doctor', 'vet', 'listen', 'stayclose', 'album', 'remind', 'hand', 'chat', 'walkout', 'game']);
-  const eligible = (p, ex) => p !== ex && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) > 0.55 && (G.isHuman(p) || p.person.kind !== 'human');
+  const eligible = (p, ex, thr) => p !== ex && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.isSleeping(p) && G.maxNeed(p) > (thr || 0.55) && (G.isHuman(p) || p.person.kind !== 'human');
   /* 挑一个动作：能降低他当前最急需求的，用得起物品的，不是特殊的 */
   const bestAction = p => {
     let best = null, gain = 0;
@@ -57,17 +57,20 @@
   };
   const timers = {};
   G.helpers = () => G.activePeople().filter(p => p.person.helper && G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)) && p !== G.protagonist() && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) < 0.8);
+  /* 分担的家人：隔一阵看看谁最需要，不在同一个房间就先走过去，到了再动手 */
   G.assistTick = dt => {
-    /* 分担的家人，每人自己的节奏 */
+    const W = CY.world;
     for (const h of G.helpers()) {
-      const hp = h.person.help || {}, iv = hp.interval || [40, 70];
+      const hp = h.person.help || {}, iv = hp.interval || [90, 160];
       timers[h.id] = (timers[h.id] === undefined ? 20 + Math.random() * 20 : timers[h.id]) - dt;
       if (timers[h.id] > 0) continue;
+      const pool = G.activePeople().filter(p => eligible(p, h, hp.threshold || 0.65)).sort((a, b) => G.urgency(b) - G.urgency(a));
+      if (!pool.length) { timers[h.id] = 15; continue; }
+      const p = pool[0], tl = W.locationOf(p), hl = W.locationOf(h);
+      if (tl.place === hl.place && tl.room !== hl.room) { timers[h.id] = W.goTo(h, tl.room) ? 12 : 8; continue; }
       timers[h.id] = iv[0] + Math.random() * (iv[1] - iv[0]);
-      const pool = G.activePeople().filter(p => eligible(p, h));
-      if (!pool.length) continue;
-      const p = pool[Math.floor(Math.random() * pool.length)], a = bestAction(p);
-      if (a) doAssist(h.person.name, p, a, (h.person.help || {}).efficiency || 0.5);
+      const a = bestAction(p);
+      if (a) doAssist(h.person.name, p, a, hp.efficiency || 0.5);
     }
   };
 })(globalThis.CY = globalThis.CY || {});

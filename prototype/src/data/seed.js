@@ -887,9 +887,9 @@ rules:
   /* 角色卡：每种典型角色一张，plain YAML，一个文件。游戏创建角色时按卡来，后端也按同样的字段读。
      health.score 是健康度，1 是完全健康；class 是这类人的紧迫、自理、哭闹；self_actions 是自己能做的动作；
      prefs 是爱待在哪些房间（rooms 是权重）和爱不爱动（restless，0 到 1，越大越爱换地方）；
-     help 是主动帮忙：proactive 为真就会隔一阵自己动手照顾别人，efficiency 是效果比例，interval 是间隔的现实秒数范围；
+     help 是主动帮忙：proactive 为真就会隔一阵自己走过去照顾最需要的人，threshold 是需求超过多少才出手，efficiency 是效果比例，interval 是间隔的现实秒数范围；
      dialogue 是对话：voice 指向声线，lines 里写的话优先于声线。 */
-  const CARD_V = 2;
+  const CARD_V = 4;
   /* 各类角色在各个房间的喜好权重，卡里的 prefs.rooms 写了就以卡为准。需求会另外把人推向厨房、卧室这些地方 */
   const PREFS = {
     elder: { living: 3, yard: 2, kitchen: 1.5 }, adult: { living: 3, kitchen: 1.5, yard: 1, study: 0.6 }, teen: { bedroom: 3, living: 1.5, study: 1.5, kitchen: 0.6 },
@@ -924,7 +924,7 @@ rules:
       Object.assign(card, { pronoun: a.pronoun, voice: a.voice, look: a.look, traits: [],
         health: Object.assign({ score: human ? SCORE[stage] : 0.9, mood: 0.6, conditions: [] }, ex.health),
         class: Object.assign({}, cls[stage]), need_rate: {}, self_actions: selfActs,
-        help: Object.assign({ proactive: HELPERS.includes(a.id), efficiency: 0.5, interval: [40, 70] }, ex.help),
+        help: Object.assign({ proactive: HELPERS.includes(a.id), efficiency: 0.4, interval: [90, 160], threshold: 0.65 }, ex.help),
         prefs: Object.assign({ rooms: PREFS[stage] || PREFS.adult, restless: RESTLESS[stage] || 0.6 }, ex.prefs),
         dialogue: { voice: a.voice, lines: ex.lines || {} } });
       out[`templates/cards/${a.id}.yaml`] = '# 角色卡：一类典型角色的全部设定。改了以后，新建的这一类角色按新的来。' + String.fromCharCode(10) + jsyaml.dump(card, { lineWidth: -1, noRefs: true, skipInvalid: true, flowLevel: 3 });

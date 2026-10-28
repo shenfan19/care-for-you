@@ -68,7 +68,7 @@
   W.frozen = new Set();   /* 被悬停或点选的人，停着不动 */
   const prefsOf = p => (p.person.prefs && p.person.prefs.rooms) || W.PREFS[G.classKey(p)] || W.PREFS.adult;
   const restlessOf = p => { const r = p.person.prefs && p.person.prefs.restless; return typeof r === 'number' ? r : 0.6; };
-  const dwellMs = p => (70 + Math.random() * 140) / (0.4 + restlessOf(p)) * 1000;
+  const dwellMs = p => (180 + Math.random() * 420) / (0.4 + restlessOf(p)) * 1000;
   /* 一个房间对这个人此刻有多大吸引力 */
   W.scoreRoom = (p, room) => {
     const n = p.state.needs, hr = G.dayMinutes() / 60, st = G.classKey(p), human = G.isHuman(p);
@@ -106,6 +106,13 @@
     return A.room;
   };
   W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
+  /* 叫一个人走到某个房间去，比如大人去照顾哭的孩子。被悬停或点选的人不动 */
+  W.goTo = (p, room) => {
+    if (W.frozen.has(p.id) || p === G.protagonist()) return false;
+    const A = W.agents[p.id] || (W.agents[p.id] = { room, next: 0 });
+    A.room = room; A.next = Date.now() + 40000;
+    return true;
+  };
   W.freeze = (id, on) => { if (on) W.frozen.add(id); else W.frozen.delete(id); };
 
   W.locationOf = p => {
