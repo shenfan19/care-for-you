@@ -126,7 +126,7 @@
     const M = CY.meta, tabs = ['about', 'privacy', 'credits', 'version'];
     const para = keys => keys.map(k => `<p>${esc(t(k))}</p>`).join('');
     const body = {
-      about: para(['about.p1', 'about.p2', 'about.p3', 'about.p4']),
+      about: para(['about.p1', 'about.p5', 'about.p2', 'about.p3', 'about.p4']),
       privacy: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}<h3>${esc(t('priv.h2'))}</h3>${para(['priv.p4', 'priv.p5'])}
         <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}<div class="mute">${esc(t('priv.note'))}</div>`,
       credits: para(['cred.p1', 'cred.p2', 'cred.p3']),
