@@ -83,11 +83,13 @@
     const cur = el._pos;
     if (cur && cur.place === place && Math.abs(cur.gx - gx) + Math.abs(cur.gy - gy) < 0.01) return;
     el._pos = { place, gx, gy }; paint(el, place, gx, gy);
+    /* 走的时候身体轻轻起伏，到了就停 */
+    if (cur && cur.place === place) { el.classList.add('walking'); clearTimeout(el._wt); el._wt = setTimeout(() => el.classList.remove('walking'), el.classList.contains('lead') || el.classList.contains('player') ? 1300 : 7200); }
   };
 
   /* 悬停或点选的人停在原地，包括正在慢慢走的：把当前位置固定下来，放开后再接着往目标走 */
   const freezeEl = (el, on) => {
-    if (on && !el._frozen) { const cs = win().getComputedStyle(el); el.style.transition = 'none'; el.style.left = cs.left; el.style.top = cs.top; el._frozen = true; }
+    if (on && !el._frozen) { el.classList.remove('walking'); const cs = win().getComputedStyle(el); el.style.transition = 'none'; el.style.left = cs.left; el.style.top = cs.top; el._frozen = true; }
     else if (!on && el._frozen) { el._frozen = false; el._pos = null; el.style.transition = ''; }
   };
   U.hoverId = null;

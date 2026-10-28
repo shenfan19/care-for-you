@@ -2,7 +2,7 @@
    用法：node tests/sim_eval.js [天数=3] [玩家每多少秒看一眼=90] [家庭=family|solo|zoo]
    看什么：急需占比（需求超过八成的人的时间占比），婴儿哭闹时长，每小时被打扰次数，大人帮忙次数，换房间的次数，住院次数。 */
 const { ctx, CY, G } = require('./harness');
-const days = +process.argv[2] || 3, look = +process.argv[3] || 90, kind = process.argv[4] || 'family';
+const days = +process.argv[2] || 3, look = +process.argv[3] || 90, kind = process.argv[4] || 'family', leadName = process.argv[5] || '';
 
 const FAMILIES = {
   family: [['grandpa', '爷爷', ['diabetes']], ['grandma', '奶奶', ['arthritis']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler2', '二岁'], ['baby', '宝宝'], ['daughter', '女儿'], ['cat', '团子'], ['dog', '豆豆']],
@@ -17,6 +17,7 @@ const FAMILIES = {
   for (const [arch, name, cond] of FAMILIES[kind]) await G.createPerson({ arch, name, conditions: cond });
   await G.load();
   G.world.intro_done = true;
+  if (leadName) { const L = G.people.find(p => p.person.name === leadName); if (L) G.setProtagonist(L.id); }
   CY.world.enforce = false;
 
   /* 虚拟时钟：Date 被换成可控的，从早上八点开始 */
@@ -64,11 +65,19 @@ const FAMILIES = {
       lastLook = fake;
       const cands = people.filter(p => !G.flag(p, 'outing') && !G.flag(p, 'hospital')).sort((a, b) => G.urgency(b) - G.urgency(a));
       const p = cands[0];
-      if (p && G.urgency(p) > 0.45) {
+      if (p && G.maxNeed(p) > 0.5) {
         const a = bestAction(p);
         if (a && G.perform(p.id, a.id)) { stat.acts++; busyUntil = fake + G.holdSeconds(a) * 1000; }
       }
     }
+  }
+  /* 不变量：数值都在范围内，没有 NaN，每个人都有位置 */
+  const bad = [];
+  for (const p of G.people) {
+    for (const [k, v] of Object.entries(p.state.needs)) if (!(v >= 0 && v <= 1)) bad.push(p.person.name + '.' + k + '=' + v);
+    if (!(p.state.mood >= 0 && p.state.mood <= 1)) bad.push(p.person.name + '.mood=' + p.state.mood);
+    if (!(p.state.frailty >= 0 && p.state.frailty <= 1)) bad.push(p.person.name + '.frailty=' + p.state.frailty);
+    const l = CY.world.locationOf(p); if (!l || !l.room) bad.push(p.person.name + ' 没有位置');
   }
   const hours = days * 24;
   let hosp = 0, assists = 0, falls = 0, social = 0;
@@ -82,6 +91,7 @@ const FAMILIES = {
   console.log(`- 每人每小时换房间：${(stat.roomMoves / Math.max(1, G.people.length) / hours).toFixed(1)} 次`);
   console.log(`- 家人之间的互动：每人每小时 ${(social / Math.max(1, G.people.length) / hours).toFixed(2)} 次`);
   console.log(`- 住院记录：${hosp} 次`);
+  console.log('- 不变量：' + (bad.length ? '失败 ' + bad.slice(0, 6).join('，') : '通过'));
   console.log('- 各人的平均最高需求：' + Object.keys(needSum).map(n => n + ' ' + (needSum[n] / needN[n]).toFixed(2)).join('，'));
   process.exit(0);
 })().catch(e => { console.error(e); process.exit(1); });

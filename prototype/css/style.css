@@ -265,3 +265,12 @@ header { align-items:center; }
 /* 角色在房间里慢慢走：位置变化是一段长的滑动，主角跟着你的操作走得快些 */
 .room.iso .cx { transition:left 7s ease-in-out, top 7s ease-in-out; }
 .room.iso .cx.lead, .room.iso .cx.player { transition-duration:1.2s; }
+
+/* 手机上房间很小，气泡收小一点 */
+@media (max-width: 640px) {
+  .bubble { width:150px; font-size:12px; padding:6px 8px; } .bubble.ask { width:180px; } .bubble.reveal { width:190px; }
+  .bubble .btns button { font-size:11px; padding:2px 8px; }
+}
+
+@keyframes stroll { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-2.5%); } }
+.room.iso .cx.walking .body { animation:stroll .8s ease-in-out infinite; }
