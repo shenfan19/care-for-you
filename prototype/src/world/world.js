@@ -29,7 +29,7 @@
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
     study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.5, .5] },
-    living: { mat: [[.5, .56]], stand: [[.5, .68], [.28, .8], [.74, .8], [.5, .9], [.85, .55], [.15, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
+    living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
@@ -89,7 +89,7 @@
       }
     }
     /* 房间里人多就不想挤，大家自然分散开 */
-    if (human) w /= 1 + 0.5 * G.activePeople().filter(q => q !== p && G.isHuman(q) && W.roomOfNow(q) === room).length;
+    if (human) w /= 1 + 0.8 * G.activePeople().filter(q => q !== p && G.isHuman(q) && W.roomOfNow(q) === room).length;
     return w;
   };
   W.chooseRoom = (p, cur) => {

@@ -27,7 +27,7 @@ const FAMILIES = {
   G.cfg.time.daynight = 'system';
   G.lastTick = fake; G.nextAt = fake + 4000;
 
-  const stat = { ticks: 0, urgentTicks: 0, sleepSkip: 0, cryTicks: 0, awakePersonTicks: 0, reqs: 0, asks: 0, acts: 0, roomMoves: 0, hospital: 0, assists: 0, falls: 0 };
+  const stat = { crowdSum: 0, crowdN: 0, ticks: 0, urgentTicks: 0, sleepSkip: 0, cryTicks: 0, awakePersonTicks: 0, reqs: 0, asks: 0, acts: 0, roomMoves: 0, hospital: 0, assists: 0, falls: 0 };
   const lastRoom = {}, seenReq = new Set(), needSum = {}, needN = {};
   let busyUntil = 0, lastLook = fake;
 
@@ -59,6 +59,7 @@ const FAMILIES = {
       if (lastRoom[p.id] && lastRoom[p.id] !== key) stat.roomMoves++;
       lastRoom[p.id] = key;
     }
+    if (i % 12 === 0) { const occ = {}; for (const p of people) if (!G.isSleeping(p) && p.person.kind !== 'plant') { const l = CY.world.locationOf(p); const k = l.place + '/' + l.room; occ[k] = (occ[k] || 0) + 1; } stat.crowdSum += Math.max(0, ...Object.values(occ)); stat.crowdN++; }
     for (const id in G.req) { const r = G.req[id]; const k = id + r.since; if (!seenReq.has(k)) { seenReq.add(k); stat.reqs++; if (r.kind === 'ask') stat.asks++; } }
     /* 玩家：每隔 look 秒看一眼，挑最急的人做他最缓解的动作，做的时候手被占住 */
     if (fake >= busyUntil && fake - lastLook >= look * 1000) {
@@ -89,6 +90,7 @@ const FAMILIES = {
   console.log(`- 每小时被打扰：${(stat.reqs / hours).toFixed(1)} 次，其中问答 ${(stat.asks / hours).toFixed(1)} 次`);
   console.log(`- 玩家动作：每小时 ${(stat.acts / hours).toFixed(1)} 次`);
   console.log(`- 每人每小时换房间：${(stat.roomMoves / Math.max(1, G.people.length) / hours).toFixed(1)} 次`);
+  console.log(`- 最挤的房间平均有 ${(stat.crowdSum / Math.max(1, stat.crowdN)).toFixed(1)} 个醒着的人`);
   console.log(`- 家人之间的互动：每人每小时 ${(social / Math.max(1, G.people.length) / hours).toFixed(2)} 次`);
   console.log(`- 住院记录：${hosp} 次`);
   const types = {}; for (const p of G.people) for (const m of Object.values(G.journal[p.id] || {})) for (const e of m) types[e.type] = (types[e.type] || 0) + 1;
