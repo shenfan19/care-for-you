@@ -274,3 +274,9 @@ header { align-items:center; }
 
 @keyframes stroll { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-2.5%); } }
 .room.iso .cx.walking .body { animation:stroll .8s ease-in-out infinite; }
+
+/* 减少动态效果：不要慢慢滑动和起伏 */
+@media (prefers-reduced-motion: reduce) {
+  .room.iso .cx, .room.iso .cx.lead, .room.iso .cx.player { transition:none; }
+  .room.iso .cx.walking .body { animation:none; }
+}

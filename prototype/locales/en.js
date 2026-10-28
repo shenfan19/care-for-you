@@ -460,3 +460,5 @@ CY.i18n.register("en", {"social.chat": "{a} and {b} had a little chat.", "social
 CY.i18n.register("en", {"social.meal": "{n} of them ate together in the kitchen."});
 
 CY.i18n.register("en", {"status.at": "Now in the {room}; likes the {likes}"});
+
+CY.i18n.register("en", {"preset.bighouse.label": "A lively household", "preset.bighouse.note": "Grandparents, parents, a child, a cat and a dog, all wandering on their own and looking after each other", "preset.name.dad": "Dad"});

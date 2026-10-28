@@ -341,3 +341,5 @@ CY.i18n.register("zh-CN", {"social.chat": "{a}和{b}聊了几句。", "social.pl
 CY.i18n.register("zh-CN", {"social.meal": "{n}个人在厨房一起吃了饭。"});
 
 CY.i18n.register("zh-CN", {"status.at": "现在在{room}，爱待在{likes}"});
+
+CY.i18n.register("zh-CN", {"preset.bighouse.label": "热闹的一家", "preset.bighouse.note": "爷爷奶奶，爸爸妈妈，孩子，猫和狗，大家各走各的，也会互相照顾", "preset.name.dad": "爸爸"});

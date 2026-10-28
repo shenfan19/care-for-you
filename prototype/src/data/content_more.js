@@ -198,6 +198,7 @@
   C.presets.push(
     { id: 'host', members: [{ arch: 'refugee_elder', name: '老人', conditions: ['trauma'] }, { arch: 'refugee_mother', name: '妈妈', conditions: ['depress'] }, { arch: 'refugee_child', name: '孩子' }] },
     { id: 'night', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['nocturia'] }] },
+    { id: 'bighouse', members: [{ arch: 'grandpa', name: '爷爷' }, { arch: 'grandma', name: '奶奶' }, { arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }, { arch: 'dog', name: '豆豆' }] },
   );
 
   V.partner = {
