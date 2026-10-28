@@ -727,6 +727,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('取消了的设置不再写回', !/quiet_hours|fall_scale|click_instead|economy = false|answer_seconds|offline_cap|hold_scale|nanny_daily|^wage/m.test(txt) && CY.ini.num(old, 'interrupt', 'countdown_seconds') === 30);
   }
 
+  /* 心情低落的人更想回自己的房间 */
+  {
+    const p = await mk('dad', '爸');
+    const keep = p.state.mood; p.state.mood = 0.1; const low = CY.world.scoreRoom(p, 'bedroom'); p.state.mood = 0.6; const mid = CY.world.scoreRoom(p, 'bedroom'); p.state.mood = keep;
+    check('心情低落的人更想回卧室', low > mid, low + ' ' + mid);
+  }
+
   /* 卡里的专属台词是中文，英文界面不该说中文 */
   {
     const p = await mk('elder', '爷'), keep = CY.i18n.lang;

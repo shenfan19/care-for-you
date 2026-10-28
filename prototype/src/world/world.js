@@ -80,6 +80,9 @@
     if (room === 'living') w += hi('company') * 2 + hi('play') * 1.5;
     if (room === 'study') w += hi('company') * 2.5;
     if (room === 'yard') w += hi('play') * 2 + hi('mobility') * 2 + (hr >= 9 && hr < 17 ? 0.6 : -0.6);
+    /* 心情低落的人想独处，躲回自己的房间；心情好的人愿意待在客厅 */
+    if (human && p.state.mood < 0.35) { if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += 2; if (room === 'living') w *= 0.6; }
+    else if (human && p.state.mood > 0.75 && room === 'living') w += 0.8;
     /* 看得见谁在叫：宝宝或幼儿很需要人，大人和老人往那个孩子在的房间去 */
     if (human && ['adult', 'elder', 'teen'].includes(st)) {
       for (const q of G.activePeople()) {
