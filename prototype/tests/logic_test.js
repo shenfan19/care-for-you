@@ -156,9 +156,9 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const bb = await G.createPerson({ arch: 'baby', name: '宝宝' });
     const ct = await G.createPerson({ arch: 'cat', name: '猫' });
     await G.load();
-    const setHour = h => { G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
+    const setHour = h => { G.cfg.time.daynight = 'game'; G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
     setHour(14);
-    check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room));
+    check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room), JSON.stringify(W.locationOf(G.get(gp))) + ' dm=' + G.dayMinutes() + ' shift=' + G.world.clock_shift + ' mode=' + G.timeMode() + ' src=' + G.daySource());
     check('婴儿白天在卧室的小床里', W.locationOf(G.get(bb)).room === 'bedroom' && W.locationOf(G.get(bb)).mode === 'cradle');
     setHour(2);
     check('夜里爷爷在老人房睡，不和婴儿一屋', W.locationOf(G.get(gp)).room === 'elder' && W.locationOf(G.get(bb)).room === 'bedroom');
@@ -255,8 +255,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.cfg.time.mode = 'real'; const s1 = G.secPerGameMin();
   G.cfg.time.mode = 'compressed'; const s2 = G.secPerGameMin();
   check('压缩时间下打扰间隔按比例变短', Math.abs(s1 / s2 - +G.cfg.time.compress_ratio) < 1e-9);
-  G.cfg.time.mode = 'paused';
-  check('暂停时不排期', !isFinite(G.secPerGameMin()));
+  G.cfg.time.mode = 'free';
+  check('游戏自己的时间是一倍速', G.secPerGameMin() === 60 && G.playMode() === 'reality', G.secPerGameMin() + ' ' + G.playMode());
   G.world.game_minutes = 0;
 
   G.cfg.interrupt.frequency = 'test'; G.cfg.interrupt.quiet_hours = ''; G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'game';
@@ -379,11 +379,22 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 账号预留 */
   check('账号功能默认未启用，调用会明确拒绝', !CY.account.enabled(G.cfg) && (await CY.account.signIn().catch(e => e.message)) === 'not_enabled' && CY.account.consentRecord('upload', true).granted === true);
 
-  /* 暂停模式不推进 */
-  G.cfg.time.mode = 'paused';
-  const m0 = G.world.game_minutes;
-  G.lastTick -= 5000; G.tick();
-  check('暂停时游戏时间不走', G.world.game_minutes === m0);
+  /* 快进到一个时刻，到了回到一倍速，之后和现实分开；对回现实时直接跟现实的钟 */
+  G.cfg.time.mode = 'real'; G.cfg.time.daynight = 'auto'; G.world.tasks = [];
+  await G.fastForward({ plus: 90 });
+  check('快进里是点击模式，倍速生效', G.timeMode() === 'compressed' && G.inputMode() === 'click' && !!G.world.ff_target);
+  const ffEnd = G.world.ff_target;
+  for (let i = 0; i < 400 && G.timeMode() === 'compressed'; i++) { G.lastTick = Date.now() - 1000; G.tick(); }
+  check('快进到了就回到一倍速的游戏时间', G.timeMode() === 'free' && G.world.game_minutes >= ffEnd && !G.world.ff_target && G.inputMode() === 'hold');
+  const gmFree = G.world.game_minutes; G.lastTick = Date.now() - 1000; G.tick();
+  check('自走时一倍速向前走', G.world.game_minutes - gmFree > 0.9 / 60 && G.world.game_minutes - gmFree < 1.1 / 60 + 1e-9);
+  await G.backToReal();
+  const sysDm = new Date().getHours() * 60 + new Date().getMinutes();
+  check('对回现实后钟直接是现实的钟', G.timeMode() === 'real' && Math.abs(G.dayMinutes() - sysDm) <= 1);
+  await G.fastForward({ to: 'morning' });
+  const dm0 = G.dayMinutes();
+  check('快进到早上七点的目标是下一个七点', (((G.world.ff_target - G.world.game_minutes) + dm0) % 1440) === 420);
+  await G.stopFastForward(); await G.backToReal();
 
   /* 手改后的 YAML 容错：缺字段 */
   mem.set(`people/${grandpa.id}/state.yaml`, 'version: 1\n');
@@ -483,10 +494,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('回到故事模式，停着的事接着做', G.timeMode() === 'compressed' && G.inputMode() === 'click');
   G.lastTick = Date.now() - 1000; G.tick();
   check('接着做时时间在走', G.runningTask().left < left0);
-  await G.setPlayMode('paused');
-  const gm = G.world.game_minutes; G.lastTick = Date.now() - 1000; G.tick();
-  check('暂停时什么都不走，并记着暂停前的模式', G.world.game_minutes === gm && G.isPaused() && G.playMode() === 'story');
-  check('暂停时不能开始新动作', G.startAction(tp.id, 'pet') === false);
   await G.setPlayMode('story'); G.world.tasks = [];
   check('游戏时钟下不再带现实时间', !('realHh' in G.clock()) && !('realMm' in G.clock()));
 

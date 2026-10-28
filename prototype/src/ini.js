@@ -7,7 +7,7 @@
     ['interrupt', 'countdown_seconds', '25', '倒计时秒数'],
     ['interrupt', 'answer_seconds', '20', '问答题的倒计时秒数，到时没回答就当作没赶上，没有惩罚'],
     ['interrupt', 'quiet_hours', '22:00-07:00', '这段现实时间内不打扰，留空表示不设'],
-    ['time', 'mode', 'compressed', 'real 现实模式，与现实同步；compressed 加速模式，时间压缩；paused 暂停。顶栏的切换会同时改这一项'],
+    ['time', 'mode', 'real', 'real 与现实同步；free 游戏自己的时间，一倍速，与现实分开；compressed 快进中。顶栏的快进和对回现实会改这一项'],
     ['time', 'daynight', 'auto', 'auto 真实时间跟随系统时钟，压缩时间用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
     ['time', 'compress_ratio', '30', '压缩时，现实 1 分钟等于游戏多少分钟'],
     ['time', 'offline_cap_hours', '12', '离开期间最多推算多少游戏小时'],

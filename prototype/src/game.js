@@ -270,12 +270,23 @@
   /* ---------- 模式：现实模式与故事模式，以及暂停 ---------- */
   G.timeMode = () => ini.get(G.cfg, 'time', 'mode');
   /* 现实模式：时间跟现实走，长按占用现实时间。故事模式：时间压缩，点击花掉游戏时间。暂停时记着暂停前的模式 */
-  G.playMode = () => {
-    const m = G.timeMode();
-    if (m === 'paused') return ini.get(G.cfg, 'play', 'last_mode') === 'story' ? 'story' : 'reality';
-    return m === 'compressed' ? 'story' : 'reality';
+  G.playMode = () => (G.timeMode() === 'compressed' ? 'story' : 'reality');
+  G.isPaused = () => false;
+  /* 时间：real 与现实同步，free 是游戏自己的时间一倍速，compressed 是快进到一个时刻。快进到了就变成 free，不再追着现实。
+     一倍速时长按，快进时点击。没有暂停：世界只在页面开着的时候走，不需要停。 */
+  const dayTarget = { morning: 420, noon: 720, evening: 1080, night: 1320 };
+  const syncShift = () => { const d = new Date(), sys = d.getHours() * 60 + d.getMinutes(); G.world.clock_shift = (((sys - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440; };
+  G.fastForward = async function (spec) {
+    const cur = G.dayMinutes();
+    const delta = spec.plus ? spec.plus : (((dayTarget[spec.to] - cur + 1440) % 1440) || 1440);
+    if (G.timeMode() === 'real') syncShift();
+    G.world.ff_target = G.world.game_minutes + delta;
+    G.cfg.time = G.cfg.time || {}; G.cfg.time.mode = 'compressed';
+    await G.saveCfg(); G.save(); emit();
   };
-  G.isPaused = () => G.timeMode() === 'paused';
+  G.stopFastForward = async function () { delete G.world.ff_target; G.cfg.time.mode = 'free'; await G.saveCfg(); G.save(); emit(); };
+  G.backToReal = async function () { delete G.world.ff_target; G.cfg.time.mode = 'real'; await G.saveCfg(); G.save(); emit(); };
+  G.ffClock = () => { const dm = (Math.floor(G.world.ff_target || 0) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) % 1440; return String(Math.floor(dm / 60)).padStart(2, '0') + ':' + String(dm % 60).padStart(2, '0'); };
   G.setPlayMode = async function (m) {
     G.cfg.time = G.cfg.time || {}; G.cfg.play = G.cfg.play || {};
     if (m === 'paused') { G.cfg.play.last_mode = G.playMode(); G.cfg.time.mode = 'paused'; }
@@ -316,12 +327,12 @@
   G.daySource = () => {
     const s = ini.get(G.cfg, 'time', 'daynight');
     if (s === 'system' || s === 'game') return s;
-    return G.playMode() === 'story' ? 'game' : 'system';
+    return G.timeMode() === 'real' ? 'system' : 'game';
   };
   /* 当天已过的分钟数，0 到 1439 */
   G.dayMinutes = () => {
     if (G.daySource() === 'system') { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
-    return (Math.floor(G.world.game_minutes) + 8 * 60) % 1440;
+    return (Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) % 1440;
   };
   G.isNight = () => { const h = G.dayMinutes() / 60; return h >= 22 || h < 6; };
   G.clock = () => {
@@ -438,16 +449,11 @@
 
   /* ---------- 时间推进 ---------- */
   function gameMinutes(realSeconds) {
-    const mode = G.timeMode();
-    if (mode === 'paused') return 0;
-    if (mode === 'real') return realSeconds / 60;
-    return realSeconds / 60 * ini.num(G.cfg, 'time', 'compress_ratio');
+    return G.timeMode() === 'compressed' ? realSeconds / 60 * ini.num(G.cfg, 'time', 'compress_ratio') : realSeconds / 60;
   }
   /* 一个游戏分钟对应多少现实秒 */
   G.secPerGameMin = () => {
-    const mode = G.timeMode();
-    if (mode === 'paused') return Infinity;
-    return mode === 'real' ? 60 : 60 / ini.num(G.cfg, 'time', 'compress_ratio');
+    return G.timeMode() === 'compressed' ? 60 / ini.num(G.cfg, 'time', 'compress_ratio') : 60;
   };
   const foodOf = p => p.species.food || 'food';
   const itemForNeed = (p, k) => (k === 'hunger' ? foodOf(p) : (G.tpl.items.for_need || {})[k]);
@@ -488,6 +494,9 @@
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
     const eco = G.economyOn(), working = eco && G.isWorkTime();
     G.world.game_minutes += gmin;
+    if (!offline && G.timeMode() === 'compressed' && G.world.ff_target && G.world.game_minutes >= G.world.ff_target) {
+      delete G.world.ff_target; G.cfg.time.mode = 'free'; G.saveCfg(); setTimeout(() => G.onFFEnd && G.onFFEnd(), 0);
+    }
     /* 工作收入：工作时段里，没有故事里的事占着手，就在赚钱 */
     if (!offline && eco && working && !G.isBusy()) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
     for (const p of G.activePeople()) {
@@ -859,7 +868,6 @@
   G.tick = function () {
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
-    if (G.timeMode() === 'paused') for (const p of G.activePeople()) G.act[p.id] = G.act[p.id] || G.activityOf(p);
     advance(gameMinutes(dt), false);
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
     for (const id in G.toast) if (now > G.toast[id].until) delete G.toast[id];
@@ -877,6 +885,8 @@
     emit();
   };
   G.start = function () {
+    const m0 = G.timeMode();
+    if (m0 === 'paused' || (m0 === 'compressed' && !G.world.ff_target)) { G.cfg.time.mode = 'real'; G.saveCfg(); }
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
     const last = Date.parse(G.world.last_seen);
     if (last) {

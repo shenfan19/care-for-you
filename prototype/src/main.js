@@ -31,7 +31,13 @@
       U.renderLife();
       if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); U.renderSaid(false); }
     });
-    document.querySelectorAll('#modeSeg button').forEach(b => { b.onclick = () => U.switchMode(b.dataset.m); });
+    $('peopleBtn').onclick = () => U.peopleDialog();
+    $('ffSel').onchange = async e => {
+      const v = e.target.value; e.target.value = ''; if (!v) return;
+      await G.fastForward(v[0] === '+' ? { plus: +v.slice(1) } : { to: v });
+      U.flash(t('ff.start', { time: G.ffClock() })); U.renderControls(); U.renderLife(); U.renderClock(); U.renderRoom(true);
+    };
+    G.onFFEnd = () => { U.flash(t('ff.done', { time: G.clock().hh + ':' + G.clock().mm })); U.renderControls(); U.renderLife(); U.renderClock(); U.renderRoom(true); };
     $('themeBtn').onclick = () => U.cycleTheme();
     $('langSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.language = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.applyLang(); U.renderControls(); };
     $('ratioSel').onchange = async e => { G.cfg.time = G.cfg.time || {}; G.cfg.time.compress_ratio = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.renderControls(); };

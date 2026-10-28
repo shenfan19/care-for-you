@@ -32,10 +32,19 @@
     const langs = Object.keys(I.packs);
     const sig = langs.join() + I.lang;
     if (ls.dataset.sig !== sig) { ls.dataset.sig = sig; ls.innerHTML = langs.map(l => `<option value="${l}" ${l === I.lang ? 'selected' : ''}>${esc(names[l] || l)}</option>`).join(''); }
-    const rs = $('ratioSel'), ratio = ini.num(G.cfg, 'time', 'compress_ratio');
-    rs.style.display = G.playMode() === 'story' ? '' : 'none';
-    const cur = G.isPaused() ? 'paused' : G.playMode();
-    document.querySelectorAll('#modeSeg button').forEach(b => { b.classList.toggle('on', b.dataset.m === cur); b.title = t('mode.' + b.dataset.m + '_tip'); b.textContent = t('mode.' + b.dataset.m); });
+    const rs = $('ratioSel'), ratio = ini.num(G.cfg, 'time', 'compress_ratio'), mode = G.timeMode();
+    const tag = $('clockTag'), back = $('backRealBtn'), ff = $('ffSel');
+    tag.textContent = mode === 'real' ? t('time.sync') : mode === 'free' ? t('time.free') : t('time.ff', { time: G.ffClock() });
+    tag.title = t('time.tip_' + mode);
+    back.style.display = mode === 'real' ? 'none' : '';
+    back.textContent = mode === 'compressed' ? t('time.stop') : t('time.back'); back.title = t(mode === 'compressed' ? 'time.stop_tip' : 'time.back_tip');
+    back.onclick = async () => { await (mode === 'compressed' ? G.stopFastForward() : G.backToReal()); U.renderControls(); U.renderLife(); U.renderClock(); U.renderRoom(true); };
+    ff.style.display = mode === 'compressed' ? 'none' : '';
+    const fsig = I.lang + 'ff';
+    if (ff.dataset.sig !== fsig) {
+      ff.dataset.sig = fsig; ff.title = t('ff.tip');
+      ff.innerHTML = `<option value="">${esc(t('ff.title'))}</option>` + ['morning', 'noon', 'evening', 'night', '+60', '+180', '+360'].map(k => `<option value="${k}">${esc(t('ff.' + (k[0] === '+' ? 'p' + k.slice(1) : k)))}</option>`).join('');
+    }
     const list = [...new Set([10, 30, 60, 120, 360, ratio])].sort((a, b) => a - b);
     const rsig = list.join() + ratio + I.lang;
     if (rs.dataset.sig !== rsig) { rs.dataset.sig = rsig; rs.title = t('hdr.ratio_tip'); rs.innerHTML = list.map(v => `<option value="${v}" ${v === ratio ? 'selected' : ''}>${esc(t('ratio.label', { n: v }))}</option>`).join(''); }
@@ -197,13 +206,13 @@
   };
 
   /* 删除前确认：记录会一起没有，所以把归档作为另一条路摆在旁边 */
-  U.deleteDialog = function (pid) {
+  U.deleteDialog = function (pid, back) {
     const p = G.get(pid); if (!p) return;
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('del.title', { name: p.person.name }))}</h2><div class="mute">${esc(t('del.note', { name: p.person.name }))}</div>
       <div class="row" style="justify-content:flex-end;margin-top:14px"><button id="dcancel">${esc(t('btn.cancel'))}</button>${p.person.archived ? '' : `<button id="darch">${esc(t('btn.archive'))}</button>`}<button id="dok" class="danger">${esc(t('btn.delete'))}</button></div>`, true);
-    dlg.querySelector('#dcancel').onclick = U.closeDialog;
-    const da = dlg.querySelector('#darch'); if (da) da.onclick = async () => { await G.archivePerson(pid, true); U.closeDialog(); U.afterPeopleChange(); };
-    dlg.querySelector('#dok').onclick = async () => { await G.deletePerson(pid); U.closeDialog(); U.afterPeopleChange(); };
+    dlg.querySelector('#dcancel').onclick = () => { U.closeDialog(); back && back(); };
+    const da = dlg.querySelector('#darch'); if (da) da.onclick = async () => { await G.archivePerson(pid, true); U.closeDialog(); U.afterPeopleChange(); back && back(); };
+    dlg.querySelector('#dok').onclick = async () => { await G.deletePerson(pid); U.closeDialog(); U.afterPeopleChange(); back && back(); };
   };
 
   U.afterPeopleChange = function () { U.renderRoom(true); U.renderBar(); U.renderFeed(true); U.renderSaid(true); };
@@ -234,7 +243,7 @@
 
   /* ---------- 设置（齿轮） ---------- */
   const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'play.model_provider': ['builtin'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
-  const SKIP = new Set(['ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
+  const SKIP = new Set(['time.mode', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
     let sec = '';
@@ -416,26 +425,40 @@
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
   U.introDialog = function () {
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('intro.title'))}</h2><p>${esc(t('intro.p1'))}</p><p>${esc(t('intro.p2'))}</p>
-      <button class="preset" data-m="reality"><b>${esc(t('intro.reality'))}</b><br><span class="mute">${esc(t('intro.reality_note'))}</span></button>
-      <button class="preset" data-m="story"><b>${esc(t('intro.story'))}</b><br><span class="mute">${esc(t('intro.story_note'))}</span></button>
+      <button class="preset" data-e="light"><b>${esc(t('intro.light'))}</b><br><span class="mute">${esc(t('intro.light_note'))}</span></button>
+      <button class="preset" data-e="full"><b>${esc(t('intro.full'))}</b><br><span class="mute">${esc(t('intro.full_note'))}</span></button>
       <div class="mute">${esc(t('intro.later'))}</div>`, true);
-    dlg.querySelectorAll('[data-m]').forEach(b => b.onclick = async () => {
-      const story = b.dataset.m === 'story';
+    dlg.querySelectorAll('[data-e]').forEach(b => b.onclick = async () => {
       G.cfg.play = G.cfg.play || {};
-      G.cfg.play.economy = story ? 'true' : 'false';
-      G.world.intro_done = true; G.save(true); await G.setPlayMode(story ? 'story' : 'reality');
+      G.cfg.play.economy = b.dataset.e === 'full' ? 'true' : 'false';
+      G.world.intro_done = true; G.save(true); await G.saveCfg();
       U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true);
     });
   };
 
-  /* 切换模式时的说明：说清楚时间怎么走，动作怎么做，故事里没做完的事怎么处理 */
-  U.switchMode = async function (m) {
-    if (m === 'story' && G.economyOn() === false && !G.world.mode_hint_seen) { G.world.mode_hint_seen = true; }
-    await G.setPlayMode(m);
-    U.renderControls(); U.renderLife(); U.renderClock();
+  /* 一句话提示，几秒后消失 */
+  U.flash = function (msg) {
     const el = $('modeToast');
-    el.textContent = t('mode.switched_' + m, { n: ini.num(G.cfg, 'time', 'compress_ratio'), k: G.tasks().length });
-    el.style.display = 'block'; clearTimeout(U._mt); U._mt = setTimeout(() => { el.style.display = 'none'; }, 6000);
+    el.textContent = msg; el.style.display = 'block'; clearTimeout(U._mt); U._mt = setTimeout(() => { el.style.display = 'none'; }, 6000);
+  };
+
+  /* ---------- 角色管理：添加，编辑，归档，删除放在一起，在顶部菜单里 ---------- */
+  U.peopleDialog = function () {
+    const rows = G.people.map(p => `<div class="prow" data-id="${p.id}"><span class="pav">${CY.avatar(p)}</span><span class="pn"><b>${esc(p.person.name)}</b> <span class="mute">${esc(p.person.role || '')}${p.person.archived ? ' · ' + esc(t('people.archived')) : ''}</span></span>
+      <button data-a="edit">${esc(t('btn.edit'))}</button>${p.person.archived ? `<button data-a="restore">${esc(t('btn.restore'))}</button>` : `<button data-a="archive">${esc(t('btn.archive'))}</button>`}<button data-a="del" class="danger">${esc(t('btn.delete'))}</button></div>`).join('');
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('people.title'))}</h2>
+      <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="mute">${esc(t('people.note'))}</span><button id="pAdd" class="primary">${esc(t('btn.add'))}</button></div>
+      <div class="plist">${rows || `<div class="mute">${esc(t('said.nobody'))}</div>`}</div>
+      <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="pClose">${esc(t('btn.close'))}</button></div>`, true);
+    dlg.querySelector('#pClose').onclick = U.closeDialog;
+    dlg.querySelector('#pAdd').onclick = () => U.addDialog(null, () => U.peopleDialog());
+    dlg.querySelectorAll('.prow button').forEach(b => b.onclick = async () => {
+      const id = b.closest('.prow').dataset.id, a = b.dataset.a;
+      if (a === 'edit') U.addDialog(null, () => U.peopleDialog(), id);
+      else if (a === 'archive') { await G.archivePerson(id, true); U.afterPeopleChange(); U.peopleDialog(); }
+      else if (a === 'restore') { await G.setActive(id, true); U.afterPeopleChange(); U.peopleDialog(); }
+      else if (a === 'del') U.deleteDialog(id, () => U.peopleDialog());
+    });
   };
 
   /* ---------- 角色的状态和需求 ---------- */

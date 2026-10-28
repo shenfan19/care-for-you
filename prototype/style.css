@@ -204,23 +204,39 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .archbox { display:inline-block; vertical-align:top; } .archbox summary { cursor:pointer; color:var(--mute); font-size:13px; } .archbox .row { gap:10px; margin:4px 0; }
 button.danger { color:#b3261e; }
 
-/* 斜视的房子：房间是固定比例的画面，人按格子位置摆在上面 */
-.room { padding:0; min-height:0; aspect-ratio:800 / 520; container-type:inline-size; width:100%; overflow:hidden; }
-body.pip .room { min-height:0; padding:0; }
-.room .stage { position:absolute; inset:0; display:block; pointer-events:none; z-index:4; }
-.cx { position:absolute; width:9cqw; transform:translate(-50%, -88%); pointer-events:auto; z-index:calc(10 + var(--z, 0)); transition:left .6s ease, top .6s ease; }
-.cx.talk { z-index:calc(1000 + var(--z, 0)); }
-.cx .body { height:11.6cqw; } .cx .tears { height:11.6cqw; }
-body.pip .cx { width:9cqw; } body.pip .cx .body { height:11.6cqw; } body.pip .stage { gap:0; }
-.cx .nm { font-size:clamp(10px, 1.5cqw, 13px); padding:0 6px; white-space:nowrap; }
-.cx.player { pointer-events:none; transition:none; } .cx.player .nm { color:var(--mute); }
-.cx.player.walking .av { animation:hop .35s ease-in-out infinite; }
-.cx.lying .body { transform:rotate(-86deg) translate(-4%, 18%); transform-origin:50% 80%; } .cx.lying .badges { top:-30px; }
-.cx.incradle .body { transform:scale(.62); transform-origin:50% 100%; }
-.cx .edit, .cx .info { display:inline !important; font-size:11px; margin-left:3px; color:var(--mute); cursor:pointer; }
-.cx .edit:hover, .cx .info:hover { color:var(--accent); }
+/* 斜视的房子：只在斜视的页面里，房间是固定比例的画面，小人按格子位置摆在上面。全家总览页保持原来的样子 */
+.room.iso { padding:0; min-height:0; aspect-ratio:800 / 520; container-type:inline-size; width:100%; overflow:hidden; }
+.room.iso .stage { position:absolute; inset:0; display:block; pointer-events:none; z-index:4; }
+.room.iso .cx { position:absolute; width:8.5cqw; transform:translate(-50%, -88%); pointer-events:auto; z-index:calc(10 + var(--z, 0)); }
+.room.iso .cx.talk { z-index:calc(1000 + var(--z, 0)); }
+.room.iso .cx .body { height:12cqw; } .room.iso .cx .tears { display:none !important; }
+.room.iso .cx .body svg.mini { width:100%; height:100%; }
+.room.iso .cx .nm { font-size:clamp(9px, 1.35cqw, 12px); padding:0 2px; white-space:nowrap; }
+.room.iso .cx .nm .edit, .room.iso .cx .nm .info, .room.iso .cx .nm .away { display:none !important; }
+.room.iso .cx .badges { top:-8px; } .room.iso .cx .badges span { width:18px; height:18px; font-size:11px; }
+.room.iso .cx.player { pointer-events:none; } .room.iso .cx.player .nm { color:var(--mute); }
+.room.iso .cx.walking .body { animation:stepbob .32s ease-in-out infinite; }
+.room.iso .cx.lying .body { transform:rotate(-88deg) translate(-2%, 28%); transform-origin:50% 85%; } .room.iso .cx.lying .badges { top:-34px; }
+.room.iso .cx.incradle .body { transform:scale(.8); transform-origin:50% 100%; }
+@keyframes stepbob { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-6%); } }
+.room:not(.iso) .placenav .here, .room:not(.iso) .roster { display:none; }
+.room:not(.iso) { padding-top:176px; }
 .placenav { position:absolute; left:10px; top:8px; z-index:20; display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:13px; }
 .placenav button { padding:2px 9px; background:var(--card); }
 .placenav .here { color:var(--mute); margin-left:6px; background:var(--card); border-radius:8px; padding:1px 8px; }
 .placenav .travel { position:relative; overflow:hidden; background:linear-gradient(90deg, var(--accent) calc(var(--k, 0) * 100%), var(--card) calc(var(--k, 0) * 100%)); }
+.roster { position:absolute; left:8px; bottom:8px; z-index:30; display:flex; flex-wrap:wrap; gap:5px; max-width:46%; max-height:38%; overflow:auto; }
+.rcard { position:relative; width:52px; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:2px 3px 3px; text-align:center; cursor:pointer; font-size:10px; line-height:1.25; opacity:.96; }
+.rcard:hover { border-color:var(--accent); } .rcard.sel { border-color:var(--accent); } .rcard.calling { animation:pulse 1.4s infinite; border-color:var(--accent); }
+.rcard .av { height:38px; } .rcard .av svg { width:100%; height:100%; }
+.rcard .rn { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; } .rcard .bar { height:3px; margin:1px 2px; }
+.rcard .rb { position:absolute; left:-4px; top:-4px; font-size:11px; background:var(--card); border:1px solid var(--line); border-radius:50%; width:17px; height:17px; display:grid; place-items:center; } .rcard .rb.urgent { border-color:var(--accent); }
+.rcard .ri { position:absolute; right:1px; top:0; font-size:10px; color:var(--mute); } .rcard .ri:hover { color:var(--accent); }
 .taskrow[draggable=true] { cursor:grab; }
+.cx .edit, .cx .info { display:inline !important; font-size:11px; margin-left:3px; color:var(--mute); cursor:pointer; }
+.cx .edit:hover, .cx .info:hover { color:var(--accent); }
+.fftag { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:1px 8px; font-size:13px; }
+
+.plist { max-height:50vh; overflow:auto; }
+.prow { display:flex; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); }
+.prow .pav { width:34px; height:44px; flex:none; } .prow .pav svg { width:100%; height:100%; } .prow .pn { flex:1; min-width:0; }

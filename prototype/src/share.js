@@ -5,22 +5,20 @@
   const t = (k, v) => CY.t(k, v);
   const esc = U.esc;
 
-  const FIELDS = ['time', 'care', 'talk', 'called', 'back', 'names'];
-  const choice = { time: true, care: true, talk: true, called: true, back: false, names: false };
+  const FIELDS = ['time', 'care', 'talk', 'back', 'names'];
+  const choice = { time: true, care: true, talk: true, back: false, names: false };
 
   /* 从记录里数出来，不另存 */
   U.shareStats = function () {
-    let care = 0, back = 0, talk = 0, called = 0;
-    const title = G.fmt('{title}');
+    let care = 0, back = 0, talk = 0;
     for (const p of G.people) {
       care += p.story.care_total || 0;
       back += p.story.cares_back_total || 0;
       for (const mk in G.journal[p.id] || {}) talk += G.journal[p.id][mk].filter(e => e.type === 'talk').length;
-      if (title) called += (G.sayings[p.id] || []).filter(s => s.by === 'char' && s.text.includes(title)).length;
     }
     const c = G.clock();
     const time = c.d > 0 ? t('clock.dh', { d: c.d, h: c.h }) : c.h > 0 ? t('clock.hm', { h: c.h, m: c.m }) : t('clock.m', { m: c.m });
-    return { care, back, talk, called, time, title, names: G.people.filter(p => !p.person.archived).map(p => p.person.name) };
+    return { care, back, talk, time, names: G.people.filter(p => !p.person.archived).map(p => p.person.name) };
   };
 
   function lines(st, pick) {
@@ -28,7 +26,6 @@
     if (pick.time) out.push(t('share.line_time', { t: st.time }));
     if (pick.care) out.push(t('share.line_care', { n: st.care }));
     if (pick.talk) out.push(t('share.line_talk', { n: st.talk }));
-    if (pick.called && st.title) out.push(t('share.line_called', { n: st.called, title: st.title }));
     if (pick.back) out.push(t('share.line_back', { n: st.back }));
     return out;
   }

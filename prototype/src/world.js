@@ -46,7 +46,8 @@
   W.travelMin = (a, b) => W.TRAVEL_MIN[a + '-' + b] || W.TRAVEL_MIN[b + '-' + a] || 30;
   W.travelHold = (a, b) => Math.min(10, Math.max(3, Math.round(W.travelMin(a, b) / 3)));
   W.TILE_MIN = 0.5;       /* 故事模式里，走过一格花的游戏分钟 */
-  W.TILE_SEC = 0.9;       /* 现实模式里，走过一格花的现实秒 */
+  W.TILE_SEC = 0.55;      /* 慢速时，走过一格花的现实秒 */
+  W.EXIT = { home: { gx: 6, gy: 8 }, hospital: { gx: 5, gy: 6 }, office: { gx: 4, gy: 6 } };   /* 出门的位置 */
   W.dist = (a, b) => Math.abs(a.gx - b.gx) + Math.abs(a.gy - b.gy);
 
   /* ---------- 谁此刻在哪个房间 ---------- */
@@ -108,12 +109,16 @@
   W.walkId = 0;
   W.pending = [];      /* 走到了才做的事 */
   W.lastActive = Date.now();
-  const taskWalk = () => { const x = G.runningTask(); return x && x.kind && G.timeMode() === 'compressed' ? x : null; };
+  const fast = () => G.timeMode() === 'compressed';
+  const taskWalk = () => { const x = G.runningTask(); return x && x.kind && fast() ? x : null; };
 
   /* 此刻看得见的位置。moving 给界面用，界面把位置过渡到终点，过渡时间就是剩下的路程时间 */
   W.visual = () => {
     const pl = W.player(), tw = taskWalk();
-    if (tw && tw.kind === 'travel') return { transit: true, place: pl.place, gx: pl.gx, gy: pl.gy, id: 't' + tw.id };
+    if (tw && tw.kind === 'travel') {
+      const ex = W.EXIT[pl.place];
+      return { place: pl.place, gx: pl.gx, gy: pl.gy, moving: { gx: ex.gx, gy: ex.gy, ms: Math.max(0, tw.left) * G.secPerGameMin() * 1000 }, id: 't' + tw.id };
+    }
     if (tw && tw.kind === 'walk') {
       const ms = Math.max(0, tw.left) * G.secPerGameMin() * 1000;
       return { place: tw.from.place, gx: tw.from.gx, gy: tw.from.gy, moving: { gx: tw.to.gx, gy: tw.to.gy, ms }, id: 't' + tw.id };
@@ -123,7 +128,6 @@
   };
   W.where = () => {
     const tw = taskWalk();
-    if (tw && tw.kind === 'travel') return { transit: true, place: W.player().place };
     return { place: W.player().place, room: W.player().room };
   };
 
@@ -133,12 +137,32 @@
   W.beginWalk = (to, then) => {
     const pl = W.player();
     if (then) W.pending.push(then);
-    if (W.walk && W.walk.to.room === to.room && W.walk.to.place === to.place) return;
+    if (W.walk && !W.walk.exit && W.walk.to.room === to.room && W.walk.to.place === to.place) return;
     const from = { place: pl.place, gx: pl.gx, gy: pl.gy };
-    const dur = Math.max(500, W.dist(from, to) * W.TILE_SEC * 1000);
+    const dur = Math.max(400, W.dist(from, to) * W.TILE_SEC * 1000);
     W.walkId++;
     W.walk = { from, to, start: Date.now(), dur };
   };
+  /* 现在这一刻在路上的位置，沿着先横后竖的路走 */
+  W.pathPos = (from, to, k) => {
+    const dx = to.gx - from.gx, dy = to.gy - from.gy, total = Math.abs(dx) + Math.abs(dy), d = Math.max(0, Math.min(1, k)) * total;
+    if (d <= Math.abs(dx)) return { gx: from.gx + Math.sign(dx) * d, gy: from.gy };
+    return { gx: to.gx, gy: from.gy + Math.sign(dy) * (d - Math.abs(dx)) };
+  };
+  /* 长按时同时走路：返回走路要花的毫秒，长按总时间是走路加动作 */
+  W.beginWalkMs = to => { W.beginWalk(to); return W.walk ? W.walk.dur : 0; };
+  W.beginExit = ms => {
+    const pl = W.player(), ex = W.EXIT[pl.place], from = { place: pl.place, gx: pl.gx, gy: pl.gy };
+    W.walkId++;
+    W.walk = { from, to: { place: pl.place, room: null, gx: ex.gx, gy: ex.gy }, start: Date.now(), dur: ms, exit: true };
+  };
+  W.cancelWalk = () => {
+    if (!W.walk) return;
+    const k = (Date.now() - W.walk.start) / W.walk.dur, pos = W.pathPos(W.walk.from, W.walk.to, k);
+    setPlayer({ place: W.walk.from.place, room: null, gx: pos.gx, gy: pos.gy });
+    W.walk = null; W.pending = [];
+  };
+  W.arriveNow = () => { if (W.walk && !W.walk.exit) { W.pending = []; arrive(); } else W.walk = null; };
   const arrive = () => {
     if (!W.walk) return;
     setPlayer(W.walk.to); W.walk = null;
@@ -173,12 +197,12 @@
     const pl = W.player();
     if (pl.place === place) return false;
     const room = place === 'home' ? W.WORK.room : place === 'office' ? 'desk' : 'ward', a = W.playerAnchor(place, room);
-    if (G.timeMode() === 'compressed') {
+    W.walk = null; W.pending = [];
+    if (fast()) {
       const ts = G.tasks();
       if (ts.length >= 4) { return false; }
       ts.push(W.travelTask(place)); G.save();
-    } else if (G.timeMode() === 'real') setPlayer({ place, room, gx: a.gx, gy: a.gy });
-    else return false;
+    } else setPlayer({ place, room, gx: a.gx, gy: a.gy });
     return true;
   };
 
@@ -193,7 +217,7 @@
     return true;
   };
   W.approach = pid => {
-    if (!W.enforce || G.timeMode() !== 'real') return;
+    if (!W.enforce || fast()) return;
     const p = G.get(pid), need = p && W.presenceNeed(p);
     if (need && !need.offsite) W.beginWalk(need);
   };
@@ -258,16 +282,16 @@
 
   /* 每秒：现实模式走路到了就收尾，空闲久了按设置自动回岗位 */
   W.tick = () => {
-    if (W.walk && (Date.now() >= W.walk.start + W.walk.dur || G.timeMode() !== 'real')) arrive();
+    if (W.walk && !W.walk.exit && (Date.now() >= W.walk.start + W.walk.dur || fast())) arrive();
     if (!W.enforce) return;
-    const busy = W.walk || G.tasks().length || G.isPaused();
+    const busy = W.walk || G.tasks().length;
     if (busy) { W.lastActive = Date.now(); return; }
     if (!ini.bool(G.cfg, 'play', 'auto_return') || Date.now() - W.lastActive < 6000) return;
     const pl = W.player();
     if (pl.place !== W.WORK.place) { W.travel(W.WORK.place); W.lastActive = Date.now(); }
     else if (pl.room !== W.WORK.room) {
       const a = W.playerAnchor(W.WORK.place, W.WORK.room), to = { place: W.WORK.place, room: W.WORK.room, gx: a.gx, gy: a.gy };
-      if (G.timeMode() === 'compressed') { G.tasks().push(W.walkTask(to)); G.save(); } else W.beginWalk(to);
+      if (fast()) { G.tasks().push(W.walkTask(to)); G.save(); } else W.beginWalk(to);
       W.lastActive = Date.now();
     }
   };
