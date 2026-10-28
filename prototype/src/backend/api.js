@@ -8,6 +8,8 @@
   const G = CY.game, A = CY.api = {};
   A.state = (opts = {}) => ({ v: 1, world: CY.protocol.world(), people: G.people.filter(p => p.person.active !== false).map(p => CY.protocol.person(p, { names: !!opts.names })) });
   A.apply = list => { const clean = CY.protocol.sanitize(list); G.applyDirectives(clean); return clean.length; };
+  /* 角色卡：每类典型角色的全部设定，和数据文件夹 templates/cards 里的一样 */
+  A.cards = () => JSON.parse(JSON.stringify(G.tpl.cards || {}));
   A.onTick = fn => G.on(() => fn(A.state()));
   if (typeof addEventListener === 'function') {
     addEventListener('message', e => {

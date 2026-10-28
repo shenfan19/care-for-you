@@ -152,7 +152,7 @@ CY.i18n.register("en", {
  "ratio.label": "x{n}",
  "unit.min": "{n} min",
  "unit.hour": "{n} h",
- "ring.lack": "Out of {item}; buy some in the shop",
+ 
  "sec.play": "Experience",
  "sec.economy": "Work and money",
  "add.group_plant": "Plants",
@@ -211,16 +211,15 @@ CY.i18n.register("en", {
  "life.wfh": "You are working from home, with {n} to look after.",
  "life.working": "At work, with {n} to look after at home.",
  "life.offwork": "Outside work hours, with {n} to look after at home.",
- "life.money_tip": "Earned during work hours, and not while you are busy with care",
+ 
  "life.mode_tip": "Switch between hold and click. Holding costs your real time; clicking costs game time.",
  "life.mode_hold": "Hold: costs real time",
  "life.mode_click": "Click: costs game time",
  "life.busy": "Busy: {what}",
- "life.shop": "Shop",
+ 
  "life.household": "Household",
- "shop.title": "Shop",
- "shop.note": "Spend what you earn on food, medicine, diapers, toys and fertilizer. Toys are not used up; without one, play is half as effective.",
- "shop.have": "have {n}",
+
+ 
  "home.title": "Household and nannies",
  "home.note": "Ordered by who needs you most, which comes naturally from their class and current needs. You do not set priorities yourself.",
  "home.urgency": "Urgency",
@@ -237,12 +236,12 @@ CY.i18n.register("en", {
  "intro.later": "You can change this later in Settings, or switch hold and click with the button under the top bar.",
  "toast.busy": "You are busy: {what}.",
  "toast.started": "Started {what}; it takes {min} min.",
- "toast.no_item": "Out of {item}.",
+ 
  "toast.nobody": "…",
  "log.self": "Nobody came, so {name} handled it alone: {need}",
  "log.cry": "{name} started crying: {need}",
  "log.healed": "{name} recovered from {cond}",
- "log.nanny_left": "Money ran out, so the nanny left",
+ 
  "log.missed_need_helpless": "You missed it. {name} could not manage alone: {text}",
  "line.cry": "Waaah…",
  "need.diaper": "Wet diaper",
@@ -290,12 +289,10 @@ CY.i18n.register("en", {
  "cond.cold": "Cold and fever",
  "cond.asthma": "Asthma",
  "cond.forgetful": "Memory loss",
- "item.food": "Food",
- "item.pet_food": "Pet food",
- "item.medicine": "Medicine",
- "item.diaper": "Diapers",
- "item.toy": "Toy",
- "item.fertilizer": "Fertilizer",
+
+ 
+
+ 
  "ini.play.economy": "true is the full experience: work for money, care uses items, nannies available; false is the light experience with hold only",
  "ini.economy.wage": "Money earned per game hour during work hours",
  "ini.economy.work_hours": "Daily work window, on the day clock",
@@ -420,7 +417,7 @@ CY.i18n.register("en", {
  "act.selfmed": "Take pills alone",
  "act.selfbp": "Check blood pressure alone",
  "act.selfheat": "Use a heat pack alone",
- "item.money": "Money",
+ 
  "ini.ui.scene": "Room background: auto is living room by day and bedroom at night; living, bedroom, kitchen, lawn, balcony; none is plain",
  "ini.play.last_mode": "The mode you were in before pausing, reality or fast. Rarely needs changing.",
  "ini.time.mode": "real is Reality mode, following the real clock; compressed is Fast mode with time sped up; paused stops. The top bar switch changes this"
@@ -448,10 +445,12 @@ CY.i18n.register("en", {"about.p5": "Let your hand rest on the mouse, and let yo
 
 CY.i18n.register("en", {"me.work_start": "Work hours began, and you settled in at the desk.", "me.work_end": "Work ended and you stepped away from the desk.", "me.go": "You went to {place}.", "me.back": "You came back home."});
 
-CY.i18n.register("en", {"loc.park": "Park", "loc.street": "Street", "loc.lawn": "Lawn", "loc.road": "Road", "act.park": "Take to the park", "act.street": "Go for a stroll in town", "toast.outing": "{name} is out at {place} and will be back soon.", "me.away": "For “{label}” you left the desk for {min} minutes and earned {lost} less.", "log.outing_start": "{name} went out to {place}.", "log.outing_back": "{name} is back.", "log.nanny_hired": "You hired a nanny for {n} days.", "log.nanny_end": "The nanny’s contract ended.", "log.nanny_left": "The nanny left because too much pay was owed.", "log.assist": "{who} looked after {name} for you: {label}", "assist.nanny": "The nanny", "ini.play.needs_source": "builtin lets the game grow needs itself; backend means needs come entirely from the backend through need_set directives, for example your own ODE, and the game stops growing them.", "ini.play.api_bridge": "When true, the page answers postMessage care.getState and care.apply so an outside program can read and write every person’s needs and state. Off by default.", "ini.economy.nanny_daily": "The nanny’s daily pay, paid once a day. Full pay gives full efficiency, owing more lowers it, and owing two days makes the nanny leave."});
+CY.i18n.register("en", {"loc.park": "Park", "loc.street": "Street", "loc.lawn": "Lawn", "loc.road": "Road", "act.park": "Take to the park", "act.street": "Go for a stroll in town", "toast.outing": "{name} is out at {place} and will be back soon.", "log.outing_start": "{name} went out to {place}.", "log.outing_back": "{name} is back.", "log.assist": "{who} looked after {name} for you: {label}", "ini.play.needs_source": "builtin lets the game grow needs itself; backend means needs come entirely from the backend through need_set directives, for example your own ODE, and the game stops growing them.", "ini.play.api_bridge": "When true, the page answers postMessage care.getState and care.apply so an outside program can read and write every person’s needs and state. Off by default.", "ini.economy.nanny_daily": "The nanny’s daily pay, paid once a day. Full pay gives full efficiency, owing more lowers it, and owing two days makes the nanny leave."});
 
-CY.i18n.register("en", {"nanny.title": "Nanny", "nanny.note": "Hire a nanny and pay her once a day, {n} a day. When paid in full she handles small chores of care on her own, at eighty percent of your own effect. Owe more and she slows down, owe two days and she leaves.", "nanny.hire": "Hire for {n} days", "nanny.status": "{d} days left, owed {owed}, efficiency {eff}%", "nanny.pay": "Pay {n}", "nanny.paid": "Paid {n} today", "nanny.fire": "Dismiss", "nanny.helpers": "{names} works from home, earns a share of income and helps with care on their own, no pay needed.", "add.helper": "Works from home, earns on their own and shares the care"});
+CY.i18n.register("en", {"add.helper": "Works from home, earns on their own and shares the care"});
 
 CY.i18n.register("en", {"intro.p2": "Time away from the desk is time you do not earn. Money buys supplies, and can hire a nanny."});
 
 CY.i18n.register("en", {"people.lead": "Be the lead", "people.lead_on": "Lead, tap to clear"});
+
+CY.i18n.register("en", {"arch.elder": "Typical elder", "arch.toddler1": "1-year-old", "arch.toddler2": "2-year-old", "arch.toddler3": "3-year-old", "arch.toddler4": "4-year-old", "arch.child12": "12-year-old", "arch.woman25": "Woman, 25", "arch.man25": "Man, 25", "add.helper": "At home, shares the care on their own"});

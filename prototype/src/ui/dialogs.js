@@ -7,7 +7,7 @@
   const $ = id => document.getElementById(id);
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
@@ -32,17 +32,17 @@
       <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button></div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
-      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="scancel">${esc(t('btn.close'))}</button><button id="sapply" class="primary">${esc(t('btn.save'))}</button></div>`, true);
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="scancel" class="primary">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelectorAll('[data-ap]').forEach(el => el[el.tagName === 'SELECT' ? 'onchange' : 'onclick'] = async () => {
       const k = el.dataset.ap; G.cfg.ui = G.cfg.ui || {}; G.cfg.ui[k] = el.tagName === 'SELECT' ? el.value : el.dataset.v;
-      await saveCfg(); U.applyTheme(); if (k === 'language') U.applyLang(); U.settingsDialog();
+      await G.saveCfg(); U.applyTheme(); if (k === 'language') U.applyLang(); U.settingsDialog();
     });
     dlg.querySelector('#scancel').onclick = U.closeDialog;
-    dlg.querySelector('#sapply').onclick = async () => {
-      const cfg = JSON.parse(JSON.stringify(G.cfg));
-      dlg.querySelectorAll('[data-k]').forEach(el => { const [s, k] = el.dataset.k.split('.'); (cfg[s] = cfg[s] || {})[k] = el.value.trim(); });
-      G.cfg = cfg; await saveCfg(); U.closeDialog(); U.renderClock();
-    };
+    /* 改了就生效，不用另外保存 */
+    dlg.querySelectorAll('[data-k]').forEach(el => el.onchange = async () => {
+      const [sc, k] = el.dataset.k.split('.'); G.cfg[sc] = G.cfg[sc] || {}; G.cfg[sc][k] = el.value.trim();
+      await G.saveCfg(); U.renderRoom(true); U.renderClock();
+    });
     dlg.querySelector('#dsave').onclick = () => U.saveDialog();
     dlg.querySelector('#dfolder').onclick = async () => {
       try { const had = await store.chooseFolder(); await G.load(); U.closeDialog(); U.afterPeopleChange(); alert(t(had ? 'set.folder_had' : 'set.folder_copied')); } catch (e) { alert(e.message); }

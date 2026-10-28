@@ -9,7 +9,7 @@ CY.i18n.register("de", {
 "btn.add": "+ Hinzufügen", "btn.cancel": "Abbrechen", "btn.close": "Schließen", "btn.save": "Speichern", "btn.later": "Später",
 "room.empty": "Noch ist niemand da.", "room.away": "{name} vom Schreibtisch weggehen lassen", "room.bar": "Stimmung {mood} %  Gebrechlichkeit {frail} %", "room.info": "Nachsehen, wie es {name} geht",
 "ask.own": "Eigene Antwort…", "ask.send": "Sagen", "pick.reroll": "Keine davon", "nudge.yes": "Okay, mache ich", "nudge.no": "Später", "unit.sec": "{n} s", "unit.min": "{n} Min.", "unit.hour": "{n} Std.",
-"ratio.label": "×{n}", "ring.lack": "{item} ist aus; im Laden kaufen",
+"ratio.label": "×{n}", 
 "clock.dh": "{d} T {h} Std.", "clock.hm": "{h} Std. {m} Min.", "clock.m": "{m} Min.", "clock.elapsed": "Zusammen seit {t}",
 "clock.elapsed_tip": "Spielzeit, die in der gewählten Geschwindigkeit vergangen ist. In der Pause wächst sie nicht.", "clock.tip_system": "Die aktuelle Uhrzeit nach deinem Computer: Tag und Nacht entsprechen deinem Fenster", "clock.tip_game": "Die Uhrzeit im Spiel; Tag und Nacht laufen nach Spielzeit",
 "bar.away": "{name} ist weggegangen", "bar.recall": "zurückrufen",
@@ -86,8 +86,8 @@ CY.i18n.register("de", {
 "kind.note.animal": "Tiere sprechen nicht. Sie zeigen Bedürfnisse durch ihr Verhalten und kommen eine Weile allein zurecht.", "kind.note.plant": "Pflanzen sprechen nicht. Ihre Bedürfnisse laufen in Tagen, sie welken langsam und weinen nie.",
 "class.infant": "Säugling", "class.toddler": "Kleinkind", "class.child": "Kind", "class.teen": "Teenager", "class.adult": "Erwachsener", "class.elder": "Älterer Mensch", "class.cat": "Katze", "class.dog": "Hund", "class.rabbit": "Kaninchen", "class.hamster": "Hamster", "class.bird": "Vogel", "class.fish": "Goldfisch", "class.turtle": "Schildkröte", "class.snake": "Schlange", "class.succulent": "Sukkulente", "class.flower": "Blume", "class.tree": "Baum", "class.cactus": "Kaktus",
 "life.wfh": "Du arbeitest im Homeoffice, mit {n} zum Kümmern.", "life.working": "Bei der Arbeit, mit {n} zum Kümmern zu Hause.", "life.offwork": "Außerhalb der Arbeitszeit, mit {n} zum Kümmern zu Hause.",
-"life.money_tip": "Wird in der Arbeitszeit verdient, nicht solange du mit Fürsorge beschäftigt bist", "life.shop": "Laden", "life.household": "Haushalt",
-"shop.title": "Laden", "shop.note": "Gib Verdientes für Essen, Medikamente, Windeln, Spielzeug und Dünger aus. Spielzeug nutzt sich nicht ab; ohne ist Spielen nur halb so wirksam.", "shop.have": "{n} vorhanden",
+"life.household": "Haushalt",
+
 "home.title": "Haushalt und Kinderfrauen", "home.note": "Sortiert danach, wer dich am meisten braucht, was sich ganz natürlich aus ihrer Kategorie und ihren aktuellen Bedürfnissen ergibt. Prioritäten setzt du nicht selbst.", "home.urgency": "Dringlichkeit", "home.self": "Selbstständigkeit {n} %", "home.nanny": "Kinderfrau engagieren",
 "home.nanny_note": "Eine Kinderfrau ist nur in der Arbeitszeit da und kostet {cost} pro Spielstunde. Bedürfnisse wachsen 60 % langsamer, aber es ist nicht dasselbe, wie wenn du da bist, und es gibt keine Aufmerksamkeiten. Wenn das Geld ausgeht, geht die Kinderfrau zuerst.",
 "intro.title": "Fürsorge hat ihren Preis", "intro.p1": "Du arbeitest im Homeoffice, während jemand zu Hause Fürsorge braucht. Jeder Moment der Fürsorge muss woanders abgezwackt werden.",
@@ -108,8 +108,8 @@ CY.i18n.register("de", {
 "act.sleeping": "Schläft", "act.awake": "Wach", "mood.great": "Sehr gute Laune", "mood.ok": "In Ordnung", "mood.low": "Niedergeschlagen", "mood.bad": "Elend",
 "status.age": "{n} Jahre alt", "status.crying": "Weint", "status.nanny": "Hat eine Kinderfrau", "status.mood": "Stimmung", "status.frailty": "Gebrechlichkeit", "status.needs": "Bedürfnisse", "status.selfdo": "Kann allein, Selbstständigkeit {n} %", "status.selfnone": "Kann nichts allein",
 "toast.sleep": "{name} ist eingeschlafen.", "toast.paused": "Die Zeit ist pausiert.", "toast.already": "Läuft schon: {what}.", "toast.too_many": "Zu viele Dinge auf einmal. Beende erst ein paar.", "toast.interrupt": "{prev} wird beiseitegelegt für {what}, danach geht es weiter.",
-"toast.started": "{what} gestartet; dauert {min} Min.", "toast.no_item": "{item} ist aus.", "toast.nobody": "…",
-"log.self_did": "{name} hat es allein gemacht: {label}", "log.self": "Niemand kam, also hat {name} es allein erledigt: {need}", "log.cry": "{name} hat angefangen zu weinen: {need}", "log.healed": "{name} ist von {cond} genesen", "log.nanny_left": "Das Geld war aus, also ging die Kinderfrau", "log.missed_need_helpless": "Du hast es verpasst. {name} konnte es nicht allein schaffen: {text}", "line.cry": "Wääh…",
+"toast.started": "{what} gestartet; dauert {min} Min.", "toast.nobody": "…",
+"log.self_did": "{name} hat es allein gemacht: {label}", "log.self": "Niemand kam, also hat {name} es allein erledigt: {need}", "log.cry": "{name} hat angefangen zu weinen: {need}", "log.healed": "{name} ist von {cond} genesen", "log.missed_need_helpless": "Du hast es verpasst. {name} konnte es nicht allein schaffen: {text}", "line.cry": "Wääh…",
 "selfact.drink": "{name} hat sich ein Glas Wasser eingeschenkt", "selfact.cook": "{name} hat sich etwas gekocht", "selfact.snack": "{name} hat sich etwas zu essen gesucht", "selfact.nap": "{name} hat ein Nickerchen gemacht", "selfact.wash": "{name} hat geduscht", "selfact.tv": "{name} hat ein bisschen ferngesehen", "selfact.stretch": "{name} hat die Beine bewegt",
 "selfact.peat": "{name} hat etwas gegessen", "selfact.pdrink": "{name} hat etwas Wasser getrunken", "selfact.selfmed": "{name} hat die Tabletten genommen", "selfact.selfbp": "{name} hat den Blutdruck gemessen", "selfact.selfheat": "{name} hat sich ein Wärmekissen aufgelegt",
 "need.thirst": "Durstig", "need.hunger": "Hungrig", "need.rest": "Müde", "need.company": "Will Gesellschaft", "need.play": "Will spielen", "need.warmth": "Braucht Wärme", "need.medicine": "Zeit für Medizin", "need.diaper": "Nasse Windel", "need.homework": "Hausaufgaben offen", "need.mobility": "Will sich bewegen", "need.clean": "Braucht Reinigung", "need.water": "Erde ist trocken", "need.sun": "Will Sonne", "need.fertilize": "Braucht Dünger", "need.prune": "Braucht Schnitt", "need.sugar": "Blutzucker prüfen", "need.bp": "Blutdruck prüfen", "need.joint": "Gelenkschmerzen", "need.fever": "Fieber", "need.breath": "Atemnot", "need.reorient": "Hat nochmal gefragt", "need.hygiene": "Will sich waschen",
@@ -118,7 +118,7 @@ CY.i18n.register("de", {
 "act.bath": "Baden", "act.bath.elder": "Beim Baden helfen", "act.read": "Bilderbuch vorlesen", "act.game": "Zusammen spielen", "act.doctor": "Zum Arzt bringen", "act.groom": "Bürsten", "act.vet": "Zum Tierarzt bringen", "act.repot": "Umtopfen",
 "act.drink": "Etwas zu trinken einschenken", "act.cook": "Kochen", "act.snack": "Einen Snack suchen", "act.nap": "Ein Nickerchen machen", "act.wash": "Duschen", "act.tv": "Fernsehen", "act.stretch": "Beine bewegen", "act.peat": "Allein essen", "act.pdrink": "Allein trinken", "act.selfmed": "Tabletten allein nehmen", "act.selfbp": "Blutdruck allein messen", "act.selfheat": "Wärmekissen allein auflegen",
 "cond.diabetes": "Diabetes", "cond.hypertension": "Bluthochdruck", "cond.arthritis": "Arthritis", "cond.cold": "Erkältung und Fieber", "cond.asthma": "Asthma", "cond.forgetful": "Gedächtnisverlust",
-"item.food": "Essen", "item.pet_food": "Tierfutter", "item.medicine": "Medikamente", "item.diaper": "Windeln", "item.toy": "Spielzeug", "item.fertilizer": "Dünger", "item.money": "Geld",
+
 });
 
 CY.i18n.register("de", {"player.title": "Papa", "player.name": "du"});
@@ -143,10 +143,12 @@ CY.i18n.register("de", {"about.p5": "Lass die Hand auf der Maus ruhen und den Ko
 
 CY.i18n.register("de", {"me.work_start": "Die Arbeitszeit begann, und du hast dich an den Schreibtisch gesetzt.", "me.work_end": "Feierabend, du bist vom Schreibtisch aufgestanden.", "me.go": "Du bist nach {place} gegangen.", "me.back": "Du bist nach Hause zurückgekehrt."});
 
-CY.i18n.register("de", {"loc.park": "Park", "loc.street": "Straße", "loc.lawn": "Wiese", "loc.road": "Fahrbahn", "act.park": "In den Park mitnehmen", "act.street": "Einen Stadtbummel machen", "toast.outing": "{name} ist in {place} und kommt bald zurück.", "me.away": "Für „{label}“ hast du den Schreibtisch {min} Minuten verlassen und {lost} weniger verdient.", "log.outing_start": "{name} ist nach {place} gegangen.", "log.outing_back": "{name} ist zurück.", "log.nanny_hired": "Du hast eine Kinderfrau für {n} Tage engagiert.", "log.nanny_end": "Der Vertrag der Kinderfrau ist ausgelaufen.", "log.nanny_left": "Die Kinderfrau ist gegangen, weil zu viel Lohn offen war.", "log.assist": "{who} hat sich für dich um {name} gekümmert: {label}", "assist.nanny": "Die Kinderfrau"});
+CY.i18n.register("de", {"loc.park": "Park", "loc.street": "Straße", "loc.lawn": "Wiese", "loc.road": "Fahrbahn", "act.park": "In den Park mitnehmen", "act.street": "Einen Stadtbummel machen", "toast.outing": "{name} ist in {place} und kommt bald zurück.", "log.outing_start": "{name} ist nach {place} gegangen.", "log.outing_back": "{name} ist zurück.", "log.assist": "{who} hat sich für dich um {name} gekümmert: {label}", });
 
-CY.i18n.register("de", {"nanny.title": "Kinderfrau", "nanny.note": "Stell eine Kinderfrau ein und zahle sie einmal am Tag, {n} pro Tag. Bei voller Zahlung übernimmt sie kleine Pflegeaufgaben selbst, mit achtzig Prozent deiner Wirkung. Schuldest du mehr, wird sie langsamer, bei zwei Tagen Rückstand geht sie.", "nanny.hire": "{n} Tage einstellen", "nanny.status": "Noch {d} Tage, offen {owed}, Effizienz {eff} %", "nanny.pay": "{n} zahlen", "nanny.paid": "Heute {n} gezahlt", "nanny.fire": "Entlassen", "nanny.helpers": "{names} arbeitet von zu Hause, verdient einen Teil des Einkommens und hilft von selbst bei der Pflege, ohne Lohn.", "add.helper": "Arbeitet von zu Hause, verdient selbst und teilt die Pflege"});
+CY.i18n.register("de", {"add.helper": "Arbeitet von zu Hause, verdient selbst und teilt die Pflege"});
 
 CY.i18n.register("de", {"intro.p2": "Zeit abseits des Schreibtischs bringt kein Geld. Mit dem Geld kaufst du Vorräte und stellst eine Kinderfrau ein."});
 
 CY.i18n.register("de", {"people.lead": "Als Hauptfigur", "people.lead_on": "Hauptfigur, tippen zum Aufheben"});
+
+CY.i18n.register("de", {"arch.elder": "Typische ältere Person", "arch.toddler1": "1-jähriges Kind", "arch.toddler2": "2-jähriges Kind", "arch.toddler3": "3-jähriges Kind", "arch.toddler4": "4-jähriges Kind", "arch.child12": "12-jähriges Kind", "arch.woman25": "Frau, 25", "arch.man25": "Mann, 25", "add.helper": "Zu Hause, teilt die Pflege von selbst"});

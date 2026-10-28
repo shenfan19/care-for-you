@@ -271,7 +271,7 @@ CY.i18n.register("zh-TW", {
  "ratio.label": "×{n}",
  "unit.min": "{n} 分鐘",
  "unit.hour": "{n} 小時",
- "ring.lack": "缺{item}，先去商店買",
+ 
  "sec.play": "體驗",
  "sec.economy": "工作與錢",
  "add.group_plant": "花草",
@@ -330,16 +330,15 @@ CY.i18n.register("zh-TW", {
  "life.wfh": "你正在居家辦公，家裡還有 {n} 個要照顧的。",
  "life.working": "工作中，家裡還有 {n} 個要照顧的。",
  "life.offwork": "不在工作時段，家裡還有 {n} 個要照顧的。",
- "life.money_tip": "工作時段裡賺錢，被照顧的事佔著手時不賺",
+ 
  "life.mode_tip": "切換長按和點選。長按佔用你現實裡的時間，點選花掉遊戲裡的時間",
  "life.mode_hold": "長按：佔用現實時間",
  "life.mode_click": "點選：花掉遊戲時間",
  "life.busy": "正在{what}",
- "life.shop": "商店",
+ 
  "life.household": "家人與保母",
- "shop.title": "商店",
- "shop.note": "用工作賺的錢買食材、藥品、尿布、玩具和肥料。玩具買了不會用完，沒有玩具時玩耍的效果減半。",
- "shop.have": "有 {n}",
+
+ 
  "home.title": "家人與保母",
  "home.note": "按誰最需要你排列，由類別和當下的需求自然決定，不需要自己排優先順序。",
  "home.urgency": "緊迫程度",
@@ -356,12 +355,12 @@ CY.i18n.register("zh-TW", {
  "intro.later": "頂欄裡的現實、加速、暫停可以隨時切換，其餘細節在設定裡改。",
  "toast.busy": "你正忙著{what}。",
  "toast.started": "開始{what}，要花 {min} 分鐘。",
- "toast.no_item": "沒有{item}了。",
+ 
  "toast.nobody": "……",
  "log.self": "沒人管，{name}自己解決了：{need}",
  "log.cry": "{name}哭了起來：{need}",
  "log.healed": "{name}的{cond}好了",
- "log.nanny_left": "錢花光了，保母先走了",
+ 
  "log.missed_need_helpless": "你沒趕上，{name}沒法自己處理：{text}",
  "line.cry": "哇——",
  "mode.reality": "現實",
@@ -581,13 +580,10 @@ CY.i18n.register("zh-TW", {
  "ini.ai.autonomy": "text_only 只改寫臺詞；suggest 另外可以提出性格調整建議，需要你確認；bounded 在很小範圍內自動調整",
  "ini.ai.max_calls_per_hour": "每小時最多呼叫次數，防止花費失控",
  "ini.ai.share_replies": "是否允許把你回答過的話發給 AI 作為上下文",
- "item.food": "食材",
- "item.pet_food": "寵物糧",
- "item.medicine": "藥品",
- "item.diaper": "尿布",
- "item.toy": "玩具",
- "item.fertilizer": "肥料"
-});
+
+ 
+
+ });
 
 CY.i18n.register("zh-TW", {"player.title": "爸爸", "player.name": "你"});
 
@@ -611,10 +607,12 @@ CY.i18n.register("zh-TW", {"about.p5": "讓手停在滑鼠上，讓腦子歇一�
 
 CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
-CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "me.away": "為了{label}，你離開書桌 {min} 分鐘，少賺了 {lost}。", "log.outing_start": "{name}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.nanny_hired": "僱了一位保母，{n} 天。", "log.nanny_end": "保母的合約到期了。", "log.nanny_left": "保母走了，因為欠薪太多。", "log.assist": "{who}替你照顧了{name}：{label}", "assist.nanny": "保母"});
+CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
 
-CY.i18n.register("zh-TW", {"nanny.title": "保母", "nanny.note": "僱一位保母，每天付一次薪水，日薪 {n}。付夠她就自動處理零碎的照顧，滿效率是你自己的八成。欠得多效率會掉，欠夠兩天她就走。", "nanny.hire": "僱 {n} 天", "nanny.status": "還剩 {d} 天，欠薪 {owed}，效率 {eff}%", "nanny.pay": "付 {n}", "nanny.paid": "今天已付 {n}", "nanny.fire": "辭退", "nanny.helpers": "{names}在家辦公，自己賺一份錢，也自動幫著照顧，不用付薪水。", "add.helper": "在家辦公，自動賺錢，也分擔照顧"});
+CY.i18n.register("zh-TW", {"add.helper": "在家辦公，自動賺錢，也分擔照顧"});
 
 CY.i18n.register("zh-TW", {"intro.p2": "離開書桌去照顧人，那段時間就賺不了錢。錢用來買物品，也可以請保母。"});
 
 CY.i18n.register("zh-TW", {"people.lead": "設為主角", "people.lead_on": "主角，點擊取消"});
+
+CY.i18n.register("zh-TW", {"arch.elder": "典型老人", "arch.toddler1": "1歲孩子", "arch.toddler2": "2歲孩子", "arch.toddler3": "3歲孩子", "arch.toddler4": "4歲孩子", "arch.child12": "12歲孩子", "arch.woman25": "25歲女性", "arch.man25": "25歲男性", "add.helper": "在家，自動分擔照顧"});

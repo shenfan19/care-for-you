@@ -9,7 +9,7 @@ CY.i18n.register("ja", {
 "btn.add": "＋ 追加", "btn.cancel": "キャンセル", "btn.close": "閉じる", "btn.save": "保存", "btn.later": "あとで",
 "room.empty": "まだ誰もいません。", "room.away": "{name}をデスクから離れさせる", "room.bar": "気分 {mood}%　衰弱 {frail}%", "room.info": "{name}の様子を見る",
 "ask.own": "自分の言葉で…", "ask.send": "言う", "pick.reroll": "どれも違う", "nudge.yes": "うん、行く", "nudge.no": "あとで", "unit.sec": "{n}秒", "unit.min": "{n}分", "unit.hour": "{n}時間",
-"ratio.label": "×{n}", "ring.lack": "{item}がありません。ショップで買ってください",
+"ratio.label": "×{n}", 
 "clock.dh": "{d}日 {h}時間", "clock.hm": "{h}時間{m}分", "clock.m": "{m}分", "clock.elapsed": "一緒に過ごした時間 {t}",
 "clock.elapsed_tip": "選んだ速さで進んだゲーム内の時間。一時停止中は増えません。", "clock.tip_system": "現在の時刻。パソコンの時計に従うので、昼夜が窓の外と同じになります", "clock.tip_game": "ゲーム内の時刻。昼夜はゲーム内の時間で巡ります",
 "bar.away": "{name}は席を外しています", "bar.recall": "呼び戻す",
@@ -86,8 +86,8 @@ CY.i18n.register("ja", {
 "kind.note.animal": "動物は話しません。行動で欲求を示し、しばらくは一人でも過ごせます。", "kind.note.plant": "植物は話しません。欲求は日単位で、ゆっくり枯れていき、泣くことはありません。",
 "class.infant": "乳児", "class.toddler": "幼児", "class.child": "子ども", "class.teen": "ティーン", "class.adult": "大人", "class.elder": "高齢者", "class.cat": "ねこ", "class.dog": "いぬ", "class.rabbit": "うさぎ", "class.hamster": "ハムスター", "class.bird": "小鳥", "class.fish": "金魚", "class.turtle": "かめ", "class.snake": "へび", "class.succulent": "多肉植物", "class.flower": "花", "class.tree": "木", "class.cactus": "サボテン",
 "life.wfh": "在宅勤務中で、家に{n}の世話があります。", "life.working": "仕事中。家に{n}の世話があります。", "life.offwork": "勤務時間外。家に{n}の世話があります。",
-"life.money_tip": "勤務時間内に稼げます。世話で手がふさがっている間は稼げません", "life.shop": "ショップ", "life.household": "家族と保育",
-"shop.title": "ショップ", "shop.note": "稼いだお金で食材、薬、おむつ、おもちゃ、肥料を買います。おもちゃは減りませんが、ないと遊びの効果は半分になります。", "shop.have": "所持 {n}",
+"life.household": "家族と保育",
+
 "home.title": "家族とシッター", "home.note": "誰があなたを一番必要としているかの順に並びます。分類と今の欲求から自然に決まるので、自分で優先順位をつける必要はありません。", "home.urgency": "緊急度", "home.self": "自立 {n}%", "home.nanny": "シッターを頼む",
 "home.nanny_note": "シッターは勤務時間中だけいて、ゲーム内1時間あたり {cost} かかります。欲求の増え方は6割遅くなりますが、あなたがそばにいるのとは違い、気遣いも返ってきません。お金が尽きるとシッターが先に去ります。",
 "intro.title": "お世話にはコストがある", "intro.p1": "在宅勤務中に、家の誰かにお世話が必要です。お世話の一瞬一瞬は、どこかから捻出するしかありません。",
@@ -108,8 +108,8 @@ CY.i18n.register("ja", {
 "act.sleeping": "眠っている", "act.awake": "起きている", "mood.great": "とても良い気分", "mood.ok": "まずまず", "mood.low": "落ち込んでいる", "mood.bad": "つらそう",
 "status.age": "{n}歳", "status.crying": "泣いている", "status.nanny": "シッターあり", "status.mood": "気分", "status.frailty": "衰弱", "status.needs": "欲求", "status.selfdo": "自分でできること、自立 {n}%", "status.selfnone": "自分では何もできない",
 "toast.sleep": "{name}は眠りについた。", "toast.paused": "時間は一時停止中です。", "toast.already": "すでに実行中：{what}。", "toast.too_many": "手がふさがりすぎです。まずいくつか終わらせましょう。", "toast.interrupt": "{prev}をいったん置いて{what}をします。終わったら戻ります。",
-"toast.started": "{what}を始めた。{min}分かかる。", "toast.no_item": "{item}がない。", "toast.nobody": "…",
-"log.self_did": "{name}が自分でやった：{label}", "log.self": "誰も来なかったので、{name}は自分で何とかした：{need}", "log.cry": "{name}が泣き出した：{need}", "log.healed": "{name}の{cond}が治った", "log.nanny_left": "お金が尽きて、シッターが去った", "log.missed_need_helpless": "間に合わなかった。{name}は自分では何とかできなかった：{text}", "line.cry": "えーん…",
+"toast.started": "{what}を始めた。{min}分かかる。", "toast.nobody": "…",
+"log.self_did": "{name}が自分でやった：{label}", "log.self": "誰も来なかったので、{name}は自分で何とかした：{need}", "log.cry": "{name}が泣き出した：{need}", "log.healed": "{name}の{cond}が治った", "log.missed_need_helpless": "間に合わなかった。{name}は自分では何とかできなかった：{text}", "line.cry": "えーん…",
 "selfact.drink": "{name}が自分で水を注いだ", "selfact.cook": "{name}が自分で食事を作った", "selfact.snack": "{name}が自分で何か食べるものを探した", "selfact.nap": "{name}が自分で少し昼寝した", "selfact.wash": "{name}が自分でシャワーを浴びた", "selfact.tv": "{name}が自分でテレビを少し見た", "selfact.stretch": "{name}が自分で足を動かした",
 "selfact.peat": "{name}が自分で少し食べた", "selfact.pdrink": "{name}が自分で水を飲んだ", "selfact.selfmed": "{name}が自分で薬を飲んだ", "selfact.selfbp": "{name}が自分で血圧を測った", "selfact.selfheat": "{name}が自分で温めた",
 "need.thirst": "喉が渇いた", "need.hunger": "お腹がすいた", "need.rest": "疲れた", "need.company": "そばにいてほしい", "need.play": "遊びたい", "need.warmth": "暖かさがほしい", "need.medicine": "薬の時間", "need.diaper": "おむつが濡れた", "need.homework": "宿題が終わっていない", "need.mobility": "体を動かしたい", "need.clean": "掃除が必要", "need.water": "土が乾いた", "need.sun": "日光がほしい", "need.fertilize": "肥料が必要", "need.prune": "剪定が必要", "need.sugar": "血糖の測定", "need.bp": "血圧の測定", "need.joint": "関節の痛み", "need.fever": "熱がある", "need.breath": "息苦しい", "need.reorient": "また聞かれた", "need.hygiene": "体を洗いたい",
@@ -118,7 +118,7 @@ CY.i18n.register("ja", {
 "act.bath": "お風呂に入れる", "act.bath.elder": "入浴を手伝う", "act.read": "絵本を読む", "act.game": "一緒にゲームをする", "act.doctor": "病院に連れていく", "act.groom": "ブラッシング", "act.vet": "動物病院に連れていく", "act.repot": "植え替える",
 "act.drink": "飲み物を注ぐ", "act.cook": "料理する", "act.snack": "おやつを探す", "act.nap": "昼寝する", "act.wash": "シャワーを浴びる", "act.tv": "テレビを見る", "act.stretch": "足を動かす", "act.peat": "一人で食べる", "act.pdrink": "一人で飲む", "act.selfmed": "一人で薬を飲む", "act.selfbp": "一人で血圧を測る", "act.selfheat": "一人で温める",
 "cond.diabetes": "糖尿病", "cond.hypertension": "高血圧", "cond.arthritis": "関節炎", "cond.cold": "風邪と発熱", "cond.asthma": "ぜんそく", "cond.forgetful": "物忘れ",
-"item.food": "食材", "item.pet_food": "ペットフード", "item.medicine": "薬", "item.diaper": "おむつ", "item.toy": "おもちゃ", "item.fertilizer": "肥料", "item.money": "お金",
+
 });
 
 CY.i18n.register("ja", {"player.title": "パパ", "player.name": "あなた"});
@@ -143,10 +143,12 @@ CY.i18n.register("ja", {"about.p5": "手をマウスに置いたまま、頭を�
 
 CY.i18n.register("ja", {"me.work_start": "仕事の時間になり、あなたは書斎で作業を始めた。", "me.work_end": "仕事が終わり、あなたは書斎を出た。", "me.go": "あなたは{place}へ行った。", "me.back": "あなたは家に戻った。"});
 
-CY.i18n.register("ja", {"loc.park": "公園", "loc.street": "商店街", "loc.lawn": "芝生", "loc.road": "通り", "act.park": "公園へ連れて行く", "act.street": "街へ出かける", "toast.outing": "{name}は{place}に出かけています。もうすぐ戻ります。", "me.away": "「{label}」のため、机を {min} 分離れ、{lost} 少なく稼いだ。", "log.outing_start": "{name}は{place}へ出かけた。", "log.outing_back": "{name}が戻ってきた。", "log.nanny_hired": "シッターを {n} 日間雇った。", "log.nanny_end": "シッターの契約が終わった。", "log.nanny_left": "給料の未払いが多く、シッターは去った。", "log.assist": "{who}があなたの代わりに{name}を世話した：{label}", "assist.nanny": "シッター"});
+CY.i18n.register("ja", {"loc.park": "公園", "loc.street": "商店街", "loc.lawn": "芝生", "loc.road": "通り", "act.park": "公園へ連れて行く", "act.street": "街へ出かける", "toast.outing": "{name}は{place}に出かけています。もうすぐ戻ります。", "log.outing_start": "{name}は{place}へ出かけた。", "log.outing_back": "{name}が戻ってきた。", "log.assist": "{who}があなたの代わりに{name}を世話した：{label}", });
 
-CY.i18n.register("ja", {"nanny.title": "シッター", "nanny.note": "シッターを雇い、1日に1回、日給 {n} を払います。満額払えば細かな世話を自動でこなし、効率はあなたの8割です。未払いが増えると効率が落ち、2日分たまると辞めます。", "nanny.hire": "{n} 日間雇う", "nanny.status": "残り {d} 日、未払い {owed}、効率 {eff}%", "nanny.pay": "{n} 払う", "nanny.paid": "今日は {n} 払い済み", "nanny.fire": "解雇", "nanny.helpers": "{names}は在宅で働いて収入の一部を稼ぎ、世話も自動で手伝います。給料は要りません。", "add.helper": "在宅で働き、自動で稼ぎ、世話も分担する"});
+CY.i18n.register("ja", {"add.helper": "在宅で働き、自動で稼ぎ、世話も分担する"});
 
 CY.i18n.register("ja", {"intro.p2": "机を離れて世話をしている間は、収入がありません。お金は物の購入やシッターの雇用に使います。"});
 
 CY.i18n.register("ja", {"people.lead": "主人公にする", "people.lead_on": "主人公。押すと解除"});
+
+CY.i18n.register("ja", {"arch.elder": "典型的なお年寄り", "arch.toddler1": "1歳の子", "arch.toddler2": "2歳の子", "arch.toddler3": "3歳の子", "arch.toddler4": "4歳の子", "arch.child12": "12歳の子", "arch.woman25": "25歳の女性", "arch.man25": "25歳の男性", "add.helper": "家にいて、世話を自動で分担する"});

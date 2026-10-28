@@ -22,7 +22,7 @@
 
   G.on = fn => G.listeners.push(fn);
   const emit = () => G.listeners.forEach(f => { try { f(); } catch (e) { console.error(e); } });
-  G._h = { emit, clamp, pick, applyEffects, consume };   /* 拆出去的文件用，函数声明会提升 */
+  G._h = { emit, clamp, pick, applyEffects };   /* 拆出去的文件用，函数声明会提升 */
   G.emit = emit;
   G.saveCfg = () => store.write('settings.ini', ini.stringify(G.cfg));
 
@@ -89,26 +89,29 @@
     for (const p in seed) {
       if (!/^templates\//.test(p)) continue;
       if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
-      if (/^templates\/(species|conditions)\/|^templates\/(classes|traits|economy\/items|events\/rules)\.yaml$/.test(p)) {
+      if (/^templates\/(species|conditions|cards)\/|^templates\/(classes|traits|events\/rules)\.yaml$/.test(p)) {
         try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
       }
     }
-    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, items: { items: {}, start: {}, for_need: {} } };
+    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {} };
     for (const p of files) {
       const m = p.match(/^templates\/(species|conditions)\/([^/]+)\.yaml$/);
       if (m) { const x = await store.readYaml(p); if (x) G.tpl[m[1]][x.id || m[2]] = x; }
       const sk = p.match(/^templates\/ai\/skills\/([^/]+)\.yaml$/);
       if (sk) { const x = await store.readYaml(p); if (x) G.tpl.skills[x.id || sk[1]] = x; }
     }
+    /* 角色卡：每类典型角色一张，读进来替换内置的原型，新增的卡会出现在添加角色的列表里 */
+    G.tpl.cards = {};
+    for (const p of files) { const m = p.match(/^templates\/cards\/([^/]+)\.yaml$/); if (m) { const x = await store.readYaml(p); if (x) G.tpl.cards[x.id || m[1]] = x; } }
+    for (const id in G.tpl.cards) {
+      const c = G.tpl.cards[id], a = Object.assign({}, c, { id, role: c.label || c.role || id }), L = CY.content.archetypes, i = L.findIndex(x => x.id === id);
+      if (i >= 0) L[i] = a; else L.push(a);
+    }
     G.tpl.persona = await store.readYaml('templates/ai/persona.yaml');
     G.tpl.rules = ((await store.readYaml('templates/events/rules.yaml')) || {}).rules || [];
     G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
     G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
-    G.tpl.items = Object.assign({ items: {}, start: {}, for_need: {} }, await store.readYaml('templates/economy/items.yaml'));
-    const st = G.tpl.items.start || {};
-    if (typeof G.world.money !== 'number') G.world.money = st.money || 0;
-    if (!G.world.inv) G.world.inv = Object.assign({}, st.inv || {});
-    if (!G.world.nanny || typeof G.world.nanny.days_left !== 'number') G.world.nanny = { days_left: 0, owed: 0, paid_today: 0, day: -1 };
+    delete G.world.money; delete G.world.inv; delete G.world.nanny;
     delete G.world.tasks;
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
@@ -144,6 +147,8 @@
 
 
   /* ---------- 创建与停用角色 ---------- */
+  /* 这个物种在这个阶段自己能做的动作，卡里没写就按这个 */
+  const defaultSelf = (species, stage) => { const acts = ((G.tpl.species[species] || {}).actions) || {}; return Object.keys(acts).filter(k => { const x = acts[k]; return x.self && (x.self === true || x.self.includes(stage)); }); };
   G.createPerson = async function (spec) {
     const arch = CY.content.archOf(spec.arch) || {};
     const id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 46656).toString(36);
@@ -157,11 +162,20 @@
       archetype: spec.arch || '', voice, pronoun: spec.pronoun || arch.pronoun || (human ? '他' : '它'),
       kind: human ? 'human' : PLANTS.includes(species) ? 'plant' : 'animal', species,
       appearance: Object.assign({}, spec.look || arch.look || {}, typeof (spec.look || arch.look || {}).skin === 'number' ? { skin_v: 2 } : {}), personality: { talkative: 0.5, temper: '', catchphrases: [] },
-      traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || [], lines: {},
+      traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
     };
+    if (spec.arch) person.card = spec.arch;
+    const hp = arch.help || {};
+    if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : !!hp.proactive;
+    if (human && (hp.efficiency || hp.interval)) person.help = { efficiency: hp.efficiency, interval: hp.interval };
+    const stg = human ? CY.content.stageOf(age) : species, cls0 = G.tpl.classes[stg] || {};
+    const diff = {}; for (const k in arch.class || {}) if (arch.class[k] !== cls0[k]) diff[k] = arch.class[k];
+    if (Object.keys(diff).length) person.class_override = diff;
+    if (arch.need_rate && Object.keys(arch.need_rate).length) person.need_rate = arch.need_rate;
+    if (Array.isArray(arch.self_actions)) { const def = defaultSelf(species, stg); if (arch.self_actions.slice().sort().join() !== def.slice().sort().join()) person.self_actions = arch.self_actions.slice(); }
     if (human) person.age = age;
-    if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : ['mom', 'dad', 'wife', 'husband'].includes(spec.arch);
     await store.writeYaml(`people/${id}/person.yaml`, person);
+    if (arch.health && typeof arch.health.score === 'number') await store.writeYaml(`people/${id}/state.yaml`, { version: 1, needs: {}, mood: typeof arch.health.mood === 'number' ? arch.health.mood : 0.6, frailty: +(1 - arch.health.score).toFixed(2), last_seen: '', asked: [], heal: {} });
     return id;
   };
   G.setActive = async function (pid, on) {
@@ -230,7 +244,7 @@
     return m;
   };
   G.classOf = p => {
-    const c = Object.assign({ urgency: 1, self_care: 0.3 }, G.tpl.classes[G.classKey(p)]);
+    const c = Object.assign({ urgency: 1, self_care: 0.3 }, G.tpl.classes[G.classKey(p)], p.person.class_override);
     c.self_care = clamp(c.self_care + G.traitMods(p).self_care, 0, 0.98);
     return c;
   };
@@ -439,20 +453,14 @@
     for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] < 0 ? (mods.effect[k] || 1) : 1));
     if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
   }
-  function consume(a) {
-    for (const k in a.uses || {}) G.world.inv[k] -= a.uses[k];
-    if (a.cost && a.cost.money) G.world.money -= a.cost.money;
-  }
+  /* 这个动作这个角色自己做得了吗：卡里写了名单就按名单，没写就按年龄阶段 */
+  G.canSelf = (p, a) => !!a.self && (p.person.self_actions ? p.person.self_actions.includes(a.id) : a.self === true || a.self.includes(G.stage(p)));
   /* 角色自己能做的动作：需求落在动作的效果里，并且这个阶段的角色自己做得了 */
   function selfActionFor(p, need) {
-    const st = G.stage(p);
-    return Object.values(G.allActionsOf(p)).find(a => a.self && (a.self === true || a.self.includes(st)) && a.effect && need in a.effect && a.effect[need] < 0);
+    return Object.values(G.allActionsOf(p)).find(a => G.canSelf(p, a) && a.effect && need in a.effect && a.effect[need] < 0);
   }
-  /* 角色自己动手：效果打折，用掉物品，行动记进日志 */
+  /* 角色自己动手：效果打折，行动记进日志 */
   function selfAct(p, a, need, offline) {
-    const lack = G.lacking(a);
-    if (lack) return false;
-    consume(a);
     applyEffects(p, a, 0.7);
     p.state.mood = clamp(p.state.mood + 0.02);
     p.story.self_total = (p.story.self_total || 0) + 1;
@@ -466,16 +474,7 @@
     if (gmin <= 0) return;
     const hours = gmin / 60;
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
-    const working = G.isWorkTime();
     G.world.game_minutes += gmin;
-    /* 工作收入：工作时段里，人在书桌前才赚钱，离开书桌的时间没有收入；分担的家人在家办公，自己赚一份 */
-    const atDesk = !CY.world || !CY.world.enforce || CY.world.atDesk();
-    if (!offline) {
-      const pst = G.protagonist() ? G.stage(G.protagonist()) : 'adult';
-      if (pst === 'elder') G.world.money += G.PENSION * hours;
-      else if (pst === 'adult' && working && atDesk) G.world.money += G.wage() * hours;
-      if (working) G.world.money += G.helperIncome() * hours;
-    }
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
     for (const p of G.activePeople()) {
       const defs = G.needsOf(p), s = p.state, mods = G.traitMods(p);
@@ -485,7 +484,7 @@
       for (const k in defs) {
         if (external) continue;
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1);
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
@@ -609,7 +608,7 @@
     /* 还不会说话的孩子没有“平时会说哪句”可回想 */
     const speaks = p.person.kind !== 'human' || G.age(p) >= 2;
     const picks = ini.bool(G.cfg, 'interaction', 'picks') && p.person.kind !== 'plant' && speaks ? G.pickOptions(p) : [];
-    const nudgeOk = ini.bool(G.cfg, 'interaction', 'nudges') && p.person.kind === 'human' && G.stage(p) !== 'infant' && G.tpl.nudges.length;
+    const nudgeOk = p.person.kind === 'human' && G.stage(p) !== 'infant' && G.tpl.nudges.length;
     const kinds = [
       ['choice', evs.length ? 0.15 : 0], ['ask', asks.length ? 0.3 : 0], ['pick', picks.length ? 0.2 : 0], ['nudge', nudgeOk ? 0.07 : 0],
       ['glance', 0.2], ['speech', 0.15],
@@ -680,13 +679,8 @@
   function applyAction(pid, actionId) {
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
     if (!a) return false;
-    const lack = G.lacking(a);
-    if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
     const s = p.state;
-    const scale = a.bonus_item && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
-    consume(a);
-    applyEffects(p, a, scale);
-    if (a.away && G.awayCost) G.awayCost(p, a);
+    applyEffects(p, a, 1);
     if (a.outing && G.startOuting) G.startOuting(p, a);
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));

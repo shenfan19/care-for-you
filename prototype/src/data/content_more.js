@@ -179,6 +179,14 @@
     H('younger_brother', '弟弟', 20, 'sibling', '他', { skin: 1, hair_style: 'curly', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f8a7a' }),
     H('younger_sister', '妹妹', 22, 'sibling', '她', { skin: 1, hair_style: 'bob', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#c58a8f' }),
     H('niece', '外甥女', 10, 'child', '她', { skin: 1, hair_style: 'bun', hair_color: 'brown', glasses: 'round', beard: false, cloth: '#9a8fc0' }),
+    H('elder', '典型老人', 75, 'elder', '他', { skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'round', beard: false, cloth: '#7f8f9a' }),
+    H('toddler1', '1岁孩子', 1, 'toddler', '她', { skin: 0, hair_style: 'bald', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#f2c9c4' }),
+    H('toddler2', '2岁孩子', 2, 'toddler', '她', { skin: 0, hair_style: 'bun', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e7a6a1' }),
+    H('toddler3', '3岁孩子', 3, 'toddler', '他', { skin: 0, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#8fbf9f' }),
+    H('toddler4', '4岁孩子', 4, 'child', '他', { skin: 0, hair_style: 'short', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e0b062' }),
+    H('child12', '12岁孩子', 12, 'child', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
+    H('woman25', '25岁女性', 25, 'sibling', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c58a8f' }),
+    H('man25', '25岁男性', 25, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f7f9f' }),
     H('classmate', '同学', 16, 'teen', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#6aa08f' }),
   );
   C.presets.push(

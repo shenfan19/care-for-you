@@ -1,7 +1,6 @@
-/* 初始数据：物种模板、疾病模板、类别设定、物品、声线、说话库、AI 技能。首次运行时写成文件夹里的明文 YAML，之后以文件为准。
+/* 初始数据：物种模板、疾病模板、类别设定、声线、说话库、AI 技能。首次运行时写成文件夹里的明文 YAML，之后以文件为准。
    起始时没有任何角色，由引导页让用户选。
-   需求的 rate 可以是一个数，也可以按阶段分别写，hold 是长按秒数，min 是点击模式下花掉的游戏分钟，uses 是消耗的物品，
-   bonus_item 表示有这件物品时效果完整，没有就减半。stages 限定适用的年龄阶段，不写就不限。 */
+   需求的 rate 可以是一个数，也可以按阶段分别写，hold 是长按秒数，min 是这件事花掉的游戏分钟。stages 限定适用的年龄阶段，不写就不限。 */
 (function (CY) {
   const F = {};
 
@@ -23,11 +22,11 @@ actions:
   pet: { label: { default: 拍拍肩, infant: 摸摸脸, toddler: 摸摸头, child: 摸摸头, teen: 拍拍肩 }, hold: 1, min: 2, effect: { company: -0.25 }, mood: 0.05 }
   hug: { label: { infant: 抱着, default: 抱一抱 }, hold: 4, min: 8, effect: { company: -0.5, rest: -0.15 }, mood: 0.1, stages: [infant, toddler, child] }
   water: { label: 倒水, hold: 3, min: 3, effect: { thirst: -0.9 }, stages: [toddler, child, teen, adult, elder] }
-  feed: { label: { infant: 喂奶, default: 喂饭 }, hold: 5, min: 25, uses: { food: 1 }, effect: { hunger: -0.9, thirst: -0.4 }, stages: [infant, toddler] }
-  meal: { label: { default: 做一顿饭, elder: 做饭给ta吃 }, hold: 6, min: 60, uses: { food: 1 }, effect: { hunger: -0.9, thirst: -0.2 }, stages: [child, teen, adult, elder] }
-  diaper: { label: 换尿布, hold: 4, min: 8, uses: { diaper: 1 }, effect: { diaper: -1 }, stages: [infant, toddler] }
+  feed: { label: { infant: 喂奶, default: 喂饭 }, hold: 5, min: 25, effect: { hunger: -0.9, thirst: -0.4 }, stages: [infant, toddler] }
+  meal: { label: { default: 做一顿饭, elder: 做饭给ta吃 }, hold: 6, min: 60, effect: { hunger: -0.9, thirst: -0.2 }, stages: [child, teen, adult, elder] }
+  diaper: { label: 换尿布, hold: 4, min: 8, effect: { diaper: -1 }, stages: [infant, toddler] }
   bath: { label: { elder: 帮忙洗澡, default: 洗澡 }, hold: 6, min: 25, effect: { hygiene: -1, company: -0.1 }, stages: [infant, toddler, child, elder] }
-  play: { label: { infant: 逗逗ta, default: 陪玩 }, hold: 8, min: 40, effect: { play: -0.9, company: -0.4 }, bonus_item: toy, stages: [infant, toddler, child] }
+  play: { label: { infant: 逗逗ta, default: 陪玩 }, hold: 8, min: 40, effect: { play: -0.9, company: -0.4 }, stages: [infant, toddler, child] }
   read: { label: 读绘本, hold: 6, min: 20, effect: { play: -0.4, company: -0.3, rest: -0.2 }, mood: 0.1, stages: [toddler, child] }
   soothe: { label: { child: 讲睡前故事, default: 哄睡 }, hold: 10, min: 30, effect: { rest: -0.9 }, stages: [infant, toddler, child] }
   homework: { label: 陪写作业, hold: 7, min: 45, effect: { homework: -1, company: -0.3 }, stages: [child, teen] }
@@ -36,25 +35,25 @@ actions:
   rest: { label: 扶去休息, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
   walk: { label: 搀着散步, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
   park: { label: 带去公园, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, minutes: 8, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
-  street: { label: 去街上逛逛, hold: 6, min: 30, away: true, cost: { money: 30 }, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
+  street: { label: 去街上逛逛, hold: 6, min: 30, away: true, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
-  doctor: { label: 带去看医生, hold: 8, min: 120, away: true, cost: { money: 80 }, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
+  doctor: { label: 带去看医生, hold: 8, min: 120, away: true, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
-  cook: { label: 做饭, selfonly: true, self: [teen, adult, elder], hold: 1, min: 60, uses: { food: 1 }, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
-  snack: { label: 找点吃的, selfonly: true, self: [child], hold: 1, min: 10, uses: { food: 1 }, effect: { hunger: -0.6 }, stages: [child] }
+  cook: { label: 做饭, selfonly: true, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
+  snack: { label: 找点吃的, selfonly: true, self: [child], hold: 1, min: 10, effect: { hunger: -0.6 }, stages: [child] }
   nap: { label: 小睡一会儿, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { rest: -0.6 }, stages: [child, teen, adult, elder] }
   wash: { label: 洗个澡, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 25, effect: { hygiene: -0.9 }, stages: [child, teen, adult, elder] }
   tv: { label: 看会儿电视, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { company: -0.25, play: -0.3 }, stages: [child, teen, adult, elder] }
   stretch: { label: 活动活动腿脚, selfonly: true, self: [elder], hold: 1, min: 15, effect: { mobility: -0.5 }, stages: [elder] }
 `;
 
-const petActions = (feedLabel, extra) => `  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
+const petActions = (feedLabel, extra) => `  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: -0.7 } }
   pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
   groom: { label: 梳毛, hold: 5, min: 15, effect: { company: -0.3 }, mood: 0.1 }
-  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 摸一摸, hold: 1, min: 2, effect: { company: -0.3 }, mood: 0.06 }
   water: { label: 换水, hold: 3, min: 3, effect: { thirst: -0.9 } }
-  feed: { label: ${feedLabel}, hold: 4, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+  feed: { label: ${feedLabel}, hold: 4, min: 5, effect: { hunger: -0.9 } }
 ${extra}`;
 
   F['templates/species/cat.yaml'] = `version: 3
@@ -68,7 +67,7 @@ needs:
   play: { label: 想玩, icon: "🧶", rate: 0.10 }
   clean: { label: 猫砂该清了, icon: "🧹", rate: 0.04 }
 actions:
-${petActions('喂猫粮', `  play: { label: 逗猫, hold: 8, min: 20, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+${petActions('喂猫粮', `  play: { label: 逗猫, hold: 8, min: 20, effect: { play: -0.9, company: -0.3 } }
   clean: { label: 铲猫砂, hold: 4, min: 10, effect: { clean: -1 } }
   hand: { label: 抱一会儿, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1 }`)}`;
 
@@ -82,7 +81,7 @@ needs:
   company: { label: 想你陪, icon: "🤝", rate: 0.09 }
   play: { label: 想出去玩, icon: "🎾", rate: 0.12 }
 actions:
-${petActions('喂狗粮', `  play: { label: 扔球, hold: 7, min: 20, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+${petActions('喂狗粮', `  play: { label: 扔球, hold: 7, min: 20, effect: { play: -0.9, company: -0.3 } }
   walk: { label: 遛一圈, hold: 10, min: 40, away: true, outing: { place: park, room: lawn, minutes: 6, group: false }, effect: { play: -1, company: -0.5 }, mood: 0.12 }
   train: { label: 教口令, hold: 6, min: 20, effect: { play: -0.4, company: -0.3 }, mood: 0.08 }`)}`;
 
@@ -97,7 +96,7 @@ needs:
   play: { label: 想出来跳跳, icon: "🐇", rate: 0.07 }
   clean: { label: 笼子该打扫了, icon: "🧹", rate: 0.04 }
 actions:
-${petActions('喂草和菜', `  play: { label: 放出来跳, hold: 7, min: 25, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+${petActions('喂草和菜', `  play: { label: 放出来跳, hold: 7, min: 25, effect: { play: -0.9, company: -0.3 } }
   clean: { label: 打扫笼子, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
 
   F['templates/species/hamster.yaml'] = `version: 3
@@ -110,7 +109,7 @@ needs:
   play: { label: 想跑轮, icon: "🎡", rate: 0.05 }
   clean: { label: 窝该换垫料了, icon: "🧹", rate: 0.03 }
 actions:
-${petActions('喂鼠粮', `  play: { label: 放进跑轮, hold: 3, min: 10, effect: { play: -0.9 }, bonus_item: toy }
+${petActions('喂鼠粮', `  play: { label: 放进跑轮, hold: 3, min: 10, effect: { play: -0.9 } }
   clean: { label: 换垫料, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
 
   F['templates/species/bird.yaml'] = `version: 4
@@ -124,7 +123,7 @@ needs:
   play: { label: 想出来飞, icon: "🪶", rate: 0.08 }
   clean: { label: 笼底该清了, icon: "🧹", rate: 0.04 }
 actions:
-${petActions('添鸟食', `  play: { label: 放出来飞, hold: 6, min: 20, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+${petActions('添鸟食', `  play: { label: 放出来飞, hold: 6, min: 20, effect: { play: -0.9, company: -0.3 } }
   clean: { label: 清笼底, hold: 4, min: 10, effect: { clean: -1 } }
   teach: { label: 教说话, hold: 6, min: 15, effect: { play: -0.3, company: -0.4 }, mood: 0.08 }`)}`;
 
@@ -137,7 +136,7 @@ needs:
   clean: { label: 水该换了, icon: "🫧", rate: 0.04 }
 actions:
   pet: { label: 看一看, hold: 1, min: 2, effect: {}, mood: 0.03 }
-  feed: { label: 撒鱼食, hold: 2, min: 2, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+  feed: { label: 撒鱼食, hold: 2, min: 2, effect: { hunger: -0.9 } }
   clean: { label: 换水, hold: 6, min: 20, effect: { clean: -1 } }
 `;
 
@@ -163,13 +162,13 @@ needs:
   thirst: { label: 口渴, icon: "💧", rate: 0.05 }
   hunger: { label: 饥饿, icon: "🍖", rate: 0.02 }
 actions:
-  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: -0.7 } }
   pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
-  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
   warm: { label: 调保温灯, hold: 4, min: 5, effect: { warmth: -0.9 } }
   water: { label: 换水, hold: 3, min: 3, effect: { thirst: -0.9 } }
-  feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, effect: { hunger: -0.9 } }
 `;
 
   F['templates/species/guineapig.yaml'] = `version: 3
@@ -196,14 +195,14 @@ needs:
   thirst: { label: 口渴, icon: "💧", rate: 0.04 }
   hunger: { label: 饥饿, icon: "🦗", rate: 0.03 }
 actions:
-  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: -0.7 } }
   pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
-  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
   warm: { label: 调保温灯, hold: 4, min: 5, effect: { warmth: -0.9 } }
   mist: { label: 喷水保湿, hold: 3, min: 5, effect: { humid: -1 } }
   water: { label: 换水, hold: 3, min: 3, effect: { thirst: -0.9 } }
-  feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, effect: { hunger: -0.9 } }
 `;
 
   F['templates/species/hedgehog.yaml'] = `version: 3
@@ -216,7 +215,7 @@ needs:
   play: { label: 想出来逛逛, icon: "🍂", rate: 0.06 }
   clean: { label: 窝该换垫料了, icon: "🧹", rate: 0.04 }
 actions:
-${petActions('喂刺猬粮', `  play: { label: 放出来逛逛, hold: 7, min: 25, effect: { play: -0.9 }, bonus_item: toy }
+${petActions('喂刺猬粮', `  play: { label: 放出来逛逛, hold: 7, min: 25, effect: { play: -0.9 } }
   clean: { label: 换垫料, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
 
   F['templates/species/duck.yaml'] = `version: 3
@@ -230,7 +229,7 @@ needs:
   play: { label: 想下水玩, icon: "🦆", rate: 0.07 }
   clean: { label: 水盆该换了, icon: "🫧", rate: 0.05 }
 actions:
-${petActions('喂鸭食', `  play: { label: 放去玩水, hold: 7, min: 25, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+${petActions('喂鸭食', `  play: { label: 放去玩水, hold: 7, min: 25, effect: { play: -0.9, company: -0.3 } }
   clean: { label: 换水盆, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
 
   F['templates/species/ferret.yaml'] = `version: 3
@@ -244,7 +243,7 @@ needs:
   play: { label: 想出来跑, icon: "🐾", rate: 0.12 }
   clean: { label: 窝该清了, icon: "🧹", rate: 0.04 }
 actions:
-${petActions('喂雪貂粮', `  play: { label: 陪它钻管道, hold: 8, min: 25, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+${petActions('喂雪貂粮', `  play: { label: 陪它钻管道, hold: 8, min: 25, effect: { play: -0.9, company: -0.3 } }
   clean: { label: 清窝, hold: 5, min: 15, effect: { clean: -1 } }
   hand: { label: 抱一会儿, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1 }`)}`;
 
@@ -257,10 +256,10 @@ needs:
   hunger: { label: 饥饿, icon: "🪱", rate: 0.04 }
   clean: { label: 水该换了, icon: "🫧", rate: 0.05 }
 actions:
-  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
   pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
   water: { label: 补水, hold: 3, min: 3, effect: { thirst: -0.9 } }
-  feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, effect: { hunger: -0.9 } }
   clean: { label: 换水, hold: 6, min: 20, effect: { clean: -1 } }
 `;
 
@@ -288,7 +287,7 @@ actions:
   pet: { label: 碰碰叶子, hold: 1, min: 1, effect: {}, mood: 0.02 }
   water: { label: 浇水, hold: 3, min: 5, effect: { water: -1 } }
   sun: { label: 挪到阳光下, hold: 3, min: 3, effect: { sun: -1 } }
-  fertilize: { label: 施肥, hold: 4, min: 8, uses: { fertilizer: 1 }, effect: { fertilize: -1 } }
+  fertilize: { label: 施肥, hold: 4, min: 8, effect: { fertilize: -1 } }
   prune: { label: 修剪, hold: 5, min: 10, effect: { prune: -1 } }
   repot: { label: 换盆, hold: 6, min: 20, effect: { fertilize: -0.5, prune: -0.4 }, mood: 0.1 }
 `;
@@ -358,21 +357,7 @@ traits:
 `;
 
   /* 物品与开局的钱。durable 为真表示买了不消耗 */
-  F['templates/economy/items.yaml'] = `version: 3
-# 完整体验里，照顾需要物品，物品要用工作赚的钱买。
-start:
-  money: 300
-  inv: { food: 6, pet_food: 4, medicine: 3, diaper: 12, toy: 1, fertilizer: 2 }
-items:
-  food: { label: 食材, icon: "🍚", price: 15 }
-  pet_food: { label: 宠物粮, icon: "🍖", price: 8 }
-  medicine: { label: 药品, icon: "💊", price: 30 }
-  diaper: { label: 尿布, icon: "🚼", price: 6 }
-  toy: { label: 玩具, icon: "🧸", price: 40, durable: true }
-  fertilizer: { label: 肥料, icon: "🌱", price: 10 }
-# 需求对应的物品，保姆和自理时用。hunger 的物品随物种，人是 food，动物是 pet_food。
-for_need: { hunger: food, diaper: diaper, medicine: medicine, fever: medicine, breath: medicine, fertilize: fertilizer }
-`;
+
 
   /* 疾病：只做基础的典型情景，不是医学建议，更深的内容交给 Life Matters。lines.request 按需求名给出台词，用 {ta} 和 {name} 占位，对谁都适用 */
   F['templates/conditions/diabetes.yaml'] = `version: 3
@@ -382,9 +367,9 @@ needs:
   medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
   sugar: { label: 该测血糖了, icon: "🩸", rate: 0.05 }
 actions:
-  medicine: { label: 陪吃药, hold: 5, min: 5, uses: { medicine: 1 }, effect: { medicine: -1 } }
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: -1 } }
   sugar: { label: 测血糖, hold: 3, min: 5, effect: { sugar: -1 } }
-  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, uses: { medicine: 1 }, effect: { medicine: -0.8 } }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: -0.8 } }
 lines:
   request:
     medicine: ["药，是不是该吃了？", "{ta}看了看药盒，又看了看你。"]
@@ -406,9 +391,9 @@ needs:
   medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
   bp: { label: 该量血压了, icon: "🩺", rate: 0.04 }
 actions:
-  medicine: { label: 陪吃药, hold: 5, min: 5, uses: { medicine: 1 }, effect: { medicine: -1 } }
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: -1 } }
   bp: { label: 量血压, hold: 3, min: 5, effect: { bp: -1 } }
-  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, uses: { medicine: 1 }, effect: { medicine: -0.8 } }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: -0.8 } }
   selfbp: { label: 自己量血压, selfonly: true, self: [adult, elder], hold: 1, min: 5, effect: { bp: -0.7 } }
 lines:
   request:
@@ -444,7 +429,7 @@ heal_after: { need: fever, count: 3 }
 needs:
   fever: { label: 体温高, icon: "🌡", rate: 0.1 }
 actions:
-  fever: { label: 量体温退热, hold: 4, min: 10, uses: { medicine: 1 }, effect: { fever: -0.8 } }
+  fever: { label: 量体温退热, hold: 4, min: 10, effect: { fever: -0.8 } }
   cool: { label: 物理降温, hold: 5, min: 15, effect: { fever: -0.5, company: -0.2 }, mood: 0.05 }
 lines:
   request:
@@ -457,7 +442,7 @@ label: 哮喘
 needs:
   breath: { label: 喘得厉害, icon: "💨", rate: 0.03 }
 actions:
-  inhaler: { label: 用吸入器, hold: 2, min: 3, uses: { medicine: 1 }, effect: { breath: -1 } }
+  inhaler: { label: 用吸入器, hold: 2, min: 3, effect: { breath: -1 } }
   air: { label: 开窗通风, hold: 2, min: 3, effect: { breath: -0.3 } }
 lines:
   request:
@@ -484,9 +469,9 @@ needs:
   medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
   chest: { label: 胸口发闷, icon: "🫀", rate: 0.04 }
 actions:
-  medicine: { label: 陪吃药, hold: 5, min: 5, uses: { medicine: 1 }, effect: { medicine: -1 } }
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: -1 } }
   restsit: { label: 扶着坐下歇歇, hold: 4, min: 10, effect: { chest: -0.8, company: -0.2 }, mood: 0.03 }
-  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, uses: { medicine: 1 }, effect: { medicine: -0.8 } }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: -0.8 } }
 lines:
   request:
     medicine: ["药，是不是该吃了？", "{ta}看了看药盒。"]
@@ -500,9 +485,9 @@ needs:
   medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
   tremor: { label: 手在抖, icon: "🤲", rate: 0.05 }
 actions:
-  medicine: { label: 陪吃药, hold: 5, min: 5, uses: { medicine: 1 }, effect: { medicine: -1 } }
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: -1 } }
   steady: { label: 扶稳, hold: 3, min: 8, effect: { tremor: -0.8 }, mood: 0.04 }
-  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, uses: { medicine: 1 }, effect: { medicine: -0.8 } }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: -0.8 } }
 lines:
   request:
     medicine: ["药，是不是该吃了？", "{ta}看了看药盒，又看了看自己的手。"]
@@ -550,7 +535,7 @@ label: 湿疹
 needs:
   itch: { label: 皮肤发痒, icon: "🩹", rate: 0.06 }
 actions:
-  ointment: { label: 涂药膏, hold: 4, min: 8, uses: { medicine: 1 }, effect: { itch: -0.9 } }
+  ointment: { label: 涂药膏, hold: 4, min: 8, effect: { itch: -0.9 } }
   trimnails: { label: 剪指甲, hold: 5, min: 10, effect: { itch: -0.2 }, mood: 0.04 }
 lines:
   request:
@@ -564,7 +549,7 @@ heal_after: { need: pain, count: 8 }
 needs:
   pain: { label: 伤处疼, icon: "🦴", rate: 0.05 }
 actions:
-  painkill: { label: 吃止痛药, hold: 3, min: 5, uses: { medicine: 1 }, effect: { pain: -0.8 } }
+  painkill: { label: 吃止痛药, hold: 3, min: 5, effect: { pain: -0.8 } }
   support: { label: 扶着走几步, hold: 5, min: 15, effect: { pain: -0.1 }, frailty: -0.05, mood: 0.04 }
   rehab: { label: 陪着做康复动作, hold: 7, min: 30, effect: { pain: -0.3 }, frailty: -0.1, mood: 0.06 }
 lines:
@@ -591,7 +576,7 @@ label: 过敏
 needs:
   sneeze: { label: 打喷嚏流眼泪, icon: "🤧", rate: 0.05 }
 actions:
-  antihist: { label: 吃抗过敏药, hold: 2, min: 3, uses: { medicine: 1 }, effect: { sneeze: -0.9 } }
+  antihist: { label: 吃抗过敏药, hold: 2, min: 3, effect: { sneeze: -0.9 } }
   airclean: { label: 打扫除尘, hold: 6, min: 25, effect: { sneeze: -0.5 } }
 lines:
   request:
@@ -899,7 +884,46 @@ rules:
     conds: '# 疾病的台词和事件文字，覆盖到疾病模板上。这个语言没有写的，用疾病模板里的写法。\n',
   };
 
+  /* 角色卡：每种典型角色一张，plain YAML，一个文件。游戏创建角色时按卡来，后端也按同样的字段读。
+     health.score 是健康度，1 是完全健康；class 是这类人的紧迫、自理、哭闹；self_actions 是自己能做的动作；
+     help 是主动帮忙：proactive 为真就会隔一阵自己动手照顾别人，efficiency 是效果比例，interval 是间隔的现实秒数范围；
+     dialogue 是对话：voice 指向声线，lines 里写的话优先于声线。 */
+  const CARD_V = 1;
+  const SCORE = { infant: 0.85, toddler: 0.9, child: 0.95, teen: 0.95, adult: 0.9, elder: 0.65 };
+  const HELPERS = ['mom', 'dad', 'wife', 'husband', 'woman25', 'man25'];
+  const CARD_EXTRA = {
+    elder: { health: { score: 0.6 }, lines: { request: { thirst: ['……有点渴，倒杯水吧。'], rest: ['我坐一会儿，不碍事。'] }, thanks: { default: ['好，好，难为你了。'] } } },
+    child12: { help: { proactive: true, efficiency: 0.3, interval: [50, 80] }, lines: { request: { hunger: ['{title}，我饿了，有吃的吗？'] }, thanks: { default: ['嗯！我也可以帮你。'] } } },
+    toddler1: { lines: { request: { hunger: ['啊——啊——'] } } },
+    toddler2: { lines: { request: { hunger: ['饿饿。'] } } },
+    toddler3: { lines: { request: { hunger: ['{title}，我饿了。'] } } },
+    toddler4: { lines: { request: { hunger: ['{title}，我要吃饭，我自己吃。'] } } },
+    woman25: { lines: { thanks: { default: ['谢啦。'] } } },
+    popo: { health: { score: 0.6 } },
+  };
+  let cardCache = null;
+  const cardFiles = () => {
+    if (cardCache) return cardCache;
+    const cls = jsyaml.load(F['templates/classes.yaml']).classes, out = {};
+    for (const a of C.archetypes) {
+      const human = a.species === 'human', stage = human ? C.stageOf(a.age) : a.species;
+      const spy = F[`templates/species/${a.species}.yaml`], sp = spy ? jsyaml.load(spy) : { actions: {} };
+      const selfActs = Object.keys(sp.actions || {}).filter(k => { const x = sp.actions[k]; return x.self && (x.self === true || x.self.includes(stage)); });
+      const ex = CARD_EXTRA[a.id] || {};
+      const card = { version: CARD_V, id: a.id, label: a.role, group: a.group, species: a.species };
+      if (human) { card.age = a.age; card.stage = stage; }
+      Object.assign(card, { pronoun: a.pronoun, voice: a.voice, look: a.look, traits: [],
+        health: Object.assign({ score: human ? SCORE[stage] : 0.9, mood: 0.6, conditions: [] }, ex.health),
+        class: Object.assign({}, cls[stage]), need_rate: {}, self_actions: selfActs,
+        help: Object.assign({ proactive: HELPERS.includes(a.id), efficiency: 0.5, interval: [40, 70] }, ex.help),
+        dialogue: { voice: a.voice, lines: ex.lines || {} } });
+      out[`templates/cards/${a.id}.yaml`] = '# 角色卡：一类典型角色的全部设定。改了以后，新建的这一类角色按新的来。' + String.fromCharCode(10) + jsyaml.dump(card, { lineWidth: -1, noRefs: true, skipInvalid: true, flowLevel: 3 });
+    }
+    return (cardCache = out);
+  };
+
   CY.seed = {
+    cardFiles,
     /* 内容包：台词、说话库、问答库、提醒库、疾病文字，按语言放在 templates/content/语言 下 */
     contentFiles(lang) {
       const P = C.packFor(lang), L = `templates/content/${lang}/`, out = {};
@@ -912,7 +936,7 @@ rules:
       return out;
     },
     files() {
-      const out = Object.assign({}, F, this.contentFiles(CY.i18n.lang));
+      const out = Object.assign({}, F, this.contentFiles(CY.i18n.lang), cardFiles());
       out['templates/ai/persona.yaml'] = '# AI 接入时共用的规则。引擎会用 forbidden_patterns 过滤 AI 的输出。\n' + dump(aiPersona);
       for (const k in aiSkills) out[`templates/ai/skills/${k}.yaml`] = '# AI 只能做这一件事，输入输出都受限。\n' + dump(aiSkills[k]);
       out['settings.ini'] = CY.ini.stringify({});

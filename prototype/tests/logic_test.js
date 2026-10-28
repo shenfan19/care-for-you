@@ -29,8 +29,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 (async () => {
   CY.i18n.set('zh-CN');
   await G.load();
-  const stock = () => { for (const k of Object.keys((G.tpl.items || {}).items || {})) G.world.inv[k] = 99; };   /* 经济一直开着，大部分测试不关心物品，先备足 */
-  stock(); await store_write_cfg();
+  await store_write_cfg();
   check('第一次进来没有角色，由引导页选', G.people.length === 0);
   check('种子里有声线、说话库、问答库、提醒库、AI 技能', G.tpl.voices.elder && G.tpl.sayLib.length > 30 && G.tpl.asks.length > 20 && G.tpl.nudges.length > 3 && G.tpl.skills.speak && G.tpl.persona);
   check('原型至少 15 种', CY.content.archetypes.length >= 15);
@@ -93,10 +92,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('界面用到的键英文包都有', missEn.length === 0, missEn.join());
   const needKeys0 = new Set(), actKeys0 = new Set(), condKeys0 = new Set();
   for (const f of Object.keys(CY.seed.files()).filter(f => /^templates\/(species|conditions)\//.test(f))) { const o = ctx.jsyaml.load(CY.seed.files()[f]); Object.keys(o.needs || {}).forEach(k => needKeys0.add(k)); Object.keys(o.actions || {}).forEach(k => actKeys0.add(k)); if (o.label && /conditions/.test(f)) condKeys0.add(o.id); }
-  const itemKeys0 = Object.keys(ctx.jsyaml.load(CY.seed.files()['templates/economy/items.yaml']).items);
+  
   for (const lang of ['zh-TW', 'fr', 'ja', 'ko', 'es', 'de']) {
     const pk = ctx.CY.i18n.packs[lang] || {};
-    const miss = [...used].filter(k => !(k in pk && pk[k] !== undefined)).concat([...needKeys0].filter(k => !(('need.' + k) in pk)).map(k => 'need.' + k), [...actKeys0].filter(k => !(('act.' + k) in pk)).map(k => 'act.' + k), [...condKeys0].filter(k => !(('cond.' + k) in pk)).map(k => 'cond.' + k), itemKeys0.filter(k => !(('item.' + k) in pk)).map(k => 'item.' + k));
+    const miss = [...used].filter(k => !(k in pk && pk[k] !== undefined)).concat([...needKeys0].filter(k => !(('need.' + k) in pk)).map(k => 'need.' + k), [...actKeys0].filter(k => !(('act.' + k) in pk)).map(k => 'act.' + k), [...condKeys0].filter(k => !(('cond.' + k) in pk)).map(k => 'cond.' + k));
     const ph = Object.keys(pk).filter(k => { const a = (pk[k].match(/\{\w+\}/g) || []).sort().join(), b = (((lang.startsWith('zh') ? zh[k] : en[k]) || zh[k] || '').match(/\{\w+\}/g) || []).sort().join(); return a !== b; });
     check('语言包 ' + lang + ' 覆盖所有界面键和数据标签', miss.length === 0, miss.slice(0, 12).join());
     check('语言包 ' + lang + ' 的占位符和英文一致', ph.length === 0, ph.slice(0, 6).join());
@@ -231,7 +230,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('远程后端回来的指令被执行且被检查', calls === 1 && G.get(body0Id()).state.mood === 1 && ctx.__lastReq.kind === 'drive' && ctx.__lastReq.v === 1);
     check('默认不把名字发出去', ctx.__lastReq.people.every(p => p.name === ''));
     const rw = ctx.__lastReq.world;
-    check('请求里带家庭经济和玩家位置', 'money' in rw && 'nanny' in rw && 'working' in rw && rw.player && rw.player.place && ctx.__lastReq.people.every(p => p.needs && p.location));
+    check('请求里带工作时段和玩家位置', 'working' in rw && !('money' in rw) && rw.player && rw.player.place && ctx.__lastReq.people.every(p => p.needs && p.location));
     /* 设了环境变量就对真实的示例后端走一遍：CARE_BACKEND_URL=http://127.0.0.1:8787/ */
     if (process.env.CARE_BACKEND_URL) {
       ctx.fetch = fetch; G.cfg.play.backend_url = process.env.CARE_BACKEND_URL;
@@ -330,7 +329,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   await G.load();
   check('每种原型都能载入', G.people.length === 3 + A.length);
   check('每种原型都有声线和候选话', G.people.every(p => Object.keys(p.voice).length > 0 && G.pickOptions(p).length > 0));
-  const talkers = G.people.filter(p => p.person.kind === 'human' && G.stage(p) !== 'infant');
+  const talkers = G.people.filter(p => p.person.kind === 'human' && G.stage(p) !== 'infant' && G.age(p) >= 2);
   check('每个人形原型都有可问的问题', talkers.every(p => G.askBank(p).length > 0), talkers.filter(p => !G.askBank(p).length).map(p => p.person.name).join());
   for (const p of G.people.slice(3)) p.person.active = false;
   await Promise.all(G.people.slice(3).map(p => CY.store.writeYaml(`people/${p.id}/person.yaml`, p.person)));
@@ -412,64 +411,30 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 
   /* 急性病：照顾够了次数就好 */
   const sick = await mk('toddler', '病宝', { conditions: ['cold'] });
-  stock(); G.world.money = Math.max(G.world.money, 500);
   for (let i = 0; i < 3; i++) { sick.state.needs.fever = 0.8; G.perform(sick.id, 'fever'); }
   check('感冒照顾三次痊愈', !sick.person.conditions.includes('cold') && Object.values(G.journal[sick.id]).flat().some(e => e.type === 'recovered'));
 
-  /* 做事要钱和物品 */
-  const tp = await mk('toddler', '测试宝'); G.world.money = 100; tp.state.needs.hunger = 0.9; G.world.inv.food = 0;
-  check('完整体验缺食材时做不了', G.perform(tp.id, 'feed') === false && tp.state.needs.hunger === 0.9);
-  check('买东西花钱', G.buy('food', 2) === true && G.world.money === 70 && G.world.inv.food === 2);
-  check('钱不够买不了', G.buy('toy', 5) === false && G.world.money === 70);
-  G.perform(tp.id, 'feed');
-  check('做了就消耗食材', G.world.inv.food === 1 && tp.state.needs.hunger < 0.3);
-  tp.state.needs.play = 0.9; G.world.inv.toy = 1; G.perform(tp.id, 'play'); const withToy = 0.9 - tp.state.needs.play;
-  tp.state.needs.play = 0.9; G.world.inv.toy = 0; G.perform(tp.id, 'play'); const noToy = 0.9 - tp.state.needs.play;
-  check('没有玩具时玩耍效果减半', Math.abs(noToy - withToy / 2) < 0.01, withToy.toFixed(2) + ' vs ' + noToy.toFixed(2));
+  const tp = await mk('toddler', '测试宝');
 
-  /* 工作赚钱 */
   G.cfg.time.daynight = 'system'; G.cfg.economy.work_hours = '00:00-23:59';
-  G.cfg.interrupt.frequency = 'normal'; G.nextAt = Date.now() + 1e9; G.world.money = 0;
+  G.cfg.interrupt.frequency = 'normal'; G.nextAt = Date.now() + 1e9;
   for (const p of G.people) p.state.needs = Object.fromEntries(Object.keys(p.state.needs).map(k => [k, 0.05]));
   G.lastTick = Date.now() - 1000; G.tick();
-  check('工作时段里赚钱', G.world.money > 0, String(G.world.money));
-  G.world.inv.food = 3; tp.state.needs.hunger = 0.9;
   check('游戏时钟下不再带现实时间', !('realHh' in G.clock()) && !('realMm' in G.clock()));
 
-  /* 保姆：雇 N 天，每天付一次，欠得多效率往下掉，欠两天就走 */
-  await store_write_cfg(); G.world.money = 1000; G.world.nanny = { days_left: 0, owed: 0, paid_today: 0, day: -1 };
-  check('没雇保姆时没有保姆', !G.nannyActive() && G.nannyEff() === 0);
-  check('可以雇保姆', G.hireNanny(3) === true && G.nannyActive() && G.nannyInfo().days_left === 3);
-  check('刚雇时欠第一天的工资，效率打折', G.nannyEff() < 0.8 && G.nannyEff() > 0.2, String(G.nannyEff()));
-  check('付一天的工资，满效率是玩家自己的八成', G.payNanny(1) === true && Math.abs(G.nannyEff() - 0.8) < 1e-9 && G.nannyInfo().owed === 0);
-  check('每天只能付一次', G.payNanny(1) === false);
-  const di0 = CY.protocol.world().date.day_index;
-  G.world.nanny.day = di0 - 1; G.assistTick(1);
-  check('过了一天，合同少一天，欠一天的工资，可以再付', G.nannyInfo().days_left === 2 && G.nannyInfo().owed === 120 && G.nannyInfo().paid_today === 0);
-  G.world.nanny.day = di0 - 1; G.assistTick(1);
-  check('欠到两天就走', !G.nannyActive());
-  G.hireNanny(3); G.payNanny(1);
-  for (const p of G.people) { p.person.active = false; }
-  tp.person.active = true; tp.state.flags = {}; G.world.inv.food = 5; tp.state.needs.hunger = 0.9;
-  let helped = false;
-  for (let i = 0; i < 60 && !helped; i++) { G.assistTick(60); helped = Object.values(G.journal[tp.id] || {}).flat().some(e => e.type === 'care' && /保姆/.test(e.text)); }
-  check('保姆自动处理零碎的照顾，并且记下来', helped && tp.state.needs.hunger < 0.9);
-  G.dismissNanny(); check('可以辞退', !G.nannyActive());
-  /* 分担的家人：妈妈在家办公，自己赚一份，也自动分担 */
+  /* 分担的家人：妈妈自动分担照顾 */
   const mom = await mk('mom', '分担妈妈'); const MM = G.get(mom.id);
-  check('妈妈默认分担', MM.person.helper === true && G.helpers().some(h => h.id === MM.id) && G.helperIncome() > 0, JSON.stringify({ h: MM.person.helper, n: G.helpers().length, inc: G.helperIncome(), eco: true, st: G.stage(MM), mx: G.maxNeed(MM), act: MM.person.active }));
+  check('妈妈默认分担', MM.person.helper === true && G.helpers().some(h => h.id === MM.id));
   const tpn = G.get(tp.id); for (const p of G.people) p.person.active = p === tpn || p === MM;
-  tpn.state.needs.hunger = 0.9; G.world.inv.food = 5; let momHelped = false;
+  tpn.state.needs.hunger = 0.9; let momHelped = false;
   for (let i = 0; i < 80 && !momHelped; i++) { G.assistTick(60); tpn.state.needs.hunger = Math.max(tpn.state.needs.hunger, 0.9); momHelped = Object.values(G.journal[tpn.id] || {}).flat().some(e => e.type === 'care' && /分担妈妈/.test(e.text)); }
   check('分担的家人自动照顾', momHelped);
   /* 外出和耽误的工作 */
-  G.cfg.economy.work_hours = '00:00-23:59'; G.cfg.time.daynight = 'system'; await store_write_cfg(); G.world.money = 500;
+  G.cfg.economy.work_hours = '00:00-23:59'; G.cfg.time.daynight = 'system'; await store_write_cfg();
   const elderX = await mk('grandpa', '外出爷爷'), babyX = await mk('toddler', '外出宝宝'); const EX = G.get(elderX.id), BX = G.get(babyX.id);
   EX.state.needs.mobility = 0.9; BX.state.needs.play = 0.9; for (const p of G.people) { p.person.active = p === EX || p === BX; }
-  const mBefore = G.world.money;
   check('带爷爷去公园', G.perform(EX.id, 'park') === true && !!G.flag(EX, 'outing') && !!G.flag(BX, 'outing'));
   check('一起去的人在公园，公园页出现', CY.world.locationOf(EX).place === 'park' && CY.world.occupiedPlaces().includes('park'));
-  check('离开书桌耽误了工作，少赚了钱', G.world.money < mBefore, mBefore + ' -> ' + G.world.money + ' work=' + G.isWorkTime() + ' away=' + JSON.stringify(G.actionsOf(EX).park && G.actionsOf(EX).park.away));
   check('在外面的人先不能照顾', CY.world.presenceNeed(EX).outing === true);
   G.world.game_minutes += 30; G.drive('tick', { minutes: 1 });
   check('外出时间到了自己回来，规则收尾', !G.flag(EX, 'outing') && !G.flag(BX, 'outing') && CY.world.locationOf(EX).place === 'home');
@@ -482,10 +447,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('狗想出去玩就来书桌边', CY.world.locationOf(DX).room === 'study');
   /* 离开书桌没有收入 */
   CY.world.enforce = true; CY.world.moveTo('home', 'kitchen'); for (const p of G.people) p.person.active = false;
-  const m2 = G.world.money; G.lastTick = Date.now() - 1000; G.nextAt = Date.now() + 1e9; G.tick();
-  check('不在书桌前不赚钱', G.world.money === m2);
+  G.lastTick = Date.now() - 1000; G.nextAt = Date.now() + 1e9; G.tick();
   CY.world.moveTo('home', 'study'); G.lastTick = Date.now() - 1000; G.tick();
-  check('回到书桌前才赚钱', G.world.money > m2);
   CY.world.enforce = false;
   /* 需求交给后端：游戏自己不涨，由 need_set 给 */
   const BXn = G.get(babyX.id);
@@ -496,7 +459,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.cfg.play.needs_source = 'builtin';
   for (const id of [mom.id, elderX.id, babyX.id, catX.id, dogX.id]) await G.deletePerson(id);
   for (const p of G.people) p.person.active = true;
-  stock(); G.cfg.economy.work_hours = '09:00-18:00'; G.cfg.time.daynight = 'auto'; await store_write_cfg(); refs();
+  G.cfg.economy.work_hours = '09:00-18:00'; G.cfg.time.daynight = 'auto'; await store_write_cfg(); refs();
 
   /* 旧数据：缺年龄的人按阶段补年龄，旧版本的物种模板被新版覆盖 */
   const legacy = await mk('grandpa', '旧爷爷');
@@ -505,7 +468,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
   check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 4 && Object.keys(G.tpl.species.human.needs).length > 5);
-  stock();
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */
@@ -513,7 +475,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('自己做的动作不在菜单里，但属于角色自己', !('drink' in G.actionsOf(eld2)) && 'drink' in G.allActionsOf(eld2) && 'cook' in G.allActionsOf(eld2) && !('drink' in G.allActionsOf(await mk('baby', '宝'))));
   const bby = G.people[G.people.length - 1];
   check('婴儿没有任何自己能做的动作', Object.values(G.allActionsOf(bby)).every(a => !a.self));
-  stock(); G.cfg.time.daynight = 'game'; G.cfg.interrupt.frequency = 'test'; G.nextAt = Date.now() + 1e9;
+  G.cfg.time.daynight = 'game'; G.cfg.interrupt.frequency = 'test'; G.nextAt = Date.now() + 1e9;
   for (const p of G.people) p.person.active = false;
   const E = G.get(eld2.id); E.person.active = true; E.state.needs.thirst = 0.95; E.state.needs.hunger = 0.95;
   G.world.game_minutes = 12 * 60 - 8 * 60;
@@ -552,10 +514,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('性格特征最多两个', (await mk('brother', '多特征', { traits: ['clingy', 'sickly', 'grumpy'] })).person.traits.length === 2);
   /* 更多动作 */
   const doc = await mk('grandpa', '看病的', { conditions: ['cold'] }); const DC = G.get(doc.id);
-  G.world.money = 100; DC.state.needs.fever = 0.9;
-  check('完整体验里看医生要花钱', 'doctor' in G.actionsOf(DC) && G.perform(DC.id, 'doctor') === true && G.world.money === 20 && !DC.person.conditions.includes('cold'));
-  G.world.money = 10; check('钱不够看不了医生', G.perform(DC.id, 'doctor') === false && G.lacking(G.actionsOf(DC).doctor) === 'money');
-  stock();
+  DC.state.needs.fever = 0.9;
   check('宠物有梳毛和看兽医，花草有换盆，洗澡只有需要的人', 'groom' in G.actionsOf(G.get(dogP.id)) && 'vet' in G.actionsOf(G.get(dogP.id)) && 'repot' in G.actionsOf(G.get(flowerP.id)) && 'bath' in G.actionsOf(C1) && !('bath' in G.actionsOf(G.get(ind.id))));
   const act26 = new Set(); for (const p of G.people) for (const k in G.allActionsOf(p)) act26.add(k);
   check('动作种类丰富', act26.size >= 40, String(act26.size));
@@ -645,14 +604,37 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     dd.person.helper = true; G.setProtagonist(dd.id);
     check('做了主角的大人不再算分担家人', !G.helpers().some(h => h.id === dd.id));
     G.setProtagonist(gp.id);
-    const mo = G.world.money; G.cfg.time.mode = 'compressed'; G.lastTick = Date.now() - 5000; G.tick();
-    check('老人主角领退休金', G.world.money > mo, mo + ' -> ' + G.world.money);
+    G.cfg.time.mode = 'compressed'; G.lastTick = Date.now() - 5000; G.tick();
     G.setProtagonist(kd.id);
     check('孩子可以做主角，圈不变慢', G.protagonist() === kd && G.holdSeconds({ min: 30 }) === h0);
     check('快照里有主角', CY.protocol.world().protagonist === kd.id && CY.protocol.person(kd, {}).protagonist === true);
     await G.deletePerson(kd.id);
     check('删掉主角后回到没有主角', G.protagonist() === null);
     G.setProtagonist(null); W.moveTo('home', 'study');
+  }
+
+  /* 角色卡：每类典型角色一张明文 YAML，创建角色按卡来，改了卡就变 */
+  {
+    const files = Object.keys(CY.seed.files()).filter(f => /^templates\/cards\//.test(f));
+    check('每种原型都有一张角色卡', files.length === CY.content.archetypes.length && files.length >= 40, files.length + ' vs ' + CY.content.archetypes.length);
+    for (const id of ['elder', 'toddler1', 'toddler2', 'toddler3', 'toddler4', 'child12', 'woman25', 'wife', 'popo']) check('有典型角色卡 ' + id, !!G.tpl.cards[id] && G.tpl.cards[id].health && typeof G.tpl.cards[id].health.score === 'number' && !!G.tpl.cards[id].help && !!G.tpl.cards[id].dialogue && Array.isArray(G.tpl.cards[id].self_actions));
+    check('1到4岁卡的年龄对', [1, 2, 3, 4].every(n => G.tpl.cards['toddler' + n].age === n) && G.tpl.cards.child12.age === 12 && G.tpl.cards.woman25.age === 25);
+    const eid = await G.createPerson({ arch: 'elder', name: '卡爷爷' }), cid = await G.createPerson({ arch: 'child12', name: '卡孩子' }), wid = await G.createPerson({ arch: 'wife', name: '卡妻子' });
+    await G.load();
+    const E0 = G.get(eid), K = G.get(cid), Wf = G.get(wid);
+    const E = E0;
+    check('老人卡的健康度进了状态', Math.abs(E.state.frailty - 0.4) < 0.011 && E.person.card === 'elder', String(E.state.frailty));
+    check('老人卡的台词优先于声线', G.lines(E, 'request', 'thirst')[0].includes('倒杯水'));
+    check('卡里的主动帮忙', K.person.helper === true && K.person.help.efficiency === 0.3 && Wf.person.helper === true && E.person.helper === false);
+    check('快照带卡和健康度', CY.protocol.person(E, {}).card === 'elder' && Math.abs(CY.protocol.person(E, {}).health - 0.6) < 0.011 && !!CY.api.cards().elder);
+    /* 改卡：自理动作名单和需求速率只对新建的角色生效 */
+    const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/elder.yaml')); cardY.self_actions = ['drink']; cardY.need_rate = { thirst: 2 };
+    await CY.store.write('templates/cards/elder.yaml', ctx.jsyaml.dump(cardY)); await G.load();
+    const e2id = await G.createPerson({ arch: 'elder', name: '改卡' }); await G.load();
+    const E2 = G.get(e2id); const Eold = G.get(eid);
+    check('改了卡的自理名单生效', JSON.stringify(E2.person.self_actions) === '["drink"]' && G.canSelf(E2, G.allActionsOf(E2).drink) && !G.canSelf(E2, G.allActionsOf(E2).nap) && G.canSelf(Eold, G.allActionsOf(Eold).nap));
+    check('改了卡的需求速率生效', E2.person.need_rate.thirst === 2);
+    await G.load();
   }
 
   /* 旧设置文件里取消了的项会被丢掉 */

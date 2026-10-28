@@ -32,7 +32,7 @@
     for (const n in p.state.flags || {}) { const f = p.state.flags[n]; if (f.until === undefined || f.until > now) flags[n] = Object.assign({}, f); }
     const loc = W ? W.locationOf(p) : { place: 'home', room: 'living' };
     return {
-      id: p.id, name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
+      id: p.id, card: p.person.card || p.person.archetype || '', health: +(1 - p.state.frailty).toFixed(2), name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
       mood: +p.state.mood.toFixed(2), frailty: +p.state.frailty.toFixed(2), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(2)])),
       conditions: (p.person.conditions || []).slice(), traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
       sleeping: G.isSleeping(p), protagonist: G.protagonist() === p, location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),
@@ -42,7 +42,7 @@
     const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {}, d = new Date();
     const pad = n => String(n).padStart(2, '0');
     const date = { month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000) };
-    return { v: P.V, date, money: Math.floor(G.world.money || 0), working: G.isWorkTime(), at_desk: !CY.world || CY.world.atDesk(), nanny: G.nannyInfo ? G.nannyInfo() : null, days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
+    return { v: P.V, date, working: G.isWorkTime(), at_desk: !CY.world || CY.world.atDesk(), days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
       player: { place: pl.place, room: pl.room }, protagonist: G.protagonist() ? G.protagonist().id : null, params: {} };
   };
 

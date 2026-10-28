@@ -288,14 +288,14 @@
     home(); layer.appendChild(label);
     acts.forEach((a, i) => {
       const ang = (-90 + 360 * i / n) * Math.PI / 180;
-      const sec = G.holdSeconds(a), cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec }), lack = G.lacking(a), urgent = U.actUrgent(p, a);
-      const text = a.label + ' · ' + cost + (lack ? ' · ' + t('ring.lack', { item: G.item(lack).label }) : '');
+      const sec = G.holdSeconds(a), cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec }), urgent = U.actUrgent(p, a);
+      const text = a.label + ' · ' + cost;
       const b = doc().createElement('button');
-      b.className = 'ico ' + (urgent ? 'urgent' : 'calm') + (lack ? ' dim' : '');
+      b.className = 'ico ' + (urgent ? 'urgent' : 'calm');
       b.style.left = (R * Math.cos(ang)) + 'px'; b.style.top = (R * Math.sin(ang)) + 'px';
       b.title = text; b.setAttribute('aria-label', text);
-      b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>` + (lack ? `<i class="lk">${G.item(lack).icon}</i>` : '');
-      const show = () => { label.innerHTML = `<b>${esc(a.label)}</b><small>${esc(cost)}</small>${lack ? `<small class="lack">${esc(t('ring.lack', { item: G.item(lack).label }))}</small>` : ''}`; };
+      b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>`;
+      const show = () => { label.innerHTML = `<b>${esc(a.label)}</b><small>${esc(cost)}</small>`; };
       b.onpointerenter = show; b.onfocus = show; b.onpointerleave = home; b.onblur = home;
       b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
       b.onpointerup = b.onpointercancel = () => U.endHold(false);

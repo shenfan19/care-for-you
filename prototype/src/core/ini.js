@@ -13,17 +13,14 @@
     ['play', 'needs_source', 'builtin', 'builtin 是游戏自己算需求的增长；backend 是需求完全由后端用 need_set 指令给，比如接入你自己的 ODE，游戏不再自己涨'],
     ['play', 'api_bridge', 'false', '为 true 时，页面响应 postMessage 的 care.getState 和 care.apply，让外部程序读取每个人的需求和状态，也能写入。默认关闭'],
     ['economy', 'work_hours', '09:00-18:00', '每天的工作时段，按昼夜时钟算'],
-    ['interaction', 'nudges', 'true', '偶尔提醒你联系现实里的人、站起来动一动'],
     ['interaction', 'picks', 'true', '偶尔问你某个角色会说哪句话'],
     ['interaction', 'sensitive_topics', 'false', '是否出现较私密或带文化压力的话题，例如身体不适、催婚，默认关闭'],
     ['interaction', 'learn', 'true', '根据你的回应逐步适应每个角色的打扰频率和话题'],
     ['ui', 'scene', 'auto', '房间背景：auto 白天客厅夜里卧室；living 客厅；bedroom 卧室；kitchen 厨房；lawn 草坪；balcony 阳台；none 纯色'],
-    ['ui', 'avatar_style', 'simple', 'simple 简洁抽象的形象；detailed 画出五官细节'],
     ['ui', 'theme', 'auto', 'auto 跟随系统；light 浅色；dark 深色'],
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],
     ['ui', 'hide_when_fullscreen', 'true', '桌面版使用，全屏程序运行时隐藏'],
-    ['privacy', 'upload', 'false', '是否允许上传数据，默认关闭'],
     ['account', 'enabled', 'false', '账号功能，预留。目前没有服务器，保持关闭'],
     ['account', 'server_url', '', '预留，将来账号和云端存档服务的地址'],
     ['ai', 'enabled', 'false', '是否启用 AI 台词。默认关闭，关闭时一个字节也不会发出去'],
@@ -37,7 +34,7 @@
   ];
 
   /* 已经取消的设置，旧文件里留着的也丢掉 */
-  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale'] };
+  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale', 'nudges'], ui: ['avatar_style'], privacy: ['upload'] };
   const dropRemoved = out => { for (const s in REMOVED) if (out[s]) { for (const k of REMOVED[s]) delete out[s][k]; if (!Object.keys(out[s]).length && !SCHEMA.some(x => x[0] === s)) delete out[s]; } return out; };
 
   function parse(text) {

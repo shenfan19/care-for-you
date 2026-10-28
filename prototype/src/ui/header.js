@@ -11,8 +11,6 @@
     if (th !== 'light' && th !== 'dark') th = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const bg = ini.get(G.cfg, 'ui', 'background');
     for (const d of [document, U.pipDoc]) if (d) { d.documentElement.dataset.theme = th; d.documentElement.dataset.bg = bg; }
-    const style = ini.get(G.cfg, 'ui', 'avatar_style') === 'detailed' ? 'detailed' : 'simple';
-    if (CY.avatarStyle !== style) { CY.avatarStyle = style; if (U.room) U.renderRoom(true); }
   };
   /* 顶栏已经没有语言和明暗的快捷控件，都在设置里 */
   U.renderControls = function () {};

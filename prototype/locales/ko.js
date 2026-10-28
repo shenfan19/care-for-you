@@ -9,7 +9,7 @@ CY.i18n.register("ko", {
 "btn.add": "+ 추가", "btn.cancel": "취소", "btn.close": "닫기", "btn.save": "저장", "btn.later": "나중에",
 "room.empty": "아직 아무도 없습니다.", "room.away": "{name}을(를) 잠시 자리에서 물러나게 하기", "room.bar": "기분 {mood}%  쇠약 {frail}%", "room.info": "{name}의 상태 보기",
 "ask.own": "직접 말하기…", "ask.send": "말하기", "pick.reroll": "이 중에 없어요", "nudge.yes": "응, 갈게", "nudge.no": "나중에", "unit.sec": "{n}초", "unit.min": "{n}분", "unit.hour": "{n}시간",
-"ratio.label": "×{n}", "ring.lack": "{item}이(가) 없습니다. 상점에서 사세요",
+"ratio.label": "×{n}", 
 "clock.dh": "{d}일 {h}시간", "clock.hm": "{h}시간 {m}분", "clock.m": "{m}분", "clock.elapsed": "함께한 시간 {t}",
 "clock.elapsed_tip": "선택한 속도로 흐른 게임 내 시간입니다. 일시정지 중에는 늘지 않습니다.", "clock.tip_system": "현재 시각입니다. 컴퓨터 시계를 따르므로 낮과 밤이 창밖과 같습니다", "clock.tip_game": "게임 안의 시각입니다. 낮과 밤은 게임 시간으로 돕니다",
 "bar.away": "{name}이(가) 자리를 비웠습니다", "bar.recall": "불러오기",
@@ -86,8 +86,8 @@ CY.i18n.register("ko", {
 "kind.note.animal": "동물은 말하지 않습니다. 행동으로 욕구를 보이며 한동안은 혼자서도 지냅니다.", "kind.note.plant": "식물은 말하지 않습니다. 욕구는 날 단위로 흐르고, 천천히 시들며, 울지 않습니다.",
 "class.infant": "영아", "class.toddler": "유아", "class.child": "어린이", "class.teen": "십대", "class.adult": "성인", "class.elder": "노인", "class.cat": "고양이", "class.dog": "강아지", "class.rabbit": "토끼", "class.hamster": "햄스터", "class.bird": "새", "class.fish": "금붕어", "class.turtle": "거북이", "class.snake": "뱀", "class.succulent": "다육식물", "class.flower": "꽃", "class.tree": "나무", "class.cactus": "선인장",
 "life.wfh": "재택근무 중이며, 집에 돌볼 대상이 {n}명 있습니다.", "life.working": "근무 중, 집에 돌볼 대상이 {n}명 있습니다.", "life.offwork": "근무 시간 외, 집에 돌볼 대상이 {n}명 있습니다.",
-"life.money_tip": "근무 시간에 벌 수 있으며, 돌봄으로 손이 묶여 있는 동안은 벌지 못합니다", "life.shop": "상점", "life.household": "가족과 돌보미",
-"shop.title": "상점", "shop.note": "번 돈으로 식재료, 약, 기저귀, 장난감, 비료를 삽니다. 장난감은 닳지 않지만 없으면 놀이 효과가 절반입니다.", "shop.have": "보유 {n}",
+"life.household": "가족과 돌보미",
+
 "home.title": "가족과 돌보미", "home.note": "누가 나를 가장 필요로 하는지 순으로 정렬됩니다. 분류와 현재 욕구에서 자연히 정해지므로 직접 우선순위를 정할 필요가 없습니다.", "home.urgency": "긴급도", "home.self": "자립 {n}%", "home.nanny": "돌보미 고용",
 "home.nanny_note": "돌보미는 근무 시간에만 있으며 게임 내 1시간당 {cost}이 듭니다. 욕구가 60% 더 천천히 늘지만 내가 곁에 있는 것과는 다르고 마음 씀도 없습니다. 돈이 떨어지면 돌보미가 먼저 떠납니다.",
 "intro.title": "돌봄에는 대가가 있다", "intro.p1": "재택근무를 하는 동안 집에는 돌봐야 할 사람이 있습니다. 돌봄의 모든 순간은 다른 어딘가에서 쥐어짜 내야 합니다.",
@@ -108,8 +108,8 @@ CY.i18n.register("ko", {
 "act.sleeping": "자는 중", "act.awake": "깨어 있음", "mood.great": "기분 최고", "mood.ok": "괜찮음", "mood.low": "기운이 없음", "mood.bad": "많이 힘듦",
 "status.age": "{n}세", "status.crying": "울고 있음", "status.nanny": "돌보미 있음", "status.mood": "기분", "status.frailty": "쇠약", "status.needs": "욕구", "status.selfdo": "혼자 할 수 있는 것, 자립 {n}%", "status.selfnone": "혼자서는 아무것도 못 함",
 "toast.sleep": "{name}이(가) 잠들었다.", "toast.paused": "시간이 일시정지 상태입니다.", "toast.already": "이미 하는 중: {what}.", "toast.too_many": "손에 든 일이 너무 많습니다. 몇 가지를 먼저 끝내세요.", "toast.interrupt": "{prev}을(를) 잠시 미루고 {what}을(를) 합니다. 끝나면 다시 돌아옵니다.",
-"toast.started": "{what} 시작. {min}분 걸립니다.", "toast.no_item": "{item}이(가) 없습니다.", "toast.nobody": "…",
-"log.self_did": "{name}이(가) 스스로 했다: {label}", "log.self": "아무도 오지 않아 {name}이(가) 혼자 처리했다: {need}", "log.cry": "{name}이(가) 울기 시작했다: {need}", "log.healed": "{name}의 {cond}이(가) 나았다", "log.nanny_left": "돈이 떨어져 돌보미가 떠났다", "log.missed_need_helpless": "놓쳤다. {name}은(는) 혼자 해결할 수 없었다: {text}", "line.cry": "으앙…",
+"toast.started": "{what} 시작. {min}분 걸립니다.", "toast.nobody": "…",
+"log.self_did": "{name}이(가) 스스로 했다: {label}", "log.self": "아무도 오지 않아 {name}이(가) 혼자 처리했다: {need}", "log.cry": "{name}이(가) 울기 시작했다: {need}", "log.healed": "{name}의 {cond}이(가) 나았다", "log.missed_need_helpless": "놓쳤다. {name}은(는) 혼자 해결할 수 없었다: {text}", "line.cry": "으앙…",
 "selfact.drink": "{name}이(가) 스스로 물을 따랐다", "selfact.cook": "{name}이(가) 스스로 밥을 해 먹었다", "selfact.snack": "{name}이(가) 스스로 먹을 것을 찾았다", "selfact.nap": "{name}이(가) 스스로 잠깐 낮잠을 잤다", "selfact.wash": "{name}이(가) 스스로 샤워를 했다", "selfact.tv": "{name}이(가) 스스로 TV를 잠깐 봤다", "selfact.stretch": "{name}이(가) 스스로 다리를 움직였다",
 "selfact.peat": "{name}이(가) 스스로 조금 먹었다", "selfact.pdrink": "{name}이(가) 스스로 물을 마셨다", "selfact.selfmed": "{name}이(가) 스스로 약을 먹었다", "selfact.selfbp": "{name}이(가) 스스로 혈압을 쟀다", "selfact.selfheat": "{name}이(가) 스스로 찜질을 했다",
 "need.thirst": "목마름", "need.hunger": "배고픔", "need.rest": "피곤함", "need.company": "곁에 있어 주길 원함", "need.play": "놀고 싶음", "need.warmth": "따뜻함이 필요함", "need.medicine": "약 먹을 시간", "need.diaper": "기저귀가 젖음", "need.homework": "숙제를 못 끝냄", "need.mobility": "움직이고 싶음", "need.clean": "청소가 필요함", "need.water": "흙이 말랐음", "need.sun": "햇볕이 필요함", "need.fertilize": "비료가 필요함", "need.prune": "가지치기가 필요함", "need.sugar": "혈당 확인", "need.bp": "혈압 확인", "need.joint": "관절 통증", "need.fever": "열이 남", "need.breath": "숨이 참", "need.reorient": "또 물어봄", "need.hygiene": "씻고 싶음",
@@ -118,7 +118,7 @@ CY.i18n.register("ko", {
 "act.bath": "목욕시키기", "act.bath.elder": "목욕 도와주기", "act.read": "그림책 읽어 주기", "act.game": "함께 게임하기", "act.doctor": "병원에 데려가기", "act.groom": "빗질해 주기", "act.vet": "동물병원에 데려가기", "act.repot": "분갈이",
 "act.drink": "마실 것 따르기", "act.cook": "요리하기", "act.snack": "간식 찾기", "act.nap": "낮잠 자기", "act.wash": "샤워하기", "act.tv": "TV 보기", "act.stretch": "다리 움직이기", "act.peat": "혼자 먹기", "act.pdrink": "혼자 마시기", "act.selfmed": "혼자 약 먹기", "act.selfbp": "혼자 혈압 재기", "act.selfheat": "혼자 찜질하기",
 "cond.diabetes": "당뇨", "cond.hypertension": "고혈압", "cond.arthritis": "관절염", "cond.cold": "감기와 열", "cond.asthma": "천식", "cond.forgetful": "기억력 저하",
-"item.food": "식재료", "item.pet_food": "사료", "item.medicine": "약", "item.diaper": "기저귀", "item.toy": "장난감", "item.fertilizer": "비료", "item.money": "돈",
+
 });
 
 CY.i18n.register("ko", {"player.title": "아빠", "player.name": "당신"});
@@ -143,10 +143,12 @@ CY.i18n.register("ko", {"about.p5": "손은 마우스에 두고, 머리를 잠�
 
 CY.i18n.register("ko", {"me.work_start": "업무 시간이 되어 서재에서 일을 시작했다.", "me.work_end": "일이 끝나 서재에서 나왔다.", "me.go": "{place}에 갔다.", "me.back": "집으로 돌아왔다."});
 
-CY.i18n.register("ko", {"loc.park": "공원", "loc.street": "거리", "loc.lawn": "잔디밭", "loc.road": "도로", "act.park": "공원에 데려가기", "act.street": "거리 구경 가기", "toast.outing": "{name}은(는) {place}에 나가 있어요. 곧 돌아와요.", "me.away": "「{label}」을 위해 {min}분 자리를 비워 {lost}만큼 덜 벌었다.", "log.outing_start": "{name}은(는) {place}에 나갔다.", "log.outing_back": "{name}이(가) 돌아왔다.", "log.nanny_hired": "돌보미를 {n}일 고용했다.", "log.nanny_end": "돌보미 계약이 끝났다.", "log.nanny_left": "밀린 급여가 많아 돌보미가 떠났다.", "log.assist": "{who}이(가) 대신 {name}을(를) 돌봤다: {label}", "assist.nanny": "돌보미"});
+CY.i18n.register("ko", {"loc.park": "공원", "loc.street": "거리", "loc.lawn": "잔디밭", "loc.road": "도로", "act.park": "공원에 데려가기", "act.street": "거리 구경 가기", "toast.outing": "{name}은(는) {place}에 나가 있어요. 곧 돌아와요.", "log.outing_start": "{name}은(는) {place}에 나갔다.", "log.outing_back": "{name}이(가) 돌아왔다.", "log.assist": "{who}이(가) 대신 {name}을(를) 돌봤다: {label}", });
 
-CY.i18n.register("ko", {"nanny.title": "돌보미", "nanny.note": "돌보미를 고용해 하루에 한 번 일당 {n}을 줍니다. 제대로 주면 자잘한 돌봄을 알아서 하고 효율은 내 8할입니다. 밀리면 효율이 떨어지고 이틀 밀리면 떠납니다.", "nanny.hire": "{n}일 고용", "nanny.status": "{d}일 남음, 밀린 급여 {owed}, 효율 {eff}%", "nanny.pay": "{n} 지급", "nanny.paid": "오늘 {n} 지급함", "nanny.fire": "그만두게 하기", "nanny.helpers": "{names}은(는) 재택근무로 수입 일부를 벌고 돌봄도 알아서 돕습니다. 급여는 필요 없습니다.", "add.helper": "재택근무로 알아서 벌고 돌봄도 나눈다"});
+CY.i18n.register("ko", {"add.helper": "재택근무로 알아서 벌고 돌봄도 나눈다"});
 
 CY.i18n.register("ko", {"intro.p2": "책상을 떠나 돌보는 동안에는 돈을 벌지 못합니다. 돈은 물품을 사거나 돌보미를 고용하는 데 씁니다."});
 
 CY.i18n.register("ko", {"people.lead": "주인공으로", "people.lead_on": "주인공, 누르면 해제"});
+
+CY.i18n.register("ko", {"arch.elder": "전형적인 노인", "arch.toddler1": "1살 아이", "arch.toddler2": "2살 아이", "arch.toddler3": "3살 아이", "arch.toddler4": "4살 아이", "arch.child12": "12살 아이", "arch.woman25": "25세 여성", "arch.man25": "25세 남성", "add.helper": "집에서 돌봄을 알아서 나눈다"});

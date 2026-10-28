@@ -115,7 +115,7 @@ CY.i18n.register("zh-CN", {
  "ratio.label": "×{n}",
  "unit.min": "{n} 分钟",
  "unit.hour": "{n} 小时",
- "ring.lack": "缺{item}，先去商店买",
+ 
  "sec.play": "体验",
  "sec.economy": "工作与钱",
  "add.group_plant": "花草",
@@ -174,16 +174,15 @@ CY.i18n.register("zh-CN", {
  "life.wfh": "你正在居家办公，家里还有 {n} 个要照顾的。",
  "life.working": "工作中，家里还有 {n} 个要照顾的。",
  "life.offwork": "不在工作时段，家里还有 {n} 个要照顾的。",
- "life.money_tip": "工作时段里赚钱，被照顾的事占着手时不赚",
+ 
  "life.mode_tip": "切换长按和点击。长按占用你现实里的时间，点击花掉游戏里的时间",
  "life.mode_hold": "长按：占用现实时间",
  "life.mode_click": "点击：花掉游戏时间",
  "life.busy": "正在{what}",
- "life.shop": "商店",
+ 
  "life.household": "家人与保姆",
- "shop.title": "商店",
- "shop.note": "用工作赚的钱买食材、药品、尿布、玩具和肥料。玩具买了不会用完，没有玩具时玩耍的效果减半。",
- "shop.have": "有 {n}",
+
+ 
  "home.title": "家人与保姆",
  "home.note": "按谁最需要你排列，由类别和当下的需求自然决定，不需要自己排优先级。",
  "home.urgency": "紧迫程度",
@@ -200,12 +199,12 @@ CY.i18n.register("zh-CN", {
  "intro.later": "之后可以在设置里改，也可以随时用顶栏下面的按钮切换长按和点击。",
  "toast.busy": "你正忙着{what}。",
  "toast.started": "开始{what}，要花 {min} 分钟。",
- "toast.no_item": "没有{item}了。",
+ 
  "toast.nobody": "……",
  "log.self": "没人管，{name}自己解决了：{need}",
  "log.cry": "{name}哭了起来：{need}",
  "log.healed": "{name}的{cond}好了",
- "log.nanny_left": "钱花光了，保姆先走了",
+ 
  "log.missed_need_helpless": "你没赶上，{name}没法自己处理：{text}",
  "line.cry": "哇——"
 });
@@ -327,10 +326,12 @@ CY.i18n.register("zh-CN", {"about.p5": "让手停在鼠标上，让脑子歇一�
 
 CY.i18n.register("zh-CN", {"me.work_start": "到了工作时间，你在书房办公。", "me.work_end": "下班了，你从书房出来。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
-CY.i18n.register("zh-CN", {"loc.park": "公园", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "马路", "act.park": "带去公园", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一会儿就回来。", "me.away": "为了{label}，你离开书桌 {min} 分钟，少赚了 {lost}。", "log.outing_start": "{name}出门去{place}了。", "log.outing_back": "{name}回来了。", "log.nanny_hired": "雇了一位保姆，{n} 天。", "log.nanny_end": "保姆的合同到期了。", "log.nanny_left": "保姆走了，因为欠薪太多。", "log.assist": "{who}替你照顾了{name}：{label}", "assist.nanny": "保姆"});
+CY.i18n.register("zh-CN", {"loc.park": "公园", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "马路", "act.park": "带去公园", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一会儿就回来。", "log.outing_start": "{name}出门去{place}了。", "log.outing_back": "{name}回来了。", "log.assist": "{who}替你照顾了{name}：{label}", });
 
-CY.i18n.register("zh-CN", {"nanny.title": "保姆", "nanny.note": "雇一位保姆，每天付一次工资，日薪 {n}。付够她就自动处理零碎的照顾，满效率是你自己的八成。欠得多效率会掉，欠够两天她就走。", "nanny.hire": "雇 {n} 天", "nanny.status": "还剩 {d} 天，欠薪 {owed}，效率 {eff}%", "nanny.pay": "付 {n}", "nanny.paid": "今天已付 {n}", "nanny.fire": "辞退", "nanny.helpers": "{names}在家办公，自己赚一份钱，也自动帮着照顾，不用付工资。", "add.helper": "在家办公，自动赚钱，也分担照顾"});
+CY.i18n.register("zh-CN", {"add.helper": "在家办公，自动赚钱，也分担照顾"});
 
 CY.i18n.register("zh-CN", {"intro.p2": "离开书桌去照顾人，那段时间就赚不了钱。钱用来买物品，也可以请保姆。"});
 
 CY.i18n.register("zh-CN", {"people.lead": "设为主角", "people.lead_on": "主角，点击取消"});
+
+CY.i18n.register("zh-CN", {"arch.elder": "典型老人", "arch.toddler1": "1岁孩子", "arch.toddler2": "2岁孩子", "arch.toddler3": "3岁孩子", "arch.toddler4": "4岁孩子", "arch.child12": "12岁孩子", "arch.woman25": "25岁女性", "arch.man25": "25岁男性", "add.helper": "在家，自动分担照顾"});
