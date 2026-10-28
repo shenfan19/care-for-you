@@ -59,35 +59,72 @@
   const block = () => Math.floor(G.dayMinutes() / 20);
   const pickBy = (id, list) => list[hashOf(id + ':' + block()) % list.length];
   const onMat = q => G.isHuman(q) && ['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (q.state.needs.rest || 0) <= 0.55;
+  /* ---------- 每个角色自己挑去哪个房间：像一个个小行动者 ----------
+     喜好来自角色卡的 prefs，需求会把人往对应的房间推：饿了去厨房，困了去卧室，想有人陪就去书桌边，宝宝哭了大人往宝宝那边去。
+     每个人在一个房间停一阵再换，现实里几十秒到几分钟，慢慢地走。鼠标悬停或点选一个人，他就停住，等你操作完才继续。 */
+  const WANDER_PETS = ['cat', 'dog', 'rabbit', 'guineapig', 'ferret', 'hedgehog', 'duck', 'chicken'];
+  W.PREFS = CY.seed.PREFS;   /* 各类角色在各房间的喜好权重，角色卡的 prefs 优先 */
+  W.agents = {};          /* 运行时的状态，不存档：每人当前的房间和下次再挑的时刻 */
+  W.frozen = new Set();   /* 被悬停或点选的人，停着不动 */
+  const prefsOf = p => (p.person.prefs && p.person.prefs.rooms) || W.PREFS[G.classKey(p)] || W.PREFS.adult;
+  const restlessOf = p => { const r = p.person.prefs && p.person.prefs.restless; return typeof r === 'number' ? r : 0.6; };
+  const dwellMs = p => (70 + Math.random() * 140) / (0.4 + restlessOf(p)) * 1000;
+  /* 一个房间对这个人此刻有多大吸引力 */
+  W.scoreRoom = (p, room) => {
+    const n = p.state.needs, hr = G.dayMinutes() / 60, st = G.classKey(p), human = G.isHuman(p);
+    let w = (prefsOf(p)[room] || 0);
+    const hi = k => Math.max(0, (n[k] || 0) - 0.45) * 2;
+    if (room === 'kitchen') w += (hi('hunger') + hi('thirst')) * 5 + (human && st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19)) ? 2.5 : 0);
+    if (room === 'toilet') w += hi('toilet') * 6 + hi('hygiene') * 2;
+    if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += hi('rest') * 4 + (hr >= 20.5 || hr < 6.5 ? 2 : 0);
+    if (room === 'living') w += hi('company') * 2 + hi('play') * 1.5;
+    if (room === 'study') w += hi('company') * 2.5;
+    if (room === 'yard') w += hi('play') * 2 + hi('mobility') * 2 + (hr >= 9 && hr < 17 ? 0.6 : -0.6);
+    /* 看得见谁在叫：宝宝或幼儿很需要人，大人和老人往那个孩子在的房间去 */
+    if (human && ['adult', 'elder', 'teen'].includes(st)) {
+      for (const q of G.activePeople()) {
+        if (q === p || !G.isHuman(q) || !['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q)) continue;
+        if (G.maxNeed(q) > 0.65 && ['living', 'bedroom'].includes(room) && room === W.roomOfNow(q)) w += 3 * (G.maxNeed(q) - 0.5);
+        else if (onMat(q) && room === 'living' && st !== 'teen') w += 1.2;
+      }
+    }
+    return w;
+  };
+  W.chooseRoom = (p, cur) => {
+    const human = G.isHuman(p), rooms = ['living', 'kitchen', 'yard', 'study', 'toilet', human && G.stage(p) === 'elder' ? 'elder' : 'bedroom'].concat(human && G.stage(p) !== 'elder' ? [] : []);
+    const ws = rooms.map(r => Math.max(0.02, W.scoreRoom(p, r) * (r === cur ? 0.5 : 1)));
+    let x = Math.random() * ws.reduce((a, b) => a + b, 0);
+    for (let i = 0; i < rooms.length; i++) { x -= ws[i]; if (x <= 0) return rooms[i]; }
+    return rooms[0];
+  };
+  const agentRoom = p => {
+    const now = Date.now();
+    let A = W.agents[p.id];
+    if (!A) A = W.agents[p.id] = { room: W.chooseRoom(p, null), next: now + dwellMs(p) * Math.random() };
+    else if (now >= A.next && !W.frozen.has(p.id)) { A.room = W.chooseRoom(p, A.room); A.next = now + dwellMs(p); }
+    else if (W.frozen.has(p.id)) A.next = Math.max(A.next, now + 3000);
+    return A.room;
+  };
+  W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
+  W.freeze = (id, on) => { if (on) W.frozen.add(id); else W.frozen.delete(id); };
+
   W.locationOf = p => {
     if (p === G.protagonist()) { const pl = W.player(); return { place: pl.place, room: pl.room, mode: 'stand' }; }
-    const hr = G.dayMinutes() / 60, fp = flagPlace(p);
+    const fp = flagPlace(p);
     if (fp) return { place: fp.place, room: fp.room, mode: fp.mode || 'stand' };
     if (!G.isHuman(p)) {
       const sp = p.species.id, n = p.state.needs;
       /* 猫想蹭人，狗想出去玩，它们就跑到书桌边来 */
       if (!G.isSleeping(p) && ((sp === 'cat' && (n.company || 0) > 0.5) || (sp === 'dog' && ((n.play || 0) > 0.5 || (n.company || 0) > 0.6)))) return { place: 'home', room: 'study', mode: 'stand' };
-      if (sp === 'dog' && !G.isSleeping(p) && hr >= 9 && hr < 17 && hashOf(p.id) % 2) return { place: 'home', room: 'yard', mode: 'stand' };
-      if (sp === 'cat') return { place: 'home', room: hr >= 12 && hr < 16 ? 'bedroom' : hr >= 17 && hr < 19 ? 'kitchen' : hr >= 9 && hr < 12 && hashOf(p.id) % 2 ? 'yard' : 'living', mode: 'stand' };
+      if (WANDER_PETS.includes(sp) && !G.isSleeping(p)) return { place: 'home', room: agentRoom(p), mode: 'stand' };
       return { place: 'home', room: PET_ROOM[sp] || 'living', mode: 'stand' };
     }
     const st = G.stage(p), sleeping = G.isSleeping(p);
     if (sleeping) return { place: 'home', room: st === 'elder' ? 'elder' : 'bedroom', mode: st === 'infant' ? 'cradle' : 'sleep' };
-    /* 宝宝困了在婴儿床，醒着就在玩具垫上 */
+    /* 宝宝困了在婴儿床，醒着就在玩具垫上，自己不会走 */
     if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
-    if (st === 'teen') return { place: 'home', room: hr >= 17 && hr < 19 ? 'study' : 'bedroom', mode: 'stand' };
     if (st === 'toddler' && G.age(p) < 2.5) return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
-    if (st === 'child' || st === 'toddler') {
-      const room = hr < 9 ? 'kitchen' : hr >= 14 && hr < 17 && hashOf(p.id) % 2 ? 'yard' : hr >= 12 && hr < 14 ? 'kitchen' : hr >= 17 && hr < 19 && st === 'child' ? 'study' : hr >= 19 ? 'bedroom' : 'living';
-      return { place: 'home', room, mode: 'stand' };
-    }
-    if (st === 'elder') {
-      /* 宝宝在垫子上，爷爷常常过去陪着玩；别的时候在屋里屋外随机走动，每二十分钟换一处 */
-      if (hr >= 9 && hr < 19 && G.activePeople().some(onMat) && hashOf(p.id + ':' + block()) % 3 !== 0) return { place: 'home', room: 'living', mode: 'stand' };
-      return { place: 'home', room: hr >= 7 && hr < 20 ? pickBy(p.id, ['living', 'yard', 'kitchen', 'living', 'yard', 'elder']) : 'living', mode: 'stand' };
-    }
-    if (st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19))) return { place: 'home', room: 'kitchen', mode: 'stand' };
-    return { place: 'home', room: 'living', mode: 'stand' };
+    return { place: 'home', room: agentRoom(p), mode: 'stand' };
   };
 
   /* 一个地点里所有人的位置：按房间分配站位 */
@@ -103,6 +140,7 @@
     const lead = G.protagonist();
     if (lead && W.player().place === place) { const pl = W.player(); out.push({ id: lead.id, place, room: pl.room, kind: 'stand', gx: pl.gx, gy: pl.gy }); }
     for (const room in byRoom) {
+      byRoom[room].sort((a, b) => (a.p.id < b.p.id ? -1 : 1));
       let ns = 0, nb = 0;
       for (const { p, mode } of byRoom[room]) {
         const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : mode === 'mat' ? 'mat' : 'stand';

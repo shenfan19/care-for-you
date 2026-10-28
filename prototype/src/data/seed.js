@@ -886,9 +886,18 @@ rules:
 
   /* 角色卡：每种典型角色一张，plain YAML，一个文件。游戏创建角色时按卡来，后端也按同样的字段读。
      health.score 是健康度，1 是完全健康；class 是这类人的紧迫、自理、哭闹；self_actions 是自己能做的动作；
+     prefs 是爱待在哪些房间（rooms 是权重）和爱不爱动（restless，0 到 1，越大越爱换地方）；
      help 是主动帮忙：proactive 为真就会隔一阵自己动手照顾别人，efficiency 是效果比例，interval 是间隔的现实秒数范围；
      dialogue 是对话：voice 指向声线，lines 里写的话优先于声线。 */
-  const CARD_V = 1;
+  const CARD_V = 2;
+  /* 各类角色在各个房间的喜好权重，卡里的 prefs.rooms 写了就以卡为准。需求会另外把人推向厨房、卧室这些地方 */
+  const PREFS = {
+    elder: { living: 3, yard: 2, kitchen: 1.5 }, adult: { living: 3, kitchen: 1.5, yard: 1, study: 0.6 }, teen: { bedroom: 3, living: 1.5, study: 1.5, kitchen: 0.6 },
+    child: { living: 3, yard: 2, kitchen: 1, bedroom: 0.8 }, toddler: { living: 4, yard: 1, kitchen: 0.6 },
+    cat: { living: 3, bedroom: 2, kitchen: 1, yard: 1, study: 0.5 }, dog: { living: 3, yard: 3, kitchen: 1 },
+    rabbit: { living: 3, yard: 1.5 }, guineapig: { living: 3, yard: 1 }, ferret: { living: 3, bedroom: 1 }, hedgehog: { living: 2, yard: 2 }, duck: { yard: 3, living: 1 }, chicken: { yard: 4, living: 0.5 },
+  };
+  const RESTLESS = { elder: 0.35, adult: 0.6, teen: 0.5, child: 0.9, toddler: 0.9, cat: 0.5, dog: 0.9 };
   const SCORE = { infant: 0.85, toddler: 0.9, child: 0.95, teen: 0.95, adult: 0.9, elder: 0.65 };
   const HELPERS = ['mom', 'dad', 'wife', 'husband', 'woman25', 'man25'];
   const CARD_EXTRA = {
@@ -916,6 +925,7 @@ rules:
         health: Object.assign({ score: human ? SCORE[stage] : 0.9, mood: 0.6, conditions: [] }, ex.health),
         class: Object.assign({}, cls[stage]), need_rate: {}, self_actions: selfActs,
         help: Object.assign({ proactive: HELPERS.includes(a.id), efficiency: 0.5, interval: [40, 70] }, ex.help),
+        prefs: Object.assign({ rooms: PREFS[stage] || PREFS.adult, restless: RESTLESS[stage] || 0.6 }, ex.prefs),
         dialogue: { voice: a.voice, lines: ex.lines || {} } });
       out[`templates/cards/${a.id}.yaml`] = '# 角色卡：一类典型角色的全部设定。改了以后，新建的这一类角色按新的来。' + String.fromCharCode(10) + jsyaml.dump(card, { lineWidth: -1, noRefs: true, skipInvalid: true, flowLevel: 3 });
     }
@@ -923,7 +933,7 @@ rules:
   };
 
   CY.seed = {
-    cardFiles,
+    PREFS, cardFiles,
     /* 内容包：台词、说话库、问答库、提醒库、疾病文字，按语言放在 templates/content/语言 下 */
     contentFiles(lang) {
       const P = C.packFor(lang), L = `templates/content/${lang}/`, out = {};

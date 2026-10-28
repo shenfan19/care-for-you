@@ -79,9 +79,24 @@
     el.style.left = (q.x / CY.world.VW * 100) + '%'; el.style.top = (q.y / CY.world.VH * 100) + '%'; el.style.setProperty('--z', Math.round(q.y));
   };
   U.moveFig = function (el, place, gx, gy) {
+    if (el._frozen) return;
     const cur = el._pos;
     if (cur && cur.place === place && Math.abs(cur.gx - gx) + Math.abs(cur.gy - gy) < 0.01) return;
     el._pos = { place, gx, gy }; paint(el, place, gx, gy);
+  };
+
+  /* 悬停或点选的人停在原地，包括正在慢慢走的：把当前位置固定下来，放开后再接着往目标走 */
+  const freezeEl = (el, on) => {
+    if (on && !el._frozen) { const cs = win().getComputedStyle(el); el.style.transition = 'none'; el.style.left = cs.left; el.style.top = cs.top; el._frozen = true; }
+    else if (!on && el._frozen) { el._frozen = false; el._pos = null; el.style.transition = ''; }
+  };
+  U.hoverId = null;
+  U.frozenIds = () => { const s = new Set(); if (U.hoverId) s.add(U.hoverId); if ($r('#ringLayer') && U.sel) s.add(U.sel); if (U.holdPid) s.add(U.holdPid); return s; };
+  U.syncFreeze = () => {
+    const ids = U.frozenIds(), W = CY.world;
+    for (const id of [...W.frozen]) if (!ids.has(id)) W.freeze(id, false);
+    for (const id of ids) W.freeze(id, true);
+    for (const c of U.room.querySelectorAll('.cx[data-id]')) freezeEl(c, ids.has(c.dataset.id));
   };
 
   /* 昼夜色调：夜里偏蓝，黄昏偏橙，清晨淡淡的暖色 */
@@ -112,8 +127,13 @@
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
         c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
         c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; U.sel = p.id; U.openRing(p.id); };
+        c.style.transition = 'none';
+        c.onpointerenter = () => { U.hoverId = p.id; U.syncFreeze(); };
+        c.onpointerleave = () => { if (U.hoverId === p.id) { U.hoverId = null; U.syncFreeze(); } };
         stage.appendChild(c);
+        win().requestAnimationFrame(() => { if (!c._frozen) c.style.transition = ''; });
       }
+      c.classList.toggle('lead', p === G.protagonist());
       if (fam) { c.style.left = ''; c.style.top = ''; c.style.removeProperty('--z'); c._pos = null; }
       else {
         const lp = laid.get(p.id);
@@ -187,7 +207,7 @@
         if (cd) cd.style.width = Math.max(0, (req.deadline - Date.now()) / (req.deadline - req.since) * 100) + '%';
       }
     }
-    U.renderPlayer(); U.renderNav(); U.renderRoster();
+    U.syncFreeze(); U.renderPlayer(); U.renderNav(); U.renderRoster();
   };
 
   /* ---------- 主角，地点导航，角上的名单 ---------- */
@@ -316,6 +336,7 @@
     h.style.display = 'block'; h.style.left = x + 'px'; h.style.top = y + 'px';
     const fg = h.querySelector('.fg'), C = 2 * Math.PI * 26;
     fg.style.strokeDasharray = C; fg.style.strokeDashoffset = C;
+    U.holdPid = pid;
     hold = { pid, a, start: performance.now(), dur: G.holdSeconds(a) * 1000, C, fg, win: win() };
     const step = () => {
       if (!hold) return;
@@ -327,7 +348,7 @@
   };
   U.endHold = function (done) {
     if (!hold) return;
-    const h = hold; hold = null;
+    const h = hold; hold = null; U.holdPid = null;
     h.win.cancelAnimationFrame(h.raf);
     CY.world.holding = false; CY.world.lastActive = Date.now();
     const el = $r('#hold'); if (el) el.style.display = 'none';

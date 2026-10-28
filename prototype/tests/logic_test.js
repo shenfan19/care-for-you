@@ -637,6 +637,40 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await G.load();
   }
 
+  /* 行动者：每个人按喜好和需求慢慢换房间，悬停的人停住 */
+  {
+    const W = CY.world;
+    for (const x of G.people) x.person.active = false;
+    const ids = []; for (const [a2, n2] of [['grandpa', '走动爷爷'], ['mom', '走动妈妈'], ['baby', '走动宝宝'], ['cat', '走动猫']]) ids.push((await mk(a2, n2)).id);
+    const [gp2, mm2, bb2, ct2] = ids.map(id => G.get(id));
+    for (const x of [gp2, mm2, bb2, ct2]) { x.person.active = true; for (const k in x.state.needs) x.state.needs[k] = 0.1; G.act[x.id] = 'awake'; }
+    const seenRooms = new Set();
+    for (let i = 0; i < 60; i++) { for (const k in W.agents) W.agents[k].next = 0; seenRooms.add(W.locationOf(mm2).room); }
+    check('醒着的大人会换房间', seenRooms.size >= 3, [...seenRooms].join());
+    check('宝宝自己不会走，醒着在垫子上', W.locationOf(bb2).room === 'living' && W.locationOf(bb2).mode === 'mat');
+    check('老人白天只在喜欢的房间', (() => { const r = new Set(); for (let i = 0; i < 60; i++) { for (const k in W.agents) W.agents[k].next = 0; r.add(W.locationOf(gp2).room); } return [...r].every(x => ['living', 'yard', 'kitchen'].includes(x)); })());
+    /* 需求把人推向对应的房间 */
+    const kitchenCount = () => { let n = 0; for (let i = 0; i < 200; i++) { for (const k in W.agents) W.agents[k].next = 0; if (W.locationOf(mm2).room === 'kitchen') n++; } return n; };
+    mm2.state.needs.hunger = 0.1; const kitFull = kitchenCount();
+    mm2.state.needs.hunger = 0.95; const kitHungry = kitchenCount();
+    check('饿了更常去厨房', kitHungry > kitFull * 1.5, kitFull + ' -> ' + kitHungry);
+    mm2.state.needs.hunger = 0.1;
+    /* 悬停的人停住，放开后才动 */
+    const r0 = W.locationOf(mm2).room; W.freeze(mm2.id, true);
+    let moved = false; for (let i = 0; i < 40; i++) { W.agents[mm2.id].next = 0; if (W.locationOf(mm2).room !== r0) moved = true; }
+    check('悬停的人不会走开', !moved);
+    W.freeze(mm2.id, false);
+    check('放开后还要再等几秒才动', W.agents[mm2.id].next > Date.now());
+    /* 角色卡里的喜好优先 */
+    const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/mom.yaml')); cardY.prefs = { rooms: { yard: 1 }, restless: 1 };
+    await CY.store.write('templates/cards/mom.yaml', ctx.jsyaml.dump(cardY)); await G.load();
+    const m3id = await G.createPerson({ arch: 'mom', name: '爱院子' }); await G.load();
+    const M3 = G.get(m3id); for (const x of G.people) x.person.active = x === M3; for (const k in M3.state.needs) M3.state.needs[k] = 0.1;
+    const r3 = new Set(); for (let i = 0; i < 40; i++) { for (const k in W.agents) W.agents[k].next = 0; r3.add(W.locationOf(M3).room); }
+    check('卡里的 prefs 决定爱去哪', r3.has('yard') && M3.person.prefs.restless === 1, [...r3].join());
+    for (const x of G.people) x.person.active = true;
+  }
+
   /* 旧设置文件里取消了的项会被丢掉 */
   {
     const old = CY.ini.parse(['[interrupt]', 'mode = keep', 'quiet_hours = 22:00-07:00', 'countdown_seconds = 30', '[play]', 'fall_scale = 9', 'economy = false', '[interaction]', 'click_instead_of_hold = true'].join(String.fromCharCode(10)));

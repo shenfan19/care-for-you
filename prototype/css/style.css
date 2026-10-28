@@ -261,3 +261,7 @@ header { align-items:center; }
 /* 宝宝这类一直要人的角色，需求超过一半就一直亮着 */
 .cx.needy .body { filter:drop-shadow(0 0 7px var(--accent)); animation:needyglow 1.4s ease-in-out infinite; }
 @keyframes needyglow { 0%, 100% { filter:drop-shadow(0 0 3px var(--accent)); } 50% { filter:drop-shadow(0 0 11px var(--accent)); } }
+
+/* 角色在房间里慢慢走：位置变化是一段长的滑动，主角跟着你的操作走得快些 */
+.room.iso .cx { transition:left 7s ease-in-out, top 7s ease-in-out; }
+.room.iso .cx.lead, .room.iso .cx.player { transition-duration:1.2s; }

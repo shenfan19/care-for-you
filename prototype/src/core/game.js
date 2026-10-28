@@ -172,6 +172,7 @@
     const diff = {}; for (const k in arch.class || {}) if (arch.class[k] !== cls0[k]) diff[k] = arch.class[k];
     if (Object.keys(diff).length) person.class_override = diff;
     if (arch.need_rate && Object.keys(arch.need_rate).length) person.need_rate = arch.need_rate;
+    if (arch.prefs) person.prefs = JSON.parse(JSON.stringify(arch.prefs));
     if (Array.isArray(arch.self_actions)) { const def = defaultSelf(species, stg); if (arch.self_actions.slice().sort().join() !== def.slice().sort().join()) person.self_actions = arch.self_actions.slice(); }
     if (human) person.age = age;
     await store.writeYaml(`people/${id}/person.yaml`, person);
