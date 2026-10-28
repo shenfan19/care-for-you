@@ -44,18 +44,23 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
+    /* 左右滑动换地点 */
+    let sx = null;
+    root.addEventListener('pointerdown', e => { sx = e.target.closest('.cx') || e.target.closest('#ringLayer') || e.target.closest('#placeNav') ? null : e.clientX; });
+    root.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 70) U.cyclePlace(dx < 0 ? 1 : -1); });
     U.renderRoom(true);
   };
 
-  /* 房间背景：客厅、卧室、厨房、草坪、阳台，随昼夜变化 */
+  /* 房间背景：斜视的房子，家，医院，办公室，窗外的天色随时间变 */
+  U.viewPlace = 'home';
+  U.cyclePlace = function (d) { const L = CY.world.PLACE_LIST, i = L.indexOf(U.viewPlace); U.viewPlace = L[(i + d + L.length) % L.length]; U.renderRoom(true); };
   U.renderScene = function () {
     const el = $r('#scene'); if (!el) return;
-    const h = G.dayMinutes() / 60, id = CY.scenes.resolve(ini.get(G.cfg, 'ui', 'scene'), h), ph = CY.scenes.phase(h);
-    const sig = (id || 'none') + '|' + ph;
-    if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = id ? CY.scenes.svg(id, h) : ''; U.room.classList.toggle('hasscene', !!id); }
+    const h = G.dayMinutes() / 60, sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang;
+    if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = CY.iso.svg(U.viewPlace, h); U.room.classList.add('hasscene'); }
   };
 
   /* 昼夜色调：夜里偏蓝，黄昏偏橙，清晨淡淡的暖色 */
@@ -74,20 +79,23 @@
     const stage = $r('#stage');
     if (!stage) return;
     U.renderTint(); U.renderScene();
-    const people = G.activePeople();
+    const all = G.activePeople(), laid = new Map(CY.world.layout(U.viewPlace).map(l => [l.id, l])), people = all.filter(p => laid.has(p.id));
     const topP = people.slice().sort((a, b) => G.urgency(b) - G.urgency(a))[0], topId = topP && G.urgency(topP) > 0.7 ? topP.id : null;
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
     $r('#roomEmpty') && $r('#roomEmpty').remove();
-    if (!people.length) { const d = doc().createElement('div'); d.id = 'roomEmpty'; d.className = 'mute'; d.textContent = t('room.empty'); stage.appendChild(d); }
+    if (!all.length) { const d = doc().createElement('div'); d.id = 'roomEmpty'; d.className = 'mute'; d.textContent = t('room.empty'); stage.appendChild(d); }
     for (const p of people) {
       let c = stage.querySelector(`.cx[data-id="${p.id}"]`);
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
         c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
-        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info')) return; U.sel = p.id; U.openRing(p.id); };
+        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; U.sel = p.id; U.openRing(p.id); };
         stage.appendChild(c);
       }
-      const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3);
+      const lp = laid.get(p.id), q = CY.world.project(U.viewPlace, lp.gx, lp.gy);
+      c.style.left = (q.x / CY.world.VW * 100) + '%'; c.style.top = (q.y / CY.world.VH * 100) + '%'; c.style.setProperty('--z', Math.round(q.y));
+      c.classList.toggle('lying', lp.kind === 'sleep'); c.classList.toggle('incradle', lp.kind === 'cradle');
+      const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '');
       if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
@@ -99,10 +107,11 @@
       if (c.dataset.nm !== nmSig) {
         c.dataset.nm = nmSig;
         const pct = v => Math.round(v * 100);
-        c.querySelector('.nm').innerHTML = `<b>${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span class="zzz" title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${(p.person.conditions || []).length ? '<span class="sick" title="' + esc((p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ')) + '">🩺</span>' : ''}<span class="info" title="${esc(t('room.info', { name: p.person.name }))}">ⓘ</span><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
+        c.querySelector('.nm').innerHTML = `<b>${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span class="zzz" title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${(p.person.conditions || []).length ? '<span class="sick" title="' + esc((p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ')) + '">🩺</span>' : ''}<span class="edit" title="${esc(t('room.edit', { name: p.person.name }))}">✎</span><span class="info" title="${esc(t('room.info', { name: p.person.name }))}">ⓘ</span><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
           <div class="bar mood" title="${esc(t('room.bar', { mood: pct(p.state.mood), frail: pct(p.state.frailty) }))}"><i style="width:${pct(p.state.mood)}%"></i></div>`;
         c.querySelector('.away').onclick = e => { e.stopPropagation(); G.setActive(p.id, false); };
         c.querySelector('.info').onclick = e => { e.stopPropagation(); U.statusDialog(p.id); };
+        c.querySelector('.edit').onclick = e => { e.stopPropagation(); U.addDialog(null, () => {}, p.id); };
       }
       /* 动作动画 */
       const fx = G.fx[p.id];
@@ -112,6 +121,8 @@
       /* 徽标 */
       const defs = G.needsOf(p), b = [];
       for (const k in defs) if (p.state.needs[k] > 0.6) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);
+      if (p.state.hospital) b.unshift('<span title="' + esc(t('loc.hospital')) + '">🏥</span>');
+      if (p.state.hurt) b.unshift('<span class="urgent" title="' + esc(t('log.fall_minor', { name: p.person.name })) + '">❗</span>');
       const bs = b.join('');
       if (c.dataset.bd !== bs) { c.querySelector('.badges').innerHTML = bs; c.dataset.bd = bs; }
       /* 气泡 */
@@ -153,12 +164,61 @@
         if (cd) cd.style.width = Math.max(0, (req.deadline - Date.now()) / (req.deadline - req.since) * 100) + '%';
       }
     }
+    U.renderPlayer(); U.renderNav();
+  };
+
+  /* ---------- 主角和地点导航 ---------- */
+  const PLAYER = { id: 'player', species: { id: 'human' }, state: { mood: 0.7 }, person: { age: 35, appearance: { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'round', beard: false, cloth: '#4f6d8f' } } };
+  U.renderPlayer = function () {
+    const stage = $r('#stage'), W = CY.world, v = W.visual();
+    let c = stage.querySelector('.cx.player');
+    if (!c) {
+      c = doc().createElement('div'); c.className = 'cx player'; c.innerHTML = '<div class="body"></div><div class="nm"><b></b></div>';
+      c.querySelector('.body').innerHTML = CY.avatar(PLAYER); stage.appendChild(c);
+    }
+    c.querySelector('b').textContent = t('player.name');
+    const show = v.place === U.viewPlace && !v.transit;
+    c.style.display = show ? '' : 'none';
+    if (!show) { c.dataset.key = ''; return; }
+    const to = v.moving || v, key = v.id + U.viewPlace + (v.moving ? '' : v.gx + ',' + v.gy);
+    const put = (g, ms) => {
+      const q = W.project(U.viewPlace, g.gx, g.gy);
+      c.style.transition = ms ? `left ${ms}ms linear, top ${ms}ms linear` : 'none';
+      c.style.left = (q.x / W.VW * 100) + '%'; c.style.top = (q.y / W.VH * 100) + '%'; c.style.setProperty('--z', Math.round(q.y));
+    };
+    if (c.dataset.key !== key) { c.dataset.key = key; put(v, 0); if (v.moving) { void c.offsetWidth; put(to, v.moving.ms); } }
+    c.classList.toggle('walking', !!v.moving);
+  };
+  U.renderNav = function () {
+    const nav = $r('#placeNav'); if (!nav) return;
+    const W = CY.world, at = W.where();
+    const here = at.transit ? t('nav.transit') : t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
+    const away = !at.transit && at.place !== U.viewPlace, story = G.timeMode() === 'compressed';
+    const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
+    const sig = [U.viewPlace, here, away, story, min, CY.i18n.lang, G.isPaused()].join('|');
+    if (nav.dataset.sig === sig) return;
+    nav.dataset.sig = sig;
+    const pn = t('loc.' + U.viewPlace);
+    nav.innerHTML = `<button data-d="-1">◀</button><b>${esc(pn)}</b><button data-d="1">▶</button><span class="here">${esc(here)}</span>` +
+      (away ? `<button class="travel" id="travelBtn" ${G.isPaused() ? 'disabled' : ''}>${esc(story ? t('nav.travel_click', { place: pn, t: U.fmtMinutes(min) }) : t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
+    nav.querySelectorAll('[data-d]').forEach(b => b.onclick = e => { e.stopPropagation(); U.cyclePlace(+b.dataset.d); });
+    const tb = nav.querySelector('#travelBtn');
+    if (!tb) return;
+    if (story) tb.onclick = () => { W.travel(U.viewPlace); U.renderRoom(true); U.renderLife && U.renderLife(); };
+    else tb.onpointerdown = e => {
+      e.preventDefault(); tb.setPointerCapture(e.pointerId);
+      const t0 = performance.now(), dur = W.travelHold(at.place, U.viewPlace) * 1000; let raf;
+      const stop = () => { win().cancelAnimationFrame(raf); tb.style.setProperty('--k', 0); tb.onpointerup = tb.onpointercancel = null; };
+      const step = () => { const k = Math.min(1, (performance.now() - t0) / dur); tb.style.setProperty('--k', k); if (k >= 1) { stop(); W.travel(U.viewPlace); U.renderRoom(true); } else raf = win().requestAnimationFrame(step); };
+      tb.onpointerup = tb.onpointercancel = stop; raf = win().requestAnimationFrame(step);
+    };
   };
 
   /* ---------- 环形菜单与长按 ---------- */
   U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); };
   U.openRing = function (pid) {
     U.closeRing();
+    CY.world.approach(pid);
     const p = G.get(pid), acts = Object.values(G.actionsOf(p));
     const cx = $r(`.cx[data-id="${pid}"]`).getBoundingClientRect();
     const layer = doc().createElement('div');

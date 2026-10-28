@@ -203,3 +203,24 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .tlbox { max-height:320px; overflow-y:auto; padding-right:6px; } .tlbox.short { max-height:200px; }
 .archbox { display:inline-block; vertical-align:top; } .archbox summary { cursor:pointer; color:var(--mute); font-size:13px; } .archbox .row { gap:10px; margin:4px 0; }
 button.danger { color:#b3261e; }
+
+/* 斜视的房子：房间是固定比例的画面，人按格子位置摆在上面 */
+.room { padding:0; min-height:0; aspect-ratio:800 / 520; container-type:inline-size; width:100%; overflow:hidden; }
+body.pip .room { min-height:0; padding:0; }
+.room .stage { position:absolute; inset:0; display:block; pointer-events:none; z-index:4; }
+.cx { position:absolute; width:9cqw; transform:translate(-50%, -88%); pointer-events:auto; z-index:calc(10 + var(--z, 0)); transition:left .6s ease, top .6s ease; }
+.cx.talk { z-index:calc(1000 + var(--z, 0)); }
+.cx .body { height:11.6cqw; } .cx .tears { height:11.6cqw; }
+body.pip .cx { width:9cqw; } body.pip .cx .body { height:11.6cqw; } body.pip .stage { gap:0; }
+.cx .nm { font-size:clamp(10px, 1.5cqw, 13px); padding:0 6px; white-space:nowrap; }
+.cx.player { pointer-events:none; transition:none; } .cx.player .nm { color:var(--mute); }
+.cx.player.walking .av { animation:hop .35s ease-in-out infinite; }
+.cx.lying .body { transform:rotate(-86deg) translate(-4%, 18%); transform-origin:50% 80%; } .cx.lying .badges { top:-30px; }
+.cx.incradle .body { transform:scale(.62); transform-origin:50% 100%; }
+.cx .edit, .cx .info { display:inline !important; font-size:11px; margin-left:3px; color:var(--mute); cursor:pointer; }
+.cx .edit:hover, .cx .info:hover { color:var(--accent); }
+.placenav { position:absolute; left:10px; top:8px; z-index:20; display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:13px; }
+.placenav button { padding:2px 9px; background:var(--card); }
+.placenav .here { color:var(--mute); margin-left:6px; background:var(--card); border-radius:8px; padding:1px 8px; }
+.placenav .travel { position:relative; overflow:hidden; background:linear-gradient(90deg, var(--accent) calc(var(--k, 0) * 100%), var(--card) calc(var(--k, 0) * 100%)); }
+.taskrow[draggable=true] { cursor:grab; }

@@ -19,7 +19,7 @@ vm.runInContext(`
     wipe: async () => { globalThis.__mem.clear(); },
     removeDir: async p => { for (const k of [...globalThis.__mem.keys()]) if (k.startsWith(p + '/')) globalThis.__mem.delete(k); },
   });`, ctx);
-for (const f of ['src/content.js', 'src/content_more.js', 'src/content_en.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/seed.js', 'src/ai.js', 'src/account.js', 'src/game.js', 'src/avatar.js', 'src/scenes.js']) run(f);
+for (const f of ['src/content.js', 'src/content_more.js', 'src/content_en.js', 'src/content_react.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/seed.js', 'src/ai.js', 'src/account.js', 'src/game.js', 'src/world.js', 'src/iso.js', 'src/avatar.js', 'src/scenes.js']) run(f);
 const CY = ctx.CY, G = CY.game;
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
@@ -123,6 +123,94 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('恢复后回到桌面', G.activePeople().some(p => p.id === vid) && !G.get(vid).person.archived);
     await G.deletePerson(vid);
     check('删除后人和文件都没了', G.people.length === before - 1 && !G.get(vid) && ![...mem.keys()].some(k => k.startsWith(`people/${vid}/`)));
+  }
+
+  /* 每种疾病都能挂到人身上，需求和动作齐全，动作能执行 */
+  {
+    const bad = [];
+    for (const c of Object.keys(G.tpl.conditions)) {
+      const pid = await G.createPerson({ arch: 'grandpa', name: '测试', conditions: [c] }); await G.load();
+      const p = G.get(pid), cd = G.tpl.conditions[c];
+      const acts = G.actionsOf(p);
+      for (const a of Object.keys(cd.actions || {})) if (!cd.actions[a].selfonly && !acts[a]) bad.push(c + ':' + a + ':缺动作');
+      for (const n of Object.keys(cd.needs || {})) if (typeof p.state.needs[n] !== 'number') bad.push(c + ':' + n + ':缺需求');
+      try { for (const a of Object.keys(acts)) if (!acts[a].selfonly) G.perform(pid, a); } catch (e) { bad.push(c + ':执行出错 ' + e.message); }
+      await G.deletePerson(pid);
+    }
+    check('每种疾病的需求动作齐全且动作可执行', bad.length === 0, bad.slice(0, 6).join());
+    const bad2 = [];
+    for (const a of CY.content.archetypes) {
+      const pid = await G.createPerson({ arch: a.id, name: '测试' }); await G.load();
+      const p = G.get(pid);
+      try { for (const k of Object.keys(G.actionsOf(p))) if (!G.actionsOf(p)[k].selfonly) G.perform(pid, k); } catch (e) { bad2.push(a.id + ' ' + e.message); }
+      await G.deletePerson(pid);
+    }
+    check('每种原型的全部动作可执行', bad2.length === 0, bad2.slice(0, 6).join());
+  }
+
+  /* 世界：房间分布，走路，住院，夜里起夜，闲谈 */
+  {
+    const W = CY.world;
+    G.cfg.time.daynight = 'game';
+    const gp = await G.createPerson({ arch: 'grandpa', name: '爷爷', conditions: ['nocturia'] });
+    const bb = await G.createPerson({ arch: 'baby', name: '宝宝' });
+    const ct = await G.createPerson({ arch: 'cat', name: '猫' });
+    await G.load();
+    const setHour = h => { G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
+    setHour(14);
+    check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room));
+    check('婴儿白天在卧室的小床里', W.locationOf(G.get(bb)).room === 'bedroom' && W.locationOf(G.get(bb)).mode === 'cradle');
+    setHour(2);
+    check('夜里爷爷在老人房睡，不和婴儿一屋', W.locationOf(G.get(gp)).room === 'elder' && W.locationOf(G.get(bb)).room === 'bedroom');
+    const lay = W.layout('home');
+    check('每个人都有位置', lay.length === G.people.length - G.people.filter(p => p.person.active === false).length || lay.length > 0);
+    W.hospitalize(G.get(gp), 3);
+    check('住院后在医院病房', W.locationOf(G.get(gp)).place === 'hospital' && W.layout('hospital').some(l => l.id === gp));
+    const before = G.world.game_minutes; G.world.game_minutes += 4400; W.advance(1);
+    check('住满天数后出院回家', !G.get(gp).state.hospital && G.get(gp).story.hospital_n === 1);
+    G.world.game_minutes = before;
+    /* 走路：主角不在这个人的房间，故事模式里先走过去再做 */
+    W.enforce = true;
+    const pl = W.player(); pl.place = 'home'; pl.room = 'study'; Object.assign(pl, W.playerAnchor('home', 'study'));
+    setHour(14);
+    G.cfg.time.mode = 'compressed'; G.world.tasks = [];
+    const need = W.presenceNeed(G.get(ct));
+    check('不在一个房间要走路', !!need && !need.offsite);
+    const okStart = G.startAction(ct, 'pet');
+    check('故事模式里开始动作会排上走路', okStart && G.tasks().length === 2 && G.tasks()[1].kind === 'walk' && G.tasks()[0].act === 'pet');
+    for (let i = 0; i < 400 && G.tasks().length; i++) G.tick();
+    G.world.tasks = [];
+    W.walk = null;
+    /* 医院：不在医院做不了医院里的事 */
+    W.hospitalize(G.get(gp), 3);
+    const off = W.presenceNeed(G.get(gp));
+    check('在医院的人要先去医院', off && off.offsite && off.place === 'hospital');
+    G.cfg.time.mode = 'compressed';
+    check('去医院会排上路程', W.travel('hospital') && G.tasks().length === 1 && G.tasks()[0].kind === 'travel');
+    G.finishSpecial(G.tasks()[0]); G.world.tasks = [];
+    check('到了医院，主角位置变了', W.player().place === 'hospital');
+    W.discharge(G.get(gp)); W.travel('home');
+    G.cfg.time.mode = 'real'; G.world.tasks = [];
+    G.finishSpecial({ to: { place: 'home', room: 'study', ...W.playerAnchor('home', 'study') } });
+    W.enforce = false;
+    /* 起夜与跌倒：概率放大后一定出事 */
+    setHour(2);
+    G.cfg.play.fall_scale = '1000';
+    const g = G.get(gp); g.state.wc_until = G.world.game_minutes - 1; g.state.hospital = null; delete g.state.hospital;
+    W.advance(1);
+    check('起夜跌倒会记下来', g.state.hurt === 'minor' || g.state.hospital);
+    G.cfg.play.fall_scale = '1';
+    /* 闲谈和反应的台词齐全 */
+    const missing = [];
+    for (const v in CY.content.VOICE_GROUP) {
+      const voice = CY.content.voices[v] || {};
+      for (const k of ['morning', 'noon', 'evening', 'night']) if (!(voice.ambient && voice.ambient[k] && voice.ambient[k].length)) missing.push(v + '.ambient.' + k);
+      for (const k of ['after_fall', 'visit_hospital', 'discharge', 'milestone_10', 'milestone_300']) if (!(voice.events && voice.events[k] && voice.events[k].length)) missing.push(v + '.events.' + k);
+    }
+    check('每种声线都有闲谈和反应台词', missing.length === 0, missing.slice(0, 6).join());
+    G.ambientChat();
+    for (const id of [gp, bb, ct]) await G.deletePerson(id);
+    G.cfg.time.daynight = 'auto';
   }
 
   /* 其他原型 */

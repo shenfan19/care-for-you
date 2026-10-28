@@ -159,6 +159,16 @@
   C.archetypes.push(
     P('parrot', 'animal', '鹦鹉', 'bird', 'bird', { coat: 'green' }),
     P('cactus', 'plant', '仙人掌', 'cactus', 'plant', { coat: 'green' }),
+    P('guineapig', 'animal', '豚鼠', 'guineapig', 'rabbit', { coat: 'tan' }),
+    P('gecko', 'animal', '守宫', 'gecko', 'snake', { coat: 'green' }),
+    H('refugee_elder', '逃难来的老人', 72, 'elder', '她', { skin: 3, hair_style: 'bun', hair_color: 'gray', glasses: 'none', beard: false, cloth: '#9c8f7a' }),
+    H('refugee_mother', '逃难来的妈妈', 34, 'parent', '她', { skin: 3, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#a3786b' }),
+    H('refugee_child', '逃难来的孩子', 6, 'child', '他', { skin: 3, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c9a35b' }),
+    H('wheelchair', '坐轮椅的家人', 68, 'elder', '他', { skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'square', beard: true, cloth: '#6f8fa0' }),
+  );
+  C.presets.push(
+    { id: 'host', members: [{ arch: 'refugee_elder', name: '老人', conditions: ['trauma'] }, { arch: 'refugee_mother', name: '妈妈', conditions: ['depress'] }, { arch: 'refugee_child', name: '孩子' }] },
+    { id: 'night', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['nocturia'] }] },
   );
 
   V.partner = {

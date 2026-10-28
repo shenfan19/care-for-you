@@ -93,14 +93,14 @@ CY.i18n.register("ko", {
 "intro.title": "돌봄에는 대가가 있다", "intro.p1": "재택근무를 하는 동안 집에는 돌봐야 할 사람이 있습니다. 돌봄의 모든 순간은 다른 어딘가에서 쥐어짜 내야 합니다.",
 "intro.p2": "길게 누르기는 지금 실제로 하는 일을 중단시킵니다. 클릭은 게임 내 시간을 쓰며, 그동안은 아무것도 벌지 못합니다. 플레이 방식을 고르세요:",
 "intro.reality": "현실 모드", "intro.reality_note": "시간이 현실 시계를 따릅니다. 길게 누르기만 있고 돈은 없습니다. 일 옆에 두기 좋고, 실제 시간을 방해합니다.",
-"intro.story": "이야기 모드", "intro.story_note": "시간이 압축되고 행동은 클릭으로 시작하며 게임 내 시간을 씁니다. 일해서 돈을 벌어 식재료, 약, 기저귀, 장난감을 사고 돌보미를 고용할 수도 있습니다. 한 번에 하나만 가능하며 새 작업은 이전 작업을 멈춥니다. 아기는 방치하면 끝없이 울고, 어르신은 한동안 스스로 지냅니다.",
-"intro.later": "위쪽 바에서 현실, 이야기, 일시정지를 언제든 바꿀 수 있습니다. 나머지 세부 사항은 설정에 있습니다.",
-"mode.reality": "현실", "mode.story": "이야기", "mode.paused": "정지",
-"mode.reality_tip": "현실 모드: 시간이 현실 시계를 따르고 행동은 길게 누르기로 하며 실제 시간을 씁니다. 이야기 속 끝나지 않은 작업은 기다립니다.",
-"mode.story_tip": "이야기 모드: 시간이 압축되고 행동은 클릭으로 시작하며 게임 내 시간을 씁니다. 한 번에 하나만 가능하고, 새 작업이 이전 작업을 밀어내며 나중에 이어집니다.",
-"mode.paused_tip": "일시정지: 시간이 멈추고 아무 일도 일어나지 않습니다", "mode.hint_reality": "현실 모드: 길게 누르기, 실제 시간 소모", "mode.hint_story": "이야기 모드: 클릭, 게임 시간 소모", "mode.hint_paused": "일시정지됨",
-"mode.switched_reality": "현실 모드로 전환했습니다. 시간이 현실 시계를 따르고 행동은 길게 누르기입니다. 끝나지 않은 이야기 작업 {k}개는 이야기 모드로 돌아올 때까지 기다립니다.",
-"mode.switched_story": "이야기 모드로 전환했습니다. 시간이 ×{n}로 흐르고 행동은 클릭으로 시작하며 게임 내 시간을 씁니다. 한 번에 하나, 새 작업은 이전 작업을 멈춥니다.",
+"intro.story": "가속 모드", "intro.story_note": "시간이 압축되고 행동은 클릭으로 시작하며 게임 내 시간을 씁니다. 일해서 돈을 벌어 식재료, 약, 기저귀, 장난감을 사고 돌보미를 고용할 수도 있습니다. 한 번에 하나만 가능하며 새 작업은 이전 작업을 멈춥니다. 아기는 방치하면 끝없이 울고, 어르신은 한동안 스스로 지냅니다.",
+"intro.later": "위쪽 바에서 현실, 가속, 일시정지를 언제든 바꿀 수 있습니다. 나머지 세부 사항은 설정에 있습니다.",
+"mode.reality": "현실", "mode.story": "가속", "mode.paused": "정지",
+"mode.reality_tip": "현실 모드: 시간이 현실 시계를 따르고 행동은 길게 누르기로 하며 실제 시간을 씁니다. 가속 속 끝나지 않은 작업은 기다립니다.",
+"mode.story_tip": "가속 모드: 시간이 압축되고 행동은 클릭으로 시작하며 게임 내 시간을 씁니다. 한 번에 하나만 가능하고, 새 작업이 이전 작업을 밀어내며 나중에 이어집니다.",
+"mode.paused_tip": "일시정지: 시간이 멈추고 아무 일도 일어나지 않습니다", "mode.hint_reality": "현실 모드: 길게 누르기, 실제 시간 소모", "mode.hint_story": "가속 모드: 클릭, 게임 시간 소모", "mode.hint_paused": "일시정지됨",
+"mode.switched_reality": "현실 모드로 전환했습니다. 시간이 현실 시계를 따르고 행동은 길게 누르기입니다. 끝나지 않은 가속 작업 {k}개는 가속 모드로 돌아올 때까지 기다립니다.",
+"mode.switched_story": "가속 모드로 전환했습니다. 시간이 ×{n}로 흐르고 행동은 클릭으로 시작하며 게임 내 시간을 씁니다. 한 번에 하나, 새 작업은 이전 작업을 멈춥니다.",
 "mode.switched_paused": "일시정지했습니다. 시간이 멈추고 아무도 방해하지 않습니다.",
 "trait.clingy": "껌딱지", "trait.independent": "독립적", "trait.nightowl": "올빼미형", "trait.earlybird": "아침형", "trait.picky": "편식", "trait.sickly": "약골", "trait.sturdy": "튼튼함", "trait.grumpy": "투덜이", "trait.cheerful": "낙천적", "trait.thirsty": "자주 목마름", "trait.hearty": "대식가",
 "trait.clingy_tip": "곁에 있어 주길 더 빨리 원함", "trait.independent_tip": "곁을 덜 원하고 혼자서도 잘 지냄", "trait.nightowl_tip": "늦게 자고 늦게 일어남", "trait.earlybird_tip": "일찍 자고 일찍 일어남",
@@ -124,3 +124,7 @@ CY.i18n.register("ko", {
 CY.i18n.register("ko", {"player.title": "아빠", "player.name": "당신"});
 
 CY.i18n.register("ko", {"btn.edit": "편집", "btn.archive": "보관", "btn.delete": "삭제", "btn.restore": "복원", "bar.archived": "보관됨 {n}명", "del.title": "{name}을(를) 삭제할까요?", "del.note": "삭제하면 {name}의 기록, 했던 말, 상태가 이 기기에서 사라지고 되돌릴 수 없습니다. 잠시 쉬게 하려면 보관을 고르세요. 기록은 남습니다."});
+
+CY.i18n.register("ko", {"hdr.share": "공유 카드", "share.title": "공유 카드", "share.note": "내 기기 안에서만, 고른 숫자로 이미지 한 장을 만듭니다. 기본값으로 이름은 들어가지 않습니다. 업로드하지 않으며 공유를 권하지도 않습니다.", "share.f_time": "함께한 시간", "share.f_care": "돌본 횟수", "share.f_talk": "대화", "share.f_called": "불린 횟수", "share.f_back": "받은 마음", "share.f_names": "이름 넣기", "share.save": "이미지 저장", "share.send": "공유", "share.line_time": "{t} 동안 함께했어요", "share.line_care": "{n}번 돌봤어요", "share.line_talk": "{n}번 이야기했어요", "share.line_called": "{title} 하고 {n}번 불렸어요", "share.line_back": "마음을 {n}번 받았어요", "share.foot": "Care for You · 점수 없이 곁에 있을 뿐", "cond.heart": "심장 질환", "cond.parkinson": "파킨슨병", "cond.depress": "우울한 기분", "cond.nocturia": "야간뇨", "cond.eczema": "습진", "cond.fracture": "골절 회복", "cond.trauma": "트라우마로 인한 놀람 각성", "cond.allergy": "알레르기", "need.chest": "가슴이 답답해요", "need.tremor": "손이 떨려요", "need.lowmood": "마음이 가라앉아요", "need.toilet": "화장실에 가고 싶어요", "need.itch": "피부가 가려워요", "need.pain": "다친 곳이 아파요", "need.nightmare": "마음이 불안해요", "need.sneeze": "재채기와 눈물", "need.veg": "신선한 채소가 먹고 싶어요", "need.humid": "분무가 필요해요", "act.restsit": "부축해 앉혀 쉬게 하기", "act.steady": "손을 잡아 주기", "act.listen": "조용히 들어주기", "act.walkout": "함께 바깥 걷기", "act.lead": "화장실까지 부축하기", "act.nightlight": "작은 야간등 켜기", "act.selftoilet": "혼자 화장실 가기", "selfact.selftoilet": "혼자 화장실 가기", "act.ointment": "연고 바르기", "act.trimnails": "손톱 깎기", "act.support": "부축해 몇 걸음 걷기", "act.painkill": "진통제 먹기", "act.rehab": "재활 운동 함께하기", "act.stayclose": "말없이 곁에 있기", "act.warmdrink": "따뜻한 음료 건네기", "act.antihist": "알레르기약 먹기", "act.airclean": "청소하고 먼지 털기", "act.veggie": "신선한 채소 주기", "act.mist": "물 분무하기", "act.train": "명령어 가르치기", "act.teach": "말 가르치기", "class.guineapig": "기니피그", "class.gecko": "도마뱀붙이", "arch.guineapig": "기니피그", "arch.gecko": "도마뱀붙이", "arch.refugee_elder": "피란 온 어르신", "arch.refugee_mother": "피란 온 엄마", "arch.refugee_child": "피란 온 아이", "arch.wheelchair": "휠체어를 타는 가족", "preset.host.label": "피란 온 가족을 맞이하기", "preset.host.note": "낯선 곳에 막 도착한 어르신, 엄마, 아이. 마음을 놓기까지 시간이 필요해요", "preset.name.refugee_elder": "어르신", "preset.name.refugee_mother": "엄마", "preset.name.refugee_child": "아이", "preset.night.label": "밤에 일어나는 할아버지", "preset.night.note": "밤에 자주 화장실에 가고 낮에도 조금 기력이 없어요. 누군가 살펴 줘야 해요"});
+
+CY.i18n.register("ko", {"loc.home": "집", "loc.office": "사무실", "loc.hospital": "병원", "loc.bedroom": "침실", "loc.elder": "어르신 방", "loc.toilet": "화장실", "loc.study": "서재", "loc.living": "거실", "loc.kitchen": "부엌", "loc.yard": "마당", "loc.ward": "병실", "loc.desk": "자리", "nav.here": "지금 {place}", "nav.transit": "이동 중", "nav.travel_hold": "{place}로, {n}초 길게 누르기", "nav.travel_click": "{place}로, {t} 소요", "walk.to": "{room}까지 걷기", "walk.travel": "{place}로 이동", "toast.offsite": "{name}은(는) {place}에 있어요. 먼저 가 보세요", "toast.walking": "걸어가는 중이에요. 도착하면 시작해요", "log.fall_minor": "{name}은(는) 밤에 화장실 가다가 넘어졌지만 크게 다치지는 않았어요.", "log.fall_serious": "{name}은(는) 밤에 화장실 가다가 넘어져 병원으로 옮겨졌어요.", "log.discharge": "{name}은(는) 퇴원해서 집으로 돌아왔어요.", "log.night_wc": "{name}은(는) 밤에 화장실 때문에 일어났어요.", "room.edit": "{name} 편집", "life.drag": "끌어서 순서 바꾸기"});

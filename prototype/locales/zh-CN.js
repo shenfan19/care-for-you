@@ -212,22 +212,22 @@ CY.i18n.register("zh-CN", {
 
 CY.i18n.register("zh-CN", {
  "mode.reality": "现实",
- "mode.story": "故事",
+ "mode.story": "加速",
  "mode.paused": "暂停",
- "mode.reality_tip": "现实模式：时间跟现实同步，动作靠长按，占用你现实里的时间。故事里没做完的事先停着",
- "mode.story_tip": "故事模式：时间压缩，动作点一下就开始，花掉游戏里的时间。一次只能做一件事，后开始的会把先开始的压下去，做完再接着做",
+ "mode.reality_tip": "现实模式：时间跟现实同步，动作靠长按，占用你现实里的时间。加速里没做完的事先停着",
+ "mode.story_tip": "加速模式：时间压缩，动作点一下就开始，花掉游戏里的时间。一次只能做一件事，后开始的会把先开始的压下去，做完再接着做",
  "mode.paused_tip": "暂停：时间停住，什么都不会发生",
  "mode.hint_reality": "现实模式：长按，占用现实时间",
- "mode.hint_story": "故事模式：点击，花掉游戏时间",
+ "mode.hint_story": "加速模式：点击，花掉游戏时间",
  "mode.hint_paused": "已暂停",
- "mode.switched_reality": "已切换到现实模式：时间和现实同步，动作靠长按。故事里还有 {k} 件没做完的事，先停着，回到故事模式再接着做。",
- "mode.switched_story": "已切换到故事模式：时间压缩为 ×{n}，动作点一下开始，花掉游戏里的时间。一次只能做一件事，插进来的新事会让旧的先暂停。",
+ "mode.switched_reality": "已切换到现实模式：时间和现实同步，动作靠长按。加速里还有 {k} 件没做完的事，先停着，回到加速模式再接着做。",
+ "mode.switched_story": "已切换到加速模式：时间压缩为 ×{n}，动作点一下开始，花掉游戏里的时间。一次只能做一件事，插进来的新事会让旧的先暂停。",
  "mode.switched_paused": "已暂停，时间不走，也不会有人来打扰。",
  "intro.reality": "现实模式",
  "intro.reality_note": "时间和现实同步，只有长按，没有钱，适合放在工作旁边，打断的是你真实的时间。",
- "intro.story": "故事模式",
+ "intro.story": "加速模式",
  "intro.story_note": "时间压缩，点一下就开始，花掉游戏里的时间。工作赚钱，买食材药品尿布玩具，也可以请保姆。一次只做一件事，新的会让旧的先暂停。婴儿没人管会一直哭，老人能自己照顾自己一阵。",
- "intro.later": "顶栏里的现实、故事、暂停可以随时切换，其余细节在设置里改。",
+ "intro.later": "顶栏里的现实、加速、暂停可以随时切换，其余细节在设置里改。",
  "scene.auto": "自动",
  "scene.living": "客厅",
  "scene.bedroom": "卧室",
@@ -308,3 +308,7 @@ CY.i18n.register("zh-CN", {
 CY.i18n.register("zh-CN", {"player.title": "爸爸", "player.name": "你"});
 
 CY.i18n.register("zh-CN", {"btn.edit": "编辑", "btn.archive": "归档", "btn.delete": "删除", "btn.restore": "恢复", "bar.archived": "已归档 {n} 位", "del.title": "删除{name}？", "del.note": "删除后{name}的记录、说过的话和状态都会从本机移除，不能恢复。只是想让ta先离开的话，可以选归档，记录会留着。"});
+
+CY.i18n.register("zh-CN", {"hdr.share": "分享卡片", "share.title": "分享卡片", "share.note": "只在你的设备上生成一张图，你选哪些数字就放哪些，默认不含名字。游戏不会上传，也不推荐你分享。", "share.f_time": "陪伴时间", "share.f_care": "照顾次数", "share.f_talk": "聊过天", "share.f_called": "被叫的次数", "share.f_back": "收到的心意", "share.f_names": "显示名字", "share.save": "保存图片", "share.send": "分享", "share.line_time": "陪伴了 {t}", "share.line_care": "照顾了 {n} 次", "share.line_talk": "聊了 {n} 次", "share.line_called": "被叫了 {n} 声{title}", "share.line_back": "收到了 {n} 份心意", "share.foot": "Care for You · 没有分数，只有陪伴", "cond.heart": "心脏病", "cond.parkinson": "帕金森", "cond.depress": "情绪低落", "cond.nocturia": "夜尿多", "cond.eczema": "湿疹", "cond.fracture": "骨折恢复", "cond.trauma": "创伤后惊醒", "cond.allergy": "过敏", "need.chest": "胸口发闷", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上厕所", "need.itch": "皮肤发痒", "need.pain": "伤处疼", "need.nightmare": "睡不安稳", "need.sneeze": "打喷嚏流眼泪", "need.veg": "想吃新鲜蔬菜", "need.humid": "要喷水保湿", "act.restsit": "扶着坐下歇歇", "act.steady": "扶稳", "act.listen": "静静听ta说", "act.walkout": "陪着出去走走", "act.lead": "扶去厕所", "act.nightlight": "开小夜灯", "act.selftoilet": "自己去厕所", "selfact.selftoilet": "自己去厕所", "act.ointment": "涂药膏", "act.trimnails": "剪指甲", "act.support": "扶着走几步", "act.painkill": "吃止痛药", "act.rehab": "陪着做康复动作", "act.stayclose": "陪在身边不说话", "act.warmdrink": "递一杯热饮", "act.antihist": "吃抗过敏药", "act.airclean": "打扫除尘", "act.veggie": "喂新鲜蔬菜", "act.mist": "喷水保湿", "act.train": "教口令", "act.teach": "教说话", "class.guineapig": "豚鼠", "class.gecko": "守宫", "arch.guineapig": "豚鼠", "arch.gecko": "守宫", "arch.refugee_elder": "逃难来的老人", "arch.refugee_mother": "逃难来的妈妈", "arch.refugee_child": "逃难来的孩子", "arch.wheelchair": "坐轮椅的家人", "preset.host.label": "收留一家逃难的人", "preset.host.note": "一位老人，一位妈妈，一个孩子，刚到一个陌生的地方，需要时间慢慢安下心来", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "妈妈", "preset.name.refugee_child": "孩子", "preset.night.label": "夜里起夜的爷爷", "preset.night.note": "夜尿多，夜里要起来，白天也有些虚弱，需要有人留意"});
+
+CY.i18n.register("zh-CN", {"loc.home": "家", "loc.office": "办公室", "loc.hospital": "医院", "loc.bedroom": "卧室", "loc.elder": "老人房", "loc.toilet": "卫生间", "loc.study": "书房", "loc.living": "客厅", "loc.kitchen": "厨房", "loc.yard": "院子", "loc.ward": "病房", "loc.desk": "工位", "nav.here": "你在{place}", "nav.transit": "正在路上", "nav.travel_hold": "前往{place}，长按 {n} 秒", "nav.travel_click": "前往{place}，花 {t}", "walk.to": "走到{room}", "walk.travel": "前往{place}", "toast.offsite": "{name}在{place}，先过去吧", "toast.walking": "正在走过去，到了就做", "log.fall_minor": "{name}夜里起夜时摔了一下，没有大碍。", "log.fall_serious": "{name}夜里起夜摔倒了，被送到了医院。", "log.discharge": "{name}出院回家了。", "log.night_wc": "{name}夜里起来上了厕所。", "room.edit": "编辑{name}", "life.drag": "拖动可以调整顺序"});

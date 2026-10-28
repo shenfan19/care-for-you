@@ -86,8 +86,7 @@
     bar.innerHTML = `<button id="addBtn" class="primary">${esc(t('btn.add'))}</button>` +
       away.map(p => `<span class="pill">${esc(t('bar.away', { name: p.person.name }))} <a href="#" data-id="${p.id}">${esc(t('bar.recall'))}</a></span>`).join('') +
       (arch.length ? `<details class="archbox"><summary>${esc(t('bar.archived', { n: arch.length }))}</summary>${arch.map(p => `<div class="row"><span>${esc(p.person.name)} <span class="mute">${esc(p.person.role || '')}</span></span><a href="#" data-rs="${p.id}">${esc(t('btn.restore'))}</a><a href="#" data-del="${p.id}">${esc(t('btn.delete'))}</a></div>`).join('')}</details>` : '') +
-      `<select id="sceneSel" title="${esc(t('scene.tip'))}">${['auto', ...CY.scenes.ids, 'none'].map(k => `<option value="${k}" ${k === ini.get(G.cfg, 'ui', 'scene') ? 'selected' : ''}>${esc(t('scene.' + k))}</option>`).join('')}</select>`;
-    $('sceneSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.scene = e.target.value; await saveCfg(); U.renderScene(); };
+''; 
     $('addBtn').onclick = () => U.addDialog(null, () => { U.renderBar(); });
     bar.querySelectorAll('a[data-id]').forEach(a => a.onclick = e => { e.preventDefault(); G.setActive(a.dataset.id, true); });
     bar.querySelectorAll('a[data-rs]').forEach(a => a.onclick = async e => { e.preventDefault(); await G.setActive(a.dataset.rs, true); U.afterPeopleChange(); });
@@ -234,7 +233,7 @@
   };
 
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'play.model_provider': ['builtin'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
@@ -377,15 +376,25 @@
       const n = people.length;
       const taskHtml = tasks.slice().reverse().map((x, i) => {
         const run = i === 0 && G.timeMode() === 'compressed', who = G.get(x.pid), idx = tasks.length - 1 - i;
-        return `<span class="taskrow ${run ? '' : 'paused'}">${run ? '⏳' : '⏸'} ${esc(who ? who.person.name : '')} ${esc(x.label)}<span class="bar"><i data-tb="${idx}"></i></span><button class="chip" data-tc="${idx}">${esc(t('btn.cancel'))}</button></span>`;
+        return `<span class="taskrow ${run ? '' : 'paused'}" draggable="true" data-ti="${idx}" title="${esc(t('life.drag'))}">${run ? '⏳' : '⏸'} ${esc(who ? who.person.name : '')} ${esc(x.label)}<span class="bar"><i data-tb="${idx}"></i></span><button class="chip" data-tc="${idx}">${esc(t('btn.cancel'))}</button></span>`;
       }).join('');
       bar.innerHTML = `<span class="wfh">💼 ${esc(t(eco ? (work ? 'life.working' : 'life.offwork') : 'life.wfh', { n }))}</span>` +
         (eco ? `<span class="money" title="${esc(t('life.money_tip'))}">💰 ${Math.floor(G.world.money)}</span>` : '') +
         `<span class="modehint" title="${esc(t('mode.' + mode + '_tip'))}">${esc(t('mode.hint_' + mode))}</span>` + taskHtml +
-        (eco ? `<button id="shopBtn">${esc(t('life.shop'))}</button>` : '') + `<button id="homeBtn">${esc(t('life.household'))}</button>`;
+        (eco ? `<button id="shopBtn">${esc(t('life.shop'))}</button>` : '');
       if ($('shopBtn')) $('shopBtn').onclick = () => U.shopDialog();
-      $('homeBtn').onclick = () => U.householdDialog();
       bar.querySelectorAll('[data-tc]').forEach(b => b.onclick = () => G.cancelAction(+b.dataset.tc));
+      let dragFrom = null;
+      bar.querySelectorAll('.taskrow').forEach(el => {
+        el.ondragstart = e => { dragFrom = +el.dataset.ti; e.dataTransfer.effectAllowed = 'move'; };
+        el.ondragover = e => e.preventDefault();
+        el.ondrop = e => {
+          e.preventDefault();
+          const to = +el.dataset.ti, ts = G.tasks();
+          if (dragFrom === null || dragFrom === to || !ts[dragFrom]) return;
+          const [m] = ts.splice(dragFrom, 1); ts.splice(to, 0, m); dragFrom = null; G.save(); U.renderLife();
+        };
+      });
     }
     bar.querySelectorAll('[data-tb]').forEach(el => { const x = tasks[+el.dataset.tb]; if (x) el.style.width = Math.min(100, (x.total - x.left) / x.total * 100) + '%'; });
   };
@@ -402,20 +411,6 @@
   };
 
   /* 家人与保姆：按谁最需要你排列，保姆能分担，但在场的效果打折 */
-  U.householdDialog = function () {
-    const eco = G.economyOn();
-    const list = G.activePeople().slice().sort((a, b) => G.urgency(b) - G.urgency(a));
-    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('home.title'))}</h2>
-      ${list.map(p => { const cl = G.classKey(p), u = G.urgency(p);
-        return `<div class="shoprow"><span class="nm">${esc(p.person.name)}</span><span class="pill">${esc(t('class.' + cl))}</span>
-          <span class="bar" title="${esc(t('home.urgency'))}"><i style="width:${Math.min(100, Math.round(u / 3 * 100))}%"></i></span>
-          <span class="mute">${esc(t('home.self', { n: Math.round(G.classOf(p).self_care * 100) }))}</span>
-          ${eco ? `<label><input type="checkbox" data-nn="${p.id}" ${G.hasNanny(p) ? 'checked' : ''}> ${esc(t('home.nanny'))}</label>` : ''}</div>`; }).join('')}
-      ${eco ? `<div class="mute" style="margin-top:8px">${esc(t('home.nanny_note', { cost: G.nannyCostPerHour() }))}</div>` : ''}
-      <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="hclose">${esc(t('btn.close'))}</button></div>`, true);
-    dlg.querySelectorAll('[data-nn]').forEach(c => c.onchange = () => { G.setNanny(c.dataset.nn, c.checked); U.renderLife(); });
-    dlg.querySelector('#hclose').onclick = U.closeDialog;
-  };
 
   /* 第一次有了角色之后，讲清楚照顾的代价，并让玩家选一种模式开始 */
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };

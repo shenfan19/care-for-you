@@ -70,7 +70,7 @@ ${petActions('喂猫粮', `  play: { label: 逗猫, hold: 8, min: 20, effect: { 
   clean: { label: 铲猫砂, hold: 4, min: 10, effect: { clean: -1 } }
   hand: { label: 抱一会儿, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1 }`)}`;
 
-  F['templates/species/dog.yaml'] = `version: 3
+  F['templates/species/dog.yaml'] = `version: 4
 id: dog
 label: 狗
 food: pet_food
@@ -81,7 +81,8 @@ needs:
   play: { label: 想出去玩, icon: "🎾", rate: 0.12 }
 actions:
 ${petActions('喂狗粮', `  play: { label: 扔球, hold: 7, min: 20, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
-  walk: { label: 遛一圈, hold: 10, min: 40, effect: { play: -1, company: -0.5 }, mood: 0.12 }`)}`;
+  walk: { label: 遛一圈, hold: 10, min: 40, effect: { play: -1, company: -0.5 }, mood: 0.12 }
+  train: { label: 教口令, hold: 6, min: 20, effect: { play: -0.4, company: -0.3 }, mood: 0.08 }`)}`;
 
   F['templates/species/rabbit.yaml'] = `version: 3
 id: rabbit
@@ -110,7 +111,7 @@ actions:
 ${petActions('喂鼠粮', `  play: { label: 放进跑轮, hold: 3, min: 10, effect: { play: -0.9 }, bonus_item: toy }
   clean: { label: 换垫料, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
 
-  F['templates/species/bird.yaml'] = `version: 3
+  F['templates/species/bird.yaml'] = `version: 4
 id: bird
 label: 小鸟
 food: pet_food
@@ -122,7 +123,8 @@ needs:
   clean: { label: 笼底该清了, icon: "🧹", rate: 0.04 }
 actions:
 ${petActions('添鸟食', `  play: { label: 放出来飞, hold: 6, min: 20, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
-  clean: { label: 清笼底, hold: 4, min: 10, effect: { clean: -1 } }`)}`;
+  clean: { label: 清笼底, hold: 4, min: 10, effect: { clean: -1 } }
+  teach: { label: 教说话, hold: 6, min: 15, effect: { play: -0.3, company: -0.4 }, mood: 0.08 }`)}`;
 
   F['templates/species/fish.yaml'] = `version: 3
 id: fish
@@ -168,6 +170,40 @@ actions:
   feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
 `;
 
+  F['templates/species/guineapig.yaml'] = `version: 3
+id: guineapig
+label: 豚鼠
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.08 }
+  hunger: { label: 饥饿, icon: "🌾", rate: 0.09 }
+  veg: { label: 想吃新鲜蔬菜, icon: "🥬", rate: 0.06 }
+  company: { label: 想你陪, icon: "🤝", rate: 0.06 }
+  clean: { label: 笼子该打扫了, icon: "🧹", rate: 0.04 }
+actions:
+${petActions('喂鼠粮', `  veggie: { label: 喂新鲜蔬菜, hold: 4, min: 6, effect: { veg: -1 }, mood: 0.06 }
+  clean: { label: 打扫笼子, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
+
+  F['templates/species/gecko.yaml'] = `version: 3
+id: gecko
+label: 守宫
+food: pet_food
+needs:
+  warmth: { label: 要保温, icon: "🔥", rate: 0.05 }
+  humid: { label: 要喷水保湿, icon: "💦", rate: 0.06 }
+  thirst: { label: 口渴, icon: "💧", rate: 0.04 }
+  hunger: { label: 饥饿, icon: "🦗", rate: 0.03 }
+actions:
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, uses: { pet_food: 1 }, effect: { hunger: -0.7 } }
+  pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: -0.7 } }
+  vet: { label: 带去看兽医, hold: 8, min: 90, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
+  warm: { label: 调保温灯, hold: 4, min: 5, effect: { warmth: -0.9 } }
+  mist: { label: 喷水保湿, hold: 3, min: 5, effect: { humid: -1 } }
+  water: { label: 换水, hold: 3, min: 3, effect: { thirst: -0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+`;
+
   const plant = (id, label, w, s, f, p) => `version: 3
 id: ${id}
 label: ${label}
@@ -190,7 +226,7 @@ actions:
   F['templates/species/cactus.yaml'] = plant('cactus', '仙人掌', 0.004, 0.012, 0.002, 0.002);
 
   /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */
-  F['templates/classes.yaml'] = `version: 3
+  F['templates/classes.yaml'] = `version: 4
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
 classes:
   infant: { urgency: 3.0, self_care: 0, cries: true }
@@ -207,6 +243,8 @@ classes:
   fish: { urgency: 0.6, self_care: 0.02 }
   turtle: { urgency: 0.6, self_care: 0.05 }
   snake: { urgency: 0.6, self_care: 0.05 }
+  guineapig: { urgency: 0.9, self_care: 0.15 }
+  gecko: { urgency: 0.6, self_care: 0.05 }
   succulent: { urgency: 0.3, self_care: 0 }
   cactus: { urgency: 0.25, self_care: 0 }
   flower: { urgency: 0.4, self_care: 0 }
@@ -347,6 +385,127 @@ actions:
 lines:
   request:
     reorient: ["我的钥匙放哪了？", "今天几号了？", "{ta}站在门口，不记得要去哪儿了。"]
+`;
+
+  F['templates/conditions/heart.yaml'] = `version: 3
+id: heart
+label: 心脏病
+needs:
+  medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
+  chest: { label: 胸口发闷, icon: "🫀", rate: 0.04 }
+actions:
+  medicine: { label: 陪吃药, hold: 5, min: 5, uses: { medicine: 1 }, effect: { medicine: -1 } }
+  restsit: { label: 扶着坐下歇歇, hold: 4, min: 10, effect: { chest: -0.8, company: -0.2 }, mood: 0.03 }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, uses: { medicine: 1 }, effect: { medicine: -0.8 } }
+lines:
+  request:
+    medicine: ["药，是不是该吃了？", "{ta}看了看药盒。"]
+    chest: ["{ta}按着胸口，慢慢坐了下来。", "{ta}说有点闷，歇一会儿就好。"]
+`;
+
+  F['templates/conditions/parkinson.yaml'] = `version: 3
+id: parkinson
+label: 帕金森
+needs:
+  medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
+  tremor: { label: 手在抖, icon: "🤲", rate: 0.05 }
+actions:
+  medicine: { label: 陪吃药, hold: 5, min: 5, uses: { medicine: 1 }, effect: { medicine: -1 } }
+  steady: { label: 扶稳, hold: 3, min: 8, effect: { tremor: -0.8 }, mood: 0.04 }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, uses: { medicine: 1 }, effect: { medicine: -0.8 } }
+lines:
+  request:
+    medicine: ["药，是不是该吃了？", "{ta}看了看药盒，又看了看自己的手。"]
+    tremor: ["{ta}端着杯子，手一直在轻轻抖。", "{ta}说今天手不太听使唤。"]
+`;
+
+  F['templates/conditions/depress.yaml'] = `version: 3
+id: depress
+label: 情绪低落
+needs:
+  lowmood: { label: 心情很低落, icon: "🌧", rate: 0.04 }
+actions:
+  listen: { label: 静静听ta说, hold: 7, min: 30, effect: { lowmood: -0.7, company: -0.4 }, mood: 0.1 }
+  walkout: { label: 陪着出去走走, hold: 9, min: 40, effect: { lowmood: -0.5, company: -0.3 }, mood: 0.12 }
+lines:
+  request:
+    lowmood: ["{ta}坐在窗边，很久没有说话。", "{ta}说：没什么，就是提不起劲。"]
+`;
+
+  F['templates/conditions/nocturia.yaml'] = `version: 3
+id: nocturia
+label: 夜尿多
+needs:
+  toilet: { label: 想上厕所, icon: "🚽", rate: 0.05 }
+actions:
+  lead: { label: 扶去厕所, hold: 4, min: 8, effect: { toilet: -1 } }
+  nightlight: { label: 开小夜灯, hold: 2, min: 2, effect: { toilet: -0.3 }, sets: { nightlight_min: 480 } }
+  selftoilet: { label: 自己去厕所, selfonly: true, self: [adult, elder], hold: 1, min: 5, effect: { toilet: -0.8 } }
+lines:
+  request:
+    toilet: ["{ta}又起来了，摸索着往厕所走。", "{ta}说夜里要起好几次。"]
+events:
+  pre_sleep:
+    evening: true
+    say: 睡前想喝点水吗？
+    choices:
+      - { label: 喝一小口, mood: 0.03, frailty: 0.0, reply: "{ta}抿了一小口，说够了。" }
+      - { label: 喝一大杯, liked: true, mood: 0.08, frailty: 0.03, reply: "{ta}喝得很痛快。你知道夜里怕是要起来了。" }
+      - { label: 不喝了，漱漱口, mood: -0.02, frailty: -0.02, reply: "{ta}点点头，说也行。" }
+`;
+
+  F['templates/conditions/eczema.yaml'] = `version: 3
+id: eczema
+label: 湿疹
+needs:
+  itch: { label: 皮肤发痒, icon: "🩹", rate: 0.06 }
+actions:
+  ointment: { label: 涂药膏, hold: 4, min: 8, uses: { medicine: 1 }, effect: { itch: -0.9 } }
+  trimnails: { label: 剪指甲, hold: 5, min: 10, effect: { itch: -0.2 }, mood: 0.04 }
+lines:
+  request:
+    itch: ["{ta}不停地抓着胳膊，皱着眉。", "{ta}哭闹着，小手往身上挠。"]
+`;
+
+  F['templates/conditions/fracture.yaml'] = `version: 3
+id: fracture
+label: 骨折恢复
+heal_after: { need: pain, count: 8 }
+needs:
+  pain: { label: 伤处疼, icon: "🦴", rate: 0.05 }
+actions:
+  painkill: { label: 吃止痛药, hold: 3, min: 5, uses: { medicine: 1 }, effect: { pain: -0.8 } }
+  support: { label: 扶着走几步, hold: 5, min: 15, effect: { pain: -0.1 }, frailty: -0.05, mood: 0.04 }
+  rehab: { label: 陪着做康复动作, hold: 7, min: 30, effect: { pain: -0.3 }, frailty: -0.1, mood: 0.06 }
+lines:
+  request:
+    pain: ["{ta}扶着伤处，倒吸了一口气。", "{ta}说今天伤口又疼了。"]
+`;
+
+  F['templates/conditions/trauma.yaml'] = `version: 3
+id: trauma
+label: 创伤后惊醒
+needs:
+  nightmare: { label: 睡不安稳, icon: "🌙", rate: 0.04 }
+actions:
+  stayclose: { label: 陪在身边不说话, hold: 8, min: 30, effect: { nightmare: -0.7, company: -0.4 }, mood: 0.1 }
+  warmdrink: { label: 递一杯热饮, hold: 3, min: 5, effect: { nightmare: -0.4, thirst: -0.3 }, mood: 0.05 }
+lines:
+  request:
+    nightmare: ["{ta}猛地惊醒，抱着自己的胳膊坐了很久。", "{ta}一直看着门口，睡不踏实。"]
+`;
+
+  F['templates/conditions/allergy.yaml'] = `version: 3
+id: allergy
+label: 过敏
+needs:
+  sneeze: { label: 打喷嚏流眼泪, icon: "🤧", rate: 0.05 }
+actions:
+  antihist: { label: 吃抗过敏药, hold: 2, min: 3, uses: { medicine: 1 }, effect: { sneeze: -0.9 } }
+  airclean: { label: 打扫除尘, hold: 6, min: 25, effect: { sneeze: -0.5 } }
+lines:
+  request:
+    sneeze: ["{ta}连着打了几个喷嚏，眼睛红红的。", "{ta}揉着鼻子，说这几天又过敏了。"]
 `;
 
   /* 以下由 content.js 的数据生成 */

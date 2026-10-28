@@ -14,7 +14,7 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const monthKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-  const DEFAULT_VOICE = { cat: 'cat', dog: 'dog', snake: 'snake', rabbit: 'rabbit', hamster: 'hamster', bird: 'bird', fish: 'fish', turtle: 'turtle', succulent: 'plant', flower: 'plant', tree: 'plant', cactus: 'plant' };
+  const DEFAULT_VOICE = { cat: 'cat', dog: 'dog', snake: 'snake', rabbit: 'rabbit', hamster: 'hamster', bird: 'bird', fish: 'fish', turtle: 'turtle', guineapig: 'rabbit', gecko: 'snake', succulent: 'plant', flower: 'plant', tree: 'plant', cactus: 'plant' };
   const PLANTS = ['succulent', 'flower', 'tree', 'cactus'];
   const CHILDLIKE = ['child', 'infant', 'toddler', 'teen'];
   const PRON_CODE = { '他': 'm', '她': 'f', '它': 'n' };
@@ -332,7 +332,7 @@
   /* ---------- 作息：睡觉，以及各自的状态 ---------- */
   const inWindow = (dm, a, b) => { a = (((a % 24) + 24) % 24) * 60; b = (((b % 24) + 24) % 24) * 60; return a <= b ? dm >= a && dm < b : dm >= a || dm < b; };
   G.sleepWindow = p => {
-    if (p.species.id === 'hamster') return [10, 18];
+    if (p.species.id === 'hamster' || p.species.id === 'gecko') return [10, 18];
     const sh = G.traitMods(p).sleep_shift;
     return [22 + sh, 6.5 + sh];
   };
@@ -498,7 +498,7 @@
       const night = G.isNight();
       for (const k in defs) {
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1) * (sleeping ? 0.4 : 1) * (mods.rate[k] || 1);
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1) * (sleeping ? 0.4 : 1) * (s.hospital ? 0.25 : 1) * (mods.rate[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
@@ -527,6 +527,7 @@
       const top = G.runningTask();
       if (top) { top.left -= gmin; if (top.left <= 0) { G.tasks().pop(); finishAction(top); } }
     }
+    if (!offline && G.worldAdvance) G.worldAdvance(gmin);
   }
 
   /* ---------- 打断 ---------- */
@@ -703,6 +704,8 @@
     const scale = a.bonus_item && G.economyOn() && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
     consume(a);
     applyEffects(p, a, scale);
+    if (a.sets && a.sets.nightlight_min) s.nightlight_until = G.world.game_minutes + a.sets.nightlight_min;
+    const wasHurt = s.hurt; delete s.hurt;
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
     p.story.care_total++;
     /* 带去看医生一类的动作直接治好某些病 */
@@ -725,7 +728,12 @@
     if (req && req.kind === 'need') {
       if (s.needs[req.need] < 0.4) { delete G.req[pid]; learn(p, 'need', true, (Date.now() - req.since) / 1000); }
     }
-    const tx = line(p, 'thanks', actionId, line(p, 'thanks', 'default', t('line.ok')));
+    let tx = line(p, 'thanks', actionId, line(p, 'thanks', 'default', t('line.ok')));
+    /* 受了伤，在医院，或者到了某个次数，角色会说不一样的话 */
+    const ev = key => { const arr = G.lines(p, 'events', key); return arr.length ? G.fmt(pick(arr), p) : null; };
+    if (wasHurt && Math.random() < 0.8) tx = ev('after_fall') || tx;
+    else if (s.hospital && Math.random() < 0.6) tx = ev('visit_hospital') || tx;
+    if ([10, 50, 100, 300].includes(p.story.care_total)) { const m = ev('milestone_' + p.story.care_total); if (m) { tx = m; G.log(pid, 'cares_back', m); } }
     G.toastFor(p, tx, 'speech'); G.say(pid, 'char', tx);
     G.log(pid, 'care', t('log.care', { label: a.label, line: tx }));
     G.playFx(pid, actionId);
@@ -733,7 +741,23 @@
     return true;
   }
   G.applyAction = applyAction;
-  G.perform = function (pid, actionId) { return applyAction(pid, actionId); };
+
+  /* 闲谈：不用你做什么，隔一阵有人随口说一句，跟着时间和所在的房间走，偶尔提起以前的事 */
+  function ambientChat() {
+    const cands = G.activePeople().filter(p => !G.toast[p.id] && !G.req[p.id]);
+    if (!cands.length) return;
+    const p = pick(cands), loc = CY.world ? CY.world.locationOf(p) : { room: 'living' };
+    const hr = G.dayMinutes() / 60, tb = hr < 6 || hr >= 22 ? 'night' : hr < 11 ? 'morning' : hr < 17 ? 'noon' : 'evening';
+    const asleep = G.isSleeping(p);
+    let key = tb;
+    if (!asleep && (p.story.hospital_n || 0) > 0 && Math.random() < 0.18) key = 'memory_hospital';
+    else if (!asleep && loc.room !== 'ward' && Math.random() < 0.55) key = loc.room;
+    let arr = G.lines(p, 'ambient', key);
+    if (!arr.length) arr = G.lines(p, 'ambient', tb);
+    if (arr.length) G.toastFor(p, G.fmt(pick(arr), p), 'soft');
+  }
+  G.ambientChat = ambientChat;
+  G.perform = function (pid, actionId) { return G.worldGuard ? G.worldGuard(pid, () => applyAction(pid, actionId)) : applyAction(pid, actionId); };
   /* 故事模式：开始做一件事，要花掉 min 个游戏分钟。已经在做别的事，就先把那件压到下面暂停，做完这件再接着做 */
   G.startAction = function (pid, actionId) {
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
@@ -742,16 +766,19 @@
     if (G.timeMode() === 'real') return applyAction(pid, actionId);
     const ts = G.tasks();
     if (ts.some(x => x.pid === pid && x.act === actionId)) { G.toastFor(p, t('toast.already', { what: a.label }), 'soft'); emit(); return false; }
-    if (ts.length >= 4) { G.toastFor(p, t('toast.too_many'), 'soft'); emit(); return false; }
+    const need = G.worldNeed && CY.world.enforce ? G.worldNeed(p) : null;
+    if (need && need.offsite) { G.toastFor(p, t('toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); emit(); return false; }
+    if (ts.length >= (need ? 3 : 4)) { G.toastFor(p, t('toast.too_many'), 'soft'); emit(); return false; }
     const lack = G.lacking(a);
     if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
     const prev = G.runningTask();
     ts.push({ pid, act: actionId, label: a.label, total: a.min, left: a.min });
+    if (need) ts.push(G.worldWalkTask(need));
     G.toastFor(p, prev ? t('toast.interrupt', { prev: prev.label, what: a.label }) : t('toast.started', { what: a.label, min: a.min }), 'soft');
     G.save(); emit();
     return true;
   };
-  function finishAction(b) { if (G.get(b.pid)) applyAction(b.pid, b.act); }
+  function finishAction(b) { if (b.kind) { G.finishSpecial(b); return; } if (G.get(b.pid)) applyAction(b.pid, b.act); }
   G.cancelAction = (i) => { const ts = G.tasks(); if (i === undefined) ts.pop(); else ts.splice(i, 1); emit(); };
   G.cancelAllTasks = () => { G.world.tasks = []; emit(); };
   /* 回答问答题：idx 是预设回答的序号，custom 是玩家自己写的 */
@@ -845,6 +872,8 @@
       if (!G.toast[p.id] || G.toast[p.id].kind !== 'cry') if (!G.req[p.id] || G.req[p.id].kind !== 'ask') G.toastFor(p, line(p, 'cry', null, t('line.cry')), 'cry');
     }
     if (now >= G.nextAt) { if (G.activePeople().length) fire(); scheduleNext(); }
+    if (G.worldTick) G.worldTick(now);
+    if (now >= (G.nextAmbient || 0)) { G.nextAmbient = now + 30000 + Math.random() * 40000; if (!G.isPaused() && G.activePeople().length) ambientChat(); }
     emit();
   };
   G.start = function () {

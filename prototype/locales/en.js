@@ -307,22 +307,22 @@ CY.i18n.register("en", {
 
 CY.i18n.register("en", {
  "mode.reality": "Reality",
- "mode.story": "Story",
+ "mode.story": "Fast",
  "mode.paused": "Pause",
- "mode.reality_tip": "Reality mode: time follows the real clock and actions need a long press, which costs your real time. Unfinished story tasks wait.",
- "mode.story_tip": "Story mode: time is compressed and an action starts with a click, spending game time. You can only do one thing at a time; a new one pushes the old one down, and it resumes afterward.",
+ "mode.reality_tip": "Reality mode: time follows the real clock and actions need a long press, which costs your real time. Unfinished fast-mode tasks wait.",
+ "mode.story_tip": "Fast mode: time is compressed and an action starts with a click, spending game time. You can only do one thing at a time; a new one pushes the old one down, and it resumes afterward.",
  "mode.paused_tip": "Pause: time stops and nothing happens",
  "mode.hint_reality": "Reality mode: hold, costs real time",
- "mode.hint_story": "Story mode: click, costs game time",
+ "mode.hint_story": "Fast mode: click, costs game time",
  "mode.hint_paused": "Paused",
- "mode.switched_reality": "Switched to Reality mode: time follows the real clock and actions need a long press. {k} unfinished story tasks wait until you return to Story mode.",
- "mode.switched_story": "Switched to Story mode: time runs x{n} and an action starts with a click, spending game time. One thing at a time; a new task pauses the old one.",
+ "mode.switched_reality": "Switched to Reality mode: time follows the real clock and actions need a long press. {k} unfinished fast-mode tasks wait until you return to Fast mode.",
+ "mode.switched_story": "Switched to Fast mode: time runs x{n} and an action starts with a click, spending game time. One thing at a time; a new task pauses the old one.",
  "mode.switched_paused": "Paused. Time stands still and nobody will interrupt you.",
  "intro.reality": "Reality mode",
  "intro.reality_note": "Time follows the real clock. Hold only, no money. Easy to leave next to your work; it interrupts your real time.",
- "intro.story": "Story mode",
+ "intro.story": "Fast mode",
  "intro.story_note": "Time is compressed and an action starts with a click, spending game time. Work for money, buy food, medicine, diapers and toys, or hire a nanny. One thing at a time; a new task pauses the old one. A baby left alone cries without end, while an elder can look after themselves for a while.",
- "intro.later": "You can switch between Reality, Story and Pause in the top bar at any time. Other details are in Settings.",
+ "intro.later": "You can switch between Reality, Fast and Pause in the top bar at any time. Other details are in Settings.",
  "scene.auto": "Auto",
  "scene.living": "Living room",
  "scene.bedroom": "Bedroom",
@@ -422,10 +422,14 @@ CY.i18n.register("en", {
  "act.selfheat": "Use a heat pack alone",
  "item.money": "Money",
  "ini.ui.scene": "Room background: auto is living room by day and bedroom at night; living, bedroom, kitchen, lawn, balcony; none is plain",
- "ini.play.last_mode": "The mode you were in before pausing, reality or story. Rarely needs changing.",
- "ini.time.mode": "real is Reality mode, following the real clock; compressed is Story mode with time sped up; paused stops. The top bar switch changes this"
+ "ini.play.last_mode": "The mode you were in before pausing, reality or fast. Rarely needs changing.",
+ "ini.time.mode": "real is Reality mode, following the real clock; compressed is Fast mode with time sped up; paused stops. The top bar switch changes this"
 });
 
 CY.i18n.register("en", {"player.title": "Dad", "player.name": "you"});
 
 CY.i18n.register("en", {"btn.edit": "Edit", "btn.archive": "Archive", "btn.delete": "Delete", "btn.restore": "Restore", "bar.archived": "{n} archived", "del.title": "Delete {name}?", "del.note": "Deleting removes the records, sayings and state of {name} from this device and cannot be undone. To just set them aside, choose Archive and the records stay."});
+
+CY.i18n.register("en", {"hdr.share": "Share card", "share.title": "Share card", "share.note": "A picture made only on your device with the numbers you choose, no names by default. Nothing is uploaded, and the game never nudges you to share.", "share.f_time": "Time together", "share.f_care": "Times cared", "share.f_talk": "Chats", "share.f_called": "Times called", "share.f_back": "Kindnesses received", "share.f_names": "Show names", "share.save": "Save image", "share.send": "Share", "share.line_time": "Together for {t}", "share.line_care": "Cared {n} times", "share.line_talk": "Chatted {n} times", "share.line_called": "Called {title} {n} times", "share.line_back": "Received {n} kindnesses", "share.foot": "Care for You · No score, just company", "cond.heart": "Heart condition", "cond.parkinson": "Parkinson’s", "cond.depress": "Low mood", "cond.nocturia": "Frequent night urination", "cond.eczema": "Eczema", "cond.fracture": "Fracture recovery", "cond.trauma": "Waking in fear after trauma", "cond.allergy": "Allergy", "need.chest": "Chest feels tight", "need.tremor": "Hands trembling", "need.lowmood": "Feeling low", "need.toilet": "Needs the toilet", "need.itch": "Skin is itchy", "need.pain": "Hurts where injured", "need.nightmare": "Restless", "need.sneeze": "Sneezing, watery eyes", "need.veg": "Wants fresh greens", "need.humid": "Needs misting", "act.restsit": "Help sit and rest", "act.steady": "Steady the hands", "act.listen": "Listen quietly", "act.walkout": "Walk outside together", "act.lead": "Help to the toilet", "act.nightlight": "Turn on a night light", "act.selftoilet": "Go to the toilet alone", "selfact.selftoilet": "Go to the toilet alone", "act.ointment": "Apply ointment", "act.trimnails": "Trim nails", "act.support": "Help walk a few steps", "act.painkill": "Take painkillers", "act.rehab": "Do rehab exercises together", "act.stayclose": "Stay close in silence", "act.warmdrink": "Hand over a warm drink", "act.antihist": "Take allergy medicine", "act.airclean": "Clean and dust", "act.veggie": "Feed fresh greens", "act.mist": "Mist with water", "act.train": "Teach a command", "act.teach": "Teach a word", "class.guineapig": "Guinea pig", "class.gecko": "Gecko", "arch.guineapig": "Guinea pig", "arch.gecko": "Gecko", "arch.refugee_elder": "An elder who fled", "arch.refugee_mother": "A mother who fled", "arch.refugee_child": "A child who fled", "arch.wheelchair": "A family member in a wheelchair", "preset.host.label": "Hosting a family who fled", "preset.host.note": "An elder, a mother and a child, newly arrived in an unfamiliar place, who need time to settle and feel safe", "preset.name.refugee_elder": "Elder", "preset.name.refugee_mother": "Mama", "preset.name.refugee_child": "Child", "preset.night.label": "Grandpa who gets up at night", "preset.night.note": "Frequent night trips to the toilet and a bit frail by day, so someone needs to keep an eye out"});
+
+CY.i18n.register("en", {"loc.home": "Home", "loc.office": "Office", "loc.hospital": "Hospital", "loc.bedroom": "Bedroom", "loc.elder": "Elders’ room", "loc.toilet": "Bathroom", "loc.study": "Study", "loc.living": "Living room", "loc.kitchen": "Kitchen", "loc.yard": "Yard", "loc.ward": "Ward", "loc.desk": "Desk", "nav.here": "You are at {place}", "nav.transit": "On the way", "nav.travel_hold": "Go to {place}, hold {n} s", "nav.travel_click": "Go to {place}, takes {t}", "walk.to": "Walk to {room}", "walk.travel": "Go to {place}", "toast.offsite": "{name} is at {place}, go there first", "toast.walking": "Walking over, it will start on arrival", "log.fall_minor": "{name} slipped during a night trip to the toilet, but it is nothing serious.", "log.fall_serious": "{name} fell during a night trip to the toilet and was taken to the hospital.", "log.discharge": "{name} is out of the hospital and back home.", "log.night_wc": "{name} got up in the night to use the toilet.", "room.edit": "Edit {name}", "life.drag": "Drag to reorder", "ini.play.auto_return": "When true, after caring with nothing else to do, you walk back to your post by yourself, and the travel time still counts. When false you stay where you are until you move.", "ini.play.fall_scale": "Multiplier for the chance of a fall on a night trip, for testing. It will come from the Life Matters nocturia model once connected.", "ini.play.model_provider": "Provider for models such as nocturia. Only the built-in default exists for now; look-up tables, Life Matters or others can be added later."});

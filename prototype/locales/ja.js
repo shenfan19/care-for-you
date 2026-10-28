@@ -93,14 +93,14 @@ CY.i18n.register("ja", {
 "intro.title": "お世話にはコストがある", "intro.p1": "在宅勤務中に、家の誰かにお世話が必要です。お世話の一瞬一瞬は、どこかから捻出するしかありません。",
 "intro.p2": "長押しは、あなたが現実でしていることを中断させます。クリックはゲーム内の時間を使い、その間は何も稼げません。遊び方を選んでください：",
 "intro.reality": "現実モード", "intro.reality_note": "時間は現実の時計に従います。長押しだけ、お金はありません。仕事のそばに置きやすく、あなたの現実の時間を中断させます。",
-"intro.story": "物語モード", "intro.story_note": "時間は圧縮され、行動はクリックで始まりゲーム内の時間を使います。仕事でお金を稼ぎ、食材、薬、おむつ、おもちゃを買い、シッターも頼めます。一度にできるのはひとつ。新しい作業は古い作業を一時停止します。赤ちゃんは放っておくと泣き続け、お年寄りはしばらく自分で何とかします。",
-"intro.later": "上部バーの「現実」「物語」「一時停止」でいつでも切り替えられます。その他の詳細は設定にあります。",
-"mode.reality": "現実", "mode.story": "物語", "mode.paused": "停止",
-"mode.reality_tip": "現実モード：時間は現実の時計に従い、行動は長押しで、あなたの現実の時間を使います。物語の中の未完了の作業は待機します。",
-"mode.story_tip": "物語モード：時間は圧縮され、行動はクリックで始まりゲーム内の時間を使います。一度にひとつだけ。新しい作業が古い作業を押しのけ、あとで再開します。",
-"mode.paused_tip": "一時停止：時間が止まり、何も起きません", "mode.hint_reality": "現実モード：長押し、現実の時間を使う", "mode.hint_story": "物語モード：クリック、ゲーム内の時間を使う", "mode.hint_paused": "一時停止中",
-"mode.switched_reality": "現実モードに切り替えました。時間は現実の時計に従い、行動は長押しです。物語の未完了の作業が {k} 件、物語モードに戻るまで待機します。",
-"mode.switched_story": "物語モードに切り替えました。時間は ×{n} で進み、行動はクリックで始まりゲーム内の時間を使います。一度にひとつ。新しい作業は古い作業を一時停止します。",
+"intro.story": "加速モード", "intro.story_note": "時間は圧縮され、行動はクリックで始まりゲーム内の時間を使います。仕事でお金を稼ぎ、食材、薬、おむつ、おもちゃを買い、シッターも頼めます。一度にできるのはひとつ。新しい作業は古い作業を一時停止します。赤ちゃんは放っておくと泣き続け、お年寄りはしばらく自分で何とかします。",
+"intro.later": "上部バーの「現実」「加速」「一時停止」でいつでも切り替えられます。その他の詳細は設定にあります。",
+"mode.reality": "現実", "mode.story": "加速", "mode.paused": "停止",
+"mode.reality_tip": "現実モード：時間は現実の時計に従い、行動は長押しで、あなたの現実の時間を使います。加速の中の未完了の作業は待機します。",
+"mode.story_tip": "加速モード：時間は圧縮され、行動はクリックで始まりゲーム内の時間を使います。一度にひとつだけ。新しい作業が古い作業を押しのけ、あとで再開します。",
+"mode.paused_tip": "一時停止：時間が止まり、何も起きません", "mode.hint_reality": "現実モード：長押し、現実の時間を使う", "mode.hint_story": "加速モード：クリック、ゲーム内の時間を使う", "mode.hint_paused": "一時停止中",
+"mode.switched_reality": "現実モードに切り替えました。時間は現実の時計に従い、行動は長押しです。加速の未完了の作業が {k} 件、加速モードに戻るまで待機します。",
+"mode.switched_story": "加速モードに切り替えました。時間は ×{n} で進み、行動はクリックで始まりゲーム内の時間を使います。一度にひとつ。新しい作業は古い作業を一時停止します。",
 "mode.switched_paused": "一時停止しました。時間は止まり、誰も邪魔しません。",
 "trait.clingy": "甘えん坊", "trait.independent": "自立心", "trait.nightowl": "夜型", "trait.earlybird": "朝型", "trait.picky": "偏食", "trait.sickly": "病弱", "trait.sturdy": "丈夫", "trait.grumpy": "不機嫌になりがち", "trait.cheerful": "陽気", "trait.thirsty": "よく喉が渇く", "trait.hearty": "大食い",
 "trait.clingy_tip": "付き合いがほしくなるのが早い", "trait.independent_tip": "付き合いをあまり求めず、一人でもよく過ごせる", "trait.nightowl_tip": "寝るのも起きるのも遅い", "trait.earlybird_tip": "寝るのも起きるのも早い",
@@ -124,3 +124,7 @@ CY.i18n.register("ja", {
 CY.i18n.register("ja", {"player.title": "パパ", "player.name": "あなた"});
 
 CY.i18n.register("ja", {"btn.edit": "編集", "btn.archive": "アーカイブ", "btn.delete": "削除", "btn.restore": "元に戻す", "bar.archived": "アーカイブ {n} 件", "del.title": "{name}を削除しますか？", "del.note": "削除すると{name}の記録、話した言葉、状態がこの端末から消え、元に戻せません。しばらく離れてもらうだけならアーカイブを選ぶと記録は残ります。"});
+
+CY.i18n.register("ja", {"hdr.share": "シェアカード", "share.title": "シェアカード", "share.note": "あなたの端末の中だけで、選んだ数字で一枚の画像を作ります。名前は初期設定では入りません。アップロードはされず、共有を勧めることもありません。", "share.f_time": "一緒にいた時間", "share.f_care": "世話の回数", "share.f_talk": "おしゃべり", "share.f_called": "呼ばれた回数", "share.f_back": "もらった気持ち", "share.f_names": "名前を入れる", "share.save": "画像を保存", "share.send": "共有", "share.line_time": "{t} 一緒に過ごした", "share.line_care": "{n} 回、世話をした", "share.line_talk": "{n} 回、おしゃべりした", "share.line_called": "{title} と {n} 回呼ばれた", "share.line_back": "{n} 回、気持ちをもらった", "share.foot": "Care for You · スコアはなく、ただそばにいる", "cond.heart": "心臓の病気", "cond.parkinson": "パーキンソン病", "cond.depress": "気分の落ち込み", "cond.nocturia": "夜間頻尿", "cond.eczema": "湿疹", "cond.fracture": "骨折の回復", "cond.trauma": "心の傷による夜驚", "cond.allergy": "アレルギー", "need.chest": "胸が苦しい", "need.tremor": "手が震える", "need.lowmood": "気分が沈んでいる", "need.toilet": "トイレに行きたい", "need.itch": "肌がかゆい", "need.pain": "傷が痛い", "need.nightmare": "落ち着かない", "need.sneeze": "くしゃみと涙目", "need.veg": "新鮮な野菜がほしい", "need.humid": "霧吹きがほしい", "act.restsit": "支えて座らせ休ませる", "act.steady": "手を支える", "act.listen": "静かに話を聞く", "act.walkout": "一緒に外を歩く", "act.lead": "トイレまで付き添う", "act.nightlight": "常夜灯をつける", "act.selftoilet": "自分でトイレに行く", "selfact.selftoilet": "自分でトイレに行く", "act.ointment": "軟膏を塗る", "act.trimnails": "爪を切る", "act.support": "支えて数歩歩く", "act.painkill": "痛み止めを飲む", "act.rehab": "一緒にリハビリをする", "act.stayclose": "黙ってそばにいる", "act.warmdrink": "温かい飲み物を渡す", "act.antihist": "アレルギー薬を飲む", "act.airclean": "掃除してほこりを払う", "act.veggie": "新鮮な野菜をあげる", "act.mist": "霧吹きをする", "act.train": "コマンドを教える", "act.teach": "言葉を教える", "class.guineapig": "モルモット", "class.gecko": "ヤモリ", "arch.guineapig": "モルモット", "arch.gecko": "ヤモリ", "arch.refugee_elder": "逃れてきた高齢者", "arch.refugee_mother": "逃れてきた母親", "arch.refugee_child": "逃れてきた子ども", "arch.wheelchair": "車いすの家族", "preset.host.label": "逃れてきた家族を迎える", "preset.host.note": "高齢者、母親、子どもが見知らぬ土地に着いたばかり。安心できるまで、時間が必要です", "preset.name.refugee_elder": "年配の方", "preset.name.refugee_mother": "お母さん", "preset.name.refugee_child": "子ども", "preset.night.label": "夜中に起きるおじいちゃん", "preset.night.note": "夜中に何度もトイレに起き、日中も少し弱っています。誰かが気にかけてあげる必要があります"});
+
+CY.i18n.register("ja", {"loc.home": "家", "loc.office": "職場", "loc.hospital": "病院", "loc.bedroom": "寝室", "loc.elder": "高齢者の部屋", "loc.toilet": "トイレ", "loc.study": "書斎", "loc.living": "リビング", "loc.kitchen": "キッチン", "loc.yard": "庭", "loc.ward": "病室", "loc.desk": "席", "nav.here": "いまは{place}", "nav.transit": "移動中", "nav.travel_hold": "{place}へ、{n} 秒長押し", "nav.travel_click": "{place}へ、{t} かかる", "walk.to": "{room}へ歩く", "walk.travel": "{place}へ向かう", "toast.offsite": "{name}は{place}にいます。まず向かいましょう", "toast.walking": "歩いて向かっています。着いたら始めます", "log.fall_minor": "{name}は夜中にトイレへ行く途中で転びましたが、大事には至りませんでした。", "log.fall_serious": "{name}は夜中にトイレへ行く途中で転び、病院に運ばれました。", "log.discharge": "{name}は退院して家に戻りました。", "log.night_wc": "{name}は夜中にトイレに起きました。", "room.edit": "{name}を編集", "life.drag": "ドラッグで並べ替え"});

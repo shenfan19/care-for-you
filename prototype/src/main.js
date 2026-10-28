@@ -37,7 +37,9 @@
     $('ratioSel').onchange = async e => { G.cfg.time = G.cfg.time || {}; G.cfg.time.compress_ratio = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.renderControls(); };
     $('floatBtn').onclick = () => U.floatToggle();
     $('unfloatBtn').onclick = () => U.floatToggle();
+    CY.world.enforce = true;
     $('dlBtn').onclick = () => U.saveDialog();
+    $('shareBtn').onclick = () => U.shareDialog();
     $('gearBtn').onclick = () => U.settingsDialog();
     $('aboutBtn').onclick = () => U.aboutDialog();
     $('footAbout').onclick = e => { e.preventDefault(); U.aboutDialog(); };

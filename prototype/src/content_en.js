@@ -253,6 +253,17 @@
     cold: { lines: { request: { fever: ['{ta} had a warm face and no energy.', '{ta} leaned back limply, forehead hot.'] } } },
     asthma: { lines: { request: { breath: ['{ta} coughed a few times and breathed quickly.', '{ta} pressed a hand to the chest, breathing heavily.'] } } },
     forgetful: { lines: { request: { reorient: ['Where did I put my keys?', 'What day is it today?', '{ta} stood at the door, not remembering where to go.'] } } },
+    heart: { lines: { request: { medicine: ['Is it time for the pills?', '{ta} looked at the pill box.'], chest: ['{ta} pressed a hand to the chest and slowly sat down.', '{ta} said it felt tight, and that a rest would help.'] } } },
+    parkinson: { lines: { request: { medicine: ['Is it time for the pills?', '{ta} looked at the pill box, then at the hands.'], tremor: ['{ta} held the cup, hands trembling gently.', '{ta} said the hands were not listening today.'] } } },
+    depress: { lines: { request: { lowmood: ['{ta} sat by the window and said nothing for a long while.', '{ta} said: it is nothing, I just have no energy.'] } } },
+    nocturia: {
+      lines: { request: { toilet: ['{ta} got up again and felt the way toward the bathroom.', '{ta} said getting up several times a night is normal now.'] } },
+      events: { pre_sleep: { say: 'Would you like some water before bed?', choices: [{ label: 'Just a sip', reply: '{ta} took a small sip and said that was enough.' }, { label: 'A big glass', reply: '{ta} drank happily. You knew the night would be interrupted.' }, { label: 'None, just rinse the mouth', reply: '{ta} nodded and said that was fine.' }] } },
+    },
+    eczema: { lines: { request: { itch: ['{ta} kept scratching the arm, frowning.', '{ta} fussed, little hands scratching at the skin.'] } } },
+    fracture: { lines: { request: { pain: ['{ta} held the injured spot and drew in a breath.', '{ta} said it hurt again today.'] } } },
+    trauma: { lines: { request: { nightmare: ['{ta} woke with a start and sat hugging both arms for a long time.', '{ta} kept watching the door and could not settle.'] } } },
+    allergy: { lines: { request: { sneeze: ['{ta} sneezed several times in a row, eyes red.', '{ta} rubbed the nose and said the allergy was back.'] } } },
   };
 
   C.registerPack('en', { voices: V, sayings, asks, nudges, conds });

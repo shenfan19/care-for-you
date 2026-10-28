@@ -34,6 +34,7 @@
   function human(p) {
     const a = p.person.appearance || {}, stage = CY.game && p.species.food !== undefined ? CY.game.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35), mood = p.state.mood;
     const detailed = CY.avatarStyle === 'detailed';
+    const asleep = !!(CY.game && CY.game.isSleeping && p.id && CY.game.isSleeping(p));
     const sk = SKIN[a.skin] || SKIN[1], hc = HAIR[a.hair_color] || HAIR.black, cloth = a.cloth || '#8fa3b8';
     const B = BODY[stage] || BODY.adult, small = stage === 'infant' || stage === 'toddler' || stage === 'child';
     const cx = 50, cy = B.cy, rx = B.rx, ry = B.ry, shY = B.shY, sh0 = B.sh0;
@@ -79,7 +80,7 @@
       <path d="M${cx - 11} ${shY + 1} Q${cx} ${shY + 15} ${cx + 11} ${shY + 1} Q${cx} ${shY + 6} ${cx - 11} ${shY + 1}Z" fill="${sk[1]}"/>
       <circle cx="${L + 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/><circle cx="${R - 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>
       <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>
-      ${cheeks}${wrinkle}${nose}${eyes}${lids}${brows}${glasses}${beard}${detailed ? mouth(mood, cx, mouthY) : ''}
+      ${cheeks}${wrinkle}${nose}${eyes}${lids}${brows}${asleep ? '' : glasses}${beard}${detailed ? mouth(mood, cx, mouthY) : ''}
       ${front}
     </svg>`;
   }
@@ -257,7 +258,7 @@
       ${[[50, 60], [50, 72], [50, 84], [42, 66], [42, 80], [26, 64], [74, 70]].map(([x, y]) => `<path d="M${x - 2} ${y} l-3 -2 M${x + 2} ${y} l3 -2" stroke="#f5efc8" stroke-width="1.2" stroke-linecap="round"/>`).join('')}
       ${wilt ? '' : '<circle cx="50" cy="40" r="4" fill="#f08aa0"/><circle cx="50" cy="40" r="1.6" fill="#f5d36a"/>'}${pot}</svg>`;
   }
-  const DRAW = { cat, dog, rabbit, hamster, bird, fish, turtle, snake, succulent, flower, tree, cactus };
+  const DRAW = { cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
   CY.avatarStyle = 'simple';
   CY.avatar = p => (DRAW[p.species.id] || human)(p);
   /* 为添加角色对话框的预览用，不需要完整的 p */
@@ -268,6 +269,6 @@
   CY.avatarOptions = {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],
     glasses: ['none', 'round', 'square'], clothes: CLOTHES, coat: Object.keys(COAT), coatHex: Object.fromEntries(Object.entries(COAT).map(([k, v]) => [k, v[0]])),
-    coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'] },
+    coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'], guineapig: ['tan', 'white', 'brown', 'gray'], gecko: ['green', 'yellow', 'brown', 'black'] },
   };
 })(globalThis.CY = globalThis.CY || {});
