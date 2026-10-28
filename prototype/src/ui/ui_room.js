@@ -210,19 +210,18 @@
     const W = CY.world, at = W.where(), pages = U.PAGES(), fam = U.viewPlace === 'family';
     nav.style.display = pages.length ? '' : 'none';
     const here = t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
-    const away = !fam && at.place !== U.viewPlace, fast = G.timeMode() === 'compressed';
+    const away = !fam && at.place !== U.viewPlace;
     const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
-    const sig = [U.viewPlace, here, away, fast, min, pages.join(), CY.i18n.lang].join('|');
+    const sig = [U.viewPlace, here, away, min, pages.join(), CY.i18n.lang].join('|');
     if (nav.dataset.sig === sig) return;
     nav.dataset.sig = sig;
     const pn = U.viewPlace ? t('loc.' + U.viewPlace) : '';
     nav.innerHTML = (pages.length > 1 ? `<button data-d="-1">◀</button>` : '') + `<b>${esc(pn)}</b>` + (pages.length > 1 ? `<button data-d="1">▶</button>` : '') + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
-      (away ? `<button class="travel" id="travelBtn">${esc(fast ? t('nav.travel_click', { place: pn, t: U.fmtMinutes(min) }) : t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
+      (away ? `<button class="travel" id="travelBtn">${esc(t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
     nav.querySelectorAll('[data-d]').forEach(b => b.onclick = e => { e.stopPropagation(); U.cyclePlace(+b.dataset.d); });
     const tb = nav.querySelector('#travelBtn');
     if (!tb) return;
-    if (fast) tb.onclick = () => { W.travel(U.viewPlace); U.renderRoom(true); U.renderLife && U.renderLife(); };
-    else tb.onpointerdown = e => {
+    tb.onpointerdown = e => {
       e.preventDefault(); tb.setPointerCapture(e.pointerId);
       const dur = W.travelHold(at.place, U.viewPlace) * 1000, t0 = performance.now(); let raf;
       const stop = ok => { win().cancelAnimationFrame(raf); tb.style.setProperty('--k', 0); tb.onpointerup = tb.onpointercancel = null; if (ok) { W.travel(U.viewPlace); U.renderRoom(true); } };
@@ -268,12 +267,12 @@
       const b = doc().createElement('button');
       b.dataset.x = Math.sin(ang) * Rx; b.dataset.y = -Math.cos(ang) * Ry - 14;
       const sec = G.holdSeconds(a);
-      const click = G.inputMode() === 'click' || ini.bool(G.cfg, 'interaction', 'click_instead_of_hold');
-      const cost = G.inputMode() === 'click' ? U.fmtMinutes(a.min) : t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec });
+      const click = ini.bool(G.cfg, 'interaction', 'click_instead_of_hold');
+      const cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec });
       const lack = G.lacking(a);
-      b.innerHTML = esc(a.label) + (G.inputMode() === 'hold' && ini.bool(G.cfg, 'interaction', 'click_instead_of_hold') ? '' : `<small>${esc(cost)}</small>`) + (lack ? `<small class="lack" title="${esc(t('ring.lack', { item: G.item(lack).label }))}">${G.item(lack).icon}</small>` : '');
+      b.innerHTML = esc(a.label) + (click ? '' : `<small>${esc(cost)}</small>`) + (lack ? `<small class="lack" title="${esc(t('ring.lack', { item: G.item(lack).label }))}">${G.item(lack).icon}</small>` : '');
       if (lack) b.classList.add('dim');
-      if (click) b.onclick = () => { if (G.inputMode() === 'click') G.startAction(pid, a.id); else G.perform(pid, a.id); U.closeRing(); };
+      if (click) b.onclick = () => { G.perform(pid, a.id); U.closeRing(); };
       else {
         b.onpointerdown = e => { e.preventDefault(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
         b.onpointerup = b.onpointercancel = () => U.endHold(false);

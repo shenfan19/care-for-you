@@ -15,7 +15,7 @@
    directive 是后端要游戏做的事，op 只能是下面这些，别的一律丢弃，数值会被压回范围：
      flag_set { person, name, minutes, value?, place?, room?, mode? }   flag_clear { person, name }
      need { person, need, delta }   mood { person, delta }   frailty { person, delta }
-     condition_add { person, id }   condition_remove { person, id }   counter { person, name, delta }
+     condition_add { person, id }   condition_remove { person, id }   counter { person, name, delta }   seen { person, name }（记下今天已经说过，每天只触发一次的规则用）
      log { person, type, text | key, args? }    say { person, text | tkey | group+key, kind? }    （tkey 是界面文字的键，group+key 是台词库里的位置） */
 (function (CY) {
   const P = CY.protocol = { V: 1 };
@@ -35,12 +35,14 @@
       id: p.id, name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(1) : null,
       mood: +p.state.mood.toFixed(2), frailty: +p.state.frailty.toFixed(2), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(2)])),
       conditions: (p.person.conditions || []).slice(), traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
-      sleeping: G.isSleeping(p), location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters),
+      sleeping: G.isSleeping(p), location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),
     };
   };
   P.world = () => {
-    const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {};
-    return { v: P.V, game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
+    const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {}, d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const date = { month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000) };
+    return { v: P.V, date, days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
       player: { place: pl.place, room: pl.room }, params: { fall_scale: parseFloat(ini.get(G.cfg, 'play', 'fall_scale')) || 1 } };
   };
 
@@ -61,6 +63,7 @@
         case 'need': o.need = str(d.need, 24); o.delta = clamp(num(d.delta), -1, 1); break;
         case 'mood': case 'frailty': o.delta = clamp(num(d.delta), -1, 1); break;
         case 'condition_add': case 'condition_remove': o.id = str(d.id, 32); if (!G.tpl.conditions[o.id]) continue; break;
+        case 'seen': o.name = str(d.name, 48); if (!o.name) continue; break;
         case 'counter': o.name = str(d.name, 24); if (!o.name) continue; o.delta = clamp(Math.round(num(d.delta)), -100, 100); break;
         case 'log':
           o.type = P.LOG_TYPES.includes(d.type) ? d.type : 'event';

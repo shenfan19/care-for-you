@@ -44,8 +44,8 @@
   /* 地点之间的路程，单位是游戏分钟 */
   W.TRAVEL_MIN = { 'home-hospital': 30, 'home-office': 25, 'hospital-office': 45 };
   W.travelMin = (a, b) => W.TRAVEL_MIN[a + '-' + b] || W.TRAVEL_MIN[b + '-' + a] || 30;
-  W.travelHold = (a, b) => Math.min(10, Math.max(3, Math.round(W.travelMin(a, b) / 3)));
-  const fast = () => G.timeMode() === 'compressed';
+  /* 去另一个地点要长按多久：和动作一样，路程的分钟开方压缩，再长一点 */
+  W.travelHold = (a, b) => Math.round(Math.min(8, G.holdFor(W.travelMin(a, b)) * 1.3));
 
   /* ---------- 谁此刻在哪个房间 ---------- */
   const PET_ROOM = { cat: 'living', dog: 'living', rabbit: 'living', hamster: 'bedroom', guineapig: 'living', bird: 'living', fish: 'living', turtle: 'kitchen', snake: 'study', gecko: 'study', succulent: 'living', cactus: 'study', flower: 'yard', tree: 'yard' };
@@ -108,11 +108,10 @@
   W.holding = false;      /* 正在长按 */
   W.IDLE_MS = 4000;       /* 动作停下后，原地停几秒再自动回去 */
   W.lastActive = Date.now();
-  const taskTravel = () => { const x = G.runningTask(); return x && x.kind === 'travel' && fast() ? x : null; };
   W.where = () => ({ place: W.player().place, room: W.player().room });
   W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; W.lastActive = Date.now(); };
   W.moveTo = (place, room) => { const a = W.playerAnchor(place, room); W.setPlayer({ place, room, gx: a.gx, gy: a.gy }); };
-  W.visual = () => { const pl = W.player(); return { place: pl.place, gx: pl.gx, gy: pl.gy, traveling: !!taskTravel() }; };
+  W.visual = () => { const pl = W.player(); return { place: pl.place, gx: pl.gx, gy: pl.gy }; };
 
   /* 要照顾这个人：在别的地点就先去那里，同一个地点就直接出现在他旁边 */
   W.presenceNeed = p => {
@@ -129,35 +128,25 @@
     return fn();
   };
 
-  /* 去另一个地点：现实速度里长按已经花了时间，所以直接到；快进里排进任务栈 */
-  W.travelTask = place => {
-    const pl = W.player(), room = place === 'home' ? W.WORK.room : place === 'office' ? 'desk' : 'ward', a = W.playerAnchor(place, room), min = W.travelMin(pl.place, place);
-    return { id: Date.now(), kind: 'travel', pid: null, act: 'travel', label: t('walk.travel', { place: t('loc.' + place) }), total: min, left: min, to: { place, room, gx: a.gx, gy: a.gy } };
-  };
-  W.finishSpecial = task => { W.setPlayer(task.to); };
+  /* 去另一个地点：界面里长按够了时间，所以这里直接到 */
   W.travel = place => {
     const pl = W.player();
     if (pl.place === place) return false;
-    if (fast()) {
-      const ts = G.tasks();
-      if (ts.length >= 4) return false;
-      ts.push(W.travelTask(place)); G.save();
-    } else W.moveTo(place, place === 'home' ? W.WORK.room : place === 'office' ? 'desk' : 'ward');
+    W.moveTo(place, place === 'home' ? W.WORK.room : place === 'office' ? 'desk' : 'ward');
     return true;
   };
 
   /* 每秒：主角所在的地点没有人了就回家；动作停下几秒后，勾了自动回岗位就回到工作的位置 */
   W.tick = () => {
     if (!W.enforce) return;
-    const pl = W.player(), busy = W.holding || G.tasks().length;
-    if (busy) { W.lastActive = Date.now(); return; }
+    const pl = W.player();
+    if (W.holding) { W.lastActive = Date.now(); return; }
     if (!W.occupiedPlaces().includes(pl.place) && G.activePeople().length) { W.moveTo(W.WORK.place, W.WORK.room); return; }
     if (!ini.bool(G.cfg, 'play', 'auto_return') || Date.now() - W.lastActive < W.IDLE_MS) return;
     if (pl.place !== W.WORK.place || pl.room !== W.WORK.room) { W.moveTo(W.WORK.place, W.WORK.room); }
   };
 
   G.worldTick = W.tick;
-  G.finishSpecial = W.finishSpecial;
   G.worldGuard = W.guard;
   G.worldNeed = W.presenceNeed;
   G.worldBlink = W.blink;

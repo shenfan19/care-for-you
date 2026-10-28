@@ -165,6 +165,27 @@
     H('refugee_mother', '逃难来的妈妈', 34, 'parent', '她', { skin: 3, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#a3786b' }),
     H('refugee_child', '逃难来的孩子', 6, 'child', '他', { skin: 3, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c9a35b' }),
     H('wheelchair', '坐轮椅的家人', 68, 'elder', '他', { skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'square', beard: true, cloth: '#6f8fa0' }),
+    P('hedgehog', 'animal', '刺猬', 'hedgehog', 'hedgehog', { coat: 'brown' }),
+    P('duck', 'animal', '鸭子', 'duck', 'duck', { coat: 'yellow' }),
+    P('ferret', 'animal', '雪貂', 'ferret', 'ferret', { coat: 'tan' }),
+    P('axolotl', 'animal', '六角恐龙', 'axolotl', 'axolotl', { coat: 'rose' }),
+    P('chicken', 'animal', '小鸡', 'chicken', 'chicken', { coat: 'white' }),
+    P('orchid', 'plant', '兰花', 'orchid', 'plant', { coat: 'rose' }),
+    P('bamboo', 'plant', '竹子', 'bamboo', 'plant', { coat: 'green' }),
+    H('gongong', '公公', 72, 'elder', '他', { skin: 1, hair_style: 'bald', hair_color: 'gray', glasses: 'square', beard: false, cloth: '#6f7f8f' }),
+    H('popo', '婆婆', 70, 'elder', '她', { skin: 1, hair_style: 'bun', hair_color: 'gray', glasses: 'round', beard: false, cloth: '#a98a9a' }),
+    H('grandson', '孙子', 6, 'child', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
+    H('granddaughter', '孙女', 4, 'child', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#e7a6a1' }),
+    H('younger_brother', '弟弟', 20, 'sibling', '他', { skin: 1, hair_style: 'curly', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f8a7a' }),
+    H('younger_sister', '妹妹', 22, 'sibling', '她', { skin: 1, hair_style: 'bob', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#c58a8f' }),
+    H('niece', '外甥女', 10, 'child', '她', { skin: 1, hair_style: 'bun', hair_color: 'brown', glasses: 'round', beard: false, cloth: '#9a8fc0' }),
+    H('classmate', '同学', 16, 'teen', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#6aa08f' }),
+  );
+  C.presets.push(
+    { id: 'threegen', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
+    { id: 'solo', members: [{ arch: 'cat', name: '团子' }, { arch: 'succulent', name: '多肉' }, { arch: 'orchid', name: '兰兰' }] },
+    { id: 'zoo', members: [{ arch: 'cat', name: '团子' }, { arch: 'dog', name: '豆豆' }, { arch: 'rabbit', name: '糯米' }, { arch: 'hedgehog', name: '小刺' }] },
+    { id: 'garden', members: [{ arch: 'flower', name: '小花' }, { arch: 'orchid', name: '兰兰' }, { arch: 'bamboo', name: '青青' }, { arch: 'cactus', name: '小刺球' }] },
   );
   C.presets.push(
     { id: 'host', members: [{ arch: 'refugee_elder', name: '老人', conditions: ['trauma'] }, { arch: 'refugee_mother', name: '妈妈', conditions: ['depress'] }, { arch: 'refugee_child', name: '孩子' }] },
@@ -210,7 +231,7 @@
   V.partner.request.mobility = ['我腰有点酸，想动一动。'];
 
   /* ---------- 性格特征，界面里选 ---------- */
-  C.TRAITS = ['clingy', 'independent', 'nightowl', 'earlybird', 'picky', 'sickly', 'sturdy', 'grumpy', 'cheerful', 'thirsty', 'hearty'];
+  C.TRAITS = ['clingy', 'independent', 'nightowl', 'earlybird', 'picky', 'sickly', 'sturdy', 'grumpy', 'cheerful', 'thirsty', 'hearty', 'shy', 'chatty', 'curious', 'stubborn', 'gentle', 'playful', 'anxious', 'proud', 'sentimental'];
 
   /* ---------- 内容包：按语言存放，缺的按回退顺序补 ----------
      台词、说话库、问答库、提醒库、疾病文字都是内容，一个语言一份。条目的编号在各语言里相同，
@@ -230,8 +251,8 @@
   };
   C.packFor = lang => {
     const chain = (CHAIN[lang] || [lang, 'en', 'zh-CN']).filter(l => C.packs[l]), rev = chain.slice().reverse();
-    const out = { voices: {}, conds: {} };
-    for (const l of rev) { for (const v in C.packs[l].voices || {}) out.voices[v] = deep(out.voices[v], C.packs[l].voices[v]); for (const c in C.packs[l].conds || {}) out.conds[c] = deep(out.conds[c], C.packs[l].conds[c]); }
+    const out = { voices: {}, conds: {}, traits: {} };
+    for (const l of rev) { for (const v in C.packs[l].voices || {}) out.voices[v] = deep(out.voices[v], C.packs[l].voices[v]); for (const tr in C.packs[l].traits || {}) out.traits[tr] = deep(out.traits[tr], C.packs[l].traits[tr]); for (const c in C.packs[l].conds || {}) out.conds[c] = deep(out.conds[c], C.packs[l].conds[c]); }
     for (const k of ['sayings', 'asks', 'nudges']) out[k] = byId(rev.map(l => C.packs[l][k]));
     return out;
   };

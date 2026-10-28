@@ -1,0 +1,10 @@
+{
+  "name": "Care for You",
+  "short_name": "Care for You",
+  "description": "A quiet game about looking after the people, pets and plants at home. No score, no pressure.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f6f1e8",
+  "theme_color": "#c8794a",
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

@@ -7,7 +7,7 @@
   G.daySource = () => {
     const s = ini.get(G.cfg, 'time', 'daynight');
     if (s === 'system' || s === 'game') return s;
-    return G.timeMode() === 'real' ? 'system' : 'game';
+    return 'system';
   };
   /* 当天已过的分钟数，0 到 1439 */
   G.dayMinutes = () => {

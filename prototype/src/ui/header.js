@@ -27,22 +27,6 @@
     const langs = Object.keys(I.packs);
     const sig = langs.join() + I.lang;
     if (ls.dataset.sig !== sig) { ls.dataset.sig = sig; ls.innerHTML = langs.map(l => `<option value="${l}" ${l === I.lang ? 'selected' : ''}>${esc(names[l] || l)}</option>`).join(''); }
-    const rs = $('ratioSel'), ratio = ini.num(G.cfg, 'time', 'compress_ratio'), mode = G.timeMode();
-    const tag = $('clockTag'), back = $('backRealBtn'), ff = $('ffSel');
-    tag.textContent = mode === 'real' ? t('time.sync') : mode === 'free' ? t('time.free') : t('time.ff', { time: G.ffClock() });
-    tag.title = t('time.tip_' + mode);
-    back.style.display = mode === 'real' ? 'none' : '';
-    back.textContent = mode === 'compressed' ? t('time.stop') : t('time.back'); back.title = t(mode === 'compressed' ? 'time.stop_tip' : 'time.back_tip');
-    back.onclick = async () => { await (mode === 'compressed' ? G.stopFastForward() : G.backToReal()); U.renderControls(); U.renderLife(); U.renderClock(); U.renderRoom(true); };
-    ff.style.display = mode === 'compressed' ? 'none' : '';
-    const fsig = I.lang + 'ff';
-    if (ff.dataset.sig !== fsig) {
-      ff.dataset.sig = fsig; ff.title = t('ff.tip');
-      ff.innerHTML = `<option value="">${esc(t('ff.title'))}</option>` + ['morning', 'noon', 'evening', 'night', '+60', '+180', '+360'].map(k => `<option value="${k}">${esc(t('ff.' + (k[0] === '+' ? 'p' + k.slice(1) : k)))}</option>`).join('');
-    }
-    const list = [...new Set([10, 30, 60, 120, 360, ratio])].sort((a, b) => a - b);
-    const rsig = list.join() + ratio + I.lang;
-    if (rs.dataset.sig !== rsig) { rs.dataset.sig = rsig; rs.title = t('hdr.ratio_tip'); rs.innerHTML = list.map(v => `<option value="${v}" ${v === ratio ? 'selected' : ''}>${esc(t('ratio.label', { n: v }))}</option>`).join(''); }
   };
   U.syncTheme = U.applyTheme;
   U.applyLang = async function () {

@@ -1,4 +1,4 @@
 /* 版本信息。schema 是数据文件结构的版本，导入存档时用来判断能不能读。 */
 (function (CY) {
-  CY.meta = { app: 'Care for You', version: '0.6.0', schema: 4, released: '2026-10-27' };
+  CY.meta = { app: 'Care for You', version: '0.7.3', schema: 4, released: '2026-10-27' };
 })(globalThis.CY = globalThis.CY || {});

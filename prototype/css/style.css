@@ -235,3 +235,13 @@ button.danger { color:#b3261e; }
 .plist { max-height:50vh; overflow:auto; }
 .prow { display:flex; gap:8px; align-items:center; padding:5px 0; border-bottom:1px solid var(--line); }
 .prow .pav { width:34px; height:44px; flex:none; } .prow .pav svg { width:100%; height:100%; } .prow .pn { flex:1; min-width:0; }
+
+/* 窄屏：房间里只留头像和徽标，名单变成底部一排可横滑的小卡片 */
+@media (max-width: 640px) {
+  .room.iso .cx { width:10cqw; } .room.iso .cx .nm { display:none; }
+  .room.iso .cx .badges span { width:14px; height:14px; font-size:9px; }
+  .roster { left:6px; right:6px; bottom:6px; max-width:none; max-height:none; flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; }
+  .rcard { flex:none; width:44px; }
+  .placenav .here { display:none; }
+  header .tools { gap:6px; }
+}

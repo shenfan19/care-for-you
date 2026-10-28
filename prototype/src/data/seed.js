@@ -204,6 +204,76 @@ actions:
   feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
 `;
 
+  F['templates/species/hedgehog.yaml'] = `version: 3
+id: hedgehog
+label: 刺猬
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.07 }
+  hunger: { label: 饥饿, icon: "🐛", rate: 0.08 }
+  play: { label: 想出来逛逛, icon: "🍂", rate: 0.06 }
+  clean: { label: 窝该换垫料了, icon: "🧹", rate: 0.04 }
+actions:
+${petActions('喂刺猬粮', `  play: { label: 放出来逛逛, hold: 7, min: 25, effect: { play: -0.9 }, bonus_item: toy }
+  clean: { label: 换垫料, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
+
+  F['templates/species/duck.yaml'] = `version: 3
+id: duck
+label: 鸭子
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.1 }
+  hunger: { label: 饥饿, icon: "🌾", rate: 0.09 }
+  company: { label: 想你陪, icon: "🤝", rate: 0.07 }
+  play: { label: 想下水玩, icon: "🦆", rate: 0.07 }
+  clean: { label: 水盆该换了, icon: "🫧", rate: 0.05 }
+actions:
+${petActions('喂鸭食', `  play: { label: 放去玩水, hold: 7, min: 25, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+  clean: { label: 换水盆, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
+
+  F['templates/species/ferret.yaml'] = `version: 3
+id: ferret
+label: 雪貂
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.08 }
+  hunger: { label: 饥饿, icon: "🍖", rate: 0.1 }
+  company: { label: 想你陪, icon: "🤝", rate: 0.09 }
+  play: { label: 想出来跑, icon: "🐾", rate: 0.12 }
+  clean: { label: 窝该清了, icon: "🧹", rate: 0.04 }
+actions:
+${petActions('喂雪貂粮', `  play: { label: 陪它钻管道, hold: 8, min: 25, effect: { play: -0.9, company: -0.3 }, bonus_item: toy }
+  clean: { label: 清窝, hold: 5, min: 15, effect: { clean: -1 } }
+  hand: { label: 抱一会儿, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1 }`)}`;
+
+  F['templates/species/axolotl.yaml'] = `version: 3
+id: axolotl
+label: 六角恐龙
+food: pet_food
+needs:
+  thirst: { label: 水位低了, icon: "💧", rate: 0.03 }
+  hunger: { label: 饥饿, icon: "🪱", rate: 0.04 }
+  clean: { label: 水该换了, icon: "🫧", rate: 0.05 }
+actions:
+  vet: { label: 带去看兽医, hold: 8, min: 90, cost: { money: 60 }, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
+  water: { label: 补水, hold: 3, min: 3, effect: { thirst: -0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, uses: { pet_food: 1 }, effect: { hunger: -0.9 } }
+  clean: { label: 换水, hold: 6, min: 20, effect: { clean: -1 } }
+`;
+
+  F['templates/species/chicken.yaml'] = `version: 3
+id: chicken
+label: 小鸡
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.09 }
+  hunger: { label: 饥饿, icon: "🌽", rate: 0.1 }
+  company: { label: 想你陪, icon: "🤝", rate: 0.05 }
+  clean: { label: 鸡窝该换稻草了, icon: "🧹", rate: 0.04 }
+actions:
+${petActions('撒玉米', `  clean: { label: 换稻草, hold: 5, min: 15, effect: { clean: -1 } }`)}`;
+
   const plant = (id, label, w, s, f, p) => `version: 3
 id: ${id}
 label: ${label}
@@ -224,9 +294,11 @@ actions:
   F['templates/species/flower.yaml'] = plant('flower', '开花的花', 0.025, 0.015, 0.006, 0.006);
   F['templates/species/tree.yaml'] = plant('tree', '盆栽小树', 0.012, 0.01, 0.004, 0.008);
   F['templates/species/cactus.yaml'] = plant('cactus', '仙人掌', 0.004, 0.012, 0.002, 0.002);
+  F['templates/species/orchid.yaml'] = plant('orchid', '兰花', 0.02, 0.01, 0.004, 0.004);
+  F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */
-  F['templates/classes.yaml'] = `version: 4
+  F['templates/classes.yaml'] = `version: 5
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
 classes:
   infant: { urgency: 3.0, self_care: 0, cries: true }
@@ -245,13 +317,20 @@ classes:
   snake: { urgency: 0.6, self_care: 0.05 }
   guineapig: { urgency: 0.9, self_care: 0.15 }
   gecko: { urgency: 0.6, self_care: 0.05 }
+  hedgehog: { urgency: 0.8, self_care: 0.15 }
+  duck: { urgency: 1.0, self_care: 0.15 }
+  ferret: { urgency: 1.1, self_care: 0.1 }
+  axolotl: { urgency: 0.6, self_care: 0.03 }
+  chicken: { urgency: 0.9, self_care: 0.2 }
+  orchid: { urgency: 0.35, self_care: 0 }
+  bamboo: { urgency: 0.3, self_care: 0 }
   succulent: { urgency: 0.3, self_care: 0 }
   cactus: { urgency: 0.25, self_care: 0 }
   flower: { urgency: 0.4, self_care: 0 }
   tree: { urgency: 0.3, self_care: 0 }
 `;
 
-  F['templates/traits.yaml'] = `version: 3
+  F['templates/traits.yaml'] = `version: 4
 # 性格特征：每个角色可以带最多两个，叠加影响需求速度、自理、作息、效果和心情。
 traits:
   clingy: { rate: { company: 1.6, play: 1.3 } }
@@ -265,6 +344,15 @@ traits:
   cheerful: { mood_offset: 0.1 }
   thirsty: { rate: { thirst: 1.5 } }
   hearty: { rate: { hunger: 1.4 } }
+  shy: { rate: { company: 0.8 }, self_care: 0.1, mood_offset: -0.03 }
+  chatty: { rate: { company: 1.4 }, mood_offset: 0.03 }
+  curious: { rate: { play: 1.3 } }
+  stubborn: { effect: { company: 0.85, hunger: 0.9 }, mood_offset: -0.05 }
+  gentle: { mood_offset: 0.06, frailty: 0.9 }
+  playful: { rate: { play: 1.5 }, mood_offset: 0.04 }
+  anxious: { rate: { company: 1.3 }, frailty: 1.2, mood_offset: -0.05 }
+  proud: { self_care: 0.15, rate: { company: 0.8 } }
+  sentimental: { rate: { company: 1.2 } }
 `;
 
   /* 物品与开局的钱。durable 为真表示买了不消耗 */
@@ -508,13 +596,14 @@ lines:
     sneeze: ["{ta}连着打了几个喷嚏，眼睛红红的。", "{ta}揉着鼻子，说这几天又过敏了。"]
 `;
 
-  F['templates/events/rules.yaml'] = `version: 1
+  F['templates/events/rules.yaml'] = `version: 2
 # 事件规则数据库。游戏本体不写死任何人或事件，谁在什么时候发生什么，都从这里读，改了就生效。
 # trigger：tick 是时间过去，action 是玩家做了一件事，end 是某个带时限的标记到期。
 # when：触发条件，可用 sleeping，any_condition，all_conditions，stage，species，hour_from，hour_to，flag，no_flag，care_total_in，min_frailty。
 # rate_per_hour：每游戏小时发生的概率。chance：这一条触发的概率。stop：触发后不再看后面的规则。
 # do：要做的事，op 可用 flag_set，flag_clear，need，mood，frailty，condition_add，condition_remove，counter，log，say。
 # then：先 do，再按 chance 乘以 scale 里的各项算概率，从 outcomes 里按 weight 挑一个结果。
+# when 还可以用 dates 日期列表，写 MM-DD 每年重复或 YYYY-MM-DD 某一天，weekday 星期，days_together_in 已陪伴的天数。once_per_day 为真时每人每天只触发一次。
 # 数值是占位，等 Life Matters 的模型接进来，可以换成远程后端，规则格式不用变。
 rules:
   - id: night_toilet
@@ -584,6 +673,171 @@ rules:
     stop: true
     do:
       - { op: say, kind: speech, group: events, key: visit_hospital }
+  - id: festival_newyear
+    trigger: tick
+    when: { dates: ['01-01'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_newyear }
+  - id: festival_valentine
+    trigger: tick
+    when: { dates: ['02-14'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_valentine }
+  - id: festival_children
+    trigger: tick
+    when: { dates: ['06-01'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_children }
+  - id: festival_national
+    trigger: tick
+    when: { dates: ['10-01'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_national }
+  - id: festival_halloween
+    trigger: tick
+    when: { dates: ['10-31'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_halloween }
+  - id: festival_christmas
+    trigger: tick
+    when: { dates: ['12-24', '12-25'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_christmas }
+  - id: festival_spring
+    trigger: tick
+    when: { dates: ['2026-02-17', '2027-02-06', '2028-01-26', '2029-02-13', '2030-02-03'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_spring }
+  - id: festival_midautumn
+    trigger: tick
+    when: { dates: ['2026-09-25', '2027-09-15', '2028-10-03', '2029-09-22', '2030-09-12'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_midautumn }
+  - id: anniv_7
+    trigger: tick
+    when: { days_together_in: [7], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_7 }
+  - id: anniv_30
+    trigger: tick
+    when: { days_together_in: [30], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_30 }
+  - id: anniv_100
+    trigger: tick
+    when: { days_together_in: [100], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_100 }
+  - id: anniv_365
+    trigger: tick
+    when: { days_together_in: [365], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_365 }
+  - id: weekend
+    trigger: tick
+    when: { weekday: [0, 6], sleeping: false, hour_from: 9, hour_to: 20 }
+    once_per_day: true
+    rate_per_hour: 0.6
+    do:
+      - { op: say, kind: soft, group: life, key: weekend }
+  - id: greet_morning
+    trigger: tick
+    when: { sleeping: false, hour_from: 6, hour_to: 9 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: greet_morning }
+  - id: goodnight
+    trigger: tick
+    when: { sleeping: false, hour_from: 21, hour_to: 23 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: goodnight }
+  - id: lunch
+    trigger: tick
+    when: { sleeping: false, hour_from: 11.5, hour_to: 13 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: lunch }
+  - id: feeling_low
+    trigger: tick
+    when: { sleeping: false, min_frailty: 0.6 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: feeling_low }
+      - { op: mood, delta: -0.02 }
+  - id: rain
+    trigger: tick
+    when: { sleeping: false, hour_from: 7, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 0.03
+    do:
+      - { op: say, kind: soft, group: life, key: rain }
+  - id: power_cut
+    trigger: tick
+    when: { sleeping: false, hour_from: 18, hour_to: 23 }
+    once_per_day: true
+    rate_per_hour: 0.015
+    do:
+      - { op: say, kind: soft, group: life, key: power_cut }
+      - { op: need, need: company, delta: 0.1 }
+  - id: package
+    trigger: tick
+    when: { sleeping: false, hour_from: 9, hour_to: 19 }
+    once_per_day: true
+    rate_per_hour: 0.04
+    do:
+      - { op: say, kind: soft, group: life, key: package }
+  - id: neighbor
+    trigger: tick
+    when: { sleeping: false, hour_from: 9, hour_to: 20 }
+    once_per_day: true
+    rate_per_hour: 0.03
+    do:
+      - { op: say, kind: soft, group: life, key: neighbor }
+      - { op: mood, delta: 0.03 }
+  - id: old_song
+    trigger: tick
+    when: { sleeping: false, hour_from: 17, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 0.03
+    do:
+      - { op: say, kind: soft, group: life, key: old_song }
+      - { op: mood, delta: 0.03 }
+  - id: old_photo
+    trigger: tick
+    when: { sleeping: false, hour_from: 10, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 0.02
+    do:
+      - { op: say, kind: soft, group: life, key: old_photo }
 `;
 
   /* 以下由 content.js 的数据生成 */
@@ -611,11 +865,13 @@ rules:
     },
   };
 
+  const CV = 2;   /* 内容文件的版本，内置内容更新了就加一，数据文件夹里旧版本的会被覆盖，旧的留在 _backup */
   const HEAD = {
     voice: '# 这种声线的角色默认会说的话。角色自己的 person.yaml 里 lines 写了同名项时，以角色自己的为准。\n',
     sayings: '# 可挑选的“说过的话”。游戏偶尔会问你：某某会对你说哪句。你选了哪句就记哪句的编号和原文。\n',
     asks: '# 问答库。每个问题有三个预设回答，游戏里另有一个自己写的回答。voice、stage、pronoun 限制谁会问这个问题，sensitive 为 true 的需要在设置里打开。\n',
     nudges: '# 偶尔出现的现实提醒，轻轻鼓励你联系现实里的人。\n',
+    traits: '# 性格的台词。每个性格有路过 glance，道谢 thanks，闲谈 ambient，需求 request，回答之后的回应 reply。和声线里的台词混在一起选。\n',
     conds: '# 疾病的台词和事件文字，覆盖到疾病模板上。这个语言没有写的，用疾病模板里的写法。\n',
   };
 
@@ -623,11 +879,12 @@ rules:
     /* 内容包：台词、说话库、问答库、提醒库、疾病文字，按语言放在 templates/content/语言 下 */
     contentFiles(lang) {
       const P = C.packFor(lang), L = `templates/content/${lang}/`, out = {};
-      for (const v in P.voices) out[`${L}voices/${v}.yaml`] = HEAD.voice + dump(Object.assign({ version: 1, id: v }, P.voices[v]));
-      out[`${L}library/sayings.yaml`] = HEAD.sayings + dump({ version: 1, items: P.sayings });
-      out[`${L}library/asks.yaml`] = HEAD.asks + dump({ version: 1, items: P.asks });
-      out[`${L}library/nudges.yaml`] = HEAD.nudges + dump({ version: 1, items: P.nudges });
-      if (P.conds && Object.keys(P.conds).length) out[`${L}conditions.yaml`] = HEAD.conds + dump(P.conds);
+      for (const v in P.voices) out[`${L}voices/${v}.yaml`] = HEAD.voice + dump(Object.assign({ version: CV, id: v }, P.voices[v]));
+      out[`${L}library/sayings.yaml`] = HEAD.sayings + dump({ version: CV, items: P.sayings });
+      out[`${L}library/asks.yaml`] = HEAD.asks + dump({ version: CV, items: P.asks });
+      out[`${L}library/nudges.yaml`] = HEAD.nudges + dump({ version: CV, items: P.nudges });
+      if (P.conds && Object.keys(P.conds).length) out[`${L}conditions.yaml`] = HEAD.conds + dump(Object.assign({ version: CV }, P.conds));
+      if (P.traits && Object.keys(P.traits).length) out[`${L}traits.yaml`] = HEAD.traits + dump(Object.assign({ version: CV }, P.traits));
       return out;
     },
     files() {

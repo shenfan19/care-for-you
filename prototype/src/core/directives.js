@@ -37,6 +37,7 @@
           if (!(p.person.conditions || []).includes(d.id)) { p.person.conditions = (p.person.conditions || []).concat(d.id); store.writeYaml(`people/${p.id}/person.yaml`, p.person); initNeeds(p); }
           break;
         case 'condition_remove': p.person.conditions = (p.person.conditions || []).filter(x => x !== d.id); store.writeYaml(`people/${p.id}/person.yaml`, p.person); break;
+        case 'seen': p.story.seen = p.story.seen || {}; p.story.seen[d.name] = CY.protocol.world().date.day_index; break;
         case 'counter': p.story.counters = p.story.counters || {}; p.story.counters[d.name] = (p.story.counters[d.name] || 0) + d.delta; break;
         case 'log': G.log(p.id, d.type, d.text || t(d.key, Object.assign({ name: p.person.name }, d.args))); break;
         case 'say': {

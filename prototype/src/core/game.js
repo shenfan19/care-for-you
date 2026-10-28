@@ -14,8 +14,9 @@
   const pick = a => a[Math.floor(Math.random() * a.length)];
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const monthKey = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-  const DEFAULT_VOICE = { cat: 'cat', dog: 'dog', snake: 'snake', rabbit: 'rabbit', hamster: 'hamster', bird: 'bird', fish: 'fish', turtle: 'turtle', guineapig: 'rabbit', gecko: 'snake', succulent: 'plant', flower: 'plant', tree: 'plant', cactus: 'plant' };
-  const PLANTS = ['succulent', 'flower', 'tree', 'cactus'];
+  const DEFAULT_VOICE = { cat: 'cat', dog: 'dog', snake: 'snake', rabbit: 'rabbit', hamster: 'hamster', bird: 'bird', fish: 'fish', turtle: 'turtle', guineapig: 'rabbit', gecko: 'snake', hedgehog: 'hedgehog', duck: 'duck', ferret: 'ferret', axolotl: 'axolotl', chicken: 'chicken', orchid: 'plant', bamboo: 'plant', succulent: 'plant', flower: 'plant', tree: 'plant', cactus: 'plant' };
+  const PLANTS = ['succulent', 'flower', 'tree', 'cactus', 'orchid', 'bamboo'];
+  const NOCTURNAL = ['hamster', 'hedgehog', 'gecko'];
   const CHILDLIKE = ['child', 'infant', 'toddler', 'teen'];
   const PRON_CODE = { '他': 'm', '她': 'f', '它': 'n' };
 
@@ -40,12 +41,16 @@
       }
     }
     const seed = CY.seed.contentFiles(L);
-    for (const p in seed) if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); }
+    for (const p in seed) {
+      if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
+      try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
+    }
     G.tpl.voices = {};
     for (const p of files) { const m = p.match(new RegExp('^' + dir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + 'voices/([^/]+)\\.yaml$')); if (m) { const x = await store.readYaml(p); if (x) G.tpl.voices[x.id || m[1]] = x; } }
     G.tpl.sayLib = ((await store.readYaml(dir + 'library/sayings.yaml')) || {}).items || [];
     G.tpl.nudges = ((await store.readYaml(dir + 'library/nudges.yaml')) || {}).items || [];
     G.tpl.asks = ((await store.readYaml(dir + 'library/asks.yaml')) || {}).items || [];
+    G.tpl.traitLines = (await store.readYaml(dir + 'traits.yaml')) || {};
     /* 疾病的台词和事件文字：当前语言的覆盖到疾病模板上 */
     const conds = (await store.readYaml(dir + 'conditions.yaml')) || {};
     for (const c in G.tpl.conditions) {
@@ -104,7 +109,7 @@
     if (typeof G.world.money !== 'number') G.world.money = st.money || 0;
     if (!G.world.inv) G.world.inv = Object.assign({}, st.inv || {});
     if (!G.world.nanny) G.world.nanny = {};
-    if (!Array.isArray(G.world.tasks)) G.world.tasks = [];
+    delete G.world.tasks;
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
     const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();
@@ -186,7 +191,6 @@
     const p = G.get(pid); if (!p) return;
     p.person.archived = on;
     p.person.active = !on;
-    if (on) G.world.tasks = G.tasks().filter(x => x.pid !== pid);
     await store.writeYaml(`people/${pid}/person.yaml`, p.person);
     emit();
   };
@@ -194,7 +198,6 @@
   G.deletePerson = async function (pid) {
     const i = G.people.findIndex(p => p.id === pid); if (i < 0) return;
     G.people.splice(i, 1);
-    G.world.tasks = G.tasks().filter(x => x.pid !== pid);
     delete G.journal[pid]; delete G.sayings[pid];
     for (const m of [G.req, G.toast, G.fx, G.crying, G.act]) delete m[pid];
     for (const k of [...G.dirty]) if (k.split('|')[1] === pid) G.dirty.delete(k);
@@ -258,7 +261,7 @@
   G.topNeed = p => { const d = G.needsOf(p); return Object.keys(d).sort((a, b) => p.state.needs[b] - p.state.needs[a])[0]; };
   /* 紧迫程度：最急的需求乘以类别的紧迫系数。不让玩家手动排优先级，由类别和当下的需求自然决定谁最急 */
   G.urgency = p => G.maxNeed(p) * G.classOf(p).urgency;
-  G.holdSeconds = a => a.hold * ini.num(G.cfg, 'interaction', 'hold_scale');
+  G.holdSeconds = a => (typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * ini.num(G.cfg, 'interaction', 'hold_scale');
   /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
   G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
   G.fmt = (s, p) => {
@@ -273,12 +276,12 @@
   /* ---------- 作息：睡觉，以及各自的状态 ---------- */
   const inWindow = (dm, a, b) => { a = (((a % 24) + 24) % 24) * 60; b = (((b % 24) + 24) % 24) * 60; return a <= b ? dm >= a && dm < b : dm >= a || dm < b; };
   G.sleepWindow = p => {
-    if (p.species.id === 'hamster' || p.species.id === 'gecko') return [10, 18];
+    if (NOCTURNAL.includes(p.species.id)) return [10, 18];
     const sh = G.traitMods(p).sleep_shift;
     return [22 + sh, 6.5 + sh];
   };
   G.activityOf = p => {
-    if (p.species.id !== 'human' && p.species.id !== 'hamster') return 'awake';
+    if (p.species.id !== 'human' && !NOCTURNAL.includes(p.species.id)) return 'awake';
     const [a, b] = G.sleepWindow(p), dm = G.dayMinutes();
     if (!inWindow(dm, a, b)) return 'awake';
     const st = G.stage(p);
@@ -293,21 +296,46 @@
   });
 
   /* 台词来源：角色自己写的优先，其次疾病里写的，最后是声线模板。 */
+  /* 性格里的台词：键没有就退回 any 或 default */
+  const traitLines = (p, group, key) => {
+    const out = [];
+    for (const id of p.person.traits || []) {
+      const tl = ((G.tpl.traitLines || {})[id] || {})[group]; if (!tl) continue;
+      const v = Array.isArray(tl) ? tl : (key !== undefined && key !== null ? (tl[key] || tl.any || tl.default) : undefined);
+      if (Array.isArray(v)) out.push(...v);
+    }
+    return out;
+  };
   G.lines = (p, group, key) => {
     const pickFrom = src => (key === undefined || key === null) ? src : (src && !Array.isArray(src) && typeof src === 'object' ? src[key] : undefined);
     const srcs = [(p.person.lines || {})[group]];
     for (const c of p.person.conditions || []) srcs.push((((G.tpl.conditions[c] || {}).lines) || {})[group]);
     srcs.push(p.voice[group]);
+    let base = [];
     for (const s of srcs) {
       const v = pickFrom(s);
-      if (Array.isArray(v) && v.length) return v;
-      if (typeof v === 'string') return [v];
+      if (Array.isArray(v) && v.length) { base = v; break; }
+      if (typeof v === 'string') { base = [v]; break; }
     }
-    return [];
+    /* 性格的台词和声线的台词混在一起，按数量折算，有性格的角色说话明显不一样 */
+    const tr = traitLines(p, group, key);
+    if (!tr.length) return base;
+    const reps = Math.max(1, Math.round(base.length / (tr.length * 2)));
+    let out = base.slice();
+    for (let i = 0; i < reps; i++) out = out.concat(tr);
+    return out;
+  };
+  /* 同一个角色近来说过的不再重复 */
+  const recent = {};
+  G.pickFresh = (p, arr) => {
+    const r = recent[p.id] = recent[p.id] || [];
+    const fresh = arr.filter(x => !r.includes(x)), x = pick(fresh.length ? fresh : arr);
+    r.push(x); if (r.length > 12) r.shift();
+    return x;
   };
   const line = (p, group, key, fallback) => {
     const arr = G.lines(p, group, key);
-    return G.fmt(pick(arr.length ? arr : [fallback]), p);
+    return G.fmt(arr.length ? G.pickFresh(p, arr) : fallback, p);
   };
   G.speechPool = p => ((p.person.personality && p.person.personality.catchphrases) || []).concat((G.sayings[p.id] || []).filter(s => s.by === 'char' && s.lib).map(s => s.text));
 
@@ -379,12 +407,8 @@
 
   /* ---------- 时间推进 ---------- */
   function gameMinutes(realSeconds) {
-    return G.timeMode() === 'compressed' ? realSeconds / 60 * ini.num(G.cfg, 'time', 'compress_ratio') : realSeconds / 60;
+    return realSeconds / 60;
   }
-  /* 一个游戏分钟对应多少现实秒 */
-  G.secPerGameMin = () => {
-    return G.timeMode() === 'compressed' ? 60 / ini.num(G.cfg, 'time', 'compress_ratio') : 60;
-  };
   const foodOf = p => p.species.food || 'food';
   const itemForNeed = (p, k) => (k === 'hunger' ? foodOf(p) : (G.tpl.items.for_need || {})[k]);
 
@@ -424,11 +448,8 @@
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
     const eco = G.economyOn(), working = eco && G.isWorkTime();
     G.world.game_minutes += gmin;
-    if (!offline && G.timeMode() === 'compressed' && G.world.ff_target && G.world.game_minutes >= G.world.ff_target) {
-      delete G.world.ff_target; G.cfg.time.mode = 'free'; G.saveCfg(); setTimeout(() => G.onFFEnd && G.onFFEnd(), 0);
-    }
     /* 工作收入：工作时段里，没有故事里的事占着手，就在赚钱 */
-    if (!offline && eco && working && !G.isBusy()) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
+    if (!offline && eco && working) G.world.money += ini.num(G.cfg, 'economy', 'wage') * hours;
     for (const p of G.activePeople()) {
       const defs = G.needsOf(p), s = p.state, nanny = eco && working && G.hasNanny(p), mods = G.traitMods(p);
       const prevAct = G.act[p.id];
@@ -461,11 +482,6 @@
     }
     /* 请了保姆但钱花光了，保姆先走 */
     if (G.world.money < 0) { G.world.money = 0; if (Object.keys(G.world.nanny || {}).length) { G.world.nanny = {}; for (const p of G.activePeople()) G.log(p.id, 'event', t('log.nanny_left')); } }
-    /* 故事模式里，正在做的事走时间，做完了接着做压在下面的那件。现实模式和暂停时这些事停着 */
-    if (!offline && G.timeMode() === 'compressed') {
-      const top = G.runningTask();
-      if (top) { top.left -= gmin; if (top.left <= 0) { G.tasks().pop(); finishAction(top); } }
-    }
     if (!offline) G.driveTick(gmin);
   }
 
@@ -482,7 +498,7 @@
     const f = ini.get(G.cfg, 'interrupt', 'frequency');
     if (f === 'test') return GAP_TEST[0] + Math.random() * (GAP_TEST[1] - GAP_TEST[0]);
     const [lo, hi] = GAP[f] || GAP.normal;
-    return (lo + Math.random() * (hi - lo)) * G.secPerGameMin();
+    return (lo + Math.random() * (hi - lo)) * 60;
   };
   function scheduleNext() {
     const s = G.nextGapSeconds();
@@ -689,28 +705,6 @@
   }
   G.ambientChat = ambientChat;
   G.perform = function (pid, actionId) { return G.worldGuard ? G.worldGuard(pid, () => applyAction(pid, actionId)) : applyAction(pid, actionId); };
-  /* 故事模式：开始做一件事，要花掉 min 个游戏分钟。已经在做别的事，就先把那件压到下面暂停，做完这件再接着做 */
-  G.startAction = function (pid, actionId) {
-    const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
-    if (!a) return false;
-    if (G.timeMode() === 'paused') { G.toastFor(p, t('toast.paused'), 'soft'); emit(); return false; }
-    if (G.timeMode() === 'real') return applyAction(pid, actionId);
-    const ts = G.tasks();
-    if (ts.some(x => x.pid === pid && x.act === actionId)) { G.toastFor(p, t('toast.already', { what: a.label }), 'soft'); emit(); return false; }
-    const need = G.worldNeed && CY.world.enforce ? G.worldNeed(p) : null;
-    if (need && need.offsite) { G.toastFor(p, t('toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); emit(); return false; }
-    if (ts.length >= 4) { G.toastFor(p, t('toast.too_many'), 'soft'); emit(); return false; }
-    const lack = G.lacking(a);
-    if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
-    const prev = G.runningTask();
-    ts.push({ pid, act: actionId, label: a.label, total: a.min, left: a.min });
-    if (G.worldBlink && CY.world.enforce) G.worldBlink(p);
-    G.toastFor(p, prev ? t('toast.interrupt', { prev: prev.label, what: a.label }) : t('toast.started', { what: a.label, min: a.min }), 'soft');
-    G.save(); emit();
-    return true;
-  };
-  function finishAction(b) { if (b.kind) { G.finishSpecial(b); return; } if (G.get(b.pid)) applyAction(b.pid, b.act); }
-  G.cancelAction = (i) => { const ts = G.tasks(); if (i === undefined) ts.pop(); else ts.splice(i, 1); emit(); };
   G.cancelAllTasks = () => { G.world.tasks = []; emit(); };
   /* 回答问答题：idx 是预设回答的序号，custom 是玩家自己写的 */
   G.answerAsk = function (pid, idx, custom) {
@@ -722,7 +716,8 @@
     G.say(pid, 'you', text, req.askId, custom !== undefined && custom !== null ? 'custom' : idx);
     G.log(pid, 'talk', t('log.talk', { q: req.text, a: text }));
     p.story.care_total++; p.state.mood = clamp(p.state.mood + 0.1);
-    G.toastFor(p, line(p, 'thanks', 'default', t('line.ok')), 'speech');
+    const rp = G.sayLine(p, 'reply', custom !== undefined && custom !== null ? 'custom' : 'a' + idx);
+    G.toastFor(p, rp || line(p, 'thanks', 'default', t('line.ok')), 'speech');
     learn(p, 'ask', true, (Date.now() - req.since) / 1000);
     G.playFx(pid, 'talk');
     G.save(); emit();
@@ -807,8 +802,6 @@
     emit();
   };
   G.start = function () {
-    const m0 = G.timeMode();
-    if (m0 === 'paused' || (m0 === 'compressed' && !G.world.ff_target)) { G.cfg.time.mode = 'real'; G.saveCfg(); }
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
     const last = Date.parse(G.world.last_seen);
     if (last) {

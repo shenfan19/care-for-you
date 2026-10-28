@@ -8,7 +8,7 @@
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
   const OPT = { 'interrupt.mode': ['keep', 'countdown_default', 'countdown_dismiss'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'time.mode': ['real', 'compressed', 'paused'], 'play.backend_provider': ['builtin', 'http'], 'time.daynight': ['auto', 'system', 'game'], 'ui.avatar_style': ['simple', 'detailed'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
-  const SKIP = new Set(['time.mode', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
+  const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
     let sec = '';

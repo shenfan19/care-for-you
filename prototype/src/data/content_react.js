@@ -7,7 +7,7 @@
 
   /* 声线属于哪个类别 */
   const GROUP = { parent: 'adult', aunt: 'adult', sibling: 'adult', partner: 'adult', elder: 'elder', child: 'child', toddler: 'child', teen: 'child', infant: 'infant', cat: 'cat', dog: 'dog',
-    rabbit: 'critter', hamster: 'critter', bird: 'critter', fish: 'critter', turtle: 'critter', snake: 'critter', plant: 'plant' };
+    rabbit: 'critter', hedgehog: 'critter', duck: 'critter', ferret: 'critter', axolotl: 'critter', chicken: 'critter', hamster: 'critter', bird: 'critter', fish: 'critter', turtle: 'critter', snake: 'critter', plant: 'plant' };
   C.VOICE_GROUP = GROUP;
 
   const ZH = {

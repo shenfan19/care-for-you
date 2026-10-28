@@ -1,7 +1,7 @@
 /* 内置后端：最简单的一个。事件的规则在数据文件夹的 templates/events/rules.yaml，台词在 templates/content 的 YAML 里，
    都是明文，改了就生效。它只认协议里的请求，回协议里的指令，和远程后端用同一套接口。 */
 (function (CY) {
-  const pickOne = a => a[Math.floor(Math.random() * a.length)];
+  const pickOne = (a, p) => (p && CY.game.pickFresh ? CY.game.pickFresh(p, a) : a[Math.floor(Math.random() * a.length)]);
   const L = CY.backendLocal = { name: 'builtin' };
 
   /* 规则的触发条件 */
@@ -20,6 +20,9 @@
     if (when.no_flag && when.no_flag.some(f => ps.flags[f])) return false;
     if (when.care_total_in && !when.care_total_in.includes(ps.care_total)) return false;
     if (when.min_frailty !== undefined && ps.frailty < when.min_frailty) return false;
+    if (when.dates && w.date && !when.dates.some(x => (x.length === 5 ? x === w.date.iso.slice(5) : x === w.date.iso))) return false;
+    if (when.weekday && w.date && !when.weekday.includes(w.date.weekday)) return false;
+    if (when.days_together_in && !when.days_together_in.includes(w.days_together)) return false;
     return true;
   };
   const fill = (v, vars) => (typeof v === 'string' ? v.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m)) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x, vars)])) : v);
@@ -53,7 +56,13 @@
       for (const ps of req.people || []) {
         const vars = { care_total: ps.care_total, name: ps.name };
         for (const e of (req.expired || []).filter(x => x.person === ps.id)) for (const r of rules) if (r.trigger === 'end' && r.flag === e.name && matches(r.when, ps, w)) out.push(...run(r, ps, w, vars));
-        for (const r of rules) if (r.trigger === 'tick' && matches(r.when, ps, w) && Math.random() < Math.min(1, (r.rate_per_hour || 0) * hours)) out.push(...run(r, ps, w, vars));
+        for (const r of rules) {
+          if (r.trigger !== 'tick' || !matches(r.when, ps, w)) continue;
+          if (r.once_per_day && w.date && (ps.seen || {})[r.id] === w.date.day_index) continue;
+          if (Math.random() >= Math.min(1, (r.rate_per_hour || 0) * hours)) continue;
+          out.push(...run(r, ps, w, vars));
+          if (r.once_per_day) out.push({ op: 'seen', person: ps.id, name: r.id });
+        }
       }
     } else if (req.trigger === 'action' && req.person) {
       const ps = req.person, vars = { care_total: ps.care_total, name: ps.name, action: req.action ? req.action.id : '' };
@@ -79,6 +88,6 @@
     }
     let arr = G.lines(p, req.group, key);
     if (!arr.length && req.group === 'ambient' && s.band) arr = G.lines(p, req.group, s.band);
-    return { v: 1, text: arr.length ? pickOne(arr) : null };
+    return { v: 1, text: arr.length ? pickOne(arr, p) : null };
   };
 })(globalThis.CY = globalThis.CY || {});

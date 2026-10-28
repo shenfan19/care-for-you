@@ -7,38 +7,18 @@
   const $ = id => document.getElementById(id);
   /* ---------- 照顾的代价：居家办公的提示条、钱、商店、家人与保姆、体验选择 ---------- */
   U.renderLife = function () {
-    const bar = $('lifeBar'), eco = G.economyOn(), people = G.activePeople(), tasks = G.tasks();
+    const bar = $('lifeBar'), eco = G.economyOn(), people = G.activePeople();
     const show = ini.bool(G.cfg, 'ui', 'wfh_notice') && people.length > 0;
     bar.style.display = show ? '' : 'none';
     if (!show) return;
-    const mode = G.isPaused() ? 'paused' : G.playMode(), work = G.isWorkTime();
-    const sig = [eco, mode, work, Math.floor(G.world.money), people.length, tasks.map(x => x.pid + x.act).join(), I.lang, JSON.stringify(G.world.inv || {})].join('|');
-    if (bar.dataset.sig !== sig) {
-      bar.dataset.sig = sig;
-      const n = people.length;
-      const taskHtml = tasks.slice().reverse().map((x, i) => {
-        const run = i === 0 && G.timeMode() === 'compressed', who = G.get(x.pid), idx = tasks.length - 1 - i;
-        return `<span class="taskrow ${run ? '' : 'paused'}" draggable="true" data-ti="${idx}" title="${esc(t('life.drag'))}">${run ? '⏳' : '⏸'} ${esc(who ? who.person.name : '')} ${esc(x.label)}<span class="bar"><i data-tb="${idx}"></i></span><button class="chip" data-tc="${idx}">${esc(t('btn.cancel'))}</button></span>`;
-      }).join('');
-      bar.innerHTML = `<span class="wfh">💼 ${esc(t(eco ? (work ? 'life.working' : 'life.offwork') : 'life.wfh', { n }))}</span>` +
-        (eco ? `<span class="money" title="${esc(t('life.money_tip'))}">💰 ${Math.floor(G.world.money)}</span>` : '') +
-        `<span class="modehint" title="${esc(t('mode.' + mode + '_tip'))}">${esc(t('mode.hint_' + mode))}</span>` + taskHtml +
-        (eco ? `<button id="shopBtn">${esc(t('life.shop'))}</button>` : '');
-      if ($('shopBtn')) $('shopBtn').onclick = () => U.shopDialog();
-      bar.querySelectorAll('[data-tc]').forEach(b => b.onclick = () => G.cancelAction(+b.dataset.tc));
-      let dragFrom = null;
-      bar.querySelectorAll('.taskrow').forEach(el => {
-        el.ondragstart = e => { dragFrom = +el.dataset.ti; e.dataTransfer.effectAllowed = 'move'; };
-        el.ondragover = e => e.preventDefault();
-        el.ondrop = e => {
-          e.preventDefault();
-          const to = +el.dataset.ti, ts = G.tasks();
-          if (dragFrom === null || dragFrom === to || !ts[dragFrom]) return;
-          const [m] = ts.splice(dragFrom, 1); ts.splice(to, 0, m); dragFrom = null; G.save(); U.renderLife();
-        };
-      });
-    }
-    bar.querySelectorAll('[data-tb]').forEach(el => { const x = tasks[+el.dataset.tb]; if (x) el.style.width = Math.min(100, (x.total - x.left) / x.total * 100) + '%'; });
+    const work = G.isWorkTime();
+    const sig = [eco, work, Math.floor(G.world.money), people.length, I.lang, JSON.stringify(G.world.inv || {})].join('|');
+    if (bar.dataset.sig === sig) return;
+    bar.dataset.sig = sig;
+    const n = people.length;
+    bar.innerHTML = `<span class="wfh">💼 ${esc(t(eco ? (work ? 'life.working' : 'life.offwork') : 'life.wfh', { n }))}</span>` +
+      (eco ? `<span class="money" title="${esc(t('life.money_tip'))}">💰 ${Math.floor(G.world.money)}</span><button id="shopBtn">${esc(t('life.shop'))}</button>` : '');
+    if ($('shopBtn')) $('shopBtn').onclick = () => U.shopDialog();
   };
 
   U.shopDialog = function () {

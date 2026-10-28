@@ -258,7 +258,95 @@
       ${[[50, 60], [50, 72], [50, 84], [42, 66], [42, 80], [26, 64], [74, 70]].map(([x, y]) => `<path d="M${x - 2} ${y} l-3 -2 M${x + 2} ${y} l3 -2" stroke="#f5efc8" stroke-width="1.2" stroke-linecap="round"/>`).join('')}
       ${wilt ? '' : '<circle cx="50" cy="40" r="4" fill="#f08aa0"/><circle cx="50" cy="40" r="1.6" fill="#f5d36a"/>'}${pot}</svg>`;
   }
-  const DRAW = { cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
+
+  function hedgehog(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.brown;
+    const spikes = [-78, -62, -46, -30, -14, 2, 18, 34, 50, 66, 82].map(a => { const r = a * Math.PI / 180, x1 = 50 + 31 * Math.sin(r), y1 = 90 - 29 * Math.cos(r), x2 = 50 + 44 * Math.sin(r), y2 = 90 - 42 * Math.cos(r); return `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${d}" stroke-width="5" stroke-linecap="round"/>`; }).join('');
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(30)}${spikes}
+      <ellipse cx="50" cy="92" rx="34" ry="30" fill="${c}"/>
+      <ellipse cx="50" cy="104" rx="23" ry="19" fill="${l}"/>
+      <circle cx="32" cy="76" r="6" fill="${l}"/><circle cx="68" cy="76" r="6" fill="${l}"/>
+      <g class="eyes"><circle cx="41" cy="97" r="2.8" fill="#26242a"/><circle cx="59" cy="97" r="2.8" fill="#26242a"/><circle cx="42" cy="96" r="0.9" fill="#fff"/><circle cx="60" cy="96" r="0.9" fill="#fff"/></g>
+      <ellipse cx="50" cy="106" rx="4" ry="3" fill="#3a2f2a"/>
+      <path d="M50 108 Q46 112 43 109 M50 108 Q54 112 57 109" fill="none" stroke="#8a5a52" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="34" cy="104" r="4" fill="#f08a80" opacity=".3"/><circle cx="66" cy="104" r="4" fill="#f08a80" opacity=".3"/>
+      <ellipse cx="38" cy="123" rx="8" ry="4" fill="${d}"/><ellipse cx="62" cy="123" rx="8" ry="4" fill="${d}"/>
+    </svg>`;
+  }
+  function duck(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.yellow;
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(28)}
+      <path d="M40 118 l-6 8 l12 0z M62 118 l-6 8 l12 0z" fill="#e8913a"/>
+      <ellipse cx="50" cy="96" rx="31" ry="26" fill="${c}"/>
+      <ellipse cx="34" cy="98" rx="11" ry="17" fill="${d}" transform="rotate(14 34 98)"/>
+      <path d="M78 90 Q92 80 88 94 Q84 100 78 98Z" fill="${c}"/>
+      <circle cx="50" cy="52" r="22" fill="${c}"/>
+      <ellipse cx="62" cy="66" rx="15" ry="8" fill="#f0a23a"/><path d="M50 66 Q62 71 74 66" fill="none" stroke="#c9791e" stroke-width="1.4" stroke-linecap="round"/>
+      <g class="eyes"><circle cx="46" cy="48" r="3.2" fill="#26242a"/><circle cx="47" cy="47" r="1" fill="#fff"/></g>
+      <circle cx="40" cy="60" r="4.5" fill="#f08a80" opacity=".3"/>
+    </svg>`;
+  }
+  function ferret(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.tan;
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(32)}
+      <path d="M14 110 Q4 100 12 88" stroke="${d}" stroke-width="8" fill="none" stroke-linecap="round"/>
+      <ellipse cx="42" cy="104" rx="34" ry="17" fill="${c}"/>
+      <ellipse cx="44" cy="112" rx="22" ry="8" fill="${l}"/>
+      <ellipse cx="24" cy="120" rx="7" ry="4" fill="${d}"/><ellipse cx="58" cy="120" rx="7" ry="4" fill="${d}"/>
+      <circle cx="72" cy="80" r="17" fill="${c}"/>
+      <path d="M58 76 Q72 66 86 76 Q86 84 72 84 Q58 84 58 76Z" fill="${d}"/>
+      <circle cx="61" cy="66" r="5" fill="${d}"/><circle cx="83" cy="66" r="5" fill="${d}"/>
+      <ellipse cx="72" cy="88" rx="8" ry="6" fill="${l}"/><ellipse cx="72" cy="85" rx="2.6" ry="2" fill="#3a2f2a"/>
+      <g class="eyes"><circle cx="66" cy="78" r="2.6" fill="#26242a"/><circle cx="78" cy="78" r="2.6" fill="#26242a"/></g>
+    </svg>`;
+  }
+  function axolotl(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.rose;
+    const gill = (x, dir) => [0, 1, 2].map(i => `<path d="M${x} ${72 + i * 9} q${dir * 14} ${-4 + i * 2} ${dir * 20} ${-8 + i * 6}" stroke="${d}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`).join('');
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(30)}
+      <path d="M22 118 Q50 128 78 118" stroke="#9cc9de" stroke-width="2" fill="none"/>
+      <path d="M62 110 Q86 110 90 100" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="104" rx="26" ry="14" fill="${c}"/>
+      <ellipse cx="28" cy="116" rx="7" ry="4" fill="${d}"/><ellipse cx="72" cy="116" rx="7" ry="4" fill="${d}"/>
+      ${gill(32, -1)}${gill(68, 1)}
+      <ellipse cx="50" cy="80" rx="25" ry="22" fill="${c}"/>
+      <ellipse cx="50" cy="92" rx="16" ry="8" fill="${l}"/>
+      <g class="eyes"><circle cx="40" cy="78" r="2.8" fill="#26242a"/><circle cx="60" cy="78" r="2.8" fill="#26242a"/><circle cx="41" cy="77" r="0.9" fill="#fff"/><circle cx="61" cy="77" r="0.9" fill="#fff"/></g>
+      <path d="M43 88 Q50 94 57 88" fill="none" stroke="#8a5a52" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="33" cy="87" r="4" fill="#f08a80" opacity=".35"/><circle cx="67" cy="87" r="4" fill="#f08a80" opacity=".35"/>
+    </svg>`;
+  }
+  function chicken(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.white;
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(28)}
+      <path d="M42 112 l0 12 m16 -12 l0 12" stroke="#e0a060" stroke-width="3" stroke-linecap="round"/>
+      <path d="M72 84 Q92 70 88 98 Q80 100 72 98Z" fill="${d}"/>
+      <ellipse cx="48" cy="94" rx="28" ry="24" fill="${c}"/>
+      <ellipse cx="42" cy="98" rx="13" ry="17" fill="${l}" transform="rotate(-10 42 98)"/>
+      <circle cx="46" cy="56" r="18" fill="${c}"/>
+      <path d="M38 40 q2 -10 6 -2 q3 -10 7 -2 q4 -8 6 2 Z" fill="#d94a4a"/>
+      <path d="M60 56 L72 60 L60 64Z" fill="#e8913a"/><path d="M58 64 q0 10 -5 8 q-1 -6 3 -8Z" fill="#d94a4a"/>
+      <g class="eyes"><circle cx="54" cy="52" r="3" fill="#26242a"/><circle cx="55" cy="51" r="0.9" fill="#fff"/></g>
+      <circle cx="44" cy="62" r="4" fill="#f08a80" opacity=".3"/>
+    </svg>`;
+  }
+  function orchid(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.rose, wilt = p.state.mood < 0.4;
+    const blossom = (x, y) => [0, 72, 144, 216, 288].map(a => `<ellipse cx="${x}" cy="${y - 8}" rx="5" ry="8" fill="${wilt ? l : c}" transform="rotate(${a} ${x} ${y})"/>`).join('') + `<circle cx="${x}" cy="${y}" r="3.4" fill="#f2cf5a"/>`;
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(30)}
+      <path d="M50 100 Q52 70 40 50 Q34 40 30 38" fill="none" stroke="#5f9a58" stroke-width="3.5" stroke-linecap="round"/>
+      <ellipse cx="34" cy="94" rx="18" ry="6" fill="#6faa68" transform="rotate(-24 34 94)"/><ellipse cx="68" cy="94" rx="18" ry="6" fill="#6faa68" transform="rotate(24 68 94)"/>
+      ${blossom(30, 40)}${blossom(42, 58)}${blossom(48, 76)}${pot}</svg>`;
+  }
+  function bamboo(p) {
+    const [c, l, d] = COAT[(p.person.appearance || {}).coat] || COAT.green, wilt = p.state.mood < 0.4, col = wilt ? '#b3b768' : c;
+    const stalk = (x, top) => `<rect x="${x - 3}" y="${top}" width="6" height="${100 - top}" rx="3" fill="${col}"/>${[0, 1, 2].map(i => `<path d="M${x - 3} ${top + 14 + i * 16} h6" stroke="${d}" stroke-width="1.6"/>`).join('')}`;
+    const leaf = (x, y, a) => `<ellipse cx="${x}" cy="${y}" rx="10" ry="3.4" fill="${wilt ? '#a8ab5a' : l}" transform="rotate(${a} ${x} ${y})"/>`;
+    return `<svg viewBox="0 0 100 130" class="av">${shadow(30)}
+      ${stalk(38, 30)}${stalk(50, 18)}${stalk(62, 36)}
+      ${leaf(46, 28, -20)}${leaf(56, 24, 20)}${leaf(34, 40, -30)}${leaf(68, 44, 26)}${leaf(46, 44, -10)}${pot}</svg>`;
+  }
+  const DRAW = { hedgehog, duck, ferret, axolotl, chicken, orchid, bamboo, cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
   CY.avatarStyle = 'simple';
   CY.avatar = p => (DRAW[p.species.id] || human)(p);
   /* 为添加角色对话框的预览用，不需要完整的 p */
@@ -269,6 +357,6 @@
   CY.avatarOptions = {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],
     glasses: ['none', 'round', 'square'], clothes: CLOTHES, coat: Object.keys(COAT), coatHex: Object.fromEntries(Object.entries(COAT).map(([k, v]) => [k, v[0]])),
-    coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'], guineapig: ['tan', 'white', 'brown', 'gray'], gecko: ['green', 'yellow', 'brown', 'black'] },
+    coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'], guineapig: ['tan', 'white', 'brown', 'gray'], hedgehog: ['brown', 'gray', 'tan', 'white'], duck: ['yellow', 'white', 'brown', 'gray'], ferret: ['tan', 'brown', 'white', 'black'], axolotl: ['rose', 'white', 'gray', 'black'], chicken: ['white', 'brown', 'yellow', 'black'], orchid: ['rose', 'white', 'yellow', 'green'], bamboo: ['green', 'yellow', 'tan', 'brown'], gecko: ['green', 'yellow', 'brown', 'black'] },
   };
 })(globalThis.CY = globalThis.CY || {});
