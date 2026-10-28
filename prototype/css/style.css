@@ -234,7 +234,9 @@ button.danger { color:#b3261e; }
 @media (max-width: 640px) {
   .room.iso .cx { width:10cqw; } .room.iso .cx .nm { display:none; }
   .room.iso .cx .badges span { width:14px; height:14px; font-size:9px; }
-  .roster { left:6px; right:6px; bottom:6px; max-width:none; max-height:none; flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; }
+  .room.iso { overflow:visible; margin-bottom:70px; }
+  .room.iso .scene { border-radius:16px; overflow:hidden; }
+  .roster { left:0; right:0; top:calc(100% + 8px); bottom:auto; max-width:none; max-height:none; flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; padding:2px; }
   .rcard { flex:none; width:44px; }
   .placenav .here { display:none; }
   header .tools { gap:6px; }
