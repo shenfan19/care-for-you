@@ -101,7 +101,7 @@
       const key = [a.id, b.id].sort().join();
       if ((socialCd[key] || 0) > now) continue;
       const want = Math.max(a.state.needs.company || 0, b.state.needs.company || 0, a.state.needs.play || 0, b.state.needs.play || 0);
-      if (Math.random() > 0.1 + 0.5 * want) continue;
+      if (Math.random() > 0.05 + 0.45 * want) continue;
       let kind, who, tgt;
       if (ha && hb) {
         const sa = SMALL.includes(G.stage(a)), sb = SMALL.includes(G.stage(b));
@@ -111,7 +111,7 @@
       else if (kind === 'play') { lower(tgt, 'play', 0.25); lower(tgt, 'company', 0.2); lower(who, 'company', 0.1); }
       else { lower(tgt, 'company', 0.2); lower(tgt, 'play', 0.15); }
       for (const q of [a, b]) q.state.mood = clamp(q.state.mood + 0.02);
-      socialCd[key] = now + 40 * 60 * 1000;
+      socialCd[key] = now + 90 * 60 * 1000;
       G.log(tgt.id, 'event', t('social.' + kind, { a: who.person.name, b: tgt.person.name }));
     }
   };
