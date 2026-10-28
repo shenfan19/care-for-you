@@ -3,7 +3,7 @@
    可调的有肤色、发型、发色、眼镜、胡子、衣服颜色，动物和花草有颜色。人按年龄阶段画出不同的比例，婴儿头大身子小。 */
 (function (CY) {
   /* 肤色：亮面，暗面。整体偏浅偏暖，避免显得发暗 */
-  const SKIN = [['#fff0e4', '#f6d7c2'], ['#fbe0cc', '#efc6aa'], ['#f0cba6', '#dfae86'], ['#d9a67c', '#c18c63'], ['#a8714b', '#8f5c3a'], ['#6e4631', '#5a3726']];
+  const SKIN = [['#fffaf6', '#f6e6dc'], ['#fff3ea', '#f3dccd'], ['#fde3d0', '#f1c9b0'], ['#f6d2b4', '#e5b793'], ['#e8bc92', '#d29f73'], ['#d9a67c', '#c18c63'], ['#a8714b', '#8f5c3a'], ['#6e4631', '#5a3726']];
   const HAIR = { black: '#2a2522', brown: '#6a4529', auburn: '#9c4a2b', blond: '#dcb86c', gray: '#b3aea6', white: '#eceae4' };
   const COAT = {
     orange: ['#e8a15c', '#f7d8b0', '#c9803c'], gray: ['#9ea0a8', '#e1e1e6', '#7d7f87'], black: ['#3b383d', '#6a6670', '#26242a'], white: ['#f2eee6', '#ffffff', '#d9d3c7'],
@@ -77,8 +77,8 @@
       <path d="M${sh0 + 4} 130 Q${sh0 + 4} ${shY + 8} 50 ${shY + 5}" fill="none" stroke="${dark(cloth)}" stroke-width="1.2" opacity=".5"/>
       <rect x="${cx - 8.5}" y="${chin - 6}" width="17" height="${Math.max(8, shY - chin + 12)}" rx="6" fill="${sk[1]}"/>
       <path d="M${cx - 11} ${shY + 1} Q${cx} ${shY + 15} ${cx + 11} ${shY + 1} Q${cx} ${shY + 6} ${cx - 11} ${shY + 1}Z" fill="${sk[1]}"/>
-      <circle cx="${L + 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}"/><circle cx="${R - 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}"/>
-      <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sk[0]}"/>
+      <circle cx="${L + 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/><circle cx="${R - 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>
+      <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>
       ${cheeks}${wrinkle}${nose}${eyes}${lids}${brows}${glasses}${beard}${detailed ? mouth(mood, cx, mouthY) : ''}
       ${front}
     </svg>`;

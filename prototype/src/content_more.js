@@ -17,7 +17,7 @@
     H('dad', '爸爸', 45, 'parent', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'square', beard: false, cloth: '#6f86a0' }),
     H('mom', '妈妈', 42, 'parent', '她', { skin: 1, hair_style: 'bob', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#c07a6b' }),
     H('aunt', '姑姑', 50, 'aunt', '她', { skin: 1, hair_style: 'curly', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#d4a24c' }),
-    H('uncle', '舅舅', 48, 'aunt', '他', { skin: 2, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f8a7a' }),
+    H('uncle', '舅舅', 48, 'aunt', '他', { skin: 4, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f8a7a' }),
     H('brother', '哥哥', 28, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#4f6d8f' }),
     H('sister', '姐姐', 26, 'sibling', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#b5677a' }),
     H('friend', '朋友', 30, 'sibling', '她', { skin: 1, hair_style: 'long', hair_color: 'auburn', glasses: 'none', beard: false, cloth: '#7aa5b8' }),

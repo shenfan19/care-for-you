@@ -112,6 +112,8 @@
       person.id = id;
       const species = G.tpl.species[person.species];
       if (!species) { console.warn('找不到物种模板', person.species); continue; }
+      /* 肤色色板加了两档偏白的，旧存档里的肤色序号按新色板换算，保持原来的颜色 */
+      if (person.appearance && typeof person.appearance.skin === 'number' && person.appearance.skin_v !== 2) { person.appearance.skin = [1, 2, 4, 5, 6, 7][person.appearance.skin] || 2; person.appearance.skin_v = 2; }
       if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || 35;
       const state = Object.assign({ version: 1, needs: {}, mood: 0.6, frailty: 0.1, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
       state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || 0.5, resp: 0, n_resp: 0, kinds: {} }, state.learn);
@@ -144,7 +146,7 @@
       version: 2, id, active: true, name: spec.name || spec.roleText || arch.role || '', role: spec.roleText || arch.role || '',
       archetype: spec.arch || '', voice, pronoun: spec.pronoun || arch.pronoun || (human ? '他' : '它'),
       kind: human ? 'human' : PLANTS.includes(species) ? 'plant' : 'animal', species,
-      appearance: spec.look || arch.look || {}, personality: { talkative: 0.5, temper: '', catchphrases: [] },
+      appearance: Object.assign({}, spec.look || arch.look || {}, typeof (spec.look || arch.look || {}).skin === 'number' ? { skin_v: 2 } : {}), personality: { talkative: 0.5, temper: '', catchphrases: [] },
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || [], lines: {},
     };
     if (human) person.age = age;

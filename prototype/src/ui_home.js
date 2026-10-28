@@ -151,7 +151,7 @@
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
           <div class="row">${esc(t('add.glasses'))} ${sel('glasses', O.glasses, O.glasses.map(g => t('glasses.' + g)), look.glasses === true ? 'round' : look.glasses || 'none')}
           <label><input type="checkbox" id="abeard" ${look.beard ? 'checked' : ''}> ${esc(t('add.beard'))}</label></div>
-          <div class="row">${esc(t('add.skin'))} ${sw('skin', [0, 1, 2, 3, 4, 5], look.skin, v => O.skin[v])} ${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])}</div>
+          <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])} ${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])}</div>
           <div class="row">${esc(t('add.hair'))} ${sel('hair_style', O.hairStyle, O.hairStyle.map(h => t('hair.' + h)), look.hair_style)} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
         : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
@@ -381,7 +381,7 @@
   U.householdDialog = function () {
     const eco = G.economyOn();
     const list = G.activePeople().slice().sort((a, b) => G.urgency(b) - G.urgency(a));
-    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('home.title'))}</h2><div class="mute" style="margin-bottom:6px">${esc(t('home.note'))}</div>
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('home.title'))}</h2>
       ${list.map(p => { const cl = G.classKey(p), u = G.urgency(p);
         return `<div class="shoprow"><span class="nm">${esc(p.person.name)}</span><span class="pill">${esc(t('class.' + cl))}</span>
           <span class="bar" title="${esc(t('home.urgency'))}"><i style="width:${Math.min(100, Math.round(u / 3 * 100))}%"></i></span>

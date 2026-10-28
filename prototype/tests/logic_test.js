@@ -306,7 +306,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   [bb, sis2, eld, tdl] = [bb, sis2, eld, tdl].map(p => G.get(p.id));
   check('每种原型都能画出形象', CY.content.archetypes.every(a => /<svg/.test(CY.avatarPreview(a, a.look))));
   check('两种画法都能画', (() => { CY.avatarStyle = 'detailed'; const d = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look); CY.avatarStyle = 'simple'; const s2 = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look); return d.length > s2.length; })());
-  check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 2));
+  check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 
   /* 没人管：婴儿哭闹，老人自己解决 */
   G.cfg.time.mode = 'compressed'; G.cfg.interrupt.frequency = 'normal'; G.cfg.interrupt.quiet_hours = ''; G.cfg.play.economy = 'false';
