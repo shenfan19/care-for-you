@@ -616,3 +616,5 @@ CY.i18n.register("zh-TW", {"intro.p2": "離開書桌去照顧人，那段時間�
 CY.i18n.register("zh-TW", {"people.lead": "設為主角", "people.lead_on": "主角，點擊取消"});
 
 CY.i18n.register("zh-TW", {"arch.elder": "典型老人", "arch.toddler1": "1歲孩子", "arch.toddler2": "2歲孩子", "arch.toddler3": "3歲孩子", "arch.toddler4": "4歲孩子", "arch.child12": "12歲孩子", "arch.woman25": "25歲女性", "arch.man25": "25歲男性", "add.helper": "在家，自動分擔照顧"});
+
+CY.i18n.register("zh-TW", {"social.chat": "{a}和{b}聊了幾句。", "social.play": "{a}陪{b}玩了一會兒。", "social.pet": "{a}摸了摸{b}。"});

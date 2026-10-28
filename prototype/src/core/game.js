@@ -820,6 +820,7 @@
     if (G.worldTick) G.worldTick(now);
     G.nagTick(now);
     if (G.assistTick) G.assistTick(dt);
+    if (G.socialTick) G.socialTick(dt);
     if (now >= (G.nextAmbient || 0)) { G.nextAmbient = now + 30000 + Math.random() * 40000; if (!G.isPaused() && G.activePeople().length) ambientChat(); }
     emit();
   };

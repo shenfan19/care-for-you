@@ -454,3 +454,5 @@ CY.i18n.register("en", {"intro.p2": "Time away from the desk is time you do not 
 CY.i18n.register("en", {"people.lead": "Be the lead", "people.lead_on": "Lead, tap to clear"});
 
 CY.i18n.register("en", {"arch.elder": "Typical elder", "arch.toddler1": "1-year-old", "arch.toddler2": "2-year-old", "arch.toddler3": "3-year-old", "arch.toddler4": "4-year-old", "arch.child12": "12-year-old", "arch.woman25": "Woman, 25", "arch.man25": "Man, 25", "add.helper": "At home, shares the care on their own"});
+
+CY.i18n.register("en", {"social.chat": "{a} and {b} had a little chat.", "social.play": "{a} played with {b} for a while.", "social.pet": "{a} stroked {b}."});

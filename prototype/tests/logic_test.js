@@ -619,6 +619,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 行动者：每个人按喜好和需求慢慢换房间，悬停的人停住 */
   {
     const W = CY.world;
+    const keepDay = [G.cfg.time.daynight, G.world.clock_shift]; G.cfg.time.daynight = 'game'; G.world.clock_shift = (14 * 60 - (Math.floor(G.world.game_minutes) % 1440) + 1440) % 1440;   /* 下午两点 */
     for (const x of G.people) x.person.active = false;
     const ids = []; for (const [a2, n2] of [['grandpa', '走动爷爷'], ['mom', '走动妈妈'], ['baby', '走动宝宝'], ['cat', '走动猫']]) ids.push((await mk(a2, n2)).id);
     const [gp2, mm2, bb2, ct2] = ids.map(id => G.get(id));
@@ -640,6 +641,14 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('悬停的人不会走开', !moved);
     W.freeze(mm2.id, false);
     check('放开后还要再等几秒才动', W.agents[mm2.id].next > Date.now());
+    /* 同一个房间的人会自己聊天、玩耍、逗宠物 */
+    for (const x of [gp2, mm2, bb2, ct2]) { for (const k in x.state.needs) x.state.needs[k] = 0.1; x.person.active = true; }
+    gp2.state.needs.company = 0.9; mm2.state.needs.company = 0.9;
+    for (const k of ['living']) { W.agents[gp2.id] = { room: k, next: Date.now() + 1e9 }; W.agents[mm2.id] = { room: k, next: Date.now() + 1e9 }; W.agents[ct2.id] = { room: k, next: Date.now() + 1e9 }; }
+    const before = Object.values(G.journal[gp2.id] || {}).flat().length + Object.values(G.journal[mm2.id] || {}).flat().length + Object.values(G.journal[ct2.id] || {}).flat().length + Object.values(G.journal[bb2.id] || {}).flat().length;
+    for (let i = 0; i < 400; i++) G.socialTick(60);
+    const after = Object.values(G.journal[gp2.id] || {}).flat().length + Object.values(G.journal[mm2.id] || {}).flat().length + Object.values(G.journal[ct2.id] || {}).flat().length + Object.values(G.journal[bb2.id] || {}).flat().length;
+    check('同房间的人自己聊起来并留在发生的事里', after > before && (gp2.state.needs.company < 0.9 || mm2.state.needs.company < 0.9), before + ' -> ' + after);
     /* 角色卡里的喜好优先 */
     const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/mom.yaml')); cardY.prefs = { rooms: { yard: 1 }, restless: 1 };
     await CY.store.write('templates/cards/mom.yaml', ctx.jsyaml.dump(cardY)); await G.load();
@@ -648,6 +657,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const r3 = new Set(); for (let i = 0; i < 40; i++) { for (const k in W.agents) W.agents[k].next = 0; r3.add(W.locationOf(M3).room); }
     check('卡里的 prefs 决定爱去哪', r3.has('yard') && M3.person.prefs.restless === 1, [...r3].join());
     for (const x of G.people) x.person.active = true;
+    G.cfg.time.daynight = keepDay[0]; G.world.clock_shift = keepDay[1];
   }
 
   /* 旧设置文件里取消了的项会被丢掉 */

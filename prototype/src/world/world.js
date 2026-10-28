@@ -88,12 +88,15 @@
         else if (onMat(q) && room === 'living' && st !== 'teen') w += 1.2;
       }
     }
+    /* 房间里人多就不想挤，大家自然分散开 */
+    if (human) w /= 1 + 0.5 * G.activePeople().filter(q => q !== p && G.isHuman(q) && W.roomOfNow(q) === room).length;
     return w;
   };
   W.chooseRoom = (p, cur) => {
     const human = G.isHuman(p), rooms = ['living', 'kitchen', 'yard', 'study', 'toilet', human && G.stage(p) === 'elder' ? 'elder' : 'bedroom'].concat(human && G.stage(p) !== 'elder' ? [] : []);
-    const ws = rooms.map(r => Math.max(0.02, W.scoreRoom(p, r) * (r === cur ? 0.5 : 1)));
-    let x = Math.random() * ws.reduce((a, b) => a + b, 0);
+    const ws = rooms.map(r => Math.max(0, W.scoreRoom(p, r) * (r === cur ? 0.5 : 1))), sum = ws.reduce((a, b) => a + b, 0);
+    if (sum <= 0) return 'living';
+    let x = Math.random() * sum;
     for (let i = 0; i < rooms.length; i++) { x -= ws[i]; if (x <= 0) return rooms[i]; }
     return rooms[0];
   };

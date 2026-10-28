@@ -156,3 +156,5 @@ CY.i18n.register("fr", {"intro.p2": "Quitter le bureau, c’est ne plus gagner d
 CY.i18n.register("fr", {"people.lead": "Jouer ce rôle", "people.lead_on": "Rôle principal, toucher pour retirer"});
 
 CY.i18n.register("fr", {"arch.elder": "Personne âgée typique", "arch.toddler1": "Enfant d’1 an", "arch.toddler2": "Enfant de 2 ans", "arch.toddler3": "Enfant de 3 ans", "arch.toddler4": "Enfant de 4 ans", "arch.child12": "Enfant de 12 ans", "arch.woman25": "Femme de 25 ans", "arch.man25": "Homme de 25 ans", "add.helper": "À la maison, partage les soins"});
+
+CY.i18n.register("fr", {"social.chat": "{a} et {b} ont bavardé un peu.", "social.play": "{a} a joué un moment avec {b}.", "social.pet": "{a} a caressé {b}."});

@@ -152,3 +152,5 @@ CY.i18n.register("de", {"intro.p2": "Zeit abseits des Schreibtischs bringt kein 
 CY.i18n.register("de", {"people.lead": "Als Hauptfigur", "people.lead_on": "Hauptfigur, tippen zum Aufheben"});
 
 CY.i18n.register("de", {"arch.elder": "Typische ältere Person", "arch.toddler1": "1-jähriges Kind", "arch.toddler2": "2-jähriges Kind", "arch.toddler3": "3-jähriges Kind", "arch.toddler4": "4-jähriges Kind", "arch.child12": "12-jähriges Kind", "arch.woman25": "Frau, 25", "arch.man25": "Mann, 25", "add.helper": "Zu Hause, teilt die Pflege von selbst"});
+
+CY.i18n.register("de", {"social.chat": "{a} und {b} haben ein bisschen geplaudert.", "social.play": "{a} hat eine Weile mit {b} gespielt.", "social.pet": "{a} hat {b} gestreichelt."});
