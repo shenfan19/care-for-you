@@ -166,3 +166,5 @@ CY.i18n.register("ko", {"status.at": "지금 {room}에 있음, 좋아하는 곳:
 CY.i18n.register("ko", {"card.title": "캐릭터 카드", "card.note": "이 종류 캐릭터의 모든 설정입니다. 데이터 폴더의 {file}에 있으며 여기서는 읽기 전용이고, 새로 만드는 캐릭터가 이를 따릅니다.", "card.copy": "복사", "card.none": "카드를 찾을 수 없습니다"});
 
 CY.i18n.register("ko", {"badge.help": "도우러 가는 중"});
+
+CY.i18n.register("ko", {"social.pets": "{a}와 {b}가 한동안 서로 쫓아다니며 놀았다."});

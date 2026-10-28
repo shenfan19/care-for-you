@@ -166,3 +166,5 @@ CY.i18n.register("es", {"status.at": "Ahora en {room}; le gusta: {likes}"});
 CY.i18n.register("es", {"card.title": "Ficha de rol", "card.note": "Todo sobre este tipo de personaje, en tu carpeta de datos: {file}. Solo lectura aquí; los nuevos de este tipo la siguen.", "card.copy": "Copiar", "card.none": "Ficha no encontrada"});
 
 CY.i18n.register("es", {"badge.help": "Va a ayudar"});
+
+CY.i18n.register("es", {"social.pets": "{a} y {b} jugaron a perseguirse un rato."});

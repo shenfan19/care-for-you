@@ -82,7 +82,7 @@ const FAMILIES = {
   }
   const hours = days * 24;
   let hosp = 0, assists = 0, falls = 0, social = 0;
-  for (const p of G.people) for (const m of Object.values(G.journal[p.id] || {})) for (const e of m) { if (e.type === 'care' && /帮|分担/.test(e.text) === false) {} if (/住院|医院/.test(e.text) && e.type === 'event') hosp++; if (e.type === 'self') falls += /跌倒|摔/.test(e.text) ? 1 : 0; if (e.type === 'care' && /帮你|自己动手|帮着/.test(e.text)) assists++; if (e.type === 'event' && /聊了|玩了一会儿|摸了摸|played with|stroked/.test(e.text)) social++; }
+  for (const p of G.people) for (const m of Object.values(G.journal[p.id] || {})) for (const e of m) { if (e.type === 'care' && /帮|分担/.test(e.text) === false) {} if (/住院|医院/.test(e.text) && e.type === 'event') hosp++; if (e.type === 'self') falls += /跌倒|摔/.test(e.text) ? 1 : 0; if (e.type === 'care' && /帮你|自己动手|帮着/.test(e.text)) assists++; if (e.type === 'event' && /聊了|玩了一会儿|摸了摸|追着玩|played with|stroked/.test(e.text)) social++; }
   const pct = x => (100 * x).toFixed(1) + '%';
   console.log(`家庭 ${kind}，${days} 天，玩家每 ${look} 秒看一眼`);
   console.log(`- 急需占比：${pct(stat.urgentTicks / Math.max(1, stat.awakePersonTicks))}`);

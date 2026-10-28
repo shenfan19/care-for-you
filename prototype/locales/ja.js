@@ -166,3 +166,5 @@ CY.i18n.register("ja", {"status.at": "今は{room}。好きな場所：{likes}"}
 CY.i18n.register("ja", {"card.title": "キャラカード", "card.note": "この種類のキャラクターの全設定。データフォルダの {file} にあります。ここでは読み取り専用で、新しく作るものはこれに従います。", "card.copy": "コピー", "card.none": "カードが見つかりません"});
 
 CY.i18n.register("ja", {"badge.help": "手伝いに行く"});
+
+CY.i18n.register("ja", {"social.pets": "{a}と{b}がしばらく追いかけっこをした。"});

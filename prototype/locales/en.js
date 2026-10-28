@@ -468,3 +468,5 @@ CY.i18n.register("en", {"status.at": "Now in the {room}; likes the {likes}"});
 CY.i18n.register("en", {"card.title": "Role card", "card.note": "Everything about this kind of character, in your data folder at {file}. Read-only here; new ones of this kind follow it.", "card.copy": "Copy", "card.none": "Card not found"});
 
 CY.i18n.register("en", {"badge.help": "Going to help"});
+
+CY.i18n.register("en", {"social.pets": "{a} and {b} chased each other around for a bit."});

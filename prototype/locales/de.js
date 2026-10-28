@@ -166,3 +166,5 @@ CY.i18n.register("de", {"status.at": "Gerade: {room}; mag: {likes}"});
 CY.i18n.register("de", {"card.title": "Rollenkarte", "card.note": "Alles zu dieser Art von Figur, in deinem Datenordner: {file}. Hier nur lesbar; neue Figuren dieser Art folgen ihr.", "card.copy": "Kopieren", "card.none": "Karte nicht gefunden"});
 
 CY.i18n.register("de", {"badge.help": "Hilft gleich"});
+
+CY.i18n.register("de", {"social.pets": "{a} und {b} sind eine Weile hinterhergejagt."});

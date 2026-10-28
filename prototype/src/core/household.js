@@ -97,18 +97,20 @@
       const L = byRoom[room]; if (L.length < 2) continue;
       const a = L[Math.floor(Math.random() * L.length)], rest = L.filter(x => x !== a), b = rest[Math.floor(Math.random() * rest.length)];
       const ha = G.isHuman(a), hb = G.isHuman(b);
-      if (!ha && !hb) continue;
+      if (!ha && !hb && (a.person.species === b.person.species)) continue;
       const key = [a.id, b.id].sort().join();
       if ((socialCd[key] || 0) > now) continue;
       const want = Math.max(a.state.needs.company || 0, b.state.needs.company || 0, a.state.needs.play || 0, b.state.needs.play || 0);
-      if (Math.random() > 0.05 + 0.45 * want) continue;
+      if (Math.random() > (0.05 + 0.45 * want) * (!ha && !hb ? 0.5 : 1)) continue;
       let kind, who, tgt;
       if (ha && hb) {
         const sa = SMALL.includes(G.stage(a)), sb = SMALL.includes(G.stage(b));
         if (sa !== sb) { kind = 'play'; who = sa ? b : a; tgt = sa ? a : b; } else { kind = 'chat'; who = a; tgt = b; }
-      } else { kind = 'pet'; who = ha ? a : b; tgt = ha ? b : a; }
+      } else if (!ha && !hb) { kind = 'pets'; who = a; tgt = b; }
+      else { kind = 'pet'; who = ha ? a : b; tgt = ha ? b : a; }
       if (kind === 'chat') { lower(a, 'company', 0.2); lower(b, 'company', 0.2); }
       else if (kind === 'play') { lower(tgt, 'play', 0.25); lower(tgt, 'company', 0.2); lower(who, 'company', 0.1); }
+      else if (kind === 'pets') { lower(a, 'play', 0.2); lower(b, 'play', 0.2); }
       else { lower(tgt, 'company', 0.2); lower(tgt, 'play', 0.15); }
       for (const q of [a, b]) q.state.mood = clamp(q.state.mood + 0.02);
       socialCd[key] = now + 90 * 60 * 1000;
