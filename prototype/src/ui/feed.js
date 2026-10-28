@@ -17,14 +17,14 @@
     for (const pid in G.journal) for (const mk in G.journal[pid]) G.journal[pid][mk].forEach(e => out.push({ pid, e }));
     return out.sort((a, b) => (a.e.t < b.e.t ? 1 : -1));
   }
-  const nameOf = pid => (G.get(pid) ? G.get(pid).person.name : pid);
+  const nameOf = pid => (G.get(pid) ? G.get(pid).person.name : pid === 'you' ? t('player.name') : pid);
   U.renderFeed = function (force) {
     const all = entries(), list = all.filter(x => !view.who || x.pid === view.who);
     const sig = view.who + view.more + all.length + I.lang + G.people.map(p => p.id + p.person.name + p.story.care_total).join();
     const root = $('feed');
     if (!force && root.dataset.sig === sig) return;
     root.dataset.sig = sig;
-    const chips = [`<button class="chip ${view.who ? '' : 'on'}" data-w="">${esc(t('feed.all'))}</button>`].concat(G.people.map(p => `<button class="chip ${view.who === p.id ? 'on' : ''}" data-w="${p.id}">${esc(p.person.name)}</button>`)).join('');
+    const chips = [`<button class="chip ${view.who ? '' : 'on'}" data-w="">${esc(t('feed.all'))}</button>`].concat(G.people.map(p => `<button class="chip ${view.who === p.id ? 'on' : ''}" data-w="${p.id}">${esc(p.person.name)}</button>`).concat(Object.keys(G.journal.you || {}).length ? [`<button class="chip ${view.who === 'you' ? 'on' : ''}" data-w="you">${esc(t('player.name'))}</button>`] : [])).join('');
     const stat = view.who && G.get(view.who) ? (() => {
       const p = G.get(view.who), n = ty => all.filter(x => x.pid === p.id && x.e.type === ty).length;
       return `<div class="mute stat">${esc(t('feed.stat', { care: p.story.care_total, talk: n('talk'), missed: n('missed') }))}${p.story.revealed ? esc(t('feed.stat_back', { name: p.person.name, n: p.story.cares_back_total })) : ''}</div>`;

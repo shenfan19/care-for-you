@@ -445,3 +445,5 @@ CY.i18n.register("en", {"arch.hedgehog": "Hedgehog", "arch.duck": "Duck", "arch.
 CY.i18n.register("en", {"intro.p2": "Choose a light experience with only the long press, or a full one with work and shopping. Pick one to begin:", "intro.later": "Other details are in Settings."});
 
 CY.i18n.register("en", {"about.p5": "Let your hand rest on the mouse, and let your mind rest a while."});
+
+CY.i18n.register("en", {"me.work_start": "Work hours began, and you settled in at the desk.", "me.work_end": "Work ended and you stepped away from the desk.", "me.go": "You went to {place}.", "me.back": "You came back home."});

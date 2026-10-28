@@ -140,3 +140,5 @@ CY.i18n.register("ja", {"arch.hedgehog": "ハリネズミ", "arch.duck": "アヒ
 CY.i18n.register("ja", {"intro.p2": "長押しだけの軽めの体験か、仕事と買い物のあるしっかり体験を選べます。どちらかで始めましょう：", "intro.later": "その他は設定で変えられます。"});
 
 CY.i18n.register("ja", {"about.p5": "手をマウスに置いたまま、頭をしばらく休ませてください。"});
+
+CY.i18n.register("ja", {"me.work_start": "仕事の時間になり、あなたは書斎で作業を始めた。", "me.work_end": "仕事が終わり、あなたは書斎を出た。", "me.go": "あなたは{place}へ行った。", "me.back": "あなたは家に戻った。"});

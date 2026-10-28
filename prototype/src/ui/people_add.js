@@ -23,7 +23,7 @@
       const look = st.look, stage = C.stageOf(st.age);
       const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look, st.age)}</div><div>
         <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa" ${editP ? 'disabled' : ''}>${archSel}</select></div>
-        ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="0.5" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
+        ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="0.25" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
           ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
           <div class="row">${esc(t('add.glasses'))} ${sel('glasses', O.glasses, O.glasses.map(g => t('glasses.' + g)), look.glasses === true ? 'round' : look.glasses || 'none')}

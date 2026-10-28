@@ -252,42 +252,61 @@
   };
 
   /* ---------- 环形菜单与长按 ---------- */
-  U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); };
+  /* 每个动作一个图标，围成一圈。悬停在中间显示名字和要按多久。有需求的动作是彩色，其余是灰色，灰色的也能点。 */
+  const ACT_ICON = {
+    pet: '🤚', hug: '🤗', water: '💧', feed: '🍼', meal: '🍲', diaper: '🚼', bath: '🛁', play: '🧸', read: '📖', soothe: '🌙', homework: '📚', game: '🎮', chat: '💬', rest: '🛋', walk: '🚶', hand: '🤝', doctor: '🩺',
+    groom: '✨', vet: '🏥', clean: '🧹', train: '🎓', teach: '🗣', warm: '🔥', veggie: '🥬', mist: '💦', sun: '☀', fertilize: '🌱', prune: '✂', repot: '🪴',
+    medicine: '💊', sugar: '🩸', bp: '🫀', heat: '♨', massage: '💆', fever: '🌡', cool: '🧊', inhaler: '💨', air: '🌬', remind: '☝', album: '📷',
+    restsit: '💺', steady: '✋', listen: '👂', walkout: '🌳', lead: '🚽', nightlight: '💡', ointment: '🧴', trimnails: '💅', painkill: '🩹', support: '🤲', rehab: '🏃',
+    stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
+  };
+  U.actIcon = (p, a) => {
+    if (ACT_ICON[a.id]) return ACT_ICON[a.id];
+    const defs = G.needsOf(p);
+    for (const k in a.effect || {}) if (defs[k] && defs[k].icon) return defs[k].icon;
+    return '•';
+  };
+  /* 这个动作能不能解决角色现在的某个需求 */
+  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > 0.45);
+  const ringOff = () => { if (U.room) U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); };
+  U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); ringOff(); };
   U.openRing = function (pid, anchor) {
     U.closeRing();
     const p = G.get(pid), acts = Object.values(G.actionsOf(p));
-    const cx = (anchor || $r(`.cx[data-id="${pid}"]`) || U.room).getBoundingClientRect();
+    const fig = $r(`.cx[data-id="${pid}"]`);
+    if (fig) fig.classList.add('ring-on');
+    const cx = (anchor || fig || U.room).getBoundingClientRect();
+    const n = acts.length, R = Math.max(58, Math.round(n * 6.6 + 14)), half = 18 + 4;
+    const vw = win().innerWidth, vh = win().innerHeight;
+    /* 圈心在角色中间，圈整个落在窗口里 */
+    let ox = cx.left + cx.width / 2, oy = cx.top + cx.height * 0.45;
+    ox = Math.min(vw - R - half - 4, Math.max(R + half + 4, ox)); oy = Math.min(vh - R - half - 4, Math.max(R + half + 4, oy));
     const layer = doc().createElement('div');
     layer.id = 'ringLayer'; layer.className = 'ring';
-    layer.style.left = (cx.left + cx.width / 2) + 'px'; layer.style.top = (cx.top + 40) + 'px';
-    const n = acts.length, Rx = 34 * n + 30, Ry = 64, span = 68;
-    const btns = [];
+    layer.style.left = ox + 'px'; layer.style.top = oy + 'px';
+    const click = ini.bool(G.cfg, 'interaction', 'click_instead_of_hold');
+    const label = doc().createElement('div'); label.className = 'ringlabel';
+    const home = () => { label.innerHTML = `<b>${esc(p.person.name)}</b>`; };
+    home(); layer.appendChild(label);
     acts.forEach((a, i) => {
-      const ang = (n === 1 ? 0 : -span + 2 * span * i / (n - 1)) * Math.PI / 180;
+      const ang = (-90 + 360 * i / n) * Math.PI / 180;
+      const sec = G.holdSeconds(a), cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec }), lack = G.lacking(a), urgent = U.actUrgent(p, a);
+      const text = a.label + (click ? '' : ' · ' + cost) + (lack ? ' · ' + t('ring.lack', { item: G.item(lack).label }) : '');
       const b = doc().createElement('button');
-      b.dataset.x = Math.sin(ang) * Rx; b.dataset.y = -Math.cos(ang) * Ry - 14;
-      const sec = G.holdSeconds(a);
-      const click = ini.bool(G.cfg, 'interaction', 'click_instead_of_hold');
-      const cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec });
-      const lack = G.lacking(a);
-      b.innerHTML = esc(a.label) + (click ? '' : `<small>${esc(cost)}</small>`) + (lack ? `<small class="lack" title="${esc(t('ring.lack', { item: G.item(lack).label }))}">${G.item(lack).icon}</small>` : '');
-      if (lack) b.classList.add('dim');
+      b.className = 'ico ' + (urgent ? 'urgent' : 'calm') + (lack ? ' dim' : '');
+      b.style.left = (R * Math.cos(ang)) + 'px'; b.style.top = (R * Math.sin(ang)) + 'px';
+      b.title = text; b.setAttribute('aria-label', text);
+      b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>` + (lack ? `<i class="lk">${G.item(lack).icon}</i>` : '');
+      const show = () => { label.innerHTML = `<b>${esc(a.label)}</b>${click ? '' : `<small>${esc(cost)}</small>`}${lack ? `<small class="lack">${esc(t('ring.lack', { item: G.item(lack).label }))}</small>` : ''}`; };
+      b.onpointerenter = show; b.onfocus = show; b.onpointerleave = home; b.onblur = home;
       if (click) b.onclick = () => { G.perform(pid, a.id); U.closeRing(); };
       else {
-        b.onpointerdown = e => { e.preventDefault(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
+        b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
         b.onpointerup = b.onpointercancel = () => U.endHold(false);
       }
-      layer.appendChild(b); btns.push(b);
+      layer.appendChild(b);
     });
     U.room.appendChild(layer);
-    /* 按钮不超出窗口 */
-    const vw = win().innerWidth, ox = cx.left + cx.width / 2;
-    let lo = 1e9, hi = -1e9;
-    for (const b of btns) { const w = b.offsetWidth, x = +b.dataset.x; lo = Math.min(lo, x - w / 2); hi = Math.max(hi, x + w / 2); }
-    let shift = 0;
-    if (ox + hi > vw - 6) shift = vw - 6 - (ox + hi);
-    if (ox + lo + shift < 6) shift = 6 - (ox + lo);
-    for (const b of btns) { b.style.left = (+b.dataset.x + shift) + 'px'; b.style.top = b.dataset.y + 'px'; }
   };
 
   /* 长按：按住这么多秒，动作才做完。要照顾的人在别的地点，先去那里。同一个地点，主角直接出现在他旁边。

@@ -16,7 +16,6 @@
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     CY.i18n.applyDom(document);
     document.title = t('app.title');
-    $('verTxt').textContent = t('app.proto', { v: CY.meta.version });
     $('footTxt').textContent = t('foot.text');
     U.applyTheme();
     if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => U.applyTheme());
@@ -33,8 +32,6 @@
     });
     $('peopleBtn').onclick = () => U.peopleDialog();
     G.backendError = () => U.flash(t('backend.error'));
-    $('themeBtn').onclick = () => U.cycleTheme();
-    $('langSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.language = e.target.value; await store.write('settings.ini', ini.stringify(G.cfg)); U.applyLang(); U.renderControls(); };
     $('floatBtn').onclick = () => U.floatToggle();
     $('unfloatBtn').onclick = () => U.floatToggle();
     CY.world.enforce = true;

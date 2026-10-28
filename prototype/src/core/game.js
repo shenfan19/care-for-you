@@ -136,6 +136,8 @@
         G.journal[id][f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || [];
       }
     }
+    G.journal.you = {};
+    for (const f of files.filter(f => f.startsWith('me/journal/'))) { const j = await store.readYaml(f); G.journal.you[f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || []; }
     await loadContent(files);
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
@@ -296,11 +298,21 @@
   });
 
   /* 台词来源：角色自己写的优先，其次疾病里写的，最后是声线模板。 */
-  /* 性格里的台词：键没有就退回 any 或 default */
+  /* 年龄分段：宝宝几个月，孩子几岁，说话不一样。婴儿 m0 m4 m7，幼儿 y1 y2 y3，儿童 c4 c7 */
+  G.ageBand = p => {
+    if (!G.isHuman(p)) return null;
+    const a = G.age(p), st = G.stage(p);
+    if (st === 'infant') return a * 12 < 4 ? 'm0' : a * 12 < 7 ? 'm4' : 'm7';
+    if (st === 'toddler') return a < 2 ? 'y1' : a < 3 ? 'y2' : 'y3';
+    if (st === 'child') return a < 7 ? 'c4' : 'c7';
+    return null;
+  };
+  /* 性格里的台词：键没有就退回 any 或 default。十三岁以下只用描写神态的那一对 */
   const traitLines = (p, group, key) => {
-    const out = [];
+    const out = [], kid = G.isHuman(p) && G.age(p) < 13;
     for (const id of p.person.traits || []) {
-      const tl = ((G.tpl.traitLines || {})[id] || {})[group]; if (!tl) continue;
+      const tr = (G.tpl.traitLines || {})[id] || {};
+      const tl = (kid ? tr.kid || {} : tr)[group]; if (!tl) continue;
       const v = Array.isArray(tl) ? tl : (key !== undefined && key !== null ? (tl[key] || tl.any || tl.default) : undefined);
       if (Array.isArray(v)) out.push(...v);
     }
@@ -310,6 +322,8 @@
     const pickFrom = src => (key === undefined || key === null) ? src : (src && !Array.isArray(src) && typeof src === 'object' ? src[key] : undefined);
     const srcs = [(p.person.lines || {})[group]];
     for (const c of p.person.conditions || []) srcs.push((((G.tpl.conditions[c] || {}).lines) || {})[group]);
+    const band = G.ageBand(p);
+    if (band && p.voice.age && p.voice.age[band]) srcs.push(p.voice.age[band][group]);
     srcs.push(p.voice[group]);
     let base = [];
     for (const s of srcs) {
@@ -354,7 +368,7 @@
       }
       for (const k of G.dirty) {
         const [kind, id, mk] = k.split('|');
-        if (kind === 'j') store.writeYaml(`people/${id}/journal/${mk}.yaml`, { version: 1, entries: G.journal[id][mk] });
+        if (kind === 'j') store.writeYaml(`${id === 'you' ? 'me' : 'people/' + id}/journal/${mk}.yaml`, { version: 1, entries: G.journal[id][mk] });
         else store.writeYaml(`people/${id}/sayings.yaml`, { version: 1, items: G.sayings[id] });
       }
       G.dirty.clear();
@@ -541,7 +555,7 @@
     const sens = ini.bool(G.cfg, 'interaction', 'sensitive_topics');
     const recent = new Set(p.state.asked || []);
     const fits = (arr, val) => !arr || arr.includes(val);
-    let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && (sens || !q.sensitive));
+    let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
     const mine = ((p.person.lines || {}).ask || []).filter(q => q && q.say).map((q, i) => ({ id: `own${i}`, say: q.say, answers: q.answers || [] }));
     pool = pool.concat(mine);
     const fresh = pool.filter(q => !recent.has(q.id));
@@ -797,6 +811,9 @@
       if (!G.toast[p.id] || G.toast[p.id].kind !== 'cry') if (!G.req[p.id] || G.req[p.id].kind !== 'ask') G.toastFor(p, line(p, 'cry', null, t('line.cry')), 'cry');
     }
     if (now >= G.nextAt) { if (G.activePeople().length) fire(); scheduleNext(); }
+    const wk = G.isWorkTime();
+    if (G._wk !== undefined && G._wk !== wk && G.activePeople().length) G.log('you', 'event', t(wk ? 'me.work_start' : 'me.work_end'));
+    G._wk = wk;
     if (G.worldTick) G.worldTick(now);
     if (now >= (G.nextAmbient || 0)) { G.nextAmbient = now + 30000 + Math.random() * 40000; if (!G.isPaused() && G.activePeople().length) ambientChat(); }
     emit();

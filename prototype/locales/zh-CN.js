@@ -324,3 +324,5 @@ CY.i18n.register("zh-CN", {"arch.hedgehog": "刺猬", "arch.duck": "鸭子", "ar
 CY.i18n.register("zh-CN", {"intro.p2": "你可以选只有长按的轻量体验，也可以选要工作赚钱、买物品的完整体验。选一种开始：", "intro.later": "其余细节在设置里改。"});
 
 CY.i18n.register("zh-CN", {"about.p5": "让手停在鼠标上，让脑子歇一会儿。"});
+
+CY.i18n.register("zh-CN", {"me.work_start": "到了工作时间，你在书房办公。", "me.work_end": "下班了，你从书房出来。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});

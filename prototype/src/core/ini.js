@@ -29,7 +29,6 @@
     ['interaction', 'learn', 'true', '根据你的回应逐步适应每个角色的打扰频率和话题'],
     ['ui', 'scene', 'auto', '房间背景：auto 白天客厅夜里卧室；living 客厅；bedroom 卧室；kitchen 厨房；lawn 草坪；balcony 阳台；none 纯色'],
     ['ui', 'avatar_style', 'simple', 'simple 简洁抽象的形象；detailed 画出五官细节'],
-    ['ui', 'wfh_notice', 'true', '是否显示居家办公的提示条'],
     ['ui', 'theme', 'auto', 'auto 跟随系统；light 浅色；dark 深色'],
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],

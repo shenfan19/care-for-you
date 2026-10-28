@@ -144,3 +144,5 @@ CY.i18n.register("fr", {"arch.hedgehog": "Hérisson", "arch.duck": "Canard", "ar
 CY.i18n.register("fr", {"intro.p2": "Choisissez une expérience légère, avec seulement l’appui long, ou une complète avec travail et achats. Choisissez pour commencer :", "intro.later": "Le reste est dans les réglages."});
 
 CY.i18n.register("fr", {"about.p5": "Laissez la main sur la souris, et laissez l’esprit se reposer un moment."});
+
+CY.i18n.register("fr", {"me.work_start": "Les heures de travail ont commencé, vous vous êtes installé au bureau.", "me.work_end": "Le travail est terminé, vous avez quitté le bureau.", "me.go": "Vous êtes allé à {place}.", "me.back": "Vous êtes rentré à la maison."});

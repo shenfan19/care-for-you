@@ -140,3 +140,5 @@ CY.i18n.register("ko", {"arch.hedgehog": "고슴도치", "arch.duck": "오리", 
 CY.i18n.register("ko", {"intro.p2": "길게 누르기만 있는 가벼운 체험이나 일과 쇼핑이 있는 완전한 체험 중에 고를 수 있습니다. 하나를 골라 시작하세요:", "intro.later": "나머지는 설정에서 바꿉니다."});
 
 CY.i18n.register("ko", {"about.p5": "손은 마우스에 두고, 머리를 잠시 쉬게 하세요."});
+
+CY.i18n.register("ko", {"me.work_start": "업무 시간이 되어 서재에서 일을 시작했다.", "me.work_end": "일이 끝나 서재에서 나왔다.", "me.go": "{place}에 갔다.", "me.back": "집으로 돌아왔다."});

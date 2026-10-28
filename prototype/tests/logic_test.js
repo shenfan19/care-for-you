@@ -19,7 +19,7 @@ vm.runInContext(`
     wipe: async () => { globalThis.__mem.clear(); },
     removeDir: async p => { for (const k of [...globalThis.__mem.keys()]) if (k.startsWith(p + '/')) globalThis.__mem.delete(k); },
   });`, ctx);
-for (const f of ['src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/http.js', 'src/backend/index.js', 'src/world/world.js', 'src/world/iso.js', 'src/world/avatar.js', 'src/world/scenes.js']) run(f);
+for (const f of ['src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/http.js', 'src/backend/index.js', 'src/world/world.js', 'src/world/iso.js', 'src/world/avatar.js', 'src/world/scenes.js']) run(f);
 const CY = ctx.CY, G = CY.game;
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
@@ -291,6 +291,24 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const reply = G.lines(tp, 'reply', 'a1');
     check('回答之后有性格的回应', reply.length >= 2);
     await G.deletePerson(tid); refs();
+  }
+
+  /* 按年龄说话：宝宝几个月说的话不同，十三岁以下不说成人口吻的性格台词 */
+  {
+    const C = CY.content;
+    const mkp = async (arch, age, traits) => { const id = await G.createPerson({ arch, name: 'a' + age, age, traits: traits || [] }); await G.load(); return G.get(id); };
+    const b0 = await mkp('baby', 0.2, ['independent']), b5 = await mkp('baby', 0.45), b9 = await mkp('baby', 0.8), t1 = await mkp('toddler', 1.4), t2 = await mkp('toddler', 2.4), t3 = await mkp('toddler', 3.4), k5 = await mkp('daughter', 5), k9 = await mkp('son', 9, ['stubborn']);
+    check('年龄分段', [b0, b5, b9, t1, t2, t3, k5, k9].map(p => G.ageBand(p)).join() === 'm0,m4,m7,y1,y2,y3,c4,c7', [b0, b5, b9, t1, t2, t3, k5, k9].map(p => G.ageBand(p)).join());
+    const adult = C.TRAIT_LINES.zh.independent.glance[0];
+    check('零个月的宝宝不说成人口吻的性格台词', !G.lines(b0, 'glance', null).includes(adult) && !G.lines(b0, 'thanks', 'default').some(l => /不用管我|我能行/.test(l)));
+    check('宝宝带性格时只描写神态', G.lines(b0, 'glance', null).includes(C.TRAIT_LINES.zh.independent.kid.glance[0]));
+    const req = p => G.lines(p, 'request', 'hunger').join('|');
+    check('不同月龄的宝宝需求台词不同', req(b0) !== req(b5) && req(b5) !== req(b9));
+    check('一岁说单字，三岁说句子', /饭/.test(req(t1)) && !/我饿了/.test(req(t1)) && /我饿了/.test(req(t3)));
+    check('九岁孩子的性格台词是神态，不是大人的话', !G.lines(k9, 'glance', null).some(l => /我说了，不用|我自己能行/.test(l)));
+    check('婴儿没有问答，一岁的孩子也没有，三岁才有', G.askBank(b9).length === 0 && G.askBank(t1).length === 0 && G.askBank(t3).length > 0);
+    for (const p of [b0, b5, b9, t1, t2, t3, k5, k9]) await G.deletePerson(p.id);
+    refs();
   }
 
   /* 其他原型 */

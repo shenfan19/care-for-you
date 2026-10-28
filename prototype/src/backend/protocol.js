@@ -32,7 +32,7 @@
     for (const n in p.state.flags || {}) { const f = p.state.flags[n]; if (f.until === undefined || f.until > now) flags[n] = Object.assign({}, f); }
     const loc = W ? W.locationOf(p) : { place: 'home', room: 'living' };
     return {
-      id: p.id, name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(1) : null,
+      id: p.id, name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
       mood: +p.state.mood.toFixed(2), frailty: +p.state.frailty.toFixed(2), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(2)])),
       conditions: (p.person.conditions || []).slice(), traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
       sleeping: G.isSleeping(p), location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),

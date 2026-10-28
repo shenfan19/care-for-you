@@ -140,3 +140,5 @@ CY.i18n.register("de", {"arch.hedgehog": "Igel", "arch.duck": "Ente", "arch.ferr
 CY.i18n.register("de", {"intro.p2": "Wähle eine leichte Erfahrung nur mit langem Drücken oder eine volle mit Arbeit und Einkauf. Such eine aus:", "intro.later": "Weiteres steht in den Einstellungen."});
 
 CY.i18n.register("de", {"about.p5": "Lass die Hand auf der Maus ruhen und den Kopf ein wenig ausruhen."});
+
+CY.i18n.register("de", {"me.work_start": "Die Arbeitszeit begann, und du hast dich an den Schreibtisch gesetzt.", "me.work_end": "Feierabend, du bist vom Schreibtisch aufgestanden.", "me.go": "Du bist nach {place} gegangen.", "me.back": "Du bist nach Hause zurückgekehrt."});

@@ -133,6 +133,7 @@
     const pl = W.player();
     if (pl.place === place) return false;
     W.moveTo(place, place === 'home' ? W.WORK.room : place === 'office' ? 'desk' : 'ward');
+    G.log('you', 'event', place === 'home' ? t('me.back') : t('me.go', { place: t('loc.' + place) }));
     return true;
   };
 

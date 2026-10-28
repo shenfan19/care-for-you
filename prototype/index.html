@@ -15,24 +15,19 @@
 <div id="gate" class="gate" style="display:none"></div>
 <div id="app" style="display:none">
   <header>
-    <h1>Care for You</h1>
-    <span class="mute" id="verTxt"></span>
+    <h1 class="brand"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 38 C8 28 8 14 17 12 C21 11 23 14 24 16 C25 14 27 11 31 12 C40 14 40 28 24 38Z" fill="var(--accent)"/><path d="M6 30 Q10 42 24 44 Q38 42 42 30" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity=".55"/><circle cx="24" cy="24" r="3.4" fill="var(--card)"/></svg><span>Care <em>for</em> You</span></h1>
     <span class="tools">
-      <span id="elapsed" class="mute"></span>
-      <span id="nowClock" class="clock"></span>
-      <button id="peopleBtn" data-i18n="hdr.people" data-i18n-title="hdr.people_tip"></button>
-      <select id="langSel" data-i18n-title="hdr.lang_tip"></select>
-      <button id="themeBtn" class="icon" data-i18n-title="hdr.theme_tip">◐</button>
-      <button id="floatBtn" data-i18n="hdr.float" data-i18n-title="hdr.float_tip"></button>
+      <span id="moneyChip" class="mute" style="display:none"></span><button id="shopBtn" class="icon" style="display:none" data-i18n-title="life.shop">🛒</button>
+      <button id="peopleBtn" class="icon" aria-label="People" data-i18n-title="hdr.people_tip">👥</button>
       <button id="shareBtn" class="icon" data-i18n-title="hdr.share">🖼</button>
-      <button id="dlBtn" data-i18n="hdr.save" data-i18n-title="hdr.save_tip"></button>
+      <button id="floatBtn" class="icon" aria-label="Pop out" data-i18n-title="hdr.float_tip">⧉</button>
+      <button id="dlBtn" class="icon" aria-label="Save and download" data-i18n-title="hdr.save_tip">⬇</button>
       <button id="gearBtn" class="icon" data-i18n-title="hdr.settings">⚙</button>
       <button id="aboutBtn" class="icon" data-i18n-title="hdr.about">ⓘ</button>
     </span>
   </header>
   <main>
     <div id="modeToast" class="card" style="display:none"></div>
-    <div id="lifeBar" class="lifebar" style="display:none"></div>
     <div id="roomSlot"><div id="room" class="room"></div></div>
     <div id="floatNote" class="card" style="display:none"><span data-i18n="float.note"></span> <button id="unfloatBtn" data-i18n="float.back"></button></div>
     <div id="roomBar" class="row bar2"></div>
@@ -63,6 +58,7 @@
 <script src="src/data/content_react.js?v=0.7.4"></script>
 <script src="src/data/content_life.js?v=0.7.4"></script>
 <script src="src/data/content_traits.js?v=0.7.4"></script>
+<script src="src/data/content_age.js?v=0.7.4"></script>
 <script src="locales/content_zh-TW.js?v=0.7.4"></script>
 <script src="locales/content_ja.js?v=0.7.4"></script>
 <script src="locales/content_ko.js?v=0.7.4"></script>

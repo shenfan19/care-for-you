@@ -608,3 +608,5 @@ CY.i18n.register("zh-TW", {"arch.hedgehog": "刺蝟", "arch.duck": "鴨子", "ar
 CY.i18n.register("zh-TW", {"intro.p2": "你可以選只有長按的輕量體驗，也可以選要工作賺錢、買物品的完整體驗。選一種開始：", "intro.later": "其餘細節在設定裡改。"});
 
 CY.i18n.register("zh-TW", {"about.p5": "讓手停在滑鼠上，讓腦子歇一會兒。"});
+
+CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});

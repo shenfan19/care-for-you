@@ -6,19 +6,11 @@
   const esc = U.esc;
   const $ = id => document.getElementById(id);
   /* ---------- 照顾的代价：居家办公的提示条、钱、商店、家人与保姆、体验选择 ---------- */
+  /* 没有横条。只有完整体验里才有钱和商店，放在顶栏 */
   U.renderLife = function () {
-    const bar = $('lifeBar'), eco = G.economyOn(), people = G.activePeople();
-    const show = ini.bool(G.cfg, 'ui', 'wfh_notice') && people.length > 0;
-    bar.style.display = show ? '' : 'none';
-    if (!show) return;
-    const work = G.isWorkTime();
-    const sig = [eco, work, Math.floor(G.world.money), people.length, I.lang, JSON.stringify(G.world.inv || {})].join('|');
-    if (bar.dataset.sig === sig) return;
-    bar.dataset.sig = sig;
-    const n = people.length;
-    bar.innerHTML = `<span class="wfh">💼 ${esc(t(eco ? (work ? 'life.working' : 'life.offwork') : 'life.wfh', { n }))}</span>` +
-      (eco ? `<span class="money" title="${esc(t('life.money_tip'))}">💰 ${Math.floor(G.world.money)}</span><button id="shopBtn">${esc(t('life.shop'))}</button>` : '');
-    if ($('shopBtn')) $('shopBtn').onclick = () => U.shopDialog();
+    const eco = G.economyOn(), sb = $('shopBtn'), mc = $('moneyChip');
+    sb.style.display = eco ? '' : 'none'; mc.style.display = eco ? '' : 'none';
+    if (eco) { mc.textContent = '💰 ' + Math.floor(G.world.money); mc.title = t('life.money_tip'); sb.onclick = () => U.shopDialog(); }
   };
 
   U.shopDialog = function () {

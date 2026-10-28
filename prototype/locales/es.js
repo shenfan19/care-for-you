@@ -140,3 +140,5 @@ CY.i18n.register("es", {"arch.hedgehog": "Erizo", "arch.duck": "Pato", "arch.fer
 CY.i18n.register("es", {"intro.p2": "Elige una experiencia ligera con solo la pulsación larga, o una completa con trabajo y compras. Elige una para empezar:", "intro.later": "El resto está en Ajustes."});
 
 CY.i18n.register("es", {"about.p5": "Deja la mano en el ratón y deja descansar la mente un rato."});
+
+CY.i18n.register("es", {"me.work_start": "Empezó la jornada y te sentaste a trabajar en el estudio.", "me.work_end": "Terminó el trabajo y saliste del estudio.", "me.go": "Fuiste a {place}.", "me.back": "Volviste a casa."});
