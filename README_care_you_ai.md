@@ -4,24 +4,29 @@
 
 ## 当前状态
 
-原型 v0.6，纯网页，没有后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
+原型 0.15，纯网页，没有后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
 
 ![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 
-核心是照顾的代价：你居家办公，家里还有人要照顾，每次照顾都从别处挤出来。
-
-- 两种玩法，顶栏一格切换，另有暂停：现实模式时间跟现实走，动作长按，占用你现实里的时间；故事模式时间压缩，动作点击，花掉游戏里的时间
-- 故事模式里一次只做一件事，后开始的把先开始的压下去暂停，做完再接着做；现实模式下故事里没做完的事暂停等着
-- 完整体验：工作时段赚钱，照顾要用食材、药品、尿布、玩具，可以请保姆，保姆在场效果会打折
+- 时间只有现实一种，动作只有长按，占用你现实里的时间，没有倒计时压力，没有惩罚
+- 每个角色是一个小行动者：按自己的喜好和当下的需求在家里慢慢换房间，饿了去厨房，困了去卧室，饭点一起吃饭，大人会走过去照顾最需要的人，同一个房间的人会聊天、玩、逗宠物。鼠标悬停或点选一个人，他就停住
+- 你默认是一个看不见的成年人，也可以选一个角色做主角，老人主角手慢，孩子也可以照顾别人，主角也能照顾自己
+- 每类典型角色是一张明文 YAML 角色卡：年龄、外观、声线、健康度、自理、需求速率、爱去的房间、主动帮忙、对话。典型老人，1 到 4 岁孩子，12 岁孩子，25 岁男女，妻子，婆婆，全部原型都有卡，加一张卡就多一种角色
 - 年龄是数字，婴儿幼儿儿童少年成人老人各不相同，婴儿没人管会一直哭，老人和孩子能自己动手做一部分，做了就记下来
 - 夜里会睡觉，睡着不打扰；每个角色有状态面板和最多两个性格特征
-- 二十一种人，九种动物，四种花草，六种基础疾病，四十八种动作
-- 房间背景是客厅、卧室、厨房、草坪、阳台，随昼夜变化
+- 二十几种人，十几种动物，几种花草，十多种疾病，原创动作动画
 - 八种语言，界面和对话都有：简体中文，繁體中文，English，Français，日本語，한국어，Español，Deutsch
-- 回答问题直接是四个选项，三个预设加一个自己写的，倒计时默认二十秒
-- 形象默认简洁抽象，页面明暗、背景、语言、压缩比例都在顶栏或设置里
-- 存档下载、本地运行包下载、存档导入，关于页面含隐私与免责，账号只预留接口
-- 数据全部是明文 YAML 和 settings.ini，AI 接口默认关闭
+- 数据全部是明文 YAML 和 settings.ini，AI 接口默认关闭，存档下载、运行包下载、存档导入
+
+## 接自己的模型
+
+游戏本体不写死谁说话、发生什么，只把每个角色的状态快照发出去，把回来的指令执行掉。
+
+- 远程后端：设置里 backend_provider 改成 http，填 backend_url。示例在 backend_example_ai，只用标准库，换掉里面的 step() 就是自己的模型
+- 需求完全由外部给：needs_source 改成 backend，用 need_set、mood_set、frailty_set、move 指令写
+- 页面内：CY.api.state()、apply()、cards()、onTick()；页面外：打开 api_bridge 后用 postMessage
+
+协议和字段在 prototype/src/backend/protocol.js 开头的注释里。
 
 ## 运行
 
@@ -30,24 +35,30 @@
 
 ## 试玩技巧
 
-- 地址后加 ?freq=test 会让打断变得很频繁，加 &quiet= 可以关掉静音时段，仅用于试玩，不会写入设置。
-- 齿轮里或 settings.ini 里可以改 frequency、倒计时、时间模式。
+- 地址后加 ?freq=test 会让打断变得很频繁，仅用于试玩，不会写入设置。
+- 齿轮里或 settings.ini 里可以改打断频率、倒计时、工作时段等，改了立刻生效。
 - 地址后加 ?onboard=0 可以跳过引导页。
 
-## 测试
+## 测试与仿真
 
 ```
 node tests/logic_test.js
+node tests/sim_eval.js 3 120 family
 ```
 
-覆盖载入、创建角色、时间显示、问答筛选与记录、打断、动作、挑话、节奏学习、存档导出与导入、多语言完整性、运行包清单、AI 校验和手改容错。界面部分没有自动测试。
+logic_test 覆盖载入、创建角色、角色卡、行动者走动、帮忙与互动、时间、问答、打断、动作、存档、多语言完整性、AI 校验。sim_eval 让一家人在虚拟时钟里过几天，玩家按注意力策略去照顾，输出急需占比、哭闹时长、被打扰次数、换房间次数，并检查数值不变量。界面部分没有自动测试。
 
 ## 目录
 
-- prototype/index.html、style.css：页面
-- prototype/src：meta、i18n、ini、store、archive、content、content_more、content_en、seed、ai、account、game、avatar、scenes、ui_room、ui_home、main
+- prototype/index.html、css：页面
+- prototype/src/core：游戏本体，game、clock、time、directives、household（主角、外出、帮忙、互动）、store、ini、i18n、archive
+- prototype/src/backend：协议、内置后端、远程传输、页面内接口
+- prototype/src/world：地点与房间、行动者走动、斜视画法、头像、场景
+- prototype/src/data：初始数据与角色卡、对话内容
+- prototype/src/ui：界面
 - prototype/locales：界面语言包，一个语言一个文件；content_开头的是对话内容包
-- prototype/tests：逻辑测试，avatar_sheet.html 看全部角色形象，gif_stage.html 用来取动画帧
+- prototype/tests：逻辑测试、仿真评估，avatar_sheet.html 看全部角色形象
+- backend_example_ai：远程后端的最小示例
 - media_ai：动作动画预览
 - prototype/vendor：js-yaml
 - android：预留，暂时搁置

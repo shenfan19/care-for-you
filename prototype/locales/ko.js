@@ -156,3 +156,5 @@ CY.i18n.register("ko", {"arch.elder": "전형적인 노인", "arch.toddler1": "1
 CY.i18n.register("ko", {"social.chat": "{a}와(과) {b}은(는) 잠깐 이야기를 나눴다.", "social.play": "{a}이(가) {b}와(과) 한동안 놀아 주었다.", "social.pet": "{a}이(가) {b}을(를) 쓰다듬었다."});
 
 CY.i18n.register("ko", {"social.meal": "{n}명이 부엌에서 함께 밥을 먹었다."});
+
+CY.i18n.register("ko", {"status.at": "지금 {room}에 있음, 좋아하는 곳: {likes}"});

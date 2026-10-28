@@ -458,3 +458,5 @@ CY.i18n.register("en", {"arch.elder": "Typical elder", "arch.toddler1": "1-year-
 CY.i18n.register("en", {"social.chat": "{a} and {b} had a little chat.", "social.play": "{a} played with {b} for a while.", "social.pet": "{a} stroked {b}."});
 
 CY.i18n.register("en", {"social.meal": "{n} of them ate together in the kitchen."});
+
+CY.i18n.register("en", {"status.at": "Now in the {room}; likes the {likes}"});

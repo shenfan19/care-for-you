@@ -156,3 +156,5 @@ CY.i18n.register("de", {"arch.elder": "Typische ältere Person", "arch.toddler1"
 CY.i18n.register("de", {"social.chat": "{a} und {b} haben ein bisschen geplaudert.", "social.play": "{a} hat eine Weile mit {b} gespielt.", "social.pet": "{a} hat {b} gestreichelt."});
 
 CY.i18n.register("de", {"social.meal": "{n} Personen haben zusammen in der Küche gegessen."});
+
+CY.i18n.register("de", {"status.at": "Gerade: {room}; mag: {likes}"});

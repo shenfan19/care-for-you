@@ -620,3 +620,5 @@ CY.i18n.register("zh-TW", {"arch.elder": "典型老人", "arch.toddler1": "1歲�
 CY.i18n.register("zh-TW", {"social.chat": "{a}和{b}聊了幾句。", "social.play": "{a}陪{b}玩了一會兒。", "social.pet": "{a}摸了摸{b}。"});
 
 CY.i18n.register("zh-TW", {"social.meal": "{n}個人在廚房一起吃了飯。"});
+
+CY.i18n.register("zh-TW", {"status.at": "現在在{room}，愛待在{likes}"});

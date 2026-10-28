@@ -156,3 +156,5 @@ CY.i18n.register("ja", {"arch.elder": "典型的なお年寄り", "arch.toddler1
 CY.i18n.register("ja", {"social.chat": "{a}と{b}は少しおしゃべりした。", "social.play": "{a}は{b}としばらく遊んだ。", "social.pet": "{a}は{b}をなでた。"});
 
 CY.i18n.register("ja", {"social.meal": "{n}人で台所で一緒にご飯を食べた。"});
+
+CY.i18n.register("ja", {"status.at": "今は{room}。好きな場所：{likes}"});
