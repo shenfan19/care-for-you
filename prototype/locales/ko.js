@@ -122,3 +122,5 @@ CY.i18n.register("ko", {
 });
 
 CY.i18n.register("ko", {"player.title": "아빠", "player.name": "당신"});
+
+CY.i18n.register("ko", {"btn.edit": "편집", "btn.archive": "보관", "btn.delete": "삭제", "btn.restore": "복원", "bar.archived": "보관됨 {n}명", "del.title": "{name}을(를) 삭제할까요?", "del.note": "삭제하면 {name}의 기록, 했던 말, 상태가 이 기기에서 사라지고 되돌릴 수 없습니다. 잠시 쉬게 하려면 보관을 고르세요. 기록은 남습니다."});

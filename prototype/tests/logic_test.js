@@ -17,6 +17,7 @@ vm.runInContext(`
     readYaml: async p => { const t = globalThis.__mem.get(p); return t === undefined ? null : jsyaml.load(t); },
     writeYaml: async (p, o) => { globalThis.__mem.set(p, jsyaml.dump(o, { lineWidth: -1 })); },
     wipe: async () => { globalThis.__mem.clear(); },
+    removeDir: async p => { for (const k of [...globalThis.__mem.keys()]) if (k.startsWith(p + '/')) globalThis.__mem.delete(k); },
   });`, ctx);
 for (const f of ['src/content.js', 'src/content_more.js', 'src/content_en.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/seed.js', 'src/ai.js', 'src/account.js', 'src/game.js', 'src/avatar.js', 'src/scenes.js']) run(f);
 const CY = ctx.CY, G = CY.game;
@@ -108,6 +109,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const notInPack = refsInHtml.filter(f => !CY.archive.APP_FILES.includes(f)), notOnDisk = CY.archive.APP_FILES.filter(f => !fs.existsSync(path.join(root, f)));
   check('页面引用的文件都在运行包清单里', notInPack.length === 0, notInPack.join());
   check('运行包清单里的文件都存在', notOnDisk.length === 0, notOnDisk.join());
+
+  /* 编辑、归档、删除 */
+  {
+    const vid = await G.createPerson({ arch: A[0].id, name: '临时' }); await G.load(); const before = G.people.length;
+    await G.updatePerson(vid, { name: '新名字', traits: ['sticky', 'sunny', 'extra'] });
+    check('编辑改了名字且特征最多两个', G.get(vid).person.name === '新名字' && G.get(vid).person.traits.length <= 2);
+    const saved = await CY.store.readYaml(`people/${vid}/person.yaml`);
+    check('编辑写入了文件', saved && saved.name === '新名字');
+    await G.archivePerson(vid, true);
+    check('归档后不在桌面但还在记录里', !G.activePeople().some(p => p.id === vid) && !!G.get(vid) && G.get(vid).person.archived === true);
+    await G.setActive(vid, true);
+    check('恢复后回到桌面', G.activePeople().some(p => p.id === vid) && !G.get(vid).person.archived);
+    await G.deletePerson(vid);
+    check('删除后人和文件都没了', G.people.length === before - 1 && !G.get(vid) && ![...mem.keys()].some(k => k.startsWith(`people/${vid}/`)));
+  }
 
   /* 其他原型 */
   for (const a of A) await G.createPerson({ arch: a.id, name: a.role });

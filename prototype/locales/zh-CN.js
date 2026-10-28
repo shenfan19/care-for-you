@@ -306,3 +306,5 @@ CY.i18n.register("zh-CN", {
 });
 
 CY.i18n.register("zh-CN", {"player.title": "爸爸", "player.name": "你"});
+
+CY.i18n.register("zh-CN", {"btn.edit": "编辑", "btn.archive": "归档", "btn.delete": "删除", "btn.restore": "恢复", "bar.archived": "已归档 {n} 位", "del.title": "删除{name}？", "del.note": "删除后{name}的记录、说过的话和状态都会从本机移除，不能恢复。只是想让ta先离开的话，可以选归档，记录会留着。"});

@@ -199,3 +199,7 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .srow2 { display:flex; align-items:center; gap:8px; margin:3px 0; font-size:13px; } .srow2 .l { width:110px; } .srow2 .bar { flex:1; }
 .tag { font-size:12px; padding:0 8px; border-radius:10px; background:var(--soft); color:var(--ink); margin-right:4px; display:inline-block; }
 .taskrow { display:inline-flex; gap:6px; align-items:center; } .taskrow.paused { opacity:.6; } .taskrow .bar { width:80px; }
+
+.tlbox { max-height:320px; overflow-y:auto; padding-right:6px; } .tlbox.short { max-height:200px; }
+.archbox { display:inline-block; vertical-align:top; } .archbox summary { cursor:pointer; color:var(--mute); font-size:13px; } .archbox .row { gap:10px; margin:4px 0; }
+button.danger { color:#b3261e; }

@@ -122,3 +122,5 @@ CY.i18n.register("de", {
 });
 
 CY.i18n.register("de", {"player.title": "Papa", "player.name": "du"});
+
+CY.i18n.register("de", {"btn.edit": "Bearbeiten", "btn.archive": "Archivieren", "btn.delete": "Löschen", "btn.restore": "Wiederherstellen", "bar.archived": "{n} archiviert", "del.title": "{name} löschen?", "del.note": "Beim Löschen werden die Erinnerungen, Sätze und der Zustand von {name} von diesem Gerät entfernt, ohne Rückweg. Wenn du nur eine Pause willst, wähle Archivieren, dann bleiben die Erinnerungen."});

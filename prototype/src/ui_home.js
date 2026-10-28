@@ -76,8 +76,8 @@
 
   /* ---------- 房间下方：添加与离开中的角色 ---------- */
   U.renderBar = function () {
-    const away = G.people.filter(p => p.person.active === false);
-    const sig = away.map(p => p.id + p.person.name).join() + U.floating + I.lang + ini.get(G.cfg, 'ui', 'scene');
+    const away = G.people.filter(p => p.person.active === false && !p.person.archived), arch = G.people.filter(p => p.person.archived);
+    const sig = away.map(p => p.id + p.person.name).join() + '|' + arch.map(p => p.id + p.person.name).join() + U.floating + I.lang + ini.get(G.cfg, 'ui', 'scene');
     const bar = $('roomBar');
     if (bar.dataset.sig === sig) return;
     bar.dataset.sig = sig;
@@ -85,10 +85,13 @@
     $('roomSlot').style.display = U.floating ? 'none' : 'block';
     bar.innerHTML = `<button id="addBtn" class="primary">${esc(t('btn.add'))}</button>` +
       away.map(p => `<span class="pill">${esc(t('bar.away', { name: p.person.name }))} <a href="#" data-id="${p.id}">${esc(t('bar.recall'))}</a></span>`).join('') +
+      (arch.length ? `<details class="archbox"><summary>${esc(t('bar.archived', { n: arch.length }))}</summary>${arch.map(p => `<div class="row"><span>${esc(p.person.name)} <span class="mute">${esc(p.person.role || '')}</span></span><a href="#" data-rs="${p.id}">${esc(t('btn.restore'))}</a><a href="#" data-del="${p.id}">${esc(t('btn.delete'))}</a></div>`).join('')}</details>` : '') +
       `<select id="sceneSel" title="${esc(t('scene.tip'))}">${['auto', ...CY.scenes.ids, 'none'].map(k => `<option value="${k}" ${k === ini.get(G.cfg, 'ui', 'scene') ? 'selected' : ''}>${esc(t('scene.' + k))}</option>`).join('')}</select>`;
     $('sceneSel').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.scene = e.target.value; await saveCfg(); U.renderScene(); };
     $('addBtn').onclick = () => U.addDialog(null, () => { U.renderBar(); });
-    bar.querySelectorAll('a').forEach(a => a.onclick = e => { e.preventDefault(); G.setActive(a.dataset.id, true); });
+    bar.querySelectorAll('a[data-id]').forEach(a => a.onclick = e => { e.preventDefault(); G.setActive(a.dataset.id, true); });
+    bar.querySelectorAll('a[data-rs]').forEach(a => a.onclick = async e => { e.preventDefault(); await G.setActive(a.dataset.rs, true); U.afterPeopleChange(); });
+    bar.querySelectorAll('a[data-del]').forEach(a => a.onclick = e => { e.preventDefault(); U.deleteDialog(a.dataset.del); });
   };
 
   /* ---------- 发生的事 ---------- */
@@ -110,8 +113,8 @@
       return `<div class="mute stat">${esc(t('feed.stat', { care: p.story.care_total, talk: n('talk'), missed: n('missed') }))}${p.story.revealed ? esc(t('feed.stat_back', { name: p.person.name, n: p.story.cares_back_total })) : ''}</div>`;
     })() : '';
     root.innerHTML = `<h2>${esc(t('feed.title'))}</h2><div class="chips">${chips}</div>${stat}` +
-      (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${esc(x.e.text)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
-      (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '');
+      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${esc(x.e.text)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
+      (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div>';
     root.querySelectorAll('.chip').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });
     const mb = $('moreBtn'); if (mb) mb.onclick = () => { view.more += 60; U.renderFeed(true); };
   };
@@ -127,16 +130,19 @@
       const items = (G.sayings[p.id] || []).slice().reverse().filter(s => s.lib || s.by === 'you');
       const n = items.filter(s => s.by === 'char').length, m = items.filter(s => s.by === 'you').length;
       return `<details data-id="${p.id}" ${open.has(p.id) ? 'open' : ''}><summary>${esc(p.person.name)}<span class="mute">　${esc(t('said.count', { n, m }))}</span></summary>` +
-        (items.slice(0, 80).map(s => `<div class="tl"><span class="t">${fmtT(s.t)}</span><span class="who ${s.by === 'you' ? 'said-you' : ''}">${s.by === 'you' ? esc(t('said.you')) : esc(p.person.name)}</span><span class="x">${esc(s.text)}</span>${s.lib ? `<span class="pill" title="${esc(t('said.lib'))}">${esc(s.lib)}${s.ans !== undefined ? '·' + esc(s.ans) : ''}</span>` : ''}</div>`).join('') || `<div class="mute" style="padding:6px 0">${esc(t('said.empty'))}</div>`) + '</details>';
+        '<div class="tlbox short">' + (items.slice(0, 80).map(s => `<div class="tl"><span class="t">${fmtT(s.t)}</span><span class="who ${s.by === 'you' ? 'said-you' : ''}">${s.by === 'you' ? esc(t('said.you')) : esc(p.person.name)}</span><span class="x">${esc(s.text)}</span>${s.lib ? `<span class="pill" title="${esc(t('said.lib'))}">${esc(s.lib)}${s.ans !== undefined ? '·' + esc(s.ans) : ''}</span>` : ''}</div>`).join('') || `<div class="mute" style="padding:6px 0">${esc(t('said.empty'))}</div>`) + '</div></details>';
     }).join('') || `<div class="mute">${esc(t('said.nobody'))}</div>`);
   };
 
   /* ---------- 添加角色 ---------- */
   U.archName = id => t('arch.' + id);
-  U.addDialog = function (archId, done) {
+  U.addDialog = function (archId, done, editPid) {
     const O = CY.avatarOptions;
-    const arch0 = C.archOf(archId) || C.archetypes[0];
-    const st = { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', traits: [] };
+    const editP = editPid && G.get(editPid);
+    const arch0 = (editP && C.archOf(editP.person.archetype)) || C.archOf(archId) || C.archetypes[0];
+    const st = editP
+      ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', traits: (editP.person.traits || []).slice() }
+      : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', traits: [] };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const GROUPS = ['family', 'animal', 'plant'];
@@ -145,7 +151,7 @@
       const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
       const look = st.look, stage = C.stageOf(st.age);
       const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look, st.age)}</div><div>
-        <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa">${archSel}</select></div>
+        <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa" ${editP ? 'disabled' : ''}>${archSel}</select></div>
         ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="0.5" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
           ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
@@ -156,7 +162,7 @@
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
         : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
         <div class="row">${esc(t('add.traits'))} <span class="chips inl">${C.TRAITS.map(k => `<button class="chip ${st.traits.includes(k) ? 'on' : ''}" data-tr="${k}" title="${esc(t('trait.' + k + '_tip'))}">${esc(t('trait.' + k))}</button>`).join('')}</span></div>
-        <div class="row" style="justify-content:flex-end;margin:12px 0 0"><button id="acancel">${esc(t('btn.cancel'))}</button><button id="aok" class="primary">${esc(t('add.ok'))}</button></div></div></div>`, true);
+        <div class="row" style="justify-content:flex-end;margin:12px 0 0"><button id="acancel">${esc(t('btn.cancel'))}</button><button id="aok" class="primary">${esc(t(editP ? 'btn.save' : 'add.ok'))}</button></div></div></div>`, true);
       dlg.querySelector('#an').oninput = e => { st.name = e.target.value; };
       dlg.querySelector('#aa').onchange = e => {
         const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age = a.age; st.look = Object.assign({}, a.look);
@@ -175,12 +181,30 @@
       const bd = dlg.querySelector('#abeard'); if (bd) bd.onchange = () => { st.look.beard = bd.checked; render(); };
       dlg.querySelector('#acancel').onclick = () => { U.closeDialog(); done && done(false); };
       dlg.querySelector('#aok').onclick = async () => {
+        if (editP) {
+          const first = (editP.person.conditions || [])[0] || '';
+          let conds = (editP.person.conditions || []).slice();
+          if (st.cond !== first) { conds = conds.filter(c => c !== first); if (st.cond) conds.unshift(st.cond); }
+          await G.updatePerson(editP.id, { name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds });
+          U.closeDialog(); U.afterPeopleChange(); done && done(true);
+          return;
+        }
         const a = C.archOf(st.arch), role = U.archName(a.id);
         await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [] });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }
     render();
+  };
+
+  /* 删除前确认：记录会一起没有，所以把归档作为另一条路摆在旁边 */
+  U.deleteDialog = function (pid) {
+    const p = G.get(pid); if (!p) return;
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('del.title', { name: p.person.name }))}</h2><div class="mute">${esc(t('del.note', { name: p.person.name }))}</div>
+      <div class="row" style="justify-content:flex-end;margin-top:14px"><button id="dcancel">${esc(t('btn.cancel'))}</button>${p.person.archived ? '' : `<button id="darch">${esc(t('btn.archive'))}</button>`}<button id="dok" class="danger">${esc(t('btn.delete'))}</button></div>`, true);
+    dlg.querySelector('#dcancel').onclick = U.closeDialog;
+    const da = dlg.querySelector('#darch'); if (da) da.onclick = async () => { await G.archivePerson(pid, true); U.closeDialog(); U.afterPeopleChange(); };
+    dlg.querySelector('#dok').onclick = async () => { await G.deletePerson(pid); U.closeDialog(); U.afterPeopleChange(); };
   };
 
   U.afterPeopleChange = function () { U.renderRoom(true); U.renderBar(); U.renderFeed(true); U.renderSaid(true); };
@@ -436,7 +460,10 @@
       <div class="srow2"><span class="l">${esc(t('status.frailty'))}</span><div class="bar"><i style="width:${Math.round(p.state.frailty * 100)}%"></i></div></div>
       <h3>${esc(t('status.needs'))}</h3>${bars}
       <h3>${esc(t('status.selfdo', { n: Math.round(st.self_care * 100) }))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
-      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
+      <div class="row" style="justify-content:space-between;margin-top:12px"><span><button id="stedit">${esc(t('btn.edit'))}</button> <button id="starch">${esc(t('btn.archive'))}</button> <button id="stdel">${esc(t('btn.delete'))}</button></span><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
     dlg.querySelector('#stclose').onclick = U.closeDialog;
+    dlg.querySelector('#stedit').onclick = () => U.addDialog(null, () => {}, pid);
+    dlg.querySelector('#starch').onclick = async () => { await G.archivePerson(pid, true); U.closeDialog(); U.afterPeopleChange(); };
+    dlg.querySelector('#stdel').onclick = () => U.deleteDialog(pid);
   };
 })(globalThis.CY = globalThis.CY || {});

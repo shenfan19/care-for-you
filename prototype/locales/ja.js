@@ -122,3 +122,5 @@ CY.i18n.register("ja", {
 });
 
 CY.i18n.register("ja", {"player.title": "パパ", "player.name": "あなた"});
+
+CY.i18n.register("ja", {"btn.edit": "編集", "btn.archive": "アーカイブ", "btn.delete": "削除", "btn.restore": "元に戻す", "bar.archived": "アーカイブ {n} 件", "del.title": "{name}を削除しますか？", "del.note": "削除すると{name}の記録、話した言葉、状態がこの端末から消え、元に戻せません。しばらく離れてもらうだけならアーカイブを選ぶと記録は残ります。"});

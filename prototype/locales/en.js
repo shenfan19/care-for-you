@@ -427,3 +427,5 @@ CY.i18n.register("en", {
 });
 
 CY.i18n.register("en", {"player.title": "Dad", "player.name": "you"});
+
+CY.i18n.register("en", {"btn.edit": "Edit", "btn.archive": "Archive", "btn.delete": "Delete", "btn.restore": "Restore", "bar.archived": "{n} archived", "del.title": "Delete {name}?", "del.note": "Deleting removes the records, sayings and state of {name} from this device and cannot be undone. To just set them aside, choose Archive and the records stay."});

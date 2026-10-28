@@ -126,3 +126,5 @@ CY.i18n.register("fr", {
 });
 
 CY.i18n.register("fr", {"player.title": "Papa", "player.name": "toi"});
+
+CY.i18n.register("fr", {"btn.edit": "Modifier", "btn.archive": "Archiver", "btn.delete": "Supprimer", "btn.restore": "Restaurer", "bar.archived": "{n} archivé(s)", "del.title": "Supprimer {name} ?", "del.note": "La suppression retire de cet appareil les souvenirs, les paroles et l’état de {name}, sans retour possible. Pour simplement le mettre de côté, choisis Archiver : les souvenirs restent."});

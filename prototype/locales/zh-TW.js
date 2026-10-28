@@ -590,3 +590,5 @@ CY.i18n.register("zh-TW", {
 });
 
 CY.i18n.register("zh-TW", {"player.title": "爸爸", "player.name": "你"});
+
+CY.i18n.register("zh-TW", {"btn.edit": "編輯", "btn.archive": "封存", "btn.delete": "刪除", "btn.restore": "恢復", "bar.archived": "已封存 {n} 位", "del.title": "刪除{name}？", "del.note": "刪除後{name}的紀錄、說過的話和狀態都會從本機移除，無法恢復。只是想讓ta先離開的話，可以選封存，紀錄會留著。"});

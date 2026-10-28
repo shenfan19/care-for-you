@@ -156,7 +156,47 @@
   G.setActive = async function (pid, on) {
     const p = G.get(pid); if (!p) return;
     p.person.active = on;
+    if (on) p.person.archived = false;
     await store.writeYaml(`people/${pid}/person.yaml`, p.person);
+    emit();
+  };
+
+  /* 编辑：只改玩家看得见的资料，需求、心情、记录都不动 */
+  G.updatePerson = async function (pid, patch) {
+    const p = G.get(pid); if (!p) return;
+    const o = p.person;
+    if (typeof patch.name === 'string' && patch.name.trim()) o.name = patch.name.trim();
+    if (patch.pronoun) o.pronoun = patch.pronoun;
+    if (patch.look) o.appearance = Object.assign({}, o.appearance, patch.look);
+    if (Array.isArray(patch.traits)) o.traits = patch.traits.slice(0, 2);
+    if (Array.isArray(patch.conditions)) o.conditions = patch.conditions.slice();
+    if (G.isHuman(p) && typeof patch.age === 'number') {
+      o.age = patch.age;
+      if (CHILDLIKE.includes(o.voice)) o.voice = CY.content.STAGE_VOICE[CY.content.stageOf(o.age)] || o.voice;
+      p.voice = G.tpl.voices[o.voice] || p.voice;
+    }
+    await store.writeYaml(`people/${pid}/person.yaml`, o);
+    emit();
+  };
+  /* 归档：离开桌面，不再出现，记录和说过的话都留着，随时可以恢复 */
+  G.archivePerson = async function (pid, on) {
+    const p = G.get(pid); if (!p) return;
+    p.person.archived = on;
+    p.person.active = !on;
+    if (on) G.world.tasks = G.tasks().filter(x => x.pid !== pid);
+    await store.writeYaml(`people/${pid}/person.yaml`, p.person);
+    emit();
+  };
+  /* 删除：连同记录一起从本机移除，不可恢复 */
+  G.deletePerson = async function (pid) {
+    const i = G.people.findIndex(p => p.id === pid); if (i < 0) return;
+    G.people.splice(i, 1);
+    G.world.tasks = G.tasks().filter(x => x.pid !== pid);
+    delete G.journal[pid]; delete G.sayings[pid];
+    for (const m of [G.req, G.toast, G.fx, G.crying, G.act]) delete m[pid];
+    for (const k of [...G.dirty]) if (k.split('|')[1] === pid) G.dirty.delete(k);
+    await store.removeDir(`people/${pid}`);
+    G.save(true);
     emit();
   };
 

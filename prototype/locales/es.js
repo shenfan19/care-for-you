@@ -122,3 +122,5 @@ CY.i18n.register("es", {
 });
 
 CY.i18n.register("es", {"player.title": "Papá", "player.name": "tú"});
+
+CY.i18n.register("es", {"btn.edit": "Editar", "btn.archive": "Archivar", "btn.delete": "Eliminar", "btn.restore": "Restaurar", "bar.archived": "{n} archivado(s)", "del.title": "¿Eliminar a {name}?", "del.note": "Al eliminar se borran de este dispositivo los recuerdos, las palabras y el estado de {name}, sin vuelta atrás. Si solo quieres apartarlo, elige Archivar y los recuerdos se conservan."});

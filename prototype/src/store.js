@@ -26,6 +26,7 @@
     write(p, t) { return tx(this.db, FILES, 'readwrite', s => s.put(t, p)); }
     list() { return tx(this.db, FILES, 'readonly', s => s.getAllKeys()).then(k => k.filter(x => !x.startsWith('_backup/'))); }
     wipe() { return tx(this.db, FILES, 'readwrite', s => s.clear()); }
+    async removeDir(prefix) { const keys = await tx(this.db, FILES, 'readonly', s => s.getAllKeys()); for (const k of keys) if (k.startsWith(prefix + '/')) await tx(this.db, FILES, 'readwrite', s => s.delete(k)); }
   }
 
   class FolderBackend {
@@ -40,6 +41,10 @@
       const d = await this.dir(parts, true);
       const w = await (await d.getFileHandle(f, { create: true })).createWritable();
       await w.write(text); await w.close();
+    }
+    async removeDir(path) {
+      const parts = path.split('/'), n = parts.pop();
+      try { const d = await this.dir(parts, false); await d.removeEntry(n, { recursive: true }); } catch (e) {}
     }
     async wipe() {
       for (const n of ['people', 'templates', '_backup', 'settings.ini', 'world.yaml', 'README.txt']) { try { await this.root.removeEntry(n, { recursive: true }); } catch (e) {} }
@@ -169,6 +174,7 @@
       }).catch(e => console.error('写入失败', path, e));
       return S.queue;
     },
+    removeDir(p) { S.queue = S.queue.then(() => S.backend.removeDir(p)).catch(e => console.error('删除失败', p, e)); return S.queue; },
     async readYaml(p) { const t = await S.read(p); if (t === null) return null; try { return jsyaml.load(t); } catch (e) { console.warn('YAML 读取失败', p, e); return null; } },
     writeYaml: (p, o) => S.write(p, jsyaml.dump(o, { lineWidth: -1, noRefs: true })),
     async exportZip(extras) {
