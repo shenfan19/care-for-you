@@ -4,7 +4,7 @@ const ctx = vm.createContext({ console, Math, Date, JSON, RegExp, Promise, setIn
 ctx.globalThis = ctx;
 const root = path.join(__dirname, '..');
 const run = f => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);
-for (const f of ['vendor/js-yaml.min.js', 'src/meta.js', 'src/i18n.js', 'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'src/ini.js', 'src/store.js', 'src/archive.js']) run(f);
+for (const f of ['vendor/js-yaml.min.js', 'src/core/meta.js', 'src/core/i18n.js', 'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js']) run(f);
 /* 内存存储代替浏览器存储，zip 读写用真实实现 */
 const mem = new Map();
 ctx.__mem = mem;
@@ -19,7 +19,7 @@ vm.runInContext(`
     wipe: async () => { globalThis.__mem.clear(); },
     removeDir: async p => { for (const k of [...globalThis.__mem.keys()]) if (k.startsWith(p + '/')) globalThis.__mem.delete(k); },
   });`, ctx);
-for (const f of ['src/content.js', 'src/content_more.js', 'src/content_en.js', 'src/content_react.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/seed.js', 'src/ai.js', 'src/account.js', 'src/game.js', 'src/world.js', 'src/iso.js', 'src/avatar.js', 'src/scenes.js']) run(f);
+for (const f of ['src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_react.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/http.js', 'src/backend/index.js', 'src/world/world.js', 'src/world/iso.js', 'src/world/avatar.js', 'src/world/scenes.js']) run(f);
 const CY = ctx.CY, G = CY.game;
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
@@ -54,8 +54,9 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 
   /* 多语言完整性：代码和页面里用到的键，两种语言包都要有 */
   const used = new Set(), dataOnly = new Set();
-  for (const f of fs.readdirSync(path.join(root, 'src'))) {
-    const s = fs.readFileSync(path.join(root, 'src', f), 'utf8');
+  const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+  for (const f of walk(path.join(root, 'src'))) {
+    const s = fs.readFileSync(f, 'utf8');
     for (const m of s.matchAll(/\bt\('([a-z_]+\.[A-Za-z0-9_.]+)'/g)) used.add(m[1]);
     for (const m of s.matchAll(/\bt\([^()]*\? '([a-z_]+\.[A-Za-z0-9_.]+)' : '([a-z_]+\.[A-Za-z0-9_.]+)'/g)) { used.add(m[1]); used.add(m[2]); }
     for (const m of s.matchAll(/\btOr\('([a-z_]+\.[A-Za-z0-9_.]+)'/g)) dataOnly.add(m[1]);
@@ -148,58 +149,93 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('每种原型的全部动作可执行', bad2.length === 0, bad2.slice(0, 6).join());
   }
 
-  /* 世界：房间分布，走路，住院，夜里起夜，闲谈 */
+  /* 世界与后端：房间分布，直接站到旁边，住院，夜里起夜，指令检查，远程后端，台词 */
   {
-    const W = CY.world;
-    G.cfg.time.daynight = 'game';
+    const W = CY.world, P = CY.protocol;
     const gp = await G.createPerson({ arch: 'grandpa', name: '爷爷', conditions: ['nocturia'] });
     const bb = await G.createPerson({ arch: 'baby', name: '宝宝' });
     const ct = await G.createPerson({ arch: 'cat', name: '猫' });
     await G.load();
     const setHour = h => { G.cfg.time.daynight = 'game'; G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
     setHour(14);
-    check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room), JSON.stringify(W.locationOf(G.get(gp))) + ' dm=' + G.dayMinutes() + ' shift=' + G.world.clock_shift + ' mode=' + G.timeMode() + ' src=' + G.daySource());
+    check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room));
     check('婴儿白天在卧室的小床里', W.locationOf(G.get(bb)).room === 'bedroom' && W.locationOf(G.get(bb)).mode === 'cradle');
+    check('没有人的地点不出现', W.occupiedPlaces().join() === 'home');
     setHour(2);
     check('夜里爷爷在老人房睡，不和婴儿一屋', W.locationOf(G.get(gp)).room === 'elder' && W.locationOf(G.get(bb)).room === 'bedroom');
-    const lay = W.layout('home');
-    check('每个人都有位置', lay.length === G.people.length - G.people.filter(p => p.person.active === false).length || lay.length > 0);
-    W.hospitalize(G.get(gp), 3);
-    check('住院后在医院病房', W.locationOf(G.get(gp)).place === 'hospital' && W.layout('hospital').some(l => l.id === gp));
-    const before = G.world.game_minutes; G.world.game_minutes += 4400; W.advance(1);
-    check('住满天数后出院回家', !G.get(gp).state.hospital && G.get(gp).story.hospital_n === 1);
-    G.world.game_minutes = before;
-    /* 走路：主角不在这个人的房间，故事模式里先走过去再做 */
+    check('每个人都有位置', W.layout('home').length === G.activePeople().length);
+
+    /* 后端指令：标记带地点，就会出现在那个地点；到期由后端的规则收尾 */
+    const dirs = P.sanitize([{ op: 'flag_set', person: gp, name: 'hospital', minutes: 4320, place: 'hospital', room: 'ward', mode: 'sleep' }]);
+    G.applyDirectives(dirs);
+    check('住院的标记让他出现在医院病房', W.locationOf(G.get(gp)).place === 'hospital' && W.layout('hospital').some(l => l.id === gp) && W.occupiedPlaces().join() === 'home,hospital');
+    G.world.game_minutes += 4400; G.drive('tick', { minutes: 1 });
+    check('住满天数后规则让他出院，旧事记在计数里', !G.flag(G.get(gp), 'hospital') && (G.get(gp).story.counters || {}).hospital_n === 1 && W.occupiedPlaces().join() === 'home');
+    G.world.game_minutes -= 4400;
+
+    /* 指令检查：不认识的丢掉，数值压回范围，名字不存在的人丢掉 */
+    const bad = P.sanitize([{ op: 'format_disk', person: gp }, { op: 'need', person: gp, need: 'thirst', delta: 99 }, { op: 'say', person: 'nobody', text: 'x' }, { op: 'flag_set', person: gp, name: 'x', minutes: 1e9, place: 'moon' }, { op: 'say', person: gp, text: 'y'.repeat(999) }]);
+    check('后端指令被检查', bad.length === 2 && bad[0].delta === 1 && bad[1].text.length === 240);
+
+    /* 照顾别的地点的人要先去，同一个地点直接出现在旁边，没有走路 */
     W.enforce = true;
-    const pl = W.player(); pl.place = 'home'; pl.room = 'study'; Object.assign(pl, W.playerAnchor('home', 'study'));
-    setHour(14);
-    G.cfg.time.mode = 'compressed'; G.world.tasks = [];
-    const need = W.presenceNeed(G.get(ct));
-    check('不在一个房间要走路', !!need && !need.offsite);
-    const okStart = G.startAction(ct, 'pet');
-    check('故事模式里开始动作会排上走路', okStart && G.tasks().length === 2 && G.tasks()[1].kind === 'walk' && G.tasks()[0].act === 'pet');
-    for (let i = 0; i < 400 && G.tasks().length; i++) G.tick();
-    G.world.tasks = [];
-    W.walk = null;
-    /* 医院：不在医院做不了医院里的事 */
-    W.hospitalize(G.get(gp), 3);
+    Object.assign(W.player(), { place: 'home', room: 'study' }, W.playerAnchor('home', 'study'));
+    check('同一个地点不需要走路', W.presenceNeed(G.get(ct)) === null);
+    check('做事时主角直接出现在他旁边', (W.guard(ct, () => true), W.player().room === W.locationOf(G.get(ct)).room));
+    G.applyDirectives(P.sanitize([{ op: 'flag_set', person: gp, name: 'hospital', minutes: 4320, place: 'hospital', room: 'ward', mode: 'sleep' }]));
     const off = W.presenceNeed(G.get(gp));
     check('在医院的人要先去医院', off && off.offsite && off.place === 'hospital');
-    G.cfg.time.mode = 'compressed';
+    G.cfg.time.mode = 'compressed'; G.world.tasks = [];
     check('去医院会排上路程', W.travel('hospital') && G.tasks().length === 1 && G.tasks()[0].kind === 'travel');
     G.finishSpecial(G.tasks()[0]); G.world.tasks = [];
     check('到了医院，主角位置变了', W.player().place === 'hospital');
-    W.discharge(G.get(gp)); W.travel('home');
-    G.cfg.time.mode = 'real'; G.world.tasks = [];
-    G.finishSpecial({ to: { place: 'home', room: 'study', ...W.playerAnchor('home', 'study') } });
-    W.enforce = false;
-    /* 起夜与跌倒：概率放大后一定出事 */
+    G.clearFlag(G.get(gp), 'hospital');
+    W.holding = false; W.tick();
+    check('医院里没有人了，主角回家', W.player().place === 'home');
+    G.cfg.time.mode = 'real';
+    check('故事里开始动作不再有走路任务', (G.cfg.time.mode = 'compressed', G.world.tasks = [], G.startAction(ct, 'pet') && G.tasks().length === 1 && !G.tasks()[0].kind));
+    G.world.tasks = []; G.cfg.time.mode = 'real';
+    /* 动作停下几秒，勾了自动回岗位就回去 */
+    G.cfg.play.auto_return = 'true';
+    W.moveTo('home', 'kitchen'); W.lastActive = Date.now() - 1000; W.tick();
+    check('停得不够久不自动回去', W.player().room === 'kitchen');
+    W.lastActive = Date.now() - W.IDLE_MS - 100; W.tick();
+    check('停够几秒后回到岗位', W.player().room === 'study');
+    G.cfg.play.auto_return = 'false'; W.enforce = false;
+
+    /* 起夜与跌倒：全是规则数据库里的规则，概率放大后一定出事 */
     setHour(2);
     G.cfg.play.fall_scale = '1000';
-    const g = G.get(gp); g.state.wc_until = G.world.game_minutes - 1; g.state.hospital = null; delete g.state.hospital;
-    W.advance(1);
-    check('起夜跌倒会记下来', g.state.hurt === 'minor' || g.state.hospital);
+    const g = G.get(gp);
+    G.setFlag(g, 'wc', { minutes: 6, place: 'home', room: 'toilet' });
+    G.world.game_minutes += 10; G.drive('tick', { minutes: 1 });
+    check('起夜到期后按规则跌倒或住院', !!G.flag(g, 'hurt'));
     G.cfg.play.fall_scale = '1';
+    check('规则就在数据文件夹的明文 YAML 里', (await CY.store.read('templates/events/rules.yaml')).includes('night_toilet') && G.tpl.rules.length >= 5);
+    /* 改规则文件就改行为：把夜尿起夜的频率调成零 */
+    const keep = G.tpl.rules; G.tpl.rules = keep.map(r => (r.id === 'night_toilet' ? Object.assign({}, r, { rate_per_hour: 0 }) : r));
+    G.clearFlag(g, 'hurt'); G.clearFlag(g, 'hospital'); delete g.state.flags.wc; g.person.conditions = ['nocturia']; G.act[gp] = 'sleeping';
+    for (let i = 0; i < 200; i++) G.drive('tick', { minutes: 60 });
+    check('规则改成零就不再起夜', !G.flag(g, 'wc'));
+    G.tpl.rules = keep;
+
+    /* 远程后端：用假的 fetch，指令被检查后执行；失败时退回内置，并只提示一次 */
+    let calls = 0, errs = 0; G.backendError = () => { errs++; };
+    ctx.AbortController = AbortController;
+    G.cfg.play.backend_provider = 'http'; G.cfg.play.backend_url = 'http://example.invalid/drive';
+    ctx.fetch = async (url, opt) => { calls++; const body = JSON.parse(opt.body); ctx.__lastReq = body; return { ok: true, json: async () => ({ v: 1, directives: [{ op: 'mood', person: body.people[0].id, delta: 5 }, { op: 'nope', person: body.people[0].id }] }) }; };
+    const m0 = G.get(body0Id()).state.mood = 0.5;
+    function body0Id() { return G.activePeople()[0].id; }
+    await CY.backend.drive(CY.backend.build('tick', { minutes: 1 })).then(list => G.applyDirectives(list));
+    check('远程后端回来的指令被执行且被检查', calls === 1 && G.get(body0Id()).state.mood === 1 && ctx.__lastReq.kind === 'drive' && ctx.__lastReq.v === 1);
+    check('默认不把名字发出去', ctx.__lastReq.people.every(p => p.name === ''));
+    ctx.fetch = async () => { throw new Error('offline'); };
+    const r1 = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 })), r2 = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 }));
+    check('远程失败退回内置，只提示一次', Array.isArray(r1) && Array.isArray(r2) && errs === 1);
+    G.cfg.play.backend_provider = 'builtin'; CY.backend.failed = false;
+    const sayText = CY.backend.line({ v: 1, kind: 'line', person: P.person(G.get(gp), {}), group: 'events', key: 'discharge' });
+    check('台词也走后端接口', typeof sayText === 'string' && sayText.length > 0);
+
     /* 闲谈和反应的台词齐全 */
     const missing = [];
     for (const v in CY.content.VOICE_GROUP) {
@@ -211,6 +247,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.ambientChat();
     for (const id of [gp, bb, ct]) await G.deletePerson(id);
     G.cfg.time.daynight = 'auto';
+    await G.load(); refs();
   }
 
   /* 其他原型 */
@@ -269,7 +306,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 
   /* 夜里更容易累 */
   G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'game';
-  const restRate = (min) => { G.world.game_minutes = min; baby.state.needs.rest = 0; const w = G.world.game_minutes; G.lastTick = Date.now() - 1000; G.tick(); return baby.state.needs.rest; };
+  const restRate = (min) => { G.world.game_minutes = min; baby.state.needs.rest = 0; baby.state.needs.hunger = 0.99; const w = G.world.game_minutes; G.lastTick = Date.now() - 1000; G.tick(); return baby.state.needs.rest; };
   const day = restRate(4 * 60), night = restRate(15 * 60 + 60);
   check('夜里疲倦涨得更快', night > day * 1.5, day.toFixed(4) + ' vs ' + night.toFixed(4));
   G.world.game_minutes = 0;

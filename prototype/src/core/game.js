@@ -21,6 +21,7 @@
 
   G.on = fn => G.listeners.push(fn);
   const emit = () => G.listeners.forEach(f => { try { f(); } catch (e) { console.error(e); } });
+  G._h = { emit, clamp, pick };   /* 拆出去的文件用 */
   G.emit = emit;
   G.saveCfg = () => store.write('settings.ini', ini.stringify(G.cfg));
 
@@ -83,7 +84,7 @@
     for (const p in seed) {
       if (!/^templates\//.test(p)) continue;
       if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
-      if (/^templates\/(species|conditions)\/|^templates\/(classes|traits|economy\/items)\.yaml$/.test(p)) {
+      if (/^templates\/(species|conditions)\/|^templates\/(classes|traits|economy\/items|events\/rules)\.yaml$/.test(p)) {
         try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
       }
     }
@@ -95,6 +96,7 @@
       if (sk) { const x = await store.readYaml(p); if (x) G.tpl.skills[x.id || sk[1]] = x; }
     }
     G.tpl.persona = await store.readYaml('templates/ai/persona.yaml');
+    G.tpl.rules = ((await store.readYaml('templates/events/rules.yaml')) || {}).rules || [];
     G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
     G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
     G.tpl.items = Object.assign({ items: {}, start: {}, for_need: {} }, await store.readYaml('templates/economy/items.yaml'));
@@ -132,6 +134,7 @@
     await loadContent(files);
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
+
 
   /* ---------- 创建与停用角色 ---------- */
   G.createPerson = async function (spec) {
@@ -265,79 +268,6 @@
     let out = String(s).replace(/\{title\}/g, dflt('title', 'player.title')).replace(/\{name\}/g, p ? p.person.name : dflt('name', 'player.name'));
     out = out.replace(/(^|[.!?]\s+|[。！？]\s*)\{ta\}/g, (m, pre) => pre + (cap ? w.charAt(0).toUpperCase() + w.slice(1) : w));
     return out.replace(/\{ta\}/g, w);
-  };
-
-  /* ---------- 模式：现实模式与故事模式，以及暂停 ---------- */
-  G.timeMode = () => ini.get(G.cfg, 'time', 'mode');
-  /* 现实模式：时间跟现实走，长按占用现实时间。故事模式：时间压缩，点击花掉游戏时间。暂停时记着暂停前的模式 */
-  G.playMode = () => (G.timeMode() === 'compressed' ? 'story' : 'reality');
-  G.isPaused = () => false;
-  /* 时间：real 与现实同步，free 是游戏自己的时间一倍速，compressed 是快进到一个时刻。快进到了就变成 free，不再追着现实。
-     一倍速时长按，快进时点击。没有暂停：世界只在页面开着的时候走，不需要停。 */
-  const dayTarget = { morning: 420, noon: 720, evening: 1080, night: 1320 };
-  const syncShift = () => { const d = new Date(), sys = d.getHours() * 60 + d.getMinutes(); G.world.clock_shift = (((sys - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440; };
-  G.fastForward = async function (spec) {
-    const cur = G.dayMinutes();
-    const delta = spec.plus ? spec.plus : (((dayTarget[spec.to] - cur + 1440) % 1440) || 1440);
-    if (G.timeMode() === 'real') syncShift();
-    G.world.ff_target = G.world.game_minutes + delta;
-    G.cfg.time = G.cfg.time || {}; G.cfg.time.mode = 'compressed';
-    await G.saveCfg(); G.save(); emit();
-  };
-  G.stopFastForward = async function () { delete G.world.ff_target; G.cfg.time.mode = 'free'; await G.saveCfg(); G.save(); emit(); };
-  G.backToReal = async function () { delete G.world.ff_target; G.cfg.time.mode = 'real'; await G.saveCfg(); G.save(); emit(); };
-  G.ffClock = () => { const dm = (Math.floor(G.world.ff_target || 0) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) % 1440; return String(Math.floor(dm / 60)).padStart(2, '0') + ':' + String(dm % 60).padStart(2, '0'); };
-  G.setPlayMode = async function (m) {
-    G.cfg.time = G.cfg.time || {}; G.cfg.play = G.cfg.play || {};
-    if (m === 'paused') { G.cfg.play.last_mode = G.playMode(); G.cfg.time.mode = 'paused'; }
-    else { G.cfg.time.mode = m === 'story' ? 'compressed' : 'real'; G.cfg.play.last_mode = m; }
-    await G.saveCfg(); emit();
-  };
-  G.inputMode = () => (G.playMode() === 'story' ? 'click' : 'hold');
-  /* 故事模式里一次只能做一件事，后开始的会把先开始的压到下面暂停，做完再接着做。现实模式下故事里的事暂停 */
-  G.tasks = () => (G.world.tasks || (G.world.tasks = []));
-  G.isBusy = () => G.timeMode() === 'compressed' && G.tasks().length > 0;
-  G.runningTask = () => { const ts = G.tasks(); return ts[ts.length - 1] || null; };
-
-  /* ---------- 经济：钱，物品，工作，保姆 ---------- */
-  G.economyOn = () => ini.bool(G.cfg, 'play', 'economy');
-  G.item = k => (G.tpl.items.items || {})[k] || (k === 'money' ? { label: CY.tOr('item.money', '钱'), icon: '💰', price: 1 } : { label: k, icon: '•', price: 10 });
-  G.workWindow = () => {
-    const m = ini.get(G.cfg, 'economy', 'work_hours').match(/^(\d\d):(\d\d)-(\d\d):(\d\d)$/);
-    return m ? [+m[1] * 60 + +m[2], +m[3] * 60 + +m[4]] : [540, 1080];
-  };
-  G.isWorkTime = () => { const [a, b] = G.workWindow(), d = G.dayMinutes(); return d >= a && d < b; };
-  G.buy = (k, n = 1) => {
-    const it = G.item(k), cost = it.price * n;
-    if (G.world.money < cost) return false;
-    G.world.money -= cost; G.world.inv[k] = (G.world.inv[k] || 0) + n; G.save(); emit(); return true;
-  };
-  G.hasNanny = p => !!(G.world.nanny || {})[p.id];
-  G.setNanny = (pid, on) => { G.world.nanny = G.world.nanny || {}; if (on) G.world.nanny[pid] = true; else delete G.world.nanny[pid]; G.save(); emit(); };
-  G.nannyCostPerHour = () => ini.num(G.cfg, 'economy', 'nanny_wage');
-  /* 动作缺什么物品或钱，完整体验才检查 */
-  G.lacking = a => {
-    if (!G.economyOn()) return null;
-    for (const k in a.uses || {}) if ((G.world.inv[k] || 0) < a.uses[k]) return k;
-    if (a.cost && a.cost.money && G.world.money < a.cost.money) return 'money';
-    return null;
-  };
-
-  /* ---------- 时间显示：经历了多少时间，以及现在是几点 ---------- */
-  G.daySource = () => {
-    const s = ini.get(G.cfg, 'time', 'daynight');
-    if (s === 'system' || s === 'game') return s;
-    return G.timeMode() === 'real' ? 'system' : 'game';
-  };
-  /* 当天已过的分钟数，0 到 1439 */
-  G.dayMinutes = () => {
-    if (G.daySource() === 'system') { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
-    return (Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) % 1440;
-  };
-  G.isNight = () => { const h = G.dayMinutes() / 60; return h >= 22 || h < 6; };
-  G.clock = () => {
-    const el = Math.floor(G.world.game_minutes), dm = G.dayMinutes(), pad = n => String(n).padStart(2, '0');
-    return { d: Math.floor(el / 1440), h: Math.floor((el % 1440) / 60), m: el % 60, hh: pad(Math.floor(dm / 60)), mm: pad(dm % 60), src: G.daySource(), night: G.isNight(), minutes: dm };
   };
 
   /* ---------- 作息：睡觉，以及各自的状态 ---------- */
@@ -507,7 +437,7 @@
       const night = G.isNight();
       for (const k in defs) {
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1) * (sleeping ? 0.4 : 1) * (s.hospital ? 0.25 : 1) * (mods.rate[k] || 1);
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (nanny ? 0.4 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
@@ -536,7 +466,7 @@
       const top = G.runningTask();
       if (top) { top.left -= gmin; if (top.left <= 0) { G.tasks().pop(); finishAction(top); } }
     }
-    if (!offline && G.worldAdvance) G.worldAdvance(gmin);
+    if (!offline) G.driveTick(gmin);
   }
 
   /* ---------- 打断 ---------- */
@@ -713,8 +643,7 @@
     const scale = a.bonus_item && G.economyOn() && !(G.world.inv[a.bonus_item] > 0) ? 0.5 : 1;
     consume(a);
     applyEffects(p, a, scale);
-    if (a.sets && a.sets.nightlight_min) s.nightlight_until = G.world.game_minutes + a.sets.nightlight_min;
-    const wasHurt = s.hurt; delete s.hurt;
+    if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
     p.story.care_total++;
     /* 带去看医生一类的动作直接治好某些病 */
@@ -738,11 +667,9 @@
       if (s.needs[req.need] < 0.4) { delete G.req[pid]; learn(p, 'need', true, (Date.now() - req.since) / 1000); }
     }
     let tx = line(p, 'thanks', actionId, line(p, 'thanks', 'default', t('line.ok')));
-    /* 受了伤，在医院，或者到了某个次数，角色会说不一样的话 */
-    const ev = key => { const arr = G.lines(p, 'events', key); return arr.length ? G.fmt(pick(arr), p) : null; };
-    if (wasHurt && Math.random() < 0.8) tx = ev('after_fall') || tx;
-    else if (s.hospital && Math.random() < 0.6) tx = ev('visit_hospital') || tx;
-    if ([10, 50, 100, 300].includes(p.story.care_total)) { const m = ev('milestone_' + p.story.care_total); if (m) { tx = m; G.log(pid, 'cares_back', m); } }
+    /* 要不要说不一样的话，由后端决定：受了伤，在医院，到了某个次数 */
+    const dres = G.drive('action', { person: p, action: { id: actionId, label: a.label }, collect: true });
+    if (dres && dres.said) tx = dres.said;
     G.toastFor(p, tx, 'speech'); G.say(pid, 'char', tx);
     G.log(pid, 'care', t('log.care', { label: a.label, line: tx }));
     G.playFx(pid, actionId);
@@ -751,19 +678,14 @@
   }
   G.applyAction = applyAction;
 
-  /* 闲谈：不用你做什么，隔一阵有人随口说一句，跟着时间和所在的房间走，偶尔提起以前的事 */
+  /* 闲谈：不用你做什么，隔一阵有人随口说一句。说什么由后端按房间，时段，旧事挑 */
   function ambientChat() {
     const cands = G.activePeople().filter(p => !G.toast[p.id] && !G.req[p.id]);
     if (!cands.length) return;
     const p = pick(cands), loc = CY.world ? CY.world.locationOf(p) : { room: 'living' };
-    const hr = G.dayMinutes() / 60, tb = hr < 6 || hr >= 22 ? 'night' : hr < 11 ? 'morning' : hr < 17 ? 'noon' : 'evening';
-    const asleep = G.isSleeping(p);
-    let key = tb;
-    if (!asleep && (p.story.hospital_n || 0) > 0 && Math.random() < 0.18) key = 'memory_hospital';
-    else if (!asleep && loc.room !== 'ward' && Math.random() < 0.55) key = loc.room;
-    let arr = G.lines(p, 'ambient', key);
-    if (!arr.length) arr = G.lines(p, 'ambient', tb);
-    if (arr.length) G.toastFor(p, G.fmt(pick(arr), p), 'soft');
+    const hr = G.dayMinutes() / 60, band = hr < 6 || hr >= 22 ? 'night' : hr < 11 ? 'morning' : hr < 17 ? 'noon' : 'evening';
+    const text = G.sayLine(p, 'ambient', null, { room: loc.room, band, asleep: G.isSleeping(p) }, tx => G.toastFor(p, G.fmt(tx, p), 'soft'));
+    if (text) G.toastFor(p, text, 'soft');
   }
   G.ambientChat = ambientChat;
   G.perform = function (pid, actionId) { return G.worldGuard ? G.worldGuard(pid, () => applyAction(pid, actionId)) : applyAction(pid, actionId); };
@@ -777,12 +699,12 @@
     if (ts.some(x => x.pid === pid && x.act === actionId)) { G.toastFor(p, t('toast.already', { what: a.label }), 'soft'); emit(); return false; }
     const need = G.worldNeed && CY.world.enforce ? G.worldNeed(p) : null;
     if (need && need.offsite) { G.toastFor(p, t('toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); emit(); return false; }
-    if (ts.length >= (need ? 3 : 4)) { G.toastFor(p, t('toast.too_many'), 'soft'); emit(); return false; }
+    if (ts.length >= 4) { G.toastFor(p, t('toast.too_many'), 'soft'); emit(); return false; }
     const lack = G.lacking(a);
     if (lack) { G.toastFor(p, t('toast.no_item', { item: G.item(lack).label }), 'soft'); emit(); return false; }
     const prev = G.runningTask();
     ts.push({ pid, act: actionId, label: a.label, total: a.min, left: a.min });
-    if (need) ts.push(G.worldWalkTask(need));
+    if (G.worldBlink && CY.world.enforce) G.worldBlink(p);
     G.toastFor(p, prev ? t('toast.interrupt', { prev: prev.label, what: a.label }) : t('toast.started', { what: a.label, min: a.min }), 'soft');
     G.save(); emit();
     return true;

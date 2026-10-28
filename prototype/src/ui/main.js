@@ -32,6 +32,7 @@
       if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); U.renderSaid(false); }
     });
     $('peopleBtn').onclick = () => U.peopleDialog();
+    G.backendError = () => U.flash(t('backend.error'));
     $('ffSel').onchange = async e => {
       const v = e.target.value; e.target.value = ''; if (!v) return;
       await G.fastForward(v[0] === '+' ? { plus: +v.slice(1) } : { to: v });

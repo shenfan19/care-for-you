@@ -1,8 +1,8 @@
 <!doctype html><meta charset="utf-8"><title>头像预览</title>
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../css/style.css">
 <style>.sheet{display:flex;flex-wrap:wrap;gap:6px;padding:10px}.sheet div{width:150px;text-align:center;font-size:12px}.sheet svg{width:150px;height:195px}</style>
 <div class="sheet" id="s"></div>
-<script src="../vendor/js-yaml.min.js"></script><script src="../src/ini.js"></script><script src="../src/content.js"></script><script src="../src/content_more.js"></script><script src="../src/avatar.js"></script>
+<script src="../vendor/js-yaml.min.js"></script><script src="../src/core/ini.js"></script><script src="../src/data/content.js"></script><script src="../src/data/content_more.js"></script><script src="../src/world/avatar.js"></script>
 <script>
 const C = CY.content;
 document.getElementById('s').innerHTML = C.archetypes.map(a => `<div>${CY.avatarPreview(a, a.look)}${a.role}</div>`).join('') +

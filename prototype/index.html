@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Care for You</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="gate" class="gate" style="display:none"></div>
@@ -40,8 +40,8 @@
 </div>
 <div id="modal" class="modal"></div>
 <script src="vendor/js-yaml.min.js"></script>
-<script src="src/meta.js"></script>
-<script src="src/i18n.js"></script>
+<script src="src/core/meta.js"></script>
+<script src="src/core/i18n.js"></script>
 <script src="locales/zh-CN.js"></script>
 <script src="locales/en.js"></script>
 <script src="locales/zh-TW.js"></script>
@@ -50,30 +50,43 @@
 <script src="locales/ko.js"></script>
 <script src="locales/es.js"></script>
 <script src="locales/de.js"></script>
-<script src="src/ini.js"></script>
-<script src="src/store.js"></script>
-<script src="src/archive.js"></script>
-<script src="src/content.js"></script>
-<script src="src/content_more.js"></script>
-<script src="src/content_en.js"></script>
-<script src="src/content_react.js"></script>
+<script src="src/core/ini.js"></script>
+<script src="src/core/store.js"></script>
+<script src="src/core/archive.js"></script>
+<script src="src/data/content.js"></script>
+<script src="src/data/content_more.js"></script>
+<script src="src/data/content_en.js"></script>
+<script src="src/data/content_react.js"></script>
 <script src="locales/content_zh-TW.js"></script>
 <script src="locales/content_ja.js"></script>
 <script src="locales/content_ko.js"></script>
 <script src="locales/content_fr.js"></script>
 <script src="locales/content_es.js"></script>
 <script src="locales/content_de.js"></script>
-<script src="src/seed.js"></script>
-<script src="src/ai.js"></script>
-<script src="src/account.js"></script>
-<script src="src/game.js"></script>
-<script src="src/avatar.js"></script>
-<script src="src/world.js"></script>
-<script src="src/iso.js"></script>
-<script src="src/scenes.js"></script>
-<script src="src/ui_room.js"></script>
-<script src="src/ui_home.js"></script>
-<script src="src/share.js"></script>
-<script src="src/main.js"></script>
+<script src="src/data/seed.js"></script>
+<script src="src/ai/ai.js"></script>
+<script src="src/ai/account.js"></script>
+<script src="src/core/game.js"></script>
+<script src="src/core/directives.js"></script>
+<script src="src/core/time.js"></script>
+<script src="src/core/economy.js"></script>
+<script src="src/core/clock.js"></script>
+<script src="src/backend/protocol.js"></script>
+<script src="src/backend/local.js"></script>
+<script src="src/backend/http.js"></script>
+<script src="src/backend/index.js"></script>
+<script src="src/world/avatar.js"></script>
+<script src="src/world/world.js"></script>
+<script src="src/world/iso.js"></script>
+<script src="src/world/scenes.js"></script>
+<script src="src/ui/ui_room.js"></script>
+<script src="src/ui/header.js"></script>
+<script src="src/ui/feed.js"></script>
+<script src="src/ui/people_add.js"></script>
+<script src="src/ui/people.js"></script>
+<script src="src/ui/life.js"></script>
+<script src="src/ui/dialogs.js"></script>
+<script src="src/ui/share.js"></script>
+<script src="src/ui/main.js"></script>
 </body>
 </html>

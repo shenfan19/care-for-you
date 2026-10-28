@@ -439,7 +439,7 @@ needs:
   toilet: { label: 想上厕所, icon: "🚽", rate: 0.05 }
 actions:
   lead: { label: 扶去厕所, hold: 4, min: 8, effect: { toilet: -1 } }
-  nightlight: { label: 开小夜灯, hold: 2, min: 2, effect: { toilet: -0.3 }, sets: { nightlight_min: 480 } }
+  nightlight: { label: 开小夜灯, hold: 2, min: 2, effect: { toilet: -0.3 }, flag: { name: nightlight, minutes: 480 } }
   selftoilet: { label: 自己去厕所, selfonly: true, self: [adult, elder], hold: 1, min: 5, effect: { toilet: -0.8 } }
 lines:
   request:
@@ -506,6 +506,84 @@ actions:
 lines:
   request:
     sneeze: ["{ta}连着打了几个喷嚏，眼睛红红的。", "{ta}揉着鼻子，说这几天又过敏了。"]
+`;
+
+  F['templates/events/rules.yaml'] = `version: 1
+# 事件规则数据库。游戏本体不写死任何人或事件，谁在什么时候发生什么，都从这里读，改了就生效。
+# trigger：tick 是时间过去，action 是玩家做了一件事，end 是某个带时限的标记到期。
+# when：触发条件，可用 sleeping，any_condition，all_conditions，stage，species，hour_from，hour_to，flag，no_flag，care_total_in，min_frailty。
+# rate_per_hour：每游戏小时发生的概率。chance：这一条触发的概率。stop：触发后不再看后面的规则。
+# do：要做的事，op 可用 flag_set，flag_clear，need，mood，frailty，condition_add，condition_remove，counter，log，say。
+# then：先 do，再按 chance 乘以 scale 里的各项算概率，从 outcomes 里按 weight 挑一个结果。
+# 数值是占位，等 Life Matters 的模型接进来，可以换成远程后端，规则格式不用变。
+rules:
+  - id: night_toilet
+    trigger: tick
+    when: { sleeping: true, any_condition: [nocturia], no_flag: [wc, hospital] }
+    rate_per_hour: 0.31
+    do:
+      - { op: flag_set, name: wc, minutes: 6, place: home, room: toilet }
+      - { op: log, type: self, key: log.night_wc }
+  - id: night_toilet_end
+    trigger: end
+    flag: wc
+    do:
+      - { op: need, need: toilet, delta: -0.9 }
+    then:
+      chance: 0.012
+      scale:
+        - { frailty: 2 }
+        - { age_over: 80, mult: 1.3 }
+        - { flag: nightlight, mult: 0.5 }
+        - { param: fall_scale }
+      outcomes:
+        - weight: 0.65
+          do:
+            - { op: mood, delta: -0.15 }
+            - { op: frailty, delta: 0.15 }
+            - { op: flag_set, name: hurt, minutes: 0, value: minor }
+            - { op: log, type: event, key: log.fall_minor }
+            - { op: say, kind: soft, tkey: log.fall_minor }
+        - weight: 0.35
+          do:
+            - { op: flag_set, name: hospital, minutes: 4320, place: hospital, room: ward, mode: sleep }
+            - { op: condition_add, id: fracture }
+            - { op: flag_set, name: hurt, minutes: 0, value: serious }
+            - { op: log, type: event, key: log.fall_serious }
+            - { op: say, kind: cry, tkey: log.fall_serious }
+  - id: hospital_end
+    trigger: end
+    flag: hospital
+    do:
+      - { op: flag_clear, name: hurt }
+      - { op: counter, name: hospital_n, delta: 1 }
+      - { op: log, type: recovered, key: log.discharge }
+      - { op: say, kind: soft, group: events, key: discharge }
+  - id: clear_hurt
+    trigger: action
+    when: { flag: [hurt] }
+    do:
+      - { op: flag_clear, name: hurt }
+  - id: milestone
+    trigger: action
+    when: { care_total_in: [10, 50, 100, 300] }
+    stop: true
+    do:
+      - { op: say, kind: speech, group: events, key: 'milestone_{care_total}' }
+  - id: after_fall
+    trigger: action
+    when: { flag: [hurt] }
+    chance: 0.8
+    stop: true
+    do:
+      - { op: say, kind: speech, group: events, key: after_fall }
+  - id: visit_hospital
+    trigger: action
+    when: { flag: [hospital] }
+    chance: 0.6
+    stop: true
+    do:
+      - { op: say, kind: speech, group: events, key: visit_hospital }
 `;
 
   /* 以下由 content.js 的数据生成 */

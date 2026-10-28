@@ -56,11 +56,13 @@
 
   /* 页面：家，办公室，医院是斜视的房子，最后一页是全家总览，原来的大头像加状态 */
   U.viewPlace = 'home';
-  U.PAGES = () => CY.world.PLACE_LIST.concat('family');
-  U.cyclePlace = function (d) { const L = U.PAGES(), i = L.indexOf(U.viewPlace); U.viewPlace = L[(i + d + L.length) % L.length]; U.renderRoom(true); };
+  U.PAGES = () => { const L = CY.world.occupiedPlaces(); return G.activePeople().length ? L.concat('family') : []; };
+  U.cyclePlace = function (d) { const L = U.PAGES(); if (L.length < 2) return; const i = L.indexOf(U.viewPlace); U.viewPlace = L[(i + d + L.length) % L.length]; U.renderRoom(true); };
   U.renderScene = function () {
     const el = $r('#scene'); if (!el) return;
-    const h = G.dayMinutes() / 60, fam = U.viewPlace === 'family';
+    const pages = U.PAGES();
+    if (pages.length && !pages.includes(U.viewPlace)) U.viewPlace = pages[0];
+    const h = G.dayMinutes() / 60, fam = U.viewPlace === 'family' || !pages.length;
     U.room.classList.toggle('iso', !fam);
     let sig, html;
     if (fam) {
@@ -71,32 +73,15 @@
     if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html(); }
   };
 
-  /* 小人在格子上走：沿着先横后竖的路，走多久由调用的人给 */
-  const figs = new Set();
-  const percent = (place, gx, gy) => { const q = CY.world.project(place, gx, gy); return { l: q.x / CY.world.VW * 100, t: q.y / CY.world.VH * 100, z: Math.round(q.y) }; };
-  const paint = (el, place, gx, gy) => { const q = percent(place, gx, gy); el.style.left = q.l + '%'; el.style.top = q.t + '%'; el.style.setProperty('--z', q.z); };
-  let figRaf = 0;
-  const figLoop = () => {
-    figRaf = 0;
-    const now = performance.now();
-    for (const el of [...figs]) {
-      const a = el._anim;
-      if (!a || !el.isConnected) { figs.delete(el); continue; }
-      const k = Math.min(1, (now - a.t0) / a.ms), pos = CY.world.pathPos(a.from, a.to, k);
-      paint(el, a.place, pos.gx, pos.gy); el._pos = { place: a.place, gx: pos.gx, gy: pos.gy };
-      if (k >= 1) { el._anim = null; el.classList.remove('walking'); figs.delete(el); }
-    }
-    if (figs.size) figRaf = win().requestAnimationFrame(figLoop);
+  /* 摆放：按格子位置直接站过去 */
+  const paint = (el, place, gx, gy) => {
+    const q = CY.world.project(place, gx, gy);
+    el.style.left = (q.x / CY.world.VW * 100) + '%'; el.style.top = (q.y / CY.world.VH * 100) + '%'; el.style.setProperty('--z', Math.round(q.y));
   };
-  /* ms 为 0 就直接站过去。目标没变不重启 */
-  U.moveFig = function (el, place, gx, gy, ms) {
-    const cur = el._pos, to = { gx, gy };
-    if (cur && cur.place === place && Math.abs(cur.gx - gx) + Math.abs(cur.gy - gy) < 0.01 && !el._anim) return;
-    if (el._anim && el._anim.place === place && Math.abs(el._anim.to.gx - gx) + Math.abs(el._anim.to.gy - gy) < 0.01) return;
-    if (!cur || cur.place !== place || !ms) { el._anim = null; el._pos = { place, gx, gy }; paint(el, place, gx, gy); el.classList.remove('walking'); figs.delete(el); return; }
-    el._anim = { place, from: { gx: cur.gx, gy: cur.gy }, to, t0: performance.now(), ms: Math.max(300, ms) };
-    el.classList.add('walking'); figs.add(el);
-    if (!figRaf) figRaf = win().requestAnimationFrame(figLoop);
+  U.moveFig = function (el, place, gx, gy) {
+    const cur = el._pos;
+    if (cur && cur.place === place && Math.abs(cur.gx - gx) + Math.abs(cur.gy - gy) < 0.01) return;
+    el._pos = { place, gx, gy }; paint(el, place, gx, gy);
   };
 
   /* 昼夜色调：夜里偏蓝，黄昏偏橙，清晨淡淡的暖色 */
@@ -115,7 +100,7 @@
     const stage = $r('#stage');
     if (!stage) return;
     U.renderTint(); U.renderScene();
-    const fam = U.viewPlace === 'family';
+    const pages = U.PAGES(), fam = U.viewPlace === 'family' || !pages.length;
     const all = G.activePeople(), laid = fam ? null : new Map(CY.world.layout(U.viewPlace).map(l => [l.id, l])), people = fam ? all : all.filter(p => laid.has(p.id));
     const topP = people.slice().sort((a, b) => G.urgency(b) - G.urgency(a))[0], topId = topP && G.urgency(topP) > 0.7 ? topP.id : null;
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
@@ -129,14 +114,13 @@
         c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; U.sel = p.id; U.openRing(p.id); };
         stage.appendChild(c);
       }
-      if (fam) { c.style.left = ''; c.style.top = ''; c.style.removeProperty('--z'); c._pos = null; c._anim = null; c.classList.remove('lying', 'incradle', 'walking'); }
+      if (fam) { c.style.left = ''; c.style.top = ''; c.style.removeProperty('--z'); c._pos = null; }
       else {
         const lp = laid.get(p.id);
-        U.moveFig(c, U.viewPlace, lp.gx, lp.gy, Math.min(7000, CY.world.dist(c._pos || lp, lp) * CY.world.TILE_SEC * 1000));
-        c.classList.toggle('lying', lp.kind === 'sleep'); c.classList.toggle('incradle', lp.kind === 'cradle');
+        U.moveFig(c, U.viewPlace, lp.gx, lp.gy);
       }
-      const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M' + (G.crying[p.id] ? 'c' : ''));
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = fam ? CY.avatar(p) : CY.iso.mini(p, { asleep: G.isSleeping(p), crying: !!G.crying[p.id] }); c.dataset.av = look; }
+      const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M');
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p));
@@ -161,8 +145,8 @@
       /* 徽标 */
       const defs = G.needsOf(p), b = [];
       for (const k in defs) if (p.state.needs[k] > 0.6) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);
-      if (p.state.hospital) b.unshift('<span title="' + esc(t('loc.hospital')) + '">🏥</span>');
-      if (p.state.hurt) b.unshift('<span class="urgent" title="' + esc(t('log.fall_minor', { name: p.person.name })) + '">❗</span>');
+      if (G.flag(p, 'hospital')) b.unshift('<span title="' + esc(t('loc.hospital')) + '">🏥</span>');
+      if (G.flag(p, 'hurt')) b.unshift('<span class="urgent" title="' + esc(t('log.fall_minor', { name: p.person.name })) + '">❗</span>');
       const bs = b.join('');
       if (c.dataset.bd !== bs) { c.querySelector('.badges').innerHTML = bs; c.dataset.bd = bs; }
       /* 气泡 */
@@ -214,27 +198,25 @@
     let c = stage.querySelector('.cx.player');
     if (!c) {
       c = doc().createElement('div'); c.className = 'cx player'; c.innerHTML = '<div class="body"></div><div class="nm"><b></b></div>';
-      c.querySelector('.body').innerHTML = CY.iso.mini(PLAYER, {}); stage.appendChild(c);
+      c.querySelector('.body').innerHTML = CY.avatar(PLAYER); stage.appendChild(c);
     }
     c.querySelector('b').textContent = t('player.name');
-    const show = v.place === U.viewPlace && U.viewPlace !== 'family';
+    const pages = U.PAGES(), show = v.place === U.viewPlace && U.viewPlace !== 'family' && pages.length > 0 && !v.traveling;
     c.style.display = show ? '' : 'none';
-    if (!show) { c._pos = null; c._anim = null; c.dataset.key = ''; return; }
-    if (v.moving) {
-      if (c.dataset.key !== v.id) { c.dataset.key = v.id; c._pos = null; U.moveFig(c, v.place, v.gx, v.gy, 0); U.moveFig(c, v.place, v.moving.gx, v.moving.gy, v.moving.ms); }
-    } else { c.dataset.key = ''; U.moveFig(c, v.place, v.gx, v.gy, 0); if (c._anim) { c._anim = null; figs.delete(c); c.classList.remove('walking'); } }
+    if (show) U.moveFig(c, v.place, v.gx, v.gy);
   };
   U.renderNav = function () {
     const nav = $r('#placeNav'); if (!nav) return;
-    const W = CY.world, at = W.where(), fam = U.viewPlace === 'family';
+    const W = CY.world, at = W.where(), pages = U.PAGES(), fam = U.viewPlace === 'family';
+    nav.style.display = pages.length ? '' : 'none';
     const here = t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
     const away = !fam && at.place !== U.viewPlace, fast = G.timeMode() === 'compressed';
     const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
-    const sig = [U.viewPlace, here, away, fast, min, CY.i18n.lang].join('|');
+    const sig = [U.viewPlace, here, away, fast, min, pages.join(), CY.i18n.lang].join('|');
     if (nav.dataset.sig === sig) return;
     nav.dataset.sig = sig;
-    const pn = t('loc.' + U.viewPlace);
-    nav.innerHTML = `<button data-d="-1">◀</button><b>${esc(pn)}</b><button data-d="1">▶</button>` + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
+    const pn = U.viewPlace ? t('loc.' + U.viewPlace) : '';
+    nav.innerHTML = (pages.length > 1 ? `<button data-d="-1">◀</button>` : '') + `<b>${esc(pn)}</b>` + (pages.length > 1 ? `<button data-d="1">▶</button>` : '') + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
       (away ? `<button class="travel" id="travelBtn">${esc(fast ? t('nav.travel_click', { place: pn, t: U.fmtMinutes(min) }) : t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
     nav.querySelectorAll('[data-d]').forEach(b => b.onclick = e => { e.stopPropagation(); U.cyclePlace(+b.dataset.d); });
     const tb = nav.querySelector('#travelBtn');
@@ -243,12 +225,7 @@
     else tb.onpointerdown = e => {
       e.preventDefault(); tb.setPointerCapture(e.pointerId);
       const dur = W.travelHold(at.place, U.viewPlace) * 1000, t0 = performance.now(); let raf;
-      W.beginExit(dur); U.renderPlayer();
-      const stop = (ok) => {
-        win().cancelAnimationFrame(raf); tb.style.setProperty('--k', 0); tb.onpointerup = tb.onpointercancel = null;
-        if (ok) { W.walk = null; W.travel(U.viewPlace); } else W.cancelWalk();
-        U.renderRoom(true);
-      };
+      const stop = ok => { win().cancelAnimationFrame(raf); tb.style.setProperty('--k', 0); tb.onpointerup = tb.onpointercancel = null; if (ok) { W.travel(U.viewPlace); U.renderRoom(true); } };
       const step = () => { const k = Math.min(1, (performance.now() - t0) / dur); tb.style.setProperty('--k', k); if (k >= 1) stop(true); else raf = win().requestAnimationFrame(step); };
       tb.onpointerup = tb.onpointercancel = () => stop(false); raf = win().requestAnimationFrame(step);
     };
@@ -256,16 +233,16 @@
   /* 角上缩小的名单：原来的头像和状态，点一下出菜单 */
   U.renderRoster = function () {
     const box = $r('#roster'); if (!box) return;
-    const people = G.activePeople(), fam = U.viewPlace === 'family';
+    const people = G.activePeople(), fam = U.viewPlace === 'family' || !U.PAGES().length;
     box.style.display = fam || !people.length ? 'none' : '';
     if (fam) return;
-    const sig = people.map(p => [p.id, p.person.name, Math.round(p.state.mood * 10), Math.round(G.maxNeed(p) * 10), !!G.req[p.id], G.topNeed(p), G.isSleeping(p), !!p.state.hospital, !!p.state.hurt].join(':')).join('|') + CY.i18n.lang;
+    const sig = people.map(p => [p.id, p.person.name, Math.round(p.state.mood * 10), Math.round(G.maxNeed(p) * 10), !!G.req[p.id], G.topNeed(p), G.isSleeping(p), !!G.flag(p, 'hospital'), !!G.flag(p, 'hurt')].join(':')).join('|') + CY.i18n.lang;
     if (box.dataset.sig === sig) return;
     box.dataset.sig = sig;
     box.innerHTML = people.map(p => {
       const defs = G.needsOf(p), tn = G.topNeed(p), urgent = p.state.needs[tn] > 0.6;
       return `<div class="rcard ${G.req[p.id] ? 'calling' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name)}"><div class="av">${CY.avatar(p)}</div>
-        <div class="rn">${esc(p.person.name)}${G.isSleeping(p) ? ' 💤' : ''}${p.state.hospital ? ' 🏥' : ''}${p.state.hurt ? ' ❗' : ''}</div>
+        <div class="rn">${esc(p.person.name)}${G.isSleeping(p) ? ' 💤' : ''}${G.flag(p, 'hospital') ? ' 🏥' : ''}${G.flag(p, 'hurt') ? ' ❗' : ''}</div>
         <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${p.state.needs[tn] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
     }).join('');
     box.querySelectorAll('.rcard').forEach(el => el.onclick = e => {
@@ -314,24 +291,23 @@
     for (const b of btns) { b.style.left = (+b.dataset.x + shift) + 'px'; b.style.top = b.dataset.y + 'px'; }
   };
 
-  /* 现实速度里的长按：先走过去再做，走路和做事是同一次长按的两段，圈走满了才算做完。
-     走到一半松手，人就停在半路。要去的人在别的地点，先去那里。 */
+  /* 长按：按住这么多秒，动作才做完。要照顾的人在别的地点，先去那里。同一个地点，主角直接出现在他旁边。
+     中途松手就没做，主角留在原地几秒，勾了自动回岗位再回去。 */
   let hold = null;
   U.startHold = function (pid, a, x, y) {
     U.endHold(false);
     const W = CY.world, p = G.get(pid), need = W.enforce && p ? W.presenceNeed(p) : null;
     if (need && need.offsite) { G.toastFor(p, t('toast.offsite', { name: p.person.name, place: t('loc.' + need.place) }), 'soft'); U.closeRing(); return; }
-    const walkMs = need ? W.beginWalkMs(need) : 0;
+    W.holding = true;
     const h = $r('#hold');
     h.style.display = 'block'; h.style.left = x + 'px'; h.style.top = y + 'px';
     const fg = h.querySelector('.fg'), C = 2 * Math.PI * 26;
     fg.style.strokeDasharray = C; fg.style.strokeDashoffset = C;
-    hold = { pid, a, start: performance.now(), dur: walkMs + G.holdSeconds(a) * 1000, C, fg, win: win(), walked: !!need };
+    hold = { pid, a, start: performance.now(), dur: G.holdSeconds(a) * 1000, C, fg, win: win() };
     const step = () => {
       if (!hold) return;
       const k = Math.min(1, (performance.now() - hold.start) / hold.dur);
       hold.fg.style.strokeDashoffset = hold.C * (1 - k);
-      U.renderPlayer();
       if (k >= 1) U.endHold(true); else hold.raf = hold.win.requestAnimationFrame(step);
     };
     hold.raf = hold.win.requestAnimationFrame(step);
@@ -340,8 +316,8 @@
     if (!hold) return;
     const h = hold; hold = null;
     h.win.cancelAnimationFrame(h.raf);
+    CY.world.holding = false; CY.world.lastActive = Date.now();
     const el = $r('#hold'); if (el) el.style.display = 'none';
-    if (h.walked) { if (done) CY.world.arriveNow(); else CY.world.cancelWalk(); }
     if (done) { G.perform(h.pid, h.a.id); U.closeRing(); }
     U.renderRoom(true);
   };
