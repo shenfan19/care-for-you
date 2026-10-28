@@ -162,3 +162,5 @@ CY.i18n.register("ja", {"status.at": "今は{room}。好きな場所：{likes}"}
 CY.i18n.register("ja", {"preset.bighouse.label": "にぎやかな一家", "preset.bighouse.note": "祖父母、両親、子ども、猫と犬。それぞれ歩き回り、助け合います", "preset.name.dad": "パパ"});
 
 CY.i18n.register("ja", {"status.at": "今は{room}。好きな場所：{likes}"});
+
+CY.i18n.register("ja", {"card.title": "キャラカード", "card.note": "この種類のキャラクターの全設定。データフォルダの {file} にあります。ここでは読み取り専用で、新しく作るものはこれに従います。", "card.copy": "コピー", "card.none": "カードが見つかりません"});

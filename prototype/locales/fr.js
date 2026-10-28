@@ -166,3 +166,5 @@ CY.i18n.register("fr", {"status.at": "Maintenant : {room} ; aime : {likes}"});
 CY.i18n.register("fr", {"preset.bighouse.label": "Une maison animée", "preset.bighouse.note": "Grands-parents, parents, un enfant, un chat et un chien, chacun va et vient et s’occupe des autres", "preset.name.dad": "Papa"});
 
 CY.i18n.register("fr", {"status.at": "Maintenant : {room} ; aime : {likes}"});
+
+CY.i18n.register("fr", {"card.title": "Fiche de rôle", "card.note": "Tout sur ce type de personnage, dans votre dossier de données : {file}. Lecture seule ici ; les nouveaux de ce type la suivent.", "card.copy": "Copier", "card.none": "Fiche introuvable"});

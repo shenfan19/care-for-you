@@ -25,6 +25,17 @@
     });
   };
 
+  /* ---------- 角色卡：这一类角色的明文 YAML，只读，可以复制 ---------- */
+  U.cardDialog = async function (pid) {
+    const p = G.get(pid); if (!p) return;
+    const id = p.person.card || p.person.archetype, text = (id && await CY.store.read(`templates/cards/${id}.yaml`)) || '';
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('card.title'))} · ${esc(p.person.role || p.person.name)}</h2><div class="mute" style="margin-bottom:6px">${esc(t('card.note', { file: 'templates/cards/' + (id || '') + '.yaml' }))}</div>
+      <pre class="cardtext">${esc(text || t('card.none'))}</pre>
+      <div class="row" style="justify-content:space-between;margin-top:10px"><button id="ccopy">${esc(t('card.copy'))}</button><button id="cback">${esc(t('btn.close'))}</button></div>`, true);
+    dlg.querySelector('#ccopy').onclick = async () => { try { await navigator.clipboard.writeText(text); } catch (e) {} };
+    dlg.querySelector('#cback').onclick = () => U.statusDialog(pid);
+  };
+
   /* ---------- 角色的状态和需求 ---------- */
   U.statusDialog = function (pid) {
     const p = G.get(pid); if (!p) return;
@@ -44,9 +55,10 @@
       <div class="srow2"><span class="l">${esc(t('status.frailty'))}</span><div class="bar"><i style="width:${Math.round(p.state.frailty * 100)}%"></i></div></div>
       <h3>${esc(t('status.needs'))}</h3>${bars}
       <h3>${esc(t('status.selfdo', { n: Math.round(st.self_care * 100) }))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
-      <div class="row" style="justify-content:space-between;margin-top:12px"><span><button id="stedit">${esc(t('btn.edit'))}</button> <button id="starch">${esc(t('btn.archive'))}</button> <button id="stdel">${esc(t('btn.delete'))}</button></span><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
+      <div class="row" style="justify-content:space-between;margin-top:12px"><span><button id="stedit">${esc(t('btn.edit'))}</button> <button id="stcard">${esc(t('card.title'))}</button> <button id="starch">${esc(t('btn.archive'))}</button> <button id="stdel">${esc(t('btn.delete'))}</button></span><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
     dlg.querySelector('#stclose').onclick = U.closeDialog;
     dlg.querySelector('#stedit').onclick = () => U.addDialog(null, () => {}, pid);
+    dlg.querySelector('#stcard').onclick = () => U.cardDialog(pid);
     dlg.querySelector('#starch').onclick = async () => { await G.archivePerson(pid, true); U.closeDialog(); U.afterPeopleChange(); };
     dlg.querySelector('#stdel').onclick = () => U.deleteDialog(pid);
   };

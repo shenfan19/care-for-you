@@ -464,3 +464,5 @@ CY.i18n.register("en", {"status.at": "Now in the {room}; likes the {likes}"});
 CY.i18n.register("en", {"preset.bighouse.label": "A lively household", "preset.bighouse.note": "Grandparents, parents, a child, a cat and a dog, all wandering on their own and looking after each other", "preset.name.dad": "Dad"});
 
 CY.i18n.register("en", {"status.at": "Now in the {room}; likes the {likes}"});
+
+CY.i18n.register("en", {"card.title": "Role card", "card.note": "Everything about this kind of character, in your data folder at {file}. Read-only here; new ones of this kind follow it.", "card.copy": "Copy", "card.none": "Card not found"});

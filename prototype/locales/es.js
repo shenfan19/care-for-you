@@ -162,3 +162,5 @@ CY.i18n.register("es", {"status.at": "Ahora en {room}; le gusta: {likes}"});
 CY.i18n.register("es", {"preset.bighouse.label": "Una casa animada", "preset.bighouse.note": "Abuelos, padres, un niño, un gato y un perro, cada uno va a lo suyo y se cuidan entre sí", "preset.name.dad": "Papá"});
 
 CY.i18n.register("es", {"status.at": "Ahora en {room}; le gusta: {likes}"});
+
+CY.i18n.register("es", {"card.title": "Ficha de rol", "card.note": "Todo sobre este tipo de personaje, en tu carpeta de datos: {file}. Solo lectura aquí; los nuevos de este tipo la siguen.", "card.copy": "Copiar", "card.none": "Ficha no encontrada"});

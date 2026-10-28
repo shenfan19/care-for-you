@@ -162,3 +162,5 @@ CY.i18n.register("ko", {"status.at": "지금 {room}에 있음, 좋아하는 곳:
 CY.i18n.register("ko", {"preset.bighouse.label": "북적이는 가족", "preset.bighouse.note": "조부모, 부모, 아이, 고양이와 개가 각자 돌아다니며 서로 돌봅니다", "preset.name.dad": "아빠"});
 
 CY.i18n.register("ko", {"status.at": "지금 {room}에 있음, 좋아하는 곳: {likes}"});
+
+CY.i18n.register("ko", {"card.title": "캐릭터 카드", "card.note": "이 종류 캐릭터의 모든 설정입니다. 데이터 폴더의 {file}에 있으며 여기서는 읽기 전용이고, 새로 만드는 캐릭터가 이를 따릅니다.", "card.copy": "복사", "card.none": "카드를 찾을 수 없습니다"});
