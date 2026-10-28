@@ -67,7 +67,7 @@
       const pool = G.activePeople().filter(p => eligible(p, h, hp.threshold || 0.65)).sort((a, b) => G.urgency(b) - G.urgency(a));
       if (!pool.length) { timers[h.id] = 15; continue; }
       const p = pool[0], tl = W.locationOf(p), hl = W.locationOf(h);
-      if (tl.place === hl.place && tl.room !== hl.room) { timers[h.id] = W.goTo(h, tl.room) ? 12 : 8; continue; }
+      if (tl.place === hl.place && tl.room !== hl.room) { timers[h.id] = W.goTo(h, tl.room, 0.7, 'help') ? 12 : 8; continue; }
       timers[h.id] = iv[0] + Math.random() * (iv[1] - iv[0]);
       const a = bestAction(p);
       if (a) doAssist(h.person.name, p, a, hp.efficiency || 0.5);

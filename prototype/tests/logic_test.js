@@ -655,6 +655,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('move 指令只认家里的房间', mv.length === 1 && mv[0].room === 'toilet');
     G.applyDirectives(mv);
     check('后端能把人叫去房间', W.locationOf(mm2).room === 'toilet' && W.agents[mm2.id].next > Date.now() + 2.5 * 60000);
+    /* 家人去帮忙：先走到要照顾的人那里，头上有标记 */
+    for (const x of G.people) x.person.active = x === mm2 || x === bb2;
+ mm2.state.needs.hunger = 0.1; bb2.state.needs.hunger = 0.9; G.act[bb2.id] = 'awake';
+    W.agents[mm2.id] = { room: 'kitchen', next: Date.now() + 1e9 }; W.frozen.clear();
+    mm2.person.helper = true; G.assistTick(1000);
+    check('帮忙的人先走去要照顾的人那里并带着标记', W.agents[mm2.id].room === 'living' && W.errandOf(mm2) === 'help', JSON.stringify(W.agents[mm2.id]));
+    for (const x of G.people) x.person.active = true;
     /* 角色卡里的喜好优先 */
     const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/mom.yaml')); cardY.prefs = { rooms: { yard: 1 }, restless: 1 };
     await CY.store.write('templates/cards/mom.yaml', ctx.jsyaml.dump(cardY)); await G.load();
@@ -696,6 +703,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('没人管的记录一轮只留一次', missed === 1, String(missed));
     G.perform(B3.id, 'feed'); check('照顾过后重新计', G.nagN[B3.id] === 0);
     for (const x of G.people) x.person.active = true;
+  }
+
+  /* 旧数据文件夹：没有 card、prefs、help 的角色，带钱和保姆的旧 world.yaml，都能照常载入 */
+  {
+    for (const x of G.people) x.person.active = true;
+    const oid = await G.createPerson({ arch: 'mom', name: '旧妈妈', helper: true });
+    const py = ctx.jsyaml.load(await CY.store.read(`people/${oid}/person.yaml`)); delete py.card; delete py.prefs; delete py.help; delete py.class_override; delete py.need_rate; delete py.self_actions;
+    await CY.store.write(`people/${oid}/person.yaml`, ctx.jsyaml.dump(py));
+    const wy = ctx.jsyaml.load(await CY.store.read('world.yaml')); wy.money = 321; wy.inv = { food: 3 }; wy.nanny = { days_left: 2, owed: 0 }; await CY.store.write('world.yaml', ctx.jsyaml.dump(wy));
+    let loadErr = null; try { await G.load(); } catch (e) { loadErr = e; }
+    const OM = G.get(oid);
+    check('旧数据文件夹能载入', !loadErr && !!OM, loadErr && String(loadErr));
+    check('旧数据里的钱和保姆被丢掉', !('money' in G.world) && !('inv' in G.world) && !('nanny' in G.world));
+    check('没有卡的旧角色也会走动、也能帮忙', ['living', 'kitchen', 'yard', 'study', 'toilet', 'bedroom'].includes(CY.world.locationOf(OM).room) && G.helpers().some(h => h.id === oid));
+    await G.deletePerson(oid);
   }
 
   /* 旧设置文件里取消了的项会被丢掉 */

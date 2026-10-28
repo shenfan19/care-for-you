@@ -104,7 +104,7 @@
     const now = Date.now();
     let A = W.agents[p.id];
     if (!A) A = W.agents[p.id] = { room: W.chooseRoom(p, null), next: now + dwellMs(p) * Math.random() };
-    else if (now >= A.next && !W.frozen.has(p.id)) { A.room = W.chooseRoom(p, A.room); A.next = now + dwellMs(p); }
+    else if (now >= A.next && !W.frozen.has(p.id)) { A.room = W.chooseRoom(p, A.room); A.next = now + dwellMs(p); A.errand = null; }
     else if (W.frozen.has(p.id)) A.next = Math.max(A.next, now + 3000);
     return A.room;
   };
@@ -112,12 +112,14 @@
   W.isMealTime = () => { const hr = G.dayMinutes() / 60; return (hr >= 12 && hr < 13) || (hr >= 18 && hr < 19); };
   W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
   /* 叫一个人走到某个房间去，比如大人去照顾哭的孩子。被悬停或点选的人不动 */
-  W.goTo = (p, room, minutes) => {
+  W.goTo = (p, room, minutes, errand) => {
     if (W.frozen.has(p.id) || p === G.protagonist()) return false;
     const A = W.agents[p.id] || (W.agents[p.id] = { room, next: 0 });
-    A.room = room; A.next = Date.now() + (minutes ? minutes * 60000 : 40000);
+    A.room = room; A.next = Date.now() + (minutes ? minutes * 60000 : 40000); A.errand = errand || null;
     return true;
   };
+  /* 这个人正在为什么事走动，比如去帮忙 */
+  W.errandOf = p => (W.agents[p.id] && W.agents[p.id].errand) || null;
   W.freeze = (id, on) => { if (on) W.frozen.add(id); else W.frozen.delete(id); };
 
   W.locationOf = p => {

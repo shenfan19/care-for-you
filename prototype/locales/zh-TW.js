@@ -628,3 +628,5 @@ CY.i18n.register("zh-TW", {"preset.bighouse.label": "熱鬧的一家", "preset.b
 CY.i18n.register("zh-TW", {"status.at": "現在在{room}，愛待在{likes}"});
 
 CY.i18n.register("zh-TW", {"card.title": "角色卡", "card.note": "這一類角色的全部設定，在資料夾的 {file}，唯讀，新建的這一類角色照它來", "card.copy": "複製", "card.none": "沒有找到這張卡"});
+
+CY.i18n.register("zh-TW", {"badge.help": "去幫忙"});

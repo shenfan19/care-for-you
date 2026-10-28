@@ -167,6 +167,7 @@
       /* 徽标 */
       const defs = G.needsOf(p), b = [];
       for (const k in defs) if (p.state.needs[k] > 0.6) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);
+      if (CY.world.errandOf(p) === 'help') b.unshift('<span title="' + esc(t('badge.help')) + '">🤝</span>');
       if (G.flag(p, 'hospital')) b.unshift('<span title="' + esc(t('loc.hospital')) + '">🏥</span>');
       if (G.flag(p, 'hurt')) b.unshift('<span class="urgent" title="' + esc(t('log.fall_minor', { name: p.person.name })) + '">❗</span>');
       const bs = b.join('');

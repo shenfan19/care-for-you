@@ -164,3 +164,5 @@ CY.i18n.register("de", {"preset.bighouse.label": "Ein lebhafter Haushalt", "pres
 CY.i18n.register("de", {"status.at": "Gerade: {room}; mag: {likes}"});
 
 CY.i18n.register("de", {"card.title": "Rollenkarte", "card.note": "Alles zu dieser Art von Figur, in deinem Datenordner: {file}. Hier nur lesbar; neue Figuren dieser Art folgen ihr.", "card.copy": "Kopieren", "card.none": "Karte nicht gefunden"});
+
+CY.i18n.register("de", {"badge.help": "Hilft gleich"});
