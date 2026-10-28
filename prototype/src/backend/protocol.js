@@ -13,7 +13,7 @@
    flag 是带时限的标记，比如在医院，夜里起夜，受了伤。带 place 的标记会让这个人出现在那个地点。
 
    directive 是后端要游戏做的事，op 只能是下面这些，别的一律丢弃，数值会被压回范围：
-     flag_set { person, name, minutes, value?, place?, room?, mode? }   flag_clear { person, name }
+     flag_set { person, name, minutes, value?, place?, room?, mode? }   flag_clear { person, name }   move { person, room, minutes? }（让这个人走到家里的某个房间，停留一阵）
      need { person, need, delta }   need_set { person, need, value }   mood_set frailty_set { person, value }   mood { person, delta }   frailty { person, delta }
      condition_add { person, id }   condition_remove { person, id }   counter { person, name, delta }   seen { person, name }（记下今天已经说过，每天只触发一次的规则用）
      log { person, type, text | key, args? }    say { person, text | tkey | group+key, kind? }    （tkey 是界面文字的键，group+key 是台词库里的位置） */
@@ -59,6 +59,7 @@
           if (d.value !== undefined) o.value = str(String(d.value), 24);
           if (d.place) { if (!(W && W.PLACES[d.place])) continue; o.place = d.place; o.room = W.PLACES[d.place].rooms[d.room] ? d.room : Object.keys(W.PLACES[d.place].rooms)[0]; o.mode = ['stand', 'sleep', 'cradle'].includes(d.mode) ? d.mode : 'stand'; }
           break;
+        case 'move': if (!(W && W.PLACES.home.rooms[d.room])) continue; o.room = d.room; o.minutes = clamp(num(d.minutes) || 1, 0.2, 30); break;
         case 'flag_clear': o.name = str(d.name, 24); if (!o.name) continue; break;
         case 'need_set': o.need = str(d.need, 24); o.value = clamp(num(d.value), 0, 1); break;
         case 'mood_set': case 'frailty_set': o.value = clamp(num(d.value), 0, 1); break;

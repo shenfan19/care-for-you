@@ -18,6 +18,9 @@ def step(person, minutes):
     out = []
     for need, v in person["needs"].items():
         out.append({"op": "need_set", "person": person["id"], "need": need, "value": min(1.0, v + RATE_PER_HOUR * minutes / 60)})
+    # 例子：饿得厉害的人，请游戏让他走去厨房待两分钟
+    if person["needs"].get("hunger", 0) > 0.8 and not person.get("sleeping"):
+        out.append({"op": "move", "person": person["id"], "room": "kitchen", "minutes": 2})
     return out
 
 

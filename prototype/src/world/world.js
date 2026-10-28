@@ -110,10 +110,10 @@
   };
   W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
   /* 叫一个人走到某个房间去，比如大人去照顾哭的孩子。被悬停或点选的人不动 */
-  W.goTo = (p, room) => {
+  W.goTo = (p, room, minutes) => {
     if (W.frozen.has(p.id) || p === G.protagonist()) return false;
     const A = W.agents[p.id] || (W.agents[p.id] = { room, next: 0 });
-    A.room = room; A.next = Date.now() + 40000;
+    A.room = room; A.next = Date.now() + (minutes ? minutes * 60000 : 40000);
     return true;
   };
   W.freeze = (id, on) => { if (on) W.frozen.add(id); else W.frozen.delete(id); };

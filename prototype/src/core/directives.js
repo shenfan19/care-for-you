@@ -29,6 +29,7 @@
       const s = p.state;
       switch (d.op) {
         case 'flag_set': G.setFlag(p, d.name, d); break;
+        case 'move': if (CY.world) CY.world.goTo(p, d.room, d.minutes); break;
         case 'flag_clear': G.clearFlag(p, d.name); break;
         case 'need': if (d.need in s.needs) s.needs[d.need] = clamp(s.needs[d.need] + d.delta); break;
         case 'need_set': if (d.need in s.needs) s.needs[d.need] = d.value; break;

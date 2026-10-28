@@ -649,6 +649,11 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (let i = 0; i < 400; i++) G.socialTick(60);
     const after = Object.values(G.journal[gp2.id] || {}).flat().length + Object.values(G.journal[mm2.id] || {}).flat().length + Object.values(G.journal[ct2.id] || {}).flat().length + Object.values(G.journal[bb2.id] || {}).flat().length;
     check('同房间的人自己聊起来并留在发生的事里', after > before && (gp2.state.needs.company < 0.9 || mm2.state.needs.company < 0.9), before + ' -> ' + after);
+    /* 后端可以让一个人走去某个房间 */
+    const mv = CY.protocol.sanitize([{ op: 'move', person: mm2.id, room: 'toilet', minutes: 3 }, { op: 'move', person: mm2.id, room: 'nowhere' }]);
+    check('move 指令只认家里的房间', mv.length === 1 && mv[0].room === 'toilet');
+    G.applyDirectives(mv);
+    check('后端能把人叫去房间', W.locationOf(mm2).room === 'toilet' && W.agents[mm2.id].next > Date.now() + 2.5 * 60000);
     /* 角色卡里的喜好优先 */
     const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/mom.yaml')); cardY.prefs = { rooms: { yard: 1 }, restless: 1 };
     await CY.store.write('templates/cards/mom.yaml', ctx.jsyaml.dump(cardY)); await G.load();
