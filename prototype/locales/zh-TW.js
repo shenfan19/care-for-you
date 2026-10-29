@@ -155,7 +155,7 @@ CY.i18n.register("zh-TW", {
  "set.data_note": "{where}。所有資料都是明文檔案，選資料夾時請確認它不會被同步到別人能看到的地方。",
  "set.folder": "選擇資料資料夾",
  "set.restore": "補回缺失的初始檔案",
- "set.danger": "刪除",
+ "set.advanced": "進階設定", "set.danger": "刪除",
  "set.wipe_note": "刪除本機上的全部遊戲資料，包括所有角色和記錄。",
  "set.wipe": "刪除全部本地資料",
  "set.folder_had": "已切換到該資料夾裡已有的資料",

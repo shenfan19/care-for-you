@@ -35,7 +35,7 @@ CY.i18n.register("de", {
 "sec.interrupt": "Unterbrechungen", "sec.time": "Zeit", "sec.player": "Namen", "sec.interaction": "Interaktion", "sec.ui": "Oberfläche", "sec.privacy": "Datenschutz", "sec.account": "Konto", "sec.ai": "KI", "sec.play": "Spielweise", "sec.economy": "Arbeit und Geld",
 "set.title": "Einstellungen", "set.look": "Aussehen und Sprache", "set.theme": "Design", "set.bg": "Hintergrund", "set.lang": "Sprache", "set.data": "Wo die Daten liegen",
 "set.data_note": "{where}. Alle Daten sind einfache Textdateien. Wenn du einen Ordner wählst, achte darauf, dass er nicht dorthin synchronisiert wird, wo andere ihn sehen können.",
-"set.folder": "Datenordner wählen", "set.restore": "Fehlende Startdateien wiederherstellen", "set.danger": "Löschen", "set.wipe_note": "Löscht alle Spieldaten auf diesem Gerät, einschließlich aller Figuren und Einträge.",
+"set.folder": "Datenordner wählen", "set.restore": "Fehlende Startdateien wiederherstellen", "set.advanced": "Erweiterte Einstellungen", "set.danger": "Löschen", "set.wipe_note": "Löscht alle Spieldaten auf diesem Gerät, einschließlich aller Figuren und Einträge.",
 "set.wipe": "Alle lokalen Daten löschen", "set.folder_had": "Zu den Daten gewechselt, die schon in diesem Ordner lagen", "set.folder_copied": "Aktuelle Daten in diesen Ordner kopiert", "set.restored": "{n} Dateien wiederhergestellt",
 "wipe.title": "Alle lokalen Daten löschen", "wipe.body": "Das entfernt alle Figuren, Einträge und Einstellungen auf diesem Gerät und lässt sich nicht rückgängig machen. Vorher einen Spielstand herunterzuladen wird empfohlen.",
 "wipe.save_first": "Zuerst einen Spielstand herunterladen", "wipe.sure": "Ich verstehe, dass das nicht rückgängig zu machen ist", "wipe.go": "Löschen",

@@ -39,7 +39,7 @@ CY.i18n.register("fr", {
 "sec.interrupt": "Interruptions", "sec.time": "Temps", "sec.player": "Noms", "sec.interaction": "Interaction", "sec.ui": "Interface", "sec.privacy": "Confidentialité", "sec.account": "Compte", "sec.ai": "IA", "sec.play": "Expérience", "sec.economy": "Travail et argent",
 "set.title": "Réglages", "set.look": "Apparence et langue", "set.theme": "Thème", "set.bg": "Fond", "set.lang": "Langue", "set.data": "Emplacement des données",
 "set.data_note": "{where}. Toutes les données sont des fichiers texte. Si vous choisissez un dossier, assurez-vous qu'il n'est pas synchronisé là où d'autres peuvent le voir.",
-"set.folder": "Choisir le dossier de données", "set.restore": "Restaurer les fichiers de départ manquants", "set.danger": "Supprimer", "set.wipe_note": "Supprime toutes les données du jeu sur cet appareil, y compris chaque personnage et chaque trace.",
+"set.folder": "Choisir le dossier de données", "set.restore": "Restaurer les fichiers de départ manquants", "set.advanced": "Réglages avancés", "set.danger": "Supprimer", "set.wipe_note": "Supprime toutes les données du jeu sur cet appareil, y compris chaque personnage et chaque trace.",
 "set.wipe": "Supprimer toutes les données locales", "set.folder_had": "Passé aux données déjà présentes dans ce dossier", "set.folder_copied": "Données actuelles copiées dans ce dossier", "set.restored": "{n} fichiers restaurés",
 "wipe.title": "Supprimer toutes les données locales", "wipe.body": "Cela supprime tous les personnages, traces et réglages de cet appareil, sans retour possible. Il est conseillé de télécharger d'abord une sauvegarde.",
 "wipe.save_first": "Télécharger d'abord une sauvegarde", "wipe.sure": "Je comprends que c'est irréversible", "wipe.go": "Supprimer",

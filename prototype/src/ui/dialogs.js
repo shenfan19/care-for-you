@@ -11,14 +11,18 @@
   const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
-    let sec = '';
-    const form = ini.SCHEMA.filter(([s, k]) => !SKIP.has(s + '.' + k)).map(([s, k, d, note]) => {
+    /* AI、账号、后端、对外接口都在底部的高级设置里，默认折叠 */
+    const ADV = k => /^(ai|account)\./.test(k) || /^play\.(backend_|needs_source|api_bridge)/.test(k);
+    const rows = list => { let sec = ''; return list.map(([s, k, d, note]) => {
       const v = ini.get(G.cfg, s, k), key = s + '.' + k;
       const head = s !== sec ? `<h3>${esc(t('sec.' + s))}</h3>` : ''; sec = s;
       const opts = OPT[key] || (d === 'true' || d === 'false' ? ['true', 'false'] : null);
       const input = opts ? `<select data-k="${key}">${opts.map(o => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input data-k="${key}" ${k === 'api_key' ? 'type="password"' : ''} value="${esc(v)}">`;
       return head + `<div class="srow"><span class="k">${k}</span>${input}<span class="mute n">${esc(CY.tOr('ini.' + key, note))}</span></div>`;
-    }).join('');
+    }).join(''); };
+    const shown = ini.SCHEMA.filter(([s, k]) => !SKIP.has(s + '.' + k));
+    const form = rows(shown.filter(([s, k]) => !ADV(s + '.' + k)));
+    const advForm = rows(shown.filter(([s, k]) => ADV(s + '.' + k)));
     const th = ini.get(G.cfg, 'ui', 'theme'), bg = ini.get(G.cfg, 'ui', 'background'), lg = ini.get(G.cfg, 'ui', 'language');
     const sel = (name, vals, labels, cur) => `<select data-ap="${name}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('set.title'))}</h2>
@@ -32,6 +36,7 @@
       <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button></div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
+      <details class="adv"><summary>${esc(t('set.advanced'))}</summary><div class="sform">${advForm}</div></details>
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="scancel" class="primary">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelectorAll('[data-ap]').forEach(el => el[el.tagName === 'SELECT' ? 'onchange' : 'onclick'] = async () => {
       const k = el.dataset.ap; G.cfg.ui = G.cfg.ui || {}; G.cfg.ui[k] = el.tagName === 'SELECT' ? el.value : el.dataset.v;
