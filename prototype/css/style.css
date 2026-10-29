@@ -289,3 +289,6 @@ header { align-items:center; }
 .tile { display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; padding:8px 10px; border-radius:10px; }
 .tile b { font-size:14px; } .tile .mute { font-size:12px; line-height:1.35; }
 @media (max-width:480px) { .tiles { grid-template-columns:1fr; } }
+.corner { position:absolute; top:8px; z-index:9; padding:3px 10px; border-radius:12px; font-size:13px; background:color-mix(in srgb, var(--card) 82%, transparent); border:1px solid var(--line); font-variant-numeric:tabular-nums; line-height:1.4; }
+.corner.cl { top:auto; bottom:10px; right:10px; pointer-events:none; } .corner.cr { right:10px; cursor:pointer; }
+.money.big { font-size:22px; font-weight:600; }

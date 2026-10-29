@@ -14,7 +14,7 @@
     return items[items.length - 1];
   };
   const sameRoom = (a, b) => a.location.place === b.location.place && a.location.room === b.location.room;
-  const busy = q => q.sleeping || q.flags.hospital || q.flags.outing;
+  const busy = q => q.sleeping || q.flags.hospital || q.flags.outing || q.flags.offduty;
   const GO_ALONE = ['teen', 'adult', 'elder'];
 
   /* 一行愿望表是否适用于这个人 */

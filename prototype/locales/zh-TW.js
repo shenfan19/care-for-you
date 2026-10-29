@@ -155,7 +155,7 @@ CY.i18n.register("zh-TW", {
  "set.data_note": "{where}。所有資料都是明文檔案，選資料夾時請確認它不會被同步到別人能看到的地方。",
  "set.folder": "選擇資料資料夾",
  "set.restore": "補回缺失的初始檔案",
- "ob.random": "隨機生成", "ob.custom": "自己搭配", "ob.back": "返回", "ob.more": "更多情境", "preset.selfcare.label": "一個人住，照顧自己", "preset.selfcare.note": "單身獨居，你就是那個人：按時吃藥、測血糖、做飯、休息", "preset.name.self": "我", "set.advanced": "進階設定", "set.danger": "刪除",
+ "ob.random": "隨機生成", "ob.custom": "自己搭配", "ob.back": "返回", "ob.more": "更多情境", "preset.selfcare.label": "一個人住，照顧自己", "preset.selfcare.note": "單身獨居，你就是那個人：按時吃藥、測血糖、做飯、休息", "preset.name.self": "我", "corner.money_tip": "錢。點開可以請保姆", "help.title": "家裡的幫手", "help.income": "工作時段在書桌前會賺錢，每小時 {n}；老人主角領固定的退休金，每小時 {p}。錢只用來請保姆。", "nanny.title": "保姆", "nanny.note": "白天幫你照顧家裡的人，每天 {n}，從錢裡自動付。錢不夠的那天保姆休息，不會欠帳。", "nanny.status": "保姆在白天幫你照顧家裡的人，每天 {n}。", "nanny.hire": "請保姆", "nanny.dismiss": "不請了", "nanny.name": "保姆", "log.nanny_hired": "請了一位保姆。", "log.nanny_paid": "付了今天保姆的錢，{n}。", "log.nanny_rest": "錢不夠，今天保姆休息。", "log.nanny_end": "保姆不來了。", "arch.nanny": "保姆", "set.advanced": "進階設定", "set.danger": "刪除",
  "set.wipe_note": "刪除本機上的全部遊戲資料，包括所有角色和記錄。",
  "set.wipe": "刪除全部本地資料",
  "set.folder_had": "已切換到該資料夾裡已有的資料",

@@ -19,7 +19,7 @@
     const GROUPS = ['family', 'animal', 'plant'];
     function render() {
       const arch = C.archOf(st.arch), human = arch.species === 'human';
-      const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
+      const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g && !a.hidden).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
       const look = st.look, stage = C.stageOf(st.age);
       const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look, st.age)}</div><div>
         <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa" ${editP ? 'disabled' : ''}>${archSel}</select></div>
@@ -90,7 +90,7 @@
   const shuffle = a => a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
   /* 随机生成一个家：三成是一个人住照顾自己，其余是一到三个人加宠物和花草，人有几率带病 */
   U.randomHousehold = function () {
-    const fam = C.archetypes.filter(a => a.group === 'family'), pets = C.archetypes.filter(a => a.group === 'animal'), plants = C.archetypes.filter(a => a.group === 'plant');
+    const fam = C.archetypes.filter(a => a.group === 'family' && !a.hidden), pets = C.archetypes.filter(a => a.group === 'animal'), plants = C.archetypes.filter(a => a.group === 'plant');
     const stageOf = a => (a.species === 'human' ? C.stageOf(a.age) : '');
     const condsFor = (a, p) => { const st = stageOf(a), pool = COND_BY_STAGE[st === 'elder' ? 'elder' : ['child', 'teen'].includes(st) ? 'child' : 'adult']; return st === 'infant' || st === 'toddler' || Math.random() > p ? [] : shuffle(pool).slice(0, Math.random() < 0.3 ? 2 : 1); };
     const nm = a => CY.tOr('preset.name.' + a.id, U.archName(a.id));
@@ -139,7 +139,7 @@
       const groups = ['family', 'animal', 'plant'];
       const dlg = U.dialog(`<div class="obhead"><h2 style="margin:0">${esc(t('ob.custom'))}</h2>${langSel()}</div>
         <div class="chips" style="margin:10px 0">${groups.map(g => `<button class="chip ${g === tab ? 'on' : ''}" data-tab="${g}">${esc(t('add.group_' + g))}</button>`).join('')}</div>
-        <div class="chips">${C.archetypes.filter(a => a.group === tab).map(a => `<button class="chip" data-a="${a.id}">${esc(U.archName(a.id))}</button>`).join('')}</div>
+        <div class="chips">${C.archetypes.filter(a => a.group === tab && !a.hidden).map(a => `<button class="chip" data-a="${a.id}">${esc(U.archName(a.id))}</button>`).join('')}</div>
         <div class="row" style="margin-top:12px"><button id="obback">${esc(t('ob.back'))}</button></div>${footer()}`, true);
       wireLang(dlg); wireGo(dlg);
       dlg.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });

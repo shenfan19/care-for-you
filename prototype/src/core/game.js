@@ -112,7 +112,8 @@
     G.tpl.system = (await store.readYaml('templates/system.yaml')) || {};
     G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
     G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
-    delete G.world.money; delete G.world.inv; delete G.world.nanny;
+    delete G.world.inv; delete G.world.nanny;   /* 旧版的物品和保姆，新版只留钱和 nanny_on */
+    if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY || 200;
     delete G.world.tasks;
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
@@ -168,7 +169,7 @@
     if (spec.arch) { person.card = spec.arch; if (Object.keys(person.lines).length) person.lines_lang = 'zh-CN'; }
     const hp = arch.help || {};
     if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : !!hp.proactive;
-    if (human && (hp.efficiency || hp.interval)) person.help = { efficiency: hp.efficiency, interval: hp.interval };
+    if (human && (hp.efficiency || hp.interval || hp.role)) person.help = { efficiency: hp.efficiency, interval: hp.interval, role: hp.role };
     const stg = human ? CY.content.stageOf(age) : species, cls0 = G.tpl.classes[stg] || {};
     const diff = {}; for (const k in arch.class || {}) if (arch.class[k] !== cls0[k]) diff[k] = arch.class[k];
     if (Object.keys(diff).length) person.class_override = diff;
@@ -254,6 +255,7 @@
   const rateOf = (d, stage) => (typeof d.rate === 'number' ? d.rate : (d.rate && (d.rate[stage] !== undefined ? d.rate[stage] : d.rate.default)) || 0.05);
   G.needsOf = p => {
     const out = {};
+    if (p.person.help && p.person.help.role === 'nanny') return out;   /* 保姆来上班，自己没有需求 */
     const add = (defs) => { for (const k in defs || {}) { const d = defs[k]; if (!d.stages || d.stages.includes(G.stage(p))) out[k] = Object.assign({}, d, { rateNow: rateOf(d, G.stage(p)) }); } };
     add(p.species.needs);
     for (const c of p.person.conditions || []) add((G.tpl.conditions[c] || {}).needs);
@@ -520,6 +522,7 @@
       if (was < 0.7 && s.frailty >= 0.7) { G.logK(p.id, 'frail', 'log.frail', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
       if (was >= 0.5 && s.frailty < 0.5) G.logK(p.id, 'recovered', 'log.recovered', { name: p.person.name });
     }
+    if (G.economyTick) G.economyTick(gmin, offline);
     if (!offline) G.driveTick(gmin);
   }
 

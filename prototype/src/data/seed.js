@@ -927,7 +927,7 @@ rules:
      prefs 是爱待在哪些房间（rooms 是权重）和爱不爱动（restless，0 到 1，越大越爱换地方）；
      help 是主动帮忙：proactive 为真就会隔一阵自己走过去照顾最需要的人，threshold 是需求超过多少才出手，efficiency 是效果比例，interval 是间隔的现实秒数范围；
      dialogue 是对话：voice 指向声线，lines 里写的话优先于声线。 */
-  const CARD_V = 4;
+  const CARD_V = 5;
   /* 各类角色在各个房间的喜好权重，卡里的 prefs.rooms 写了就以卡为准。需求会另外把人推向厨房、卧室这些地方 */
   const PREFS = {
     elder: { living: 3, yard: 2, kitchen: 1.5 }, adult: { living: 3, kitchen: 1.5, yard: 1, study: 0.6 }, teen: { bedroom: 3, living: 1.5, study: 1.5, kitchen: 0.6 },
@@ -947,6 +947,7 @@ rules:
     toddler4: { lines: { request: { hunger: ['{title}，我要吃饭，我自己吃。'] } } },
     woman25: { lines: { thanks: { default: ['谢啦。'] } } },
     popo: { health: { score: 0.6 } },
+    nanny: { health: { score: 0.95 }, help: { proactive: true, role: 'nanny', efficiency: 0.6, interval: [60, 120], threshold: 0.5 } },
   };
   let cardCache = null;
   const cardFiles = () => {
@@ -959,6 +960,7 @@ rules:
       const ex = CARD_EXTRA[a.id] || {};
       const card = { version: CARD_V, id: a.id, label: a.role, group: a.group, species: a.species };
       if (human) { card.age = a.age; card.stage = stage; }
+      if (a.hidden) card.hidden = true;
       Object.assign(card, { pronoun: a.pronoun, voice: a.voice, look: a.look, traits: [],
         health: Object.assign({ score: human ? SCORE[stage] : 0.9, mood: 0.6, conditions: [] }, ex.health),
         class: Object.assign({}, cls[stage]), need_rate: {}, self_actions: selfActs,

@@ -15,7 +15,7 @@
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   /* ---------- 个人卡的判断，前台再核一遍，不全信后台 ---------- */
-  const eligibleTo = p => p && p.person.active !== false && p !== G.protagonist() && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing');
+  const eligibleTo = p => p && p.person.active !== false && p !== G.protagonist() && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty');
   /* 别人能为这个人的某个需求做的动作：能降低这个需求的，不是特殊动作 */
   const careAction = (p, need) => {
     let best = null, gain = 0;

@@ -40,7 +40,16 @@
 
   /* ---------- 顶栏：经历了多少时间，现在是几点 ---------- */
   /* 顶栏不再显示时间，信息越少越好 */
-  U.renderClock = function () {};
+  /* 房间的两个角：左上角是现在几点，右上角是钱，点开可以请保姆 */
+  U.renderClock = function () {
+    const root = U.room; if (!root) return;
+    const tm = root.querySelector('#cornerTime'), mn = root.querySelector('#cornerMoney');
+    if (!tm || !mn) return;
+    const c = G.clock(), wd = new Date().toLocaleDateString(I.lang, { weekday: 'short' });
+    tm.textContent = c.hh + ':' + c.mm + ' · ' + wd;
+    mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
+    mn.onclick = () => U.helpDialog();
+  };
 
   /* 房间下方的条不要了：添加，编辑，归档，删除，叫回离开的人，都在顶栏的角色里 */
   U.renderBar = function () {

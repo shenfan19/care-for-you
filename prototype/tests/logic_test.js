@@ -692,7 +692,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     for (const x of G.people) x.person.active = false;
     const baby3 = await mk('baby', '没人理的宝宝'); const B3 = G.get(baby3.id); B3.person.active = true; for (const k in B3.state.needs) B3.state.needs[k] = 0.1; B3.state.needs.hunger = 0.85; G.act[B3.id] = 'awake';
-    G.cfg.time.mode = 'real'; G.nagN = {}; G.nagLogged = {}; G.nagAt = {}; G.req = {}; G.nextAt = Date.now() + 1e9;
+    G.cfg.time.mode = 'real'; G.cfg.time.daynight = 'game'; G.world.clock_shift = ((600 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; G.nagN = {}; G.nagLogged = {}; G.nagAt = {}; G.req = {}; G.nextAt = Date.now() + 1e9;
     const gaps = [];
     for (let i = 0; i < 5; i++) {
       G.nagAt = {}; G.nagTick(Date.now()); gaps.push(G.nagAt[B3.id] - Date.now());
@@ -715,7 +715,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     let loadErr = null; try { await G.load(); } catch (e) { loadErr = e; }
     const OM = G.get(oid);
     check('旧数据文件夹能载入', !loadErr && !!OM, loadErr && String(loadErr));
-    check('旧数据里的钱和保姆被丢掉', !('money' in G.world) && !('inv' in G.world) && !('nanny' in G.world));
+    check('旧数据里的钱保留，物品和旧保姆被丢掉', G.world.money === 321 && !('inv' in G.world) && !('nanny' in G.world));
     check('没有卡的旧角色也会走动、也能帮忙', ['living', 'kitchen', 'yard', 'study', 'toilet', 'bedroom'].includes(CY.world.locationOf(OM).room) && G.helpers().some(h => h.id === oid));
     await G.deletePerson(oid);
   }
@@ -820,6 +820,31 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('一个人住照顾自己的场景：只有一个成年人，带病', pr.members.length === 1 && m.lead && m.conditions.includes('diabetes') && G.get(sid).person.age === 55);
     check('他能当主角，也能自己照顾自己', G.setProtagonist(sid) && G.protagonist().id === sid && Object.keys(G.actionsOf(G.get(sid))).length > 0);
     G.setProtagonist(null);
+    for (const x of G.people) x.person.active = true;
+  }
+
+  /* 金钱：工作时段赚钱，请保姆，没有欠账 */
+  {
+    const atHour = h => { G.cfg.time.daynight = 'game'; G.world.clock_shift = ((h * 60 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; };
+    CY.world.enforce = false; G.cfg.economy.work_hours = '09:00-18:00'; G.setProtagonist(null);
+    atHour(10); G.world.money = 100; G.economyTick(60, false);
+    check('工作时段每小时赚 40', Math.abs(G.world.money - 140) < 0.01, G.world.money);
+    atHour(22); G.economyTick(60, false);
+    check('不是工作时段不赚钱', Math.abs(G.world.money - 140) < 0.01);
+    check('保姆不出现在可添加的角色里', !CY.content.archetypes.filter(a => !a.hidden).some(a => a.id === 'nanny'));
+    G.world.money = 50; await G.hireNanny(); atHour(10);
+    const nn = G.nanny();
+    check('请了保姆：一个真实的角色，没有自己的需求', !!nn && nn.person.help.role === 'nanny' && Object.keys(G.needsOf(nn)).length === 0 && G.nannyOn());
+    G.economyTick(0, false);
+    check('钱不够的那天保姆休息，不欠账也不扣钱', G.world.money === 50 && !!G.flag(nn, 'offduty'), G.world.money);
+    G.world.money = 500; G.world.game_minutes += 1440; atHour(10); G.economyTick(0, false);
+    check('钱够了的一天自动付 120，保姆白天上班', G.world.money === 380 && !G.flag(nn, 'offduty'), G.world.money);
+    atHour(22); G.economyTick(0, false);
+    check('晚上保姆下班', !!G.flag(nn, 'offduty'));
+    await G.dismissNanny();
+    check('不请了：保姆不再来，钱不变', !G.nannyOn() && nn.person.active === false || G.get(nn.id).person.active === false);
+    const pen = (() => { const e = G.people.find(p => p.person.kind === 'human' && G.stage(p) === 'elder'); return e; })();
+    if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，每小时 4', Math.abs(G.world.money - m1 - 4) < 0.01); G.setProtagonist(null); }
     for (const x of G.people) x.person.active = true;
   }
 

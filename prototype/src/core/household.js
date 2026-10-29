@@ -37,7 +37,7 @@
 
   /* ---------- 谁能帮别人：卡里写了 help.proactive 的成人，没做主角，不是婴幼儿。帮不帮、帮谁由 agents.js 按后台的策略决定 ---------- */
   G.canHelp = p => !!p.person.helper && G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)) && p !== G.protagonist();
-  G.helpers = () => G.activePeople().filter(p => G.canHelp(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && G.maxNeed(p) < 0.8);
+  G.helpers = () => G.activePeople().filter(p => G.canHelp(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty') && G.maxNeed(p) < 0.8);
 
   /* ---------- 人和人之间：在同一个房间的两个人，偶尔自己聊几句、玩一会儿、逗逗宠物，需求会降一点，发生的事里留一句 ---------- */
   const socialCd = {}, SMALL = ['infant', 'toddler', 'child'];
