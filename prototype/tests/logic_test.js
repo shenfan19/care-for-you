@@ -792,6 +792,26 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = true;
   }
 
+  /* 换语言：台词库没有残留中文，发生的事的记录跟着语言变 */
+  {
+    const y = ctx.jsyaml, cjk = /[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af]/, zhF = CY.seed.contentFiles('zh-CN');
+    const leaves = (o, pre = '', out = []) => { if (Array.isArray(o)) out.push([pre, o]); else if (o && typeof o === 'object') for (const k in o) leaves(o[k], pre + '/' + k, out); return out; };
+    const bad = [];
+    for (const L of ['en', 'fr', 'es', 'de']) {
+      const F = CY.seed.contentFiles(L);
+      for (const f in zhF) { if (!/voices\//.test(f)) continue; const rel = f.replace(/^templates\/content\/[^/]+\//, ''), key = Object.keys(F).find(x => x.endsWith(rel)); const B = Object.fromEntries(leaves(y.load(F[key]) || {})); for (const [p, a] of leaves(y.load(zhF[f]) || {})) if (!B[p] || B[p].some(x => typeof x === 'string' && cjk.test(x))) bad.push(L + rel + p); }
+    }
+    check('英法西德的台词库没有缺的或残留的中文', bad.length === 0, bad.slice(0, 4).join(' '));
+    const jp = await mk('mom', '语言妈妈'); jp.state.needs.hunger = 0.9; G.act[jp.id] = 'awake';
+    for (const x of G.people) x.person.active = x === jp;
+    CY.i18n.set('zh-CN'); const act = Object.values(G.actionsOf(jp)).find(a => a.effect && a.effect.hunger < 0);
+    G.perform(jp.id, act.id);
+    const ent = Object.values(G.journal[jp.id]).flat().filter(e => e.type === 'care').pop();
+    const zhText = G.entryText(ent); CY.i18n.set('en'); const enText = G.entryText(ent); CY.i18n.set('zh-CN');
+    check('发生的事存了键和参数，换成英文后框架和动作名都变了', !!ent.k && enText !== zhText && !/[\u4e00-\u9fff]/.test(enText.replace(ent.a.line, '')), zhText + ' | ' + enText);
+    for (const x of G.people) x.person.active = true;
+  }
+
   /* zip：不压缩的写出，读回内容一致 */
   const blob = CY.store.zip([{ name: 'careforyou-data/people/a.yaml', data: new TextEncoder().encode('名字: 爷爷\n') }, { name: 'careforyou-data/settings.ini', data: new TextEncoder().encode('[a]\nb = 1\n') }]);
   fs.writeFileSync(path.join(process.env.TEMP || '/tmp', 'cy_test.zip'), Buffer.from(await blob.arrayBuffer()));

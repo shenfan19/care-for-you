@@ -30,7 +30,7 @@
     }
     for (const m of group) {
       G.setFlag(m, 'outing', { minutes: o.minutes, place: o.place, room: o.room, mode: 'stand' });
-      G.log(m.id, 'event', t('log.outing_start', { name: m.person.name, place: t('loc.' + o.place) }));
+      G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place: G.ref('loc.' + o.place, o.place) });
       if (m !== p) m.state.mood = clamp(m.state.mood + 0.05);
     }
   };
@@ -56,7 +56,7 @@
     if (W.isMealTime() && eaters.length >= 3 && (socialCd.meal || 0) < now) {
       socialCd.meal = now + 3 * 3600 * 1000;
       for (const q of eaters) { lower(q, 'hunger', 0.35); lower(q, 'thirst', 0.2); q.state.mood = clamp(q.state.mood + 0.03); }
-      G.log(eaters[0].id, 'event', t('social.meal', { n: eaters.length }));
+      G.logK(eaters[0].id, 'event', 'social.meal', { n: eaters.length });
     }
     for (const room in byRoom) {
       const L = byRoom[room]; if (L.length < 2) continue;
@@ -79,7 +79,7 @@
       else { lower(tgt, 'company', 0.2); lower(tgt, 'play', 0.15); }
       for (const q of [a, b]) q.state.mood = clamp(q.state.mood + 0.02);
       socialCd[key] = now + 90 * 60 * 1000;
-      G.log(tgt.id, 'event', t('social.' + kind, { a: who.person.name, b: tgt.person.name }));
+      G.logK(tgt.id, 'event', 'social.' + kind, { a: who.person.name, b: tgt.person.name });
     }
   };
 })(globalThis.CY = globalThis.CY || {});

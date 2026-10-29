@@ -88,7 +88,7 @@
     applyEffects(from, a, (to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5);
     from.state.mood = clamp(from.state.mood + 0.03);
     const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label });
-    G.log(from.id, 'care', txt); G.toastFor(from, txt, 'soft'); G.playFx(from.id, a.id);
+    G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); G.playFx(from.id, a.id);
     return true;
   };
   const doSelf = e => {
@@ -107,7 +107,7 @@
     applyEffects(from, a, 1);
     from.state.mood = clamp(from.state.mood + (a.mood === undefined ? 0.08 : a.mood));
     G.startOuting(from, a);
-    if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.log(from.id, 'care', txt); G.toastFor(from, txt, 'soft'); }
+    if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }
     return true;
   };
 

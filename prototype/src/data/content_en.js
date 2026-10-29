@@ -266,6 +266,13 @@
     allergy: { lines: { request: { sneeze: ['{ta} sneezed several times in a row, eyes red.', '{ta} rubbed the nose and said the allergy was back.'] } } },
   };
 
+  /* 补齐：这几句原先只有中文 */
+  Object.assign(V.elder.thanks, { bath: ['Nice and clean, thank you.'], chat: ['Talking with you does me good.'] });
+  Object.assign(V.parent.thanks, { chat: ['Talking with you eases my mind.'] });
+  Object.assign(V.aunt.thanks, { chat: ['What a good chat.'] });
+  Object.assign(V.child.thanks, { homework: ['Oh, I get it now!'] });
+  Object.assign(V.partner.request, { mobility: ['My back aches a bit, I want to move around.'] });
+
   C.registerPack('en', { voices: V, sayings, asks, nudges, conds });
   /* items are merged by id; for asks and nudges only text fields need translating, the structure comes from the Chinese pack */
   const base = C.packs['zh-CN'];

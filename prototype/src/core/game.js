@@ -400,13 +400,22 @@
     };
     if (now) run(); else saveTimer = setTimeout(run, 400);
   };
-  G.log = function (pid, type, text) {
+  /* 发生的事。能翻译的记录同时存下文字的键 k 和参数 a，换语言后按当前语言重新生成；别人说过的原话留着原样。
+     参数里要跟着语言变的词（动作名，需求名，地点，病名）用 G.ref 包一下 */
+  G.ref = (keys, d) => ({ t: [].concat(keys), d });
+  const refText = v => (v && typeof v === 'object' && v.t ? v.t.reduceRight((fb, k) => CY.tOr(k, fb), v.d) : v);
+  G.entryText = e => (e.k && CY.i18n.hasOwn(e.k) ? t(e.k, Object.fromEntries(Object.entries(e.a || {}).map(([k, v]) => [k, refText(v)]))) : e.text);
+  G.log = function (pid, type, text, meta) {
     const d = new Date(), mk = monthKey(d);
     const arr = ((G.journal[pid] = G.journal[pid] || {})[mk] = G.journal[pid][mk] || []);
-    arr.push({ t: d.toISOString(), day: G.clock().d + 1, type, text });
+    arr.push(Object.assign({ t: d.toISOString(), day: G.clock().d + 1, type, text }, meta ? { k: meta.k, a: meta.a } : {}));
     G.dirty.add(`j|${pid}|${mk}`);
     G.save();
   };
+  G.logK = (pid, type, key, args) => G.log(pid, type, G.entryText({ k: key, a: args }), { k: key, a: args });
+  /* 动作名，需求名，病名，地点：跟着语言变 */
+  G.refAct = (a, p) => G.ref(['act.' + a.id + '.' + G.stage(p), 'act.' + a.id], a.label);
+  G.refNeed = (k, d) => G.ref('need.' + k, d.label);
   /* lib 是库里的编号，ans 是预设回答的序号或 custom。正文总是一起记下来。 */
   G.say = function (pid, by, text, lib, ans) {
     const item = { t: new Date().toISOString(), by, text };
@@ -468,8 +477,9 @@
     applyEffects(p, a, 0.7);
     p.state.mood = clamp(p.state.mood + 0.02);
     p.story.self_total = (p.story.self_total || 0) + 1;
-    const txt = CY.i18n.hasOwn('selfact.' + a.id) ? t('selfact.' + a.id, { name: p.person.name }) : t('log.self_did', { name: p.person.name, label: a.label });
-    if (!offline) { G.log(p.id, 'self', txt); G.toastFor(p, txt, 'self'); }
+    const lk = CY.i18n.hasOwn('selfact.' + a.id) ? 'selfact.' + a.id : 'log.self_did', la = { name: p.person.name, label: G.refAct(a, p) };
+    const txt = t(lk, { name: p.person.name, label: a.label });
+    if (!offline) { G.logK(p.id, 'self', lk, la); G.toastFor(p, txt, 'self'); }
     return true;
   }
   G.selfActFor = selfActionFor;
@@ -507,8 +517,8 @@
       const was = s.frailty;
       if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hours * boost * mods.frailty);
       else if (G.maxNeed(p) < 0.4) s.frailty = clamp(s.frailty - 0.01 * hours);
-      if (was < 0.7 && s.frailty >= 0.7) { G.log(p.id, 'frail', t('log.frail', { name: p.person.name })); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
-      if (was >= 0.5 && s.frailty < 0.5) G.log(p.id, 'recovered', t('log.recovered', { name: p.person.name }));
+      if (was < 0.7 && s.frailty >= 0.7) { G.logK(p.id, 'frail', 'log.frail', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
+      if (was >= 0.5 && s.frailty < 0.5) G.logK(p.id, 'recovered', 'log.recovered', { name: p.person.name });
     }
     if (!offline) G.driveTick(gmin);
   }
@@ -673,13 +683,13 @@
       const a = selfActionFor(p, req.need);
       if (a && G.classOf(p).self_care > 0 && selfAct(p, a, req.need, false)) return;
       if (req.nag) G.nagN[p.id] = (G.nagN[p.id] || 0) + 1;
-      if (!req.nag || !G.nagLogged[p.id]) { G.log(p.id, 'missed', t('log.missed_need_helpless', { name: p.person.name, text: req.text })); G.nagLogged[p.id] = true; }
+      if (!req.nag || !G.nagLogged[p.id]) { G.logK(p.id, 'missed', 'log.missed_need_helpless', { name: p.person.name, text: req.text }); G.nagLogged[p.id] = true; }
       G.toastFor(p, t('toast.nobody'), 'soft');
     } else if (req.kind === 'choice') {
       const c = req.choices.find(x => x.liked) || req.choices[0];
       applyChoice(p, c, true);
     } else {
-      G.log(p.id, 'missed', t('log.missed_generic', { text: req.text }));
+      G.logK(p.id, 'missed', 'log.missed_generic', { text: req.text });
       G.toastFor(p, t('toast.nevermind2'), 'soft');
     }
   }
@@ -697,7 +707,7 @@
     p.story.care_total++;
     /* 带去看医生一类的动作直接治好某些病 */
     for (const c of a.heals || []) {
-      if ((p.person.conditions || []).includes(c)) { p.person.conditions = p.person.conditions.filter(x => x !== c); store.writeYaml(`people/${p.id}/person.yaml`, p.person); G.log(p.id, 'recovered', t('log.healed', { name: p.person.name, cond: CY.tOr('cond.' + c, (G.tpl.conditions[c] || {}).label || c) })); }
+      if ((p.person.conditions || []).includes(c)) { p.person.conditions = p.person.conditions.filter(x => x !== c); store.writeYaml(`people/${p.id}/person.yaml`, p.person); G.logK(p.id, 'recovered', 'log.healed', { name: p.person.name, cond: G.ref('cond.' + c, (G.tpl.conditions[c] || {}).label || c) }); }
     }
     /* 急性的病好起来：照顾够了次数就痊愈 */
     for (const c of [...(p.person.conditions || [])]) {
@@ -707,7 +717,7 @@
         if (s.heal[c] >= ha.count) {
           p.person.conditions = p.person.conditions.filter(x => x !== c); delete s.heal[c];
           store.writeYaml(`people/${p.id}/person.yaml`, p.person);
-          G.log(p.id, 'recovered', t('log.healed', { name: p.person.name, cond: CY.tOr('cond.' + c, (G.tpl.conditions[c] || {}).label || c) }));
+          G.logK(p.id, 'recovered', 'log.healed', { name: p.person.name, cond: G.ref('cond.' + c, (G.tpl.conditions[c] || {}).label || c) });
         }
       }
     }
@@ -720,7 +730,7 @@
     const dres = G.drive('action', { person: p, action: { id: actionId, label: a.label }, collect: true });
     if (dres && dres.said) tx = dres.said;
     G.toastFor(p, tx, 'speech'); G.say(pid, 'char', tx);
-    G.log(pid, 'care', t('log.care', { label: a.label, line: tx }));
+    G.logK(pid, 'care', 'log.care', { label: G.refAct(a, p), line: tx });
     G.playFx(pid, actionId);
     G.save(); emit();
     return true;
@@ -747,7 +757,7 @@
     if (!text) return;
     delete G.req[pid];
     G.say(pid, 'you', text, req.askId, custom !== undefined && custom !== null ? 'custom' : idx);
-    G.log(pid, 'talk', t('log.talk', { q: req.text, a: text }));
+    G.logK(pid, 'talk', 'log.talk', { q: req.text, a: text });
     p.story.care_total++; p.state.mood = clamp(p.state.mood + 0.1);
     const rp = G.sayLine(p, 'reply', custom !== undefined && custom !== null ? 'custom' : 'a' + idx);
     G.toastFor(p, rp || line(p, 'thanks', 'default', t('line.ok')), 'speech');
@@ -760,7 +770,7 @@
     p.state.frailty = clamp(p.state.frailty + (c.frailty || 0));
     const reply = G.fmt(c.reply, p);
     G.toastFor(p, reply, 'speech'); G.say(p.id, 'char', reply);
-    G.log(p.id, 'event', t(auto ? 'log.dinner_auto' : 'log.dinner', { name: p.person.name, label: c.label, reply }));
+    G.logK(p.id, 'event', auto ? 'log.dinner_auto' : 'log.dinner', { name: p.person.name, label: c.label, reply });
     if (!auto) p.story.care_total++;
   }
   G.choose = function (pid, i) {
@@ -781,7 +791,7 @@
     delete G.req[pid];
     const text = G.fmt(o.text, p);
     G.say(pid, 'char', text, o.id);
-    G.log(pid, 'picked', t('log.picked', { name: p.person.name, text }));
+    G.logK(pid, 'picked', 'log.picked', { name: p.person.name, text });
     G.toastFor(p, text, 'speech');
     learn(p, 'pick', true, (Date.now() - req.since) / 1000);
     G.save(); emit();
@@ -793,7 +803,7 @@
     delete G.req[pid];
     if (yes) {
       p.story.nudge_done++;
-      G.log(pid, 'nudge', t('log.nudge', { name: p.person.name, text: (G.tpl.nudges.find(n => n.id === req.nudge) || {}).text || '' }));
+      G.logK(pid, 'nudge', 'log.nudge', { name: p.person.name, text: (G.tpl.nudges.find(n => n.id === req.nudge) || {}).text || '' });
       G.toastFor(p, t('toast.go'), 'soft');
     } else G.toastFor(p, t('toast.later'), 'soft');
     learn(p, 'nudge', !!yes, (Date.now() - req.since) / 1000);
@@ -803,7 +813,7 @@
     const r = G.req[pid]; if (!r) return;
     delete G.req[pid];
     learn(G.get(pid), r.kind, false);
-    if (r.kind !== 'pick' && r.kind !== 'nudge') G.log(pid, 'missed', t('log.put_down', { text: r.text }));
+    if (r.kind !== 'pick' && r.kind !== 'nudge') G.logK(pid, 'missed', 'log.put_down', { text: r.text });
     emit();
   };
 
@@ -819,12 +829,12 @@
     for (const p of G.activePeople()) {
       if (!G.classOf(p).cries || G.maxNeed(p) <= 0.8 || G.isSleeping(p)) continue;
       G.crying[p.id] = true;
-      if (!was[p.id]) G.log(p.id, 'cry', t('log.cry', { name: p.person.name, need: G.needLabel(G.topNeed(p), G.needsOf(p)[G.topNeed(p)]) }));
+      if (!was[p.id]) G.logK(p.id, 'cry', 'log.cry', { name: p.person.name, need: G.refNeed(G.topNeed(p), G.needsOf(p)[G.topNeed(p)]) });
       if (!G.toast[p.id] || G.toast[p.id].kind !== 'cry') if (!G.req[p.id] || G.req[p.id].kind !== 'ask') G.toastFor(p, line(p, 'cry', null, t('line.cry')), 'cry');
     }
     if (now >= G.nextAt) { if (G.activePeople().length) fire(); scheduleNext(); }
     const wk = G.isWorkTime();
-    if (G._wk !== undefined && G._wk !== wk && G.activePeople().length) G.log('you', 'event', t(wk ? 'me.work_start' : 'me.work_end'));
+    if (G._wk !== undefined && G._wk !== wk && G.activePeople().length) G.logK('you', 'event', wk ? 'me.work_start' : 'me.work_end', {});
     G._wk = wk;
     if (G.worldTick) G.worldTick(now);
     G.nagTick(now);

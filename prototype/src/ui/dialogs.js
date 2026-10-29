@@ -78,7 +78,7 @@
     const sayRows = [[t('csv.person'), t('csv.time'), t('csv.who'), t('csv.lib'), t('csv.ans'), t('csv.text')]], logRows = [[t('csv.person'), t('csv.time'), t('csv.day'), t('csv.type'), t('csv.text')]];
     for (const p of G.people) {
       for (const s of G.sayings[p.id] || []) sayRows.push([p.person.name, s.t, s.by === 'you' ? t('said.you') : p.person.name, s.lib || '', s.ans === undefined ? '' : s.ans, s.text]);
-      for (const mk in G.journal[p.id] || {}) for (const e of G.journal[p.id][mk]) logRows.push([p.person.name, e.t, e.day || '', typeName(e.type), e.text]);
+      for (const mk in G.journal[p.id] || {}) for (const e of G.journal[p.id][mk]) logRows.push([p.person.name, e.t, e.day || '', typeName(e.type), G.entryText(e)]);
     }
     return { 'summary/sayings.csv': csv(sayRows), 'summary/journal.csv': csv(logRows) };
   };

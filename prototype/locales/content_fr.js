@@ -241,5 +241,11 @@
     forgetful: { lines: { request: { reorient: ["Où ai-je mis mes clés ?", "On est quel jour ?", "{ta} se tenait à la porte, sans se rappeler où aller."] } } },
   };
 
+  /* 补齐：这几句原先只有中文 */
+  Object.assign(V.elder.thanks, { bath: ["Bien propre, merci."], chat: ["Ça me fait du bien de parler avec toi."] });
+  Object.assign(V.parent.thanks, { chat: ["Parler avec toi m'apaise."] });
+  Object.assign(V.aunt.thanks, { chat: ["Quelle bonne discussion !"] });
+  Object.assign(V.partner.request, { mobility: ["J'ai mal au dos, j'ai envie de bouger un peu."] });
+
   C.registerPack('fr', C.buildPack({ voices: V, sayings: S, asks: A, nudges: N, conds }));
 })(globalThis.CY = globalThis.CY || {});
