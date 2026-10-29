@@ -7,7 +7,7 @@
   const $ = id => document.getElementById(id);
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'audio.volume': ['0', '0.25', '0.5', '0.75', '1'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'ui.figure', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
@@ -30,7 +30,7 @@
       <div class="row">${esc(t('set.theme'))} ${sel('theme', ['auto', 'light', 'dark'], [t('theme.auto'), t('theme.light'), t('theme.dark')], th)}</div>
       <div class="row">${esc(t('set.bg'))} <span class="sws">${BGS.map(b => `<span class="sw ${b === bg ? 'on' : ''}" data-ap="background" data-v="${b}" title="${esc(t('bg.' + b))}" style="background:${BG_HEX[b]}"></span>`).join('')}</span></div>
       <div class="row">${esc(t('set.scene'))} ${sel('scene', ['auto', ...CY.scenes.ids, 'none'], ['auto', ...CY.scenes.ids, 'none'].map(k => t('scene.' + k)), ini.get(G.cfg, 'ui', 'scene'))}</div>
-      <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.FIGURES, CY.FIGURES.map(k => t('figure.' + k)), ini.get(G.cfg, 'ui', 'figure'))}</div>
+      <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.FIGURES, CY.FIGURES.map(k => t('figure.' + k)), CY.figureOf(ini.get(G.cfg, 'ui', 'figure')))}</div>
       <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
@@ -47,7 +47,7 @@
     /* 改了就生效，不用另外保存 */
     dlg.querySelectorAll('[data-k]').forEach(el => el.onchange = async () => {
       const [sc, k] = el.dataset.k.split('.'); G.cfg[sc] = G.cfg[sc] || {}; G.cfg[sc][k] = el.value.trim();
-      await G.saveCfg(); U.renderRoom(true); U.renderClock();
+      await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderRoom(true); U.renderClock();
     });
     dlg.querySelector('#dsave').onclick = () => U.saveDialog();
     dlg.querySelector('#dfolder').onclick = async () => {

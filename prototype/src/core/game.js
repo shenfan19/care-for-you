@@ -412,6 +412,7 @@
     const arr = ((G.journal[pid] = G.journal[pid] || {})[mk] = G.journal[pid][mk] || []);
     arr.push(Object.assign({ t: d.toISOString(), day: G.clock().d + 1, type, text }, meta ? { k: meta.k, a: meta.a } : {}));
     G.dirty.add(`j|${pid}|${mk}`);
+    if (type === 'event' && G.get(pid)) G.pop(pid, 'event', '✨');
     G.save();
   };
   G.logK = (pid, type, key, args) => G.log(pid, type, G.entryText({ k: key, a: args }), { k: key, a: args });
@@ -426,7 +427,14 @@
     (G.sayings[pid] = G.sayings[pid] || []).push(item);
     G.dirty.add(`s|${pid}`);
   };
-  G.playFx = (pid, act) => { G.fx[pid] = { act, t: Date.now() }; };
+  /* 头上弹出的事件：ask 有人开口要求，done 完成了打勾，event 发生了事情。界面和声音各自来取 */
+  G.pops = []; G.popSeq = 0; G.popHooks = G.popHooks || [];
+  G.pop = (pid, kind, icon) => {
+    const e = { n: ++G.popSeq, pid, kind, icon, t: Date.now() };
+    G.pops.push(e); if (G.pops.length > 40) G.pops.shift();
+    for (const f of G.popHooks) f(e);
+  };
+  G.playFx = (pid, act) => { G.fx[pid] = { act, t: Date.now() }; G.pop(pid, 'done', '✓'); };
 
   /* ---------- 学习每个角色的节奏 ---------- */
   const learnOn = () => ini.bool(G.cfg, 'interaction', 'learn');
@@ -481,7 +489,7 @@
     p.story.self_total = (p.story.self_total || 0) + 1;
     const lk = CY.i18n.hasOwn('selfact.' + a.id) ? 'selfact.' + a.id : 'log.self_did', la = { name: p.person.name, label: G.refAct(a, p) };
     const txt = t(lk, { name: p.person.name, label: a.label });
-    if (!offline) { G.logK(p.id, 'self', lk, la); G.toastFor(p, txt, 'self'); }
+    if (!offline) { G.logK(p.id, 'self', lk, la); G.toastFor(p, txt, 'self'); G.pop(p.id, 'done', '✓'); }
     return true;
   }
   G.selfActFor = selfActionFor;
@@ -553,6 +561,7 @@
   }
 
   const mkReq = (o) => {
+    if (o.kind === 'need' && G.get(o.pid)) G.pop(o.pid, 'ask', ((G.needsOf(G.get(o.pid)) || {})[o.need] || {}).icon || '❗');
     return Object.assign({ since: Date.now(), deadline: Date.now() + ini.num(G.cfg, 'interrupt', 'countdown_seconds') * 1000 }, o);
   };
 

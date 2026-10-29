@@ -127,7 +127,7 @@
       let c = stage.querySelector(`.cx[data-id="${p.id}"]`);
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
-        c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
+        c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="pops"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
         c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; U.sel = p.id; U.openRing(p.id); };
         c.style.transition = 'none';
         c.onpointerenter = () => { U.hoverId = p.id; U.syncFreeze(); };
@@ -164,6 +164,19 @@
       if (fx && Date.now() - fx.t < U.fxDuration) {
         if (c.dataset.fxt !== String(fx.t)) { c.dataset.fxt = String(fx.t); c.dataset.fx = fx.act; c.querySelector('.fx').innerHTML = U.fxMarkup(fx.act, p.species.id); }
       } else if (c.dataset.fx) { delete c.dataset.fx; delete c.dataset.fxt; c.querySelector('.fx').innerHTML = ''; }
+      /* 头上弹出的事件：有人开口、完成打勾、发生了事情 */
+      {
+        const pops = c.querySelector('.pops'), nowT = Date.now();
+        if (c._popN === undefined) c._popN = 0;
+        for (const e of G.pops) if (e.pid === p.id && e.n > c._popN) {
+          c._popN = e.n;
+          if (nowT - e.t > 3000) continue;
+          const k = pops.children.length, sp = doc().createElement('span');
+          sp.className = 'pop ' + e.kind; sp.textContent = e.icon;
+          sp.style.marginLeft = ((k % 2 ? 1 : -1) * Math.ceil(k / 2) * 26) + 'px';
+          pops.appendChild(sp); setTimeout(() => sp.remove(), 4200);
+        }
+      }
       /* 徽标 */
       const defs = G.needsOf(p), b = [];
       for (const k in defs) if (p.state.needs[k] > 0.6) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);

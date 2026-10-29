@@ -1,6 +1,6 @@
 /* 角色形象：全部是代码画的扁平矢量图。
-   人有两种画法：simple 简洁抽象，只有圆脸、点状的眼睛和腮红，不画鼻子和嘴，靠眼睛和腮红表达情绪；detailed 画出五官。
-   可调的有肤色、发型、发色、眼镜、胡子、衣服颜色，动物和花草有颜色。人按年龄阶段画出不同的比例，婴儿头大身子小。 */
+   人是豆子造型，只有点状的眼睛和腮红，靠眼睛和腮红表达情绪。可调的有肤色、发型、发色、眼镜、胡子、衣服颜色，动物和花草有颜色。
+   人按年龄阶段画出不同的比例，婴儿矮圆，老人略驼。 */
 (function (CY) {
   /* 肤色：亮面，暗面。整体偏浅偏暖，避免显得发暗 */
   const SKIN = [['#fffaf6', '#f6e6dc'], ['#fff3ea', '#f3dccd'], ['#fde3d0', '#f1c9b0'], ['#f6d2b4', '#e5b793'], ['#e8bc92', '#d29f73'], ['#d9a67c', '#c18c63'], ['#a8714b', '#8f5c3a'], ['#6e4631', '#5a3726']];
@@ -13,78 +13,6 @@
   const CLOTHES = ['#7f9580', '#b58aa5', '#7d8fa8', '#c28a6e', '#6f86a0', '#c07a6b', '#d4a24c', '#5f8a7a', '#e7a6a1', '#8fbf9f', '#4f6d8f', '#9a8fc0'];
   const dark = (hex, k = 0.82) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, '0')).join('');
   const shadow = w => `<ellipse cx="50" cy="127" rx="${w}" ry="3.5" fill="#00000018"/>`;
-
-  function mouth(mood, cx, y) {
-    const c = '#8a4a3c';
-    if (mood > 0.6) return `<path d="M${cx - 6} ${y} Q${cx} ${y + 7} ${cx + 6} ${y}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`;
-    if (mood > 0.35) return `<path d="M${cx - 4.5} ${y + 2} L${cx + 4.5} ${y + 2}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`;
-    return `<path d="M${cx - 5} ${y + 4} Q${cx} ${y - 2} ${cx + 5} ${y + 4}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round"/>`;
-  }
-
-  /* 各年龄阶段的头身比例 */
-  const BODY = {
-    infant: { cy: 64, rx: 30, ry: 28, shY: 104, sh0: 32 },
-    toddler: { cy: 60, rx: 27, ry: 26, shY: 100, sh0: 26 },
-    child: { cy: 56, rx: 25, ry: 25, shY: 94, sh0: 22 },
-    teen: { cy: 52, rx: 22, ry: 25, shY: 90, sh0: 14 },
-    adult: { cy: 50, rx: 22, ry: 26, shY: 88, sh0: 12 },
-    elder: { cy: 51, rx: 22, ry: 26, shY: 89, sh0: 13 },
-  };
-
-  function human(p) {
-    const a = p.person.appearance || {}, stage = CY.game && p.species.food !== undefined ? CY.game.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35), mood = p.state.mood;
-    const detailed = CY.avatarStyle === 'detailed';
-    const asleep = !!(CY.game && CY.game.isSleeping && p.id && CY.game.isSleeping(p));
-    const sk = SKIN[a.skin] || SKIN[1], hc = HAIR[a.hair_color] || HAIR.black, cloth = a.cloth || '#8fa3b8';
-    const B = BODY[stage] || BODY.adult, small = stage === 'infant' || stage === 'toddler' || stage === 'child';
-    /* 头和身子放大一成，肩膀贴近下巴，脖子很短，头也不比宠物小 */
-    const HEAD_K = 1.12, cx = 50, cy = B.cy + 3, rx = B.rx * HEAD_K, ry = B.ry * HEAD_K, sh0 = Math.max(4, B.sh0 - 3);
-    const L = cx - rx, R = cx + rx, chin = cy + ry, shY = chin + (small ? 1 : 2);
-    const elder = stage === 'elder';
-    let hairStyle = a.hair_style || 'short';
-    let back = '', front = '';
-    if (hairStyle === 'long') back = `<path d="M${L - 4} ${cy} Q${L - 9} ${chin + 18} ${L + 3} ${chin + 26} L${R - 3} ${chin + 26} Q${R + 9} ${chin + 18} ${R + 4} ${cy}Z" fill="${hc}"/>`;
-    else if (hairStyle === 'bob') back = `<path d="M${L - 4} ${cy - 2} Q${L - 8} ${chin + 4} ${L + 2} ${chin + 6} L${R - 2} ${chin + 6} Q${R + 8} ${chin + 4} ${R + 4} ${cy - 2}Z" fill="${hc}"/>`;
-    else if (hairStyle === 'ponytail') back = `<path d="M${R - 2} ${cy - 10} Q${R + 20} ${cy - 4} ${R + 12} ${cy + 24} Q${R + 6} ${cy + 10} ${R - 4} ${cy + 6}Z" fill="${hc}"/>`;
-    else if (hairStyle === 'curly') back = [[-4, -ry + 4], [8, -ry - 2], [-14, -ry + 10], [20, -ry + 6], [-20, -ry + 22], [26, -ry + 20], [-24, -2], [30, -2]].map(([dx, dy]) => `<circle cx="${cx + dx}" cy="${cy + dy}" r="10" fill="${hc}"/>`).join('');
-    else if (hairStyle === 'bun') back = `<circle cx="${cx}" cy="${cy - ry - 5}" r="${small ? 7.5 : 9.5}" fill="${hc}"/>`;
-    const cap = `<path d="M${L - 1} ${cy + 3} C${L - 4} ${cy - ry - 17} ${R + 4} ${cy - ry - 17} ${R + 1} ${cy + 3} C${R - 1} ${cy - 3} ${cx + 12} ${cy - ry * 0.4} ${cx - 2} ${cy - ry * 0.46} C${cx - 14} ${cy - ry * 0.34} ${L + 4} ${cy - 3} ${L + 2} ${cy + 3}Z" fill="${hc}"/>`;
-    if (hairStyle === 'bald') front = stage === 'infant' ? `<path d="M${cx - 4} ${cy - ry + 1} Q${cx} ${cy - ry - 9} ${cx + 5} ${cy - ry + 1}" fill="none" stroke="${hc}" stroke-width="3" stroke-linecap="round"/>` : elder ? `<ellipse cx="${L + 1}" cy="${cy - 2}" rx="3.5" ry="8" fill="${hc}"/><ellipse cx="${R - 1}" cy="${cy - 2}" rx="3.5" ry="8" fill="${hc}"/>` : '';
-    else front = cap;
-    const eyeY = cy + (small ? 5 : 3), eyeDx = small ? 10 : 9.5, eyeR = small ? 3.2 : 2.6;
-    /* 眼睛：心情好是弯弯的笑眼，一般是圆点，心情差是半闭的 */
-    let eyes;
-    if (mood > 0.78) eyes = `<g class="eyes" fill="none" stroke="#2a2522" stroke-width="2.2" stroke-linecap="round"><path d="M${cx - eyeDx - 3} ${eyeY + 1} Q${cx - eyeDx} ${eyeY - 3} ${cx - eyeDx + 3} ${eyeY + 1}"/><path d="M${cx + eyeDx - 3} ${eyeY + 1} Q${cx + eyeDx} ${eyeY - 3} ${cx + eyeDx + 3} ${eyeY + 1}"/></g>`;
-    else eyes = `<g class="eyes"><ellipse cx="${cx - eyeDx}" cy="${eyeY}" rx="${eyeR}" ry="${eyeR + 0.5}" fill="#2a2522"/><ellipse cx="${cx + eyeDx}" cy="${eyeY}" rx="${eyeR}" ry="${eyeR + 0.5}" fill="#2a2522"/>
-      <circle cx="${cx - eyeDx + 1}" cy="${eyeY - 1}" r="0.9" fill="#fff"/><circle cx="${cx + eyeDx + 1}" cy="${eyeY - 1}" r="0.9" fill="#fff"/></g>`;
-    const lids = mood < 0.35 ? `<g fill="none" stroke="${sk[1]}" stroke-width="2.4" stroke-linecap="round"><path d="M${cx - eyeDx - 4} ${eyeY - 2.5} Q${cx - eyeDx} ${eyeY - 5.5} ${cx - eyeDx + 4} ${eyeY - 1}"/><path d="M${cx + eyeDx - 4} ${eyeY - 1} Q${cx + eyeDx} ${eyeY - 5.5} ${cx + eyeDx + 4} ${eyeY - 2.5}"/></g>` : '';
-    const bc = a.hair_color === 'white' || a.hair_color === 'gray' ? '#8a857d' : hc;
-    const lift = mood < 0.35 ? 1.5 : 0;
-    const brows = detailed ? `<path d="M${cx - eyeDx - 4} ${eyeY - 7 + lift} Q${cx - eyeDx} ${eyeY - 9.5} ${cx - eyeDx + 4} ${eyeY - 7}" fill="none" stroke="${bc}" stroke-width="1.8" stroke-linecap="round"/><path d="M${cx + eyeDx - 4} ${eyeY - 7} Q${cx + eyeDx} ${eyeY - 9.5} ${cx + eyeDx + 4} ${eyeY - 7 + lift}" fill="none" stroke="${bc}" stroke-width="1.8" stroke-linecap="round"/>` : '';
-    const nose = detailed ? `<path d="M${cx - 1.5} ${eyeY + 5} Q${cx + 2.5} ${eyeY + 8.5} ${cx - 0.5} ${eyeY + 9.5}" fill="none" stroke="${sk[1]}" stroke-width="1.6" stroke-linecap="round"/>` : '';
-    const mouthY = cy + (small ? 16 : 15);
-    const cheeks = `<circle cx="${cx - 15}" cy="${eyeY + 7}" r="${small ? 5 : 4.2}" fill="#f08a80" opacity="${detailed ? 0.28 : 0.38}"/><circle cx="${cx + 15}" cy="${eyeY + 7}" r="${small ? 5 : 4.2}" fill="#f08a80" opacity="${detailed ? 0.28 : 0.38}"/>`;
-    let glasses = '';
-    if (a.glasses === true || a.glasses === 'round') glasses = `<g fill="none" stroke="#3e3a36" stroke-width="1.6"><circle cx="${cx - eyeDx}" cy="${eyeY}" r="7"/><circle cx="${cx + eyeDx}" cy="${eyeY}" r="7"/><path d="M${cx - eyeDx + 7} ${eyeY} L${cx + eyeDx - 7} ${eyeY}"/></g>`;
-    else if (a.glasses === 'square') glasses = `<g fill="none" stroke="#3e3a36" stroke-width="1.6"><rect x="${cx - eyeDx - 7}" y="${eyeY - 5.5}" width="14" height="11" rx="3"/><rect x="${cx + eyeDx - 7}" y="${eyeY - 5.5}" width="14" height="11" rx="3"/><path d="M${cx - eyeDx + 7} ${eyeY - 1} L${cx + eyeDx - 7} ${eyeY - 1}"/></g>`;
-    const beard = a.beard && !small ? (detailed
-      ? `<path d="M${cx - 11} ${mouthY - 3} Q${cx} ${mouthY - 8} ${cx + 11} ${mouthY - 3} Q${cx} ${mouthY - 2} ${cx - 11} ${mouthY - 3}Z" fill="${hc}"/><path d="M${cx - 10} ${mouthY + 6} Q${cx} ${chin + 8} ${cx + 10} ${mouthY + 6} Q${cx} ${mouthY + 9} ${cx - 10} ${mouthY + 6}Z" fill="${hc}"/>`
-      : `<path d="M${cx - 15} ${cy + 12} Q${cx} ${cy + 20} ${cx + 15} ${cy + 12} Q${cx + 17} ${chin + 3} ${cx} ${chin + 6} Q${cx - 17} ${chin + 3} ${cx - 15} ${cy + 12}Z" fill="${hc}"/>`) : '';
-    const wrinkle = detailed && elder ? `<path d="M${cx - 18} ${cy - 12} Q${cx} ${cy - 17} ${cx + 18} ${cy - 12}" fill="none" stroke="${sk[1]}" stroke-width="1.1" stroke-linecap="round"/>` : '';
-    const sh1 = 100 - sh0;
-    return `<svg viewBox="0 0 100 130" class="av">
-      ${shadow(small ? 24 : 34)}
-      ${back}
-      <path d="M${sh0} 130 Q${sh0} ${shY + 3} 50 ${shY} Q${sh1} ${shY + 3} ${sh1} 130Z" fill="${cloth}"/>
-      <path d="M${sh0 + 4} 130 Q${sh0 + 4} ${shY + 8} 50 ${shY + 5}" fill="none" stroke="${dark(cloth)}" stroke-width="1.2" opacity=".5"/>
-      <rect x="${cx - 8.5}" y="${chin - 6}" width="17" height="${Math.max(8, shY - chin + 12)}" rx="6" fill="${sk[1]}"/>
-      <path d="M${cx - 11} ${shY + 1} Q${cx} ${shY + 15} ${cx + 11} ${shY + 1} Q${cx} ${shY + 6} ${cx - 11} ${shY + 1}Z" fill="${sk[1]}"/>
-      <circle cx="${L + 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/><circle cx="${R - 0.5}" cy="${cy + 4}" r="4.6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>
-      <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>
-      ${cheeks}${wrinkle}${nose}${eyes}${lids}${brows}${asleep ? '' : glasses}${beard}${detailed ? mouth(mood, cx, mouthY) : ''}
-      ${front}
-    </svg>`;
-  }
 
   function cat(p) {
     const a = p.person.appearance || {}, [c, l, d] = COAT[a.coat] || COAT.orange, mood = p.state.mood;
@@ -416,11 +344,13 @@ function beanDraw(o, V) {
     return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: a.cloth || '#8fa3b8', glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)) }, V);
   };
   const DRAW = { hedgehog, duck, ferret, axolotl, chicken, orchid, bamboo, cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
-  CY.avatarStyle = 'simple';
-  /* CY.figure：classic 原来的画法，bean_a、bean_b、bean_c 三种豆子造型，只换人的画法，动物和花草不变 */
-  CY.figure = 'classic';
-  CY.FIGURES = ['classic', 'bean_a', 'bean_b', 'bean_c'];
-  CY.avatar = p => DRAW[p.species.id] ? DRAW[p.species.id](p) : CY.figure && CY.figure.indexOf('bean_') === 0 ? beanHuman(p, CY.figure.slice(5).toUpperCase()) : human(p);
+  /* CY.figure：人的造型，设置里选。dressed 上半肤色下半衣服，默认；plain 整只衣服色加肤色脸盘，有手脚；dumpling 同 plain 但没有手脚。
+     只换人，动物和花草不变。旧设置文件里的 classic 和 bean_a、bean_b、bean_c 按对应关系转过来 */
+  const FIG_V = { dressed: 'C', plain: 'B', dumpling: 'A' };
+  CY.FIGURES = ['dressed', 'plain', 'dumpling'];
+  CY.figureOf = v => ({ classic: 'dressed', bean_c: 'dressed', bean_b: 'plain', bean_a: 'dumpling' }[v]) || (CY.FIGURES.includes(v) ? v : 'dressed');
+  CY.figure = 'dressed';
+  CY.avatar = p => DRAW[p.species.id] ? DRAW[p.species.id](p) : beanHuman(p, FIG_V[CY.figure] || 'C');
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {
     const years = typeof age === 'number' ? age : arch.age;

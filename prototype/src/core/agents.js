@@ -51,13 +51,14 @@
       if (r.want && !G.wants[p.id] && goAction(p, r.want.action) && eligibleTo(p)) {
         G.wants[p.id] = { id: r.want.id, action: r.want.action, until: now + (W.ttl_seconds || 600) * 1000 };
         G.toastFor(p, goAction(p, r.want.action).label + '…', 'soft');
+        G.pop(p.id, 'ask', goAction(p, r.want.action).icon || '🚶');
       }
     }
     const max = (cfg().request || {}).max_open || 6;
     for (const s of plan.strategies) {
       if (S.inbox.length >= max) break;
       const e = Object.assign({ id: ++S.seq, born: now, phase: 'sent', wait: rnd(3, 12), tries: 0 }, s);
-      if (valid(e)) S.inbox.push(e);
+      if (valid(e)) { S.inbox.push(e); if (e.kind !== 'go') G.pop(e.from, 'ask', ((G.needsOf(G.get(e.from)) || {})[e.need] || {}).icon || '💬'); }
     }
   }
 
@@ -106,7 +107,7 @@
     }
     applyEffects(from, a, 1);
     from.state.mood = clamp(from.state.mood + (a.mood === undefined ? 0.08 : a.mood));
-    G.startOuting(from, a);
+    G.startOuting(from, a); G.pop(from.id, 'done', '✓');
     if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }
     return true;
   };
