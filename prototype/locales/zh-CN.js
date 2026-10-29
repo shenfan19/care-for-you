@@ -286,7 +286,7 @@ CY.i18n.register("zh-CN", {
  "selfact.nap": "{name}自己小睡了一会儿",
  "selfact.wash": "{name}自己洗了个澡",
  "selfact.tv": "{name}自己看了会儿电视",
- "selfact.stretch": "{name}自己活动了活动腿脚",
+ "selfact.stretch": "{name}自己活动了活动腿脚", "selfact.rattle": "{name}自己抓着摇铃玩", "selfact.babble": "{name}自己咿咿呀呀说了一阵", "selfact.blocks": "{name}自己搭了会儿积木",
  "selfact.peat": "{name}自己吃了点东西",
  "selfact.pdrink": "{name}自己喝了点水",
  "selfact.selfmed": "{name}自己吃了药",

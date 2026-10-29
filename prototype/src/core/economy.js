@@ -29,7 +29,7 @@
     const hours = gmin / 60, W = CY.world, lead = G.protagonist();
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
-    else if (G.isWorkTime() && (offline || !W || !W.enforce || W.atDesk())) G.world.money += G.WAGE * hours;
+    else if (G.isWorkTime() && (offline || !W || !W.enforce || W.hasWorker() || (W.driven(lead) && W.atDesk()))) G.world.money += G.WAGE * hours;
     const n = G.nanny();
     if (!n) return;
     if (!G.nannyOn()) { return; }

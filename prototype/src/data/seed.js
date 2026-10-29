@@ -44,6 +44,9 @@ actions:
   nap: { label: 小睡一会儿, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { rest: -0.6 }, stages: [child, teen, adult, elder] }
   wash: { label: 洗个澡, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 25, effect: { hygiene: -0.9 }, stages: [child, teen, adult, elder] }
   tv: { label: 看会儿电视, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { company: -0.25, play: -0.3 }, stages: [child, teen, adult, elder] }
+  rattle: { label: 抓摇铃, selfonly: true, self: [infant], hold: 1, min: 10, effect: { play: -0.4 }, stages: [infant] }
+  babble: { label: 咿咿呀呀, selfonly: true, self: [infant, toddler], hold: 1, min: 8, effect: { company: -0.25 }, stages: [infant, toddler] }
+  blocks: { label: 搭积木, selfonly: true, self: [toddler], hold: 1, min: 20, effect: { play: -0.5 }, stages: [toddler] }
   stretch: { label: 活动活动腿脚, selfonly: true, self: [elder], hold: 1, min: 15, effect: { mobility: -0.5 }, stages: [elder] }
 `;
 

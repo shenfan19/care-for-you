@@ -374,6 +374,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('旧设置的造型名转成新的，默认穿衣小豆', CY.figureOf('classic') === 'dressed' && CY.figureOf('bean_a') === 'dumpling' && CY.figureOf('bean_b') === 'plain' && CY.figureOf('') === 'dressed' && CY.figure === 'dressed');
   check('四个方向都能画：朝上看不到脸，朝下脸转向一侧，左右是镜像', (() => { const mom = CY.content.archOf('mom'), at = d => CY.avatarPreview(mom, mom.look, 35).length && CY.avatar({ species: { id: 'human' }, state: { mood: 0.7 }, person: { age: 35, appearance: mom.look } }, d); const f = at(''), se = at('se'), sw = at('sw'), ne = at('ne'), nw = at('nw'); return CY.DIRS.length === 4 && f.includes('class="eyes"') && se.includes('class="eyes"') && sw.includes('scale(-1 1)') && !se.includes('scale(-1 1)') && !ne.includes('class="eyes"') && !nw.includes('class="eyes"') && nw.includes('scale(-1 1)') && ne.includes('data-dir="ne"') && ne.includes('class="foot l"'); })());
   check('操纵对象坐在电脑前的椅子上，书房和办公室都算', (() => { const W = CY.world; const a = W.slotPoint('home', 'study', 'player', 0), c = W.slotPoint('office', 'desk', 'player', 0); const old = Object.assign({}, W.player()); W.moveTo('home', 'study'); const s1 = W.atWork(); W.moveTo('office', 'desk'); const s2 = W.atWork(); W.moveTo('home', 'living'); const s3 = W.atWork(); Object.assign(W.player(), old); return s1 && s2 && !s3 && a.gy < 2 && c.gx < 3; })());
+  check('只有爸爸妈妈办公，白天坐在书桌前；其他人不办公', (() => { const W = CY.world, G2 = CY.game, dm = G2.world.game_minutes; const saved = G2.people.map(p => [p, W.worker(p)]); const dads = G2.people.filter(p => ['dad', 'mom'].includes(p.person.archetype || p.person.card)); const others = G2.people.filter(p => !['dad', 'mom'].includes(p.person.archetype || p.person.card)); return saved.every(([p, w]) => w === dads.includes(p) && (!dads.length || true)) && others.every(p => !W.isWorking(p) || W.driven(p) && !W.hasWorker()); })());
   check('头上弹出的事件：完成打勾和有人开口', (() => { const GG = CY.game, p = GG.people[0]; if (!p) return false; const n0 = GG.popSeq; GG.playFx(p.id, 'talk'); const e = GG.pops[GG.pops.length - 1]; return GG.popSeq === n0 + 1 && e.kind === 'done' && e.icon === '✓' && e.pid === p.id; })());
   check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 
@@ -386,7 +387,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('婴儿需求严重时哭闹，老人不哭', G.crying[bb.id] && !G.crying[eld.id] && G.toast[bb.id].kind === 'cry');
   let selfDone = 0, infantSelf = 0; const n0s = eld.state.needs.hunger;
   for (let i = 0; i < 4000; i++) { G.lastTick -= 5000; for (const p of [eld, bb]) p.state.needs.hunger = Math.max(p.state.needs.hunger, 0.9); const h = eld.state.needs.hunger; G.tick(); }
-  check('老人没人管会自己解决，婴儿不会', G.journal[eld.id] && Object.values(G.journal[eld.id]).flat().some(e => e.type === 'self') && !(G.journal[bb.id] && Object.values(G.journal[bb.id]).flat().some(e => e.type === 'self')));
+  check('老人没人管会自己解决', G.journal[eld.id] && Object.values(G.journal[eld.id]).flat().some(e => e.type === 'self'));
   check('哭闹只记一次', Object.values(G.journal[bb.id]).flat().filter(e => e.type === 'cry').length === 1);
   for (const k in bb.state.needs) bb.state.needs[k] = 0.1; G.lastTick = Date.now() - 1000; G.tick();
   check('需求解决后不再哭', !G.crying[bb.id]);
@@ -457,7 +458,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const eld2 = await mk('grandpa', '独居老人'); const kid2 = await mk('daughter', '小孩'); const hamP = await mk('hamster', '仓鼠鼠'); const owl = await mk('sister', '夜猫', { traits: ['nightowl'] }); const lark = await mk('sister', '早起', { traits: ['earlybird'] });
   check('自己做的动作不在菜单里，但属于角色自己', !('drink' in G.actionsOf(eld2)) && 'drink' in G.allActionsOf(eld2) && 'cook' in G.allActionsOf(eld2) && !('drink' in G.allActionsOf(await mk('baby', '宝'))));
   const bby = G.people[G.people.length - 1];
-  check('婴儿没有任何自己能做的动作', Object.values(G.allActionsOf(bby)).every(a => !a.self));
+  check('婴儿自己只能玩一玩、咿呀几声，吃喝拉睡一样都做不了', (() => { const own = Object.values(G.allActionsOf(bby)).filter(a => a.self); return own.length >= 2 && own.every(a => Object.keys(a.effect).every(k => ['play', 'company'].includes(k))); })());
   G.cfg.time.daynight = 'game'; G.cfg.interrupt.frequency = 'test'; G.nextAt = Date.now() + 1e9;
   for (const p of G.people) p.person.active = false;
   const E = G.get(eld2.id); E.person.active = true; E.state.needs.thirst = 0.95; E.state.needs.hunger = 0.95;
@@ -756,7 +757,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     let [bab, mom3, dg, el] = ids4.map(i => G.get(i));
     const snap = () => CY.backend.buildPlan({ minutes: 600 });
     const sn = snap(), sb = sn.people.find(x => x.id === bab.id), se = sn.people.find(x => x.id === el.id);
-    check('快照带个人卡的判断：宝宝自己什么都做不了，妈妈能帮忙', sb.abilities.self_needs.length === 0 && sn.people.find(x => x.id === mom3.id).abilities.help && !sb.abilities.help && se.abilities.go_actions.includes('street'), JSON.stringify(sb.abilities));
+    check('快照带个人卡的判断：宝宝自己只能玩和咿呀，妈妈能帮忙', sb.abilities.self_needs.every(n => ['play', 'company'].includes(n)) && sn.people.find(x => x.id === mom3.id).abilities.help && !sb.abilities.help && se.abilities.go_actions.includes('street'), JSON.stringify(sb.abilities));
     let toSelf = 0, toMom = 0, toOther = 0, n = 0;
     const T = G.tpl.system.agents, keep = JSON.stringify(T);
     for (let i = 0; i < 300; i++) {

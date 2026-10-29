@@ -190,7 +190,7 @@
         const lp = laid.get(p.id);
         U.moveFig(c, U.viewPlace, lp.gx, lp.gy);
       }
-      const working = p === G.protagonist() && !fam && CY.world.atWork();
+      const working = !fam && CY.world.isWorking(p);
       const dir = fam ? '' : c._dir || (working ? 'ne' : '');
       c.classList.toggle('working', working && !c._dir);
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;

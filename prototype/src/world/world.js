@@ -28,7 +28,7 @@
     bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.8, .33]], player: [.18, .9] },
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
-    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .42] },
+    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .42], seat: [[.52, .42], [.76, .46]] },
     living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
@@ -45,6 +45,13 @@
   };
   W.playerAnchor = (place, room) => W.slotPoint(place, room, 'player', 0);
   W.WORK = { place: 'home', room: 'study' };
+  /* 谁办公：默认只有爸爸妈妈在家办公。有他们在，操纵对象平时就待在客厅，书桌留给他们 */
+  W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && ['dad', 'mom'].includes(p.person.archetype || p.person.card);
+  W.hasWorker = () => G.activePeople().some(W.worker);
+  W.workRoom = () => (W.hasWorker() ? 'living' : W.WORK.room);
+  /* 宝宝还不会走，只待在垫子和婴儿床上 */
+  W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
+  W.driven = p => !!p && p === G.protagonist();
   /* 地点之间的路程，单位是游戏分钟 */
   W.TRAVEL_MIN = { 'home-hospital': 30, 'home-office': 25, 'hospital-office': 45 };
   W.travelMin = (a, b) => W.TRAVEL_MIN[a + '-' + b] || W.TRAVEL_MIN[b + '-' + a] || 30;
@@ -79,6 +86,9 @@
     if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += hi('rest') * 4 + (hr >= 20.5 || hr < 6.5 ? 2 : 0);
     if (room === 'living') w += hi('company') * 2 + hi('play') * 1.5;
     if (room === 'study') w += hi('company') * 2.5;
+    /* 爸爸妈妈白天在书桌前办公，爷爷奶奶白天遛弯，下午晒晒太阳 */
+    if (W.worker(p) && room === 'study' && hr >= 9 && hr < 17) w += 7;
+    if (human && st === 'elder' && room === 'yard' && ((hr >= 8 && hr < 10.5) || (hr >= 15 && hr < 17.5))) w += 2;
     if (room === 'yard') w += hi('play') * 2 + hi('mobility') * 2 + (hr >= 9 && hr < 17 ? 0.6 : -0.6);
     /* 心情低落的人想独处，躲回自己的房间；心情好的人愿意待在客厅 */
     if (human && p.state.mood < 0.35) { if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += 2; if (room === 'living') w *= 0.6; }
@@ -91,8 +101,13 @@
         else if (onMat(q) && room === 'living' && st !== 'teen') w += 1.2;
       }
     }
+    /* 宠物爱撒欢，也爱凑到醒着的宝宝身边 */
+    if (!human) {
+      if (room === 'yard') w += 1.5;
+      for (const q of G.activePeople()) if (W.immobile(q) && !G.isSleeping(q) && W.locationOf(q).room === room) w += 2.5;
+    }
     /* 房间里人多就不想挤，大家自然分散开 */
-    if (human) w /= 1 + 0.8 * G.activePeople().filter(q => q !== p && G.isHuman(q) && W.roomOfNow(q) === room).length;
+    if (human && !(W.worker(p) && room === 'study')) w /= 1 + 0.8 * G.activePeople().filter(q => q !== p && G.isHuman(q) && W.roomOfNow(q) === room).length;
     return w;
   };
   W.chooseRoom = (p, cur) => {
@@ -116,7 +131,7 @@
   W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
   /* 叫一个人走到某个房间去，比如大人去照顾哭的孩子。被悬停或点选的人不动 */
   W.goTo = (p, room, minutes, errand) => {
-    if (W.frozen.has(p.id) || p === G.protagonist()) return false;
+    if (W.frozen.has(p.id) || W.driven(p)) return false;
     const A = W.agents[p.id] || (W.agents[p.id] = { room, next: 0 });
     A.room = room; A.next = Date.now() + (minutes ? minutes * 60000 : 40000); A.errand = errand || null;
     return true;
@@ -126,7 +141,7 @@
   W.freeze = (id, on) => { if (on) W.frozen.add(id); else W.frozen.delete(id); };
 
   W.locationOf = p => {
-    if (p === G.protagonist()) { const pl = W.player(); return { place: pl.place, room: pl.room, mode: 'stand' }; }
+    if (W.driven(p)) { const pl = W.player(); return { place: pl.place, room: pl.room, mode: 'stand' }; }
     const fp = flagPlace(p);
     if (fp) return { place: fp.place, room: fp.room, mode: fp.mode || 'stand' };
     if (!G.isHuman(p)) {
@@ -141,39 +156,46 @@
     /* 宝宝困了在婴儿床，醒着就在玩具垫上，自己不会走 */
     if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
     if (st === 'toddler' && G.age(p) < 2.5) return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
-    return { place: 'home', room: agentRoom(p), mode: 'stand' };
+    const room = agentRoom(p);
+    return { place: 'home', room, mode: W.worker(p) && room === 'study' ? 'work' : 'stand' };
+  };
+  /* 此刻是不是坐在电脑前办公 */
+  W.isWorking = p => {
+    if (!p || G.isSleeping(p) || W.frozen.has(p.id)) return false;
+    if (W.worker(p)) { const l = W.locationOf(p); return l.place === 'home' && l.mode === 'work'; }
+    return W.driven(p) && !W.hasWorker() && W.atWork();
   };
 
   /* 一个地点里所有人的位置：按房间分配站位 */
   W.layout = place => {
     const byRoom = {};
     for (const p of G.activePeople()) {
-      if (p === G.protagonist()) continue;
+      if (W.driven(p)) continue;
       const loc = W.locationOf(p);
       if (loc.place !== place) continue;
       (byRoom[loc.room] = byRoom[loc.room] || []).push({ p, mode: loc.mode });
     }
     const out = [];
     const lead = G.protagonist();
-    if (lead && W.player().place === place) { const pl = W.player(); out.push({ id: lead.id, place, room: pl.room, kind: 'stand', gx: pl.gx, gy: pl.gy }); }
+    if (W.driven(lead) && W.player().place === place) { const pl = W.player(); out.push({ id: lead.id, place, room: pl.room, kind: 'stand', gx: pl.gx, gy: pl.gy }); }
     for (const room in byRoom) {
       byRoom[room].sort((a, b) => (a.p.id < b.p.id ? -1 : 1));
-      let ns = 0, nb = 0;
+      let ns = 0, nb = 0, nw = 0;
       for (const { p, mode } of byRoom[room]) {
-        const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : mode === 'mat' ? 'mat' : 'stand';
-        const i = kind === 'stand' ? ns++ : kind === 'sleep' ? nb++ : 0;
+        const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : mode === 'mat' ? 'mat' : mode === 'work' ? 'seat' : 'stand';
+        const i = kind === 'stand' ? ns++ : kind === 'sleep' ? nb++ : kind === 'seat' ? nw++ : 0;
         out.push({ id: p.id, place, room, kind, ...W.slotPoint(place, room, kind, i) });
       }
     }
     return out;
   };
   /* 哪些地点有人。没有人的地点不出现 */
-  W.othersPlaces = () => { const set = new Set(G.activePeople().filter(p => p !== G.protagonist()).map(p => W.locationOf(p).place)); return W.PLACE_LIST.filter(pl => set.has(pl)); };
-  W.occupiedPlaces = () => { const set = new Set(W.othersPlaces()); if (G.protagonist()) set.add(W.player().place); return W.PLACE_LIST.filter(pl => set.has(pl)); };
+  W.othersPlaces = () => { const set = new Set(G.activePeople().filter(p => !W.driven(p)).map(p => W.locationOf(p).place)); return W.PLACE_LIST.filter(pl => set.has(pl)); };
+  W.occupiedPlaces = () => { const set = new Set(W.othersPlaces()); if (W.driven(G.protagonist())) set.add(W.player().place); return W.PLACE_LIST.filter(pl => set.has(pl)); };
 
   /* ---------- 主角 ---------- */
   W.player = () => {
-    if (!G.world.player) { const a = W.playerAnchor(W.WORK.place, W.WORK.room); G.world.player = { place: 'home', room: 'study', gx: a.gx, gy: a.gy }; }
+    if (!G.world.player) { const a = W.playerAnchor(W.WORK.place, W.workRoom()); G.world.player = { place: 'home', room: W.workRoom(), gx: a.gx, gy: a.gy }; }
     return G.world.player;
   };
   W.holding = false;      /* 正在长按 */
@@ -209,7 +231,7 @@
   W.travel = place => {
     const pl = W.player();
     if (pl.place === place) return false;
-    W.moveTo(place, place === 'home' ? W.WORK.room : place === 'office' ? 'desk' : 'ward');
+    W.moveTo(place, place === 'home' ? W.workRoom() : place === 'office' ? 'desk' : 'ward');
     G.logK('you', 'event', place === 'home' ? 'me.back' : 'me.go', { place: G.ref('loc.' + place, place) });
     return true;
   };
@@ -219,9 +241,9 @@
     if (!W.enforce) return;
     const pl = W.player();
     if (W.holding) { W.lastActive = Date.now(); return; }
-    if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.moveTo(W.WORK.place, W.WORK.room); return; }
+    if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.moveTo(W.WORK.place, W.workRoom()); return; }
     if (!ini.bool(G.cfg, 'play', 'auto_return') || Date.now() - W.lastActive < W.IDLE_MS) return;
-    if (pl.place !== W.WORK.place || pl.room !== W.WORK.room) { W.moveTo(W.WORK.place, W.WORK.room); }
+    if (pl.place !== W.WORK.place || pl.room !== W.workRoom()) { W.moveTo(W.WORK.place, W.workRoom()); }
   };
 
   G.worldTick = W.tick;
