@@ -82,26 +82,69 @@
 
   U.afterPeopleChange = function () { U.renderRoom(true); U.renderBar(); U.renderFeed(true); U.renderSaid(true); };
 
-  /* ---------- 引导：家里还是空的时候 ---------- */
-  U.onboard = function () {
-    const added = [];
-    function render() {
-      const chip = a => `<button class="chip" data-a="${a.id}">${esc(U.archName(a.id))}</button>`;
-      const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('ob.title'))}</h2>
-        <div class="mute" style="margin-bottom:8px">${esc(t('ob.sub'))}</div>
-        <h3>${esc(t('ob.recommend'))}</h3>${C.presets.map(p => `<button class="preset" data-p="${p.id}"><b>${esc(t('preset.' + p.id + '.label'))}</b><br><span class="mute">${esc(t('preset.' + p.id + '.note'))}</span></button>`).join('')}
-        <h3>${esc(t('add.group_family'))}</h3><div class="chips">${C.archetypes.filter(a => a.group === 'family').map(chip).join('')}</div>
-        <h3>${esc(t('add.group_animal'))}</h3><div class="chips">${C.archetypes.filter(a => a.group === 'animal').map(chip).join('')}</div>
-        <h3>${esc(t('add.group_plant'))}</h3><div class="chips">${C.archetypes.filter(a => a.group === 'plant').map(chip).join('')}</div>
-        <div class="row" style="margin-top:14px;justify-content:space-between"><span class="mute">${added.length ? esc(t('ob.added', { names: added.join(t('sep.list')) })) : ''}</span>
-          <button id="obgo" class="primary">${esc(t(added.length ? 'ob.start' : 'ob.skip'))}</button></div>`, true);
-      dlg.querySelectorAll('.chip').forEach(b => b.onclick = () => U.addDialog(b.dataset.a, ok => { if (ok) added.push(G.people[G.people.length - 1].person.name); render(); }));
-      dlg.querySelectorAll('.preset').forEach(b => b.onclick = async () => {
-        const pr = C.presets.find(x => x.id === b.dataset.p);
-        for (const m of pr.members) await G.createPerson({ arch: m.arch, name: t('preset.name.' + m.arch), roleText: U.archName(m.arch), conditions: m.conditions });
-        await G.load(); U.closeDialog(); U.afterPeopleChange(); U.maybeIntro();
-      });
-      dlg.querySelector('#obgo').onclick = () => { U.closeDialog(); U.afterPeopleChange(); if (G.people.length) U.maybeIntro(); };
+  /* ---------- 引导：家里还是空的时候 ----------
+     第一屏只有一排场景和三个按钮，放得进一屏；想自己搭就进第二屏，按家人、动物、植物分页。 */
+  const TOP = ['trio', 'selfcare', 'elder', 'baby', 'threegen', 'pet', 'zoo', 'garden'];
+  const COND_BY_STAGE = { elder: ['diabetes', 'hypertension', 'arthritis', 'heart', 'nocturia', 'forgetful', 'parkinson'], adult: ['depress', 'hypertension', 'asthma', 'allergy'], child: ['asthma', 'eczema', 'allergy', 'cold'] };
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  const shuffle = a => a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+  /* 随机生成一个家：三成是一个人住照顾自己，其余是一到三个人加宠物和花草，人有几率带病 */
+  U.randomHousehold = function () {
+    const fam = C.archetypes.filter(a => a.group === 'family'), pets = C.archetypes.filter(a => a.group === 'animal'), plants = C.archetypes.filter(a => a.group === 'plant');
+    const stageOf = a => (a.species === 'human' ? C.stageOf(a.age) : '');
+    const condsFor = (a, p) => { const st = stageOf(a), pool = COND_BY_STAGE[st === 'elder' ? 'elder' : ['child', 'teen'].includes(st) ? 'child' : 'adult']; return st === 'infant' || st === 'toddler' || Math.random() > p ? [] : shuffle(pool).slice(0, Math.random() < 0.3 ? 2 : 1); };
+    const nm = a => CY.tOr('preset.name.' + a.id, U.archName(a.id));
+    const members = [];
+    if (Math.random() < 0.3) {
+      const a = rnd(fam.filter(x => ['uncle', 'aunt', 'grandpa', 'grandma', 'friend', 'man25', 'woman25'].includes(x.id))), age = 25 + Math.floor(Math.random() * 56);
+      members.push({ arch: a.id, name: t('preset.name.self'), age, conditions: condsFor({ species: 'human', age }, 0.8), lead: true });
+      if (Math.random() < 0.5) { const p = rnd(pets.concat(plants)); members.push({ arch: p.id, name: nm(p) }); }
+    } else {
+      for (const a of shuffle(fam).slice(0, 1 + Math.floor(Math.random() * 3))) members.push({ arch: a.id, name: nm(a), conditions: condsFor(a, 0.5) });
+      for (const p of shuffle(pets).slice(0, Math.floor(Math.random() * 3))) members.push({ arch: p.id, name: nm(p) });
+      if (Math.random() < 0.4) { const p = rnd(plants); members.push({ arch: p.id, name: nm(p) }); }
+    }
+    return members;
+  };
+  U.createMembers = async function (members) {
+    let lead = null;
+    for (const m of members) { const id = await G.createPerson({ arch: m.arch, name: m.name, roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
+    await G.load();
+    if (lead) G.setProtagonist(lead);
+  };
+  U.onboard = function (page) {
+    const added = [], I = CY.i18n;
+    let tab = 'family';
+    const langSel = () => `<select id="oblang" aria-label="${esc(t('set.lang'))}">${Object.keys(I.packs).map(l => `<option value="${l}" ${l === I.lang ? 'selected' : ''}>${esc(I.names[l] || l)}</option>`).join('')}</select>`;
+    const wireLang = dlg => { dlg.querySelector('#oblang').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.language = e.target.value; await G.saveCfg(); await U.applyLang(); render(); }; };
+    const start = async members => { await U.createMembers(members); U.closeDialog(); U.afterPeopleChange(); U.maybeIntro(); };
+    const tile = id => { const p = C.presets.find(x => x.id === id); return p ? `<button class="tile" data-p="${id}"><b>${esc(t('preset.' + id + '.label'))}</b><span class="mute">${esc(t('preset.' + id + '.note'))}</span></button>` : ''; };
+    const wireTiles = dlg => dlg.querySelectorAll('.tile').forEach(b => b.onclick = () => { const pr = C.presets.find(x => x.id === b.dataset.p); start(pr.members.map(m => Object.assign({}, m, { name: CY.tOr('preset.name.' + (m.lead ? 'self' : m.arch), U.archName(m.arch)) }))); });
+    const footer = () => `<div class="row" style="margin-top:12px;justify-content:space-between"><span class="mute">${added.length ? esc(t('ob.added', { names: added.join(t('sep.list')) })) : ''}</span>
+          <button id="obgo" class="primary">${esc(t(added.length ? 'ob.start' : 'ob.skip'))}</button></div>`;
+    const wireGo = dlg => { dlg.querySelector('#obgo').onclick = () => { U.closeDialog(); U.afterPeopleChange(); if (G.people.length) U.maybeIntro(); }; };
+    function render() { return page === 'custom' ? renderCustom() : renderMain(); }
+    function renderMain() {
+      const more = C.presets.filter(p => !TOP.includes(p.id));
+      const dlg = U.dialog(`<div class="obhead"><h2 style="margin:0">${esc(t('ob.title'))}</h2>${langSel()}</div>
+        <div class="mute" style="margin:6px 0 10px">${esc(t('ob.sub'))}</div>
+        <div class="tiles">${TOP.map(tile).join('')}</div>
+        <div class="row" style="margin-top:10px"><button id="obrand">🎲 ${esc(t('ob.random'))}</button><button id="obcustom">${esc(t('ob.custom'))}</button></div>
+        <details class="adv"><summary>${esc(t('ob.more'))}</summary><div class="tiles" style="margin-top:6px">${more.map(p => tile(p.id)).join('')}</div></details>${footer()}`, true);
+      wireLang(dlg); wireTiles(dlg); wireGo(dlg);
+      dlg.querySelector('#obrand').onclick = () => start(U.randomHousehold());
+      dlg.querySelector('#obcustom').onclick = () => { page = 'custom'; render(); };
+    }
+    function renderCustom() {
+      const groups = ['family', 'animal', 'plant'];
+      const dlg = U.dialog(`<div class="obhead"><h2 style="margin:0">${esc(t('ob.custom'))}</h2>${langSel()}</div>
+        <div class="chips" style="margin:10px 0">${groups.map(g => `<button class="chip ${g === tab ? 'on' : ''}" data-tab="${g}">${esc(t('add.group_' + g))}</button>`).join('')}</div>
+        <div class="chips">${C.archetypes.filter(a => a.group === tab).map(a => `<button class="chip" data-a="${a.id}">${esc(U.archName(a.id))}</button>`).join('')}</div>
+        <div class="row" style="margin-top:12px"><button id="obback">${esc(t('ob.back'))}</button></div>${footer()}`, true);
+      wireLang(dlg); wireGo(dlg);
+      dlg.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+      dlg.querySelectorAll('[data-a]').forEach(b => b.onclick = () => U.addDialog(b.dataset.a, ok => { if (ok) added.push(G.people[G.people.length - 1].person.name); render(); }));
+      dlg.querySelector('#obback').onclick = () => { page = 'main'; render(); };
     }
     render();
   };

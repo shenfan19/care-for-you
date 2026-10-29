@@ -320,7 +320,7 @@
       b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>`;
       const show = () => { label.innerHTML = `<b>${esc(a.label)}</b><small>${esc(cost)}</small>`; };
       b.onpointerenter = show; b.onfocus = show; b.onpointerleave = home; b.onblur = home;
-      b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); U.startHold(pid, a, e.clientX, e.clientY); };
+      b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); const r = b.getBoundingClientRect(); U.startHold(pid, a, r.left + r.width / 2, r.top + r.height / 2); };
       b.onpointerup = b.onpointercancel = () => U.endHold(false);
       layer.appendChild(b);
     });

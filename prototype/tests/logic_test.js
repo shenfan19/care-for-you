@@ -47,7 +47,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   used.add('add.group_family'); used.add('add.group_animal');
   const A = CY.content.archetypes;
   A.forEach(a => used.add('arch.' + a.id));
-  CY.content.presets.forEach(p => { used.add(`preset.${p.id}.label`); used.add(`preset.${p.id}.note`); p.members.forEach(m => used.add('preset.name.' + m.arch)); });
+  CY.content.presets.forEach(p => { used.add(`preset.${p.id}.label`); used.add(`preset.${p.id}.note`); p.members.forEach(m => used.add('preset.name.' + (m.lead ? 'self' : m.arch))); });
   ['care', 'talk', 'missed', 'cares_back', 'glance', 'event', 'frail', 'recovered', 'reveal', 'picked', 'nudge', 'cry', 'self'].forEach(k => used.add('type.' + k));
   ['infant', 'toddler', 'child', 'teen', 'adult', 'elder'].forEach(k => { used.add('stage.' + k); used.add('stage.note.' + k); });
   used.add('kind.note.plant'); used.add('kind.note.animal'); used.add('add.group_plant');
@@ -809,6 +809,17 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const ent = Object.values(G.journal[jp.id]).flat().filter(e => e.type === 'care').pop();
     const zhText = G.entryText(ent); CY.i18n.set('en'); const enText = G.entryText(ent); CY.i18n.set('zh-CN');
     check('发生的事存了键和参数，换成英文后框架和动作名都变了', !!ent.k && enText !== zhText && !/[\u4e00-\u9fff]/.test(enText.replace(ent.a.line, '')), zhText + ' | ' + enText);
+    for (const x of G.people) x.person.active = true;
+  }
+
+  /* 开始场景：一个人住照顾自己 */
+  {
+    const pr = CY.content.presets.find(x => x.id === 'selfcare'), m = pr.members[0];
+    for (const x of G.people) x.person.active = false;
+    const sid = await G.createPerson({ arch: m.arch, name: m.name, age: m.age, conditions: m.conditions }); await G.load();
+    check('一个人住照顾自己的场景：只有一个成年人，带病', pr.members.length === 1 && m.lead && m.conditions.includes('diabetes') && G.get(sid).person.age === 55);
+    check('他能当主角，也能自己照顾自己', G.setProtagonist(sid) && G.protagonist().id === sid && Object.keys(G.actionsOf(G.get(sid))).length > 0);
+    G.setProtagonist(null);
     for (const x of G.people) x.person.active = true;
   }
 

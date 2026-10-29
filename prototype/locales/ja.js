@@ -35,7 +35,7 @@ CY.i18n.register("ja", {
 "sec.interrupt": "割り込み", "sec.time": "時間", "sec.player": "呼び名", "sec.interaction": "操作", "sec.ui": "画面", "sec.privacy": "プライバシー", "sec.account": "アカウント", "sec.ai": "AI", "sec.play": "遊び方", "sec.economy": "仕事とお金",
 "set.title": "設定", "set.look": "見た目と言語", "set.theme": "テーマ", "set.bg": "背景", "set.lang": "言語", "set.data": "データの場所",
 "set.data_note": "{where}。データはすべてテキストファイルです。フォルダを選ぶときは、他の人に見える場所へ同期されないか確認してください。",
-"set.folder": "データフォルダを選ぶ", "set.restore": "足りない初期ファイルを復元", "set.advanced": "詳細設定", "set.danger": "削除", "set.wipe_note": "この端末のゲームデータをすべて削除します。キャラクターも記録もすべて含みます。",
+"set.folder": "データフォルダを選ぶ", "set.restore": "足りない初期ファイルを復元", "ob.random": "おまかせ", "ob.custom": "自分で組み立てる", "ob.back": "戻る", "ob.more": "そのほかのシナリオ", "preset.selfcare.label": "ひとり暮らしで、自分をいたわる", "preset.selfcare.note": "ひとり暮らし。薬、血糖測定、食事、休息を自分で管理する", "preset.name.self": "わたし", "set.advanced": "詳細設定", "set.danger": "削除", "set.wipe_note": "この端末のゲームデータをすべて削除します。キャラクターも記録もすべて含みます。",
 "set.wipe": "ローカルデータをすべて削除", "set.folder_had": "そのフォルダにあるデータに切り替えました", "set.folder_copied": "現在のデータをそのフォルダにコピーしました", "set.restored": "{n}個のファイルを復元しました",
 "wipe.title": "ローカルデータをすべて削除", "wipe.body": "この端末のキャラクター、記録、設定がすべて消え、元に戻せません。先にセーブをダウンロードすることをおすすめします。",
 "wipe.save_first": "先にセーブをダウンロード", "wipe.sure": "元に戻せないことを理解しました", "wipe.go": "削除",

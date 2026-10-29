@@ -50,7 +50,7 @@ CY.i18n.register('zh-CN', {
   'sec.interrupt': '打扰', 'sec.time': '时间', 'sec.player': '称呼', 'sec.interaction': '互动', 'sec.ui': '界面', 'sec.privacy': '隐私', 'sec.account': '账号', 'sec.ai': 'AI 接入',
   'set.title': '设置', 'set.look': '外观与语言', 'set.theme': '明暗', 'set.bg': '背景', 'set.lang': '语言',
   'set.data': '数据位置', 'set.data_note': '{where}。所有数据都是明文文件，选文件夹时请确认它不会被同步到别人能看到的地方。',
-  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
+  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'ob.more': '更多场景', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
   'set.wipe': '删除全部本地数据', 'set.folder_had': '已切换到该文件夹里已有的数据', 'set.folder_copied': '已把当前数据复制到该文件夹', 'set.restored': '补回了 {n} 个文件',
   'wipe.title': '删除全部本地数据', 'wipe.body': '这会清除这台设备上的所有角色、记录和设置，无法恢复。建议先下载一份存档。',
   'wipe.save_first': '先下载存档', 'wipe.sure': '我知道删除后无法恢复', 'wipe.go': '删除',
