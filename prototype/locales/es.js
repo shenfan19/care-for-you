@@ -23,7 +23,7 @@ CY.i18n.register("es", {
 "glasses.none": "Ninguna", "glasses.round": "Redondas", "glasses.square": "Cuadradas", "hair.short": "Corto", "hair.long": "Largo", "hair.bob": "Media melena", "hair.ponytail": "Coleta", "hair.bun": "Moño", "hair.curly": "Rizado", "hair.bald": "Calvo",
 "theme.auto": "Seguir el sistema", "theme.light": "Claro", "theme.dark": "Oscuro", "bg.warm": "Cálido", "bg.mint": "Menta", "bg.sky": "Cielo", "bg.rose": "Rosa", "bg.gray": "Gris", "lang.auto": "Seguir el navegador",
 "scene.auto": "Auto", "scene.living": "Salón", "scene.bedroom": "Dormitorio", "scene.kitchen": "Cocina", "scene.lawn": "Césped", "scene.balcony": "Balcón", "scene.none": "Liso", "scene.tip": "Fondo de la habitación", "set.scene": "Escena",
-"arch.grandpa": "Abuelo", "arch.grandma": "Abuela", "arch.waigong": "Abuelo materno", "arch.waipo": "Abuela materna", "arch.dad": "Papá", "arch.mom": "Mamá", "arch.aunt": "Tía", "arch.uncle": "Tío", "arch.brother": "Hermano", "arch.sister": "Hermana", "arch.daughter": "Hija", "arch.son": "Hijo", "arch.nephew": "Sobrino", "arch.friend": "Amigo", "arch.cat": "Gato", "arch.dog": "Perro", "arch.snake": "Serpiente",
+"arch.grandpa": "Abuelo", "arch.grandma": "Abuela", "arch.waigong": "Abuelo materno", "arch.waipo": "Abuela materna", "arch.dad": "Papá", "arch.mom": "Mamá", "arch.aunt": "Tía", "arch.uncle": "Tío", "arch.me": "Yo", "arch.brother": "Hermano", "arch.sister": "Hermana", "arch.daughter": "Hija", "arch.son": "Hijo", "arch.nephew": "Sobrino", "arch.friend": "Amigo", "arch.cat": "Gato", "arch.dog": "Perro", "arch.snake": "Serpiente",
 "arch.baby": "Bebé", "arch.toddler": "Niño pequeño", "arch.teen": "Adolescente", "arch.rabbit": "Conejo", "arch.hamster": "Hámster", "arch.bird": "Pájaro", "arch.fish": "Pez dorado", "arch.turtle": "Tortuga", "arch.succulent": "Suculenta", "arch.flower": "Planta con flores", "arch.tree": "Árbol en maceta",
 "arch.husband": "Marido", "arch.wife": "Esposa", "arch.neighbor": "Vecino mayor", "arch.roommate": "Compañero de piso", "arch.parrot": "Loro", "arch.cactus": "Cactus",
 "ob.title": "¿A quién tienes que cuidar?", "ob.sub": "Elige uno para empezar. Puedes añadir más cuando quieras.", "ob.recommend": "Sugerencias", "ob.added": "Añadido: {names}", "ob.start": "Empezar", "ob.skip": "Solo echar un vistazo", "sep.list": ", ",
@@ -149,7 +149,7 @@ CY.i18n.register("es", {"add.helper": "Trabaja desde casa, gana dinero y compart
 
 CY.i18n.register("es", {"intro.p2": "El tiempo lejos del escritorio es tiempo sin ingresos. El dinero sirve para comprar cosas y contratar a una niñera."});
 
-CY.i18n.register("es", {"people.lead": "Ser el protagonista", "people.lead_on": "Protagonista, toca para quitar"});
+CY.i18n.register("es", {"people.lead": "Controlar a esta persona", "people.lead_on": "Bajo tu control, toca para quitar"});
 
 CY.i18n.register("es", {"arch.elder": "Persona mayor típica", "arch.toddler1": "Niño de 1 año", "arch.toddler2": "Niño de 2 años", "arch.toddler3": "Niño de 3 años", "arch.toddler4": "Niño de 4 años", "arch.child12": "Niño de 12 años", "arch.woman25": "Mujer de 25 años", "arch.man25": "Hombre de 25 años", "add.helper": "En casa, comparte los cuidados"});
 

@@ -23,7 +23,7 @@ CY.i18n.register("de", {
 "glasses.none": "Keine", "glasses.round": "Rund", "glasses.square": "Eckig", "hair.short": "Kurz", "hair.long": "Lang", "hair.bob": "Bob", "hair.ponytail": "Pferdeschwanz", "hair.bun": "Dutt", "hair.curly": "Lockig", "hair.bald": "Glatze",
 "theme.auto": "System folgen", "theme.light": "Hell", "theme.dark": "Dunkel", "bg.warm": "Warm", "bg.mint": "Minze", "bg.sky": "Himmel", "bg.rose": "Rosé", "bg.gray": "Grau", "lang.auto": "Browser folgen",
 "scene.auto": "Auto", "scene.living": "Wohnzimmer", "scene.bedroom": "Schlafzimmer", "scene.kitchen": "Küche", "scene.lawn": "Wiese", "scene.balcony": "Balkon", "scene.none": "Einfarbig", "scene.tip": "Zimmerhintergrund", "set.scene": "Szene",
-"arch.grandpa": "Opa", "arch.grandma": "Oma", "arch.waigong": "Opa mütterlicherseits", "arch.waipo": "Oma mütterlicherseits", "arch.dad": "Papa", "arch.mom": "Mama", "arch.aunt": "Tante", "arch.uncle": "Onkel", "arch.brother": "Bruder", "arch.sister": "Schwester", "arch.daughter": "Tochter", "arch.son": "Sohn", "arch.nephew": "Neffe", "arch.friend": "Freund", "arch.cat": "Katze", "arch.dog": "Hund", "arch.snake": "Schlange",
+"arch.grandpa": "Opa", "arch.grandma": "Oma", "arch.waigong": "Opa mütterlicherseits", "arch.waipo": "Oma mütterlicherseits", "arch.dad": "Papa", "arch.mom": "Mama", "arch.aunt": "Tante", "arch.uncle": "Onkel", "arch.me": "Ich", "arch.brother": "Bruder", "arch.sister": "Schwester", "arch.daughter": "Tochter", "arch.son": "Sohn", "arch.nephew": "Neffe", "arch.friend": "Freund", "arch.cat": "Katze", "arch.dog": "Hund", "arch.snake": "Schlange",
 "arch.baby": "Baby", "arch.toddler": "Kleinkind", "arch.teen": "Teenager", "arch.rabbit": "Kaninchen", "arch.hamster": "Hamster", "arch.bird": "Vogel", "arch.fish": "Goldfisch", "arch.turtle": "Schildkröte", "arch.succulent": "Sukkulente", "arch.flower": "Blühpflanze", "arch.tree": "Bäumchen im Topf",
 "arch.husband": "Ehemann", "arch.wife": "Ehefrau", "arch.neighbor": "Älterer Nachbar", "arch.roommate": "Mitbewohner", "arch.parrot": "Papagei", "arch.cactus": "Kaktus",
 "ob.title": "Um wen musst du dich kümmern?", "ob.sub": "Such dir einen zum Anfangen aus. Du kannst jederzeit weitere hinzufügen.", "ob.recommend": "Vorschläge", "ob.added": "Hinzugefügt: {names}", "ob.start": "Los", "ob.skip": "Erst mal nur umsehen", "sep.list": ", ",
@@ -149,7 +149,7 @@ CY.i18n.register("de", {"add.helper": "Arbeitet von zu Hause, verdient selbst un
 
 CY.i18n.register("de", {"intro.p2": "Zeit abseits des Schreibtischs bringt kein Geld. Mit dem Geld kaufst du Vorräte und stellst eine Kinderfrau ein."});
 
-CY.i18n.register("de", {"people.lead": "Als Hauptfigur", "people.lead_on": "Hauptfigur, tippen zum Aufheben"});
+CY.i18n.register("de", {"people.lead": "Diese Person steuern", "people.lead_on": "Wird gesteuert, tippen zum Aufheben"});
 
 CY.i18n.register("de", {"arch.elder": "Typische ältere Person", "arch.toddler1": "1-jähriges Kind", "arch.toddler2": "2-jähriges Kind", "arch.toddler3": "3-jähriges Kind", "arch.toddler4": "4-jähriges Kind", "arch.child12": "12-jähriges Kind", "arch.woman25": "Frau, 25", "arch.man25": "Mann, 25", "add.helper": "Zu Hause, teilt die Pflege von selbst"});
 

@@ -5,9 +5,9 @@
   const t = (k, v) => CY.t(k, v);
   const { emit, clamp } = G._h;
 
-  /* ---------- 主角：可选。没有主角时，玩家是一个看不见的成年人，在书桌前工作。
-     选了一个人做主角，玩家的手就是他的手：他站在玩家所在的位置，不睡觉，不被打扰，也能照顾自己。
-     老人主角的圈转得慢些。 ---------- */
+  /* ---------- 操纵对象：玩家操纵的那个角色，内部叫 protagonist。没有时，玩家是一个成年人的影子，在书桌前工作。
+     选了一个人做操纵对象，玩家的手就是他的手：他站在玩家所在的位置，不睡觉，不被打扰，也能照顾自己。
+     老人做操纵对象，圈转得慢些。 ---------- */
   const LEAD_STAGES = ['child', 'teen', 'adult', 'elder'];
   G.canLead = p => !!p && G.isHuman(p) && LEAD_STAGES.includes(G.stage(p));
   G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
@@ -17,6 +17,18 @@
     G.world.protagonist = id || null;
     if (p) { p.person.active = true; G.clearFlag(p, 'hospital'); G.clearFlag(p, 'outing'); }
     G.save(); emit(); return true;
+  };
+
+  /* 操纵对象是家里的一个真角色，和别人一样设置。第一次有人住进来而还没有操纵对象，就替玩家建一个“我”，只做一次，以后删了或归档了不会再自己冒出来 */
+  G.ensurePlayer = async () => {
+    if (G.world.player_char || !G.activePeople().length) return false;
+    G.world.player_char = true;
+    if (G.protagonist()) { G.save(); return false; }
+    const id = await G.createPerson({ arch: 'me', name: t('preset.name.self'), roleText: CY.tOr('arch.me', '我') });
+    G.world.player_char = true;
+    await G.load(); G.world.player_char = true;
+    G.setProtagonist(id);
+    return true;
   };
 
   /* ---------- 外出：带着人出门 ---------- */

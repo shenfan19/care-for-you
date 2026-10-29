@@ -23,7 +23,7 @@ CY.i18n.register("ja", {
 "glasses.none": "なし", "glasses.round": "丸型", "glasses.square": "四角", "hair.short": "ショート", "hair.long": "ロング", "hair.bob": "ボブ", "hair.ponytail": "ポニーテール", "hair.bun": "お団子", "hair.curly": "カール", "hair.bald": "坊主",
 "theme.auto": "システムに従う", "theme.light": "ライト", "theme.dark": "ダーク", "bg.warm": "ウォーム", "bg.mint": "ミント", "bg.sky": "スカイ", "bg.rose": "ローズ", "bg.gray": "グレー", "lang.auto": "ブラウザに従う",
 "scene.auto": "自動", "scene.living": "リビング", "scene.bedroom": "寝室", "scene.kitchen": "キッチン", "scene.lawn": "芝生", "scene.balcony": "ベランダ", "scene.none": "無地", "scene.tip": "部屋の背景", "set.scene": "背景シーン",
-"arch.grandpa": "おじいちゃん", "arch.grandma": "おばあちゃん", "arch.waigong": "母方の祖父", "arch.waipo": "母方の祖母", "arch.dad": "お父さん", "arch.mom": "お母さん", "arch.aunt": "おば", "arch.uncle": "おじ", "arch.brother": "兄・弟", "arch.sister": "姉・妹", "arch.daughter": "娘", "arch.son": "息子", "arch.nephew": "甥", "arch.friend": "友人", "arch.cat": "ねこ", "arch.dog": "いぬ", "arch.snake": "へび",
+"arch.grandpa": "おじいちゃん", "arch.grandma": "おばあちゃん", "arch.waigong": "母方の祖父", "arch.waipo": "母方の祖母", "arch.dad": "お父さん", "arch.mom": "お母さん", "arch.aunt": "おば", "arch.uncle": "おじ", "arch.me": "わたし", "arch.brother": "兄・弟", "arch.sister": "姉・妹", "arch.daughter": "娘", "arch.son": "息子", "arch.nephew": "甥", "arch.friend": "友人", "arch.cat": "ねこ", "arch.dog": "いぬ", "arch.snake": "へび",
 "arch.baby": "赤ちゃん", "arch.toddler": "幼児", "arch.teen": "ティーン", "arch.rabbit": "うさぎ", "arch.hamster": "ハムスター", "arch.bird": "小鳥", "arch.fish": "金魚", "arch.turtle": "かめ", "arch.succulent": "多肉植物", "arch.flower": "花の鉢", "arch.tree": "鉢植えの木",
 "arch.husband": "夫", "arch.wife": "妻", "arch.neighbor": "ご近所のお年寄り", "arch.roommate": "ルームメイト", "arch.parrot": "オウム", "arch.cactus": "サボテン",
 "ob.title": "お世話したい人はいますか？", "ob.sub": "ひとつ選んで始めましょう。あとからいつでも追加できます。", "ob.recommend": "おすすめ", "ob.added": "追加済み：{names}", "ob.start": "始める", "ob.skip": "まずは見てみる", "sep.list": "、",
@@ -149,7 +149,7 @@ CY.i18n.register("ja", {"add.helper": "在宅で働き、自動で稼ぎ、世�
 
 CY.i18n.register("ja", {"intro.p2": "机を離れて世話をしている間は、収入がありません。お金は物の購入やシッターの雇用に使います。"});
 
-CY.i18n.register("ja", {"people.lead": "主人公にする", "people.lead_on": "主人公。押すと解除"});
+CY.i18n.register("ja", {"people.lead": "操作する", "people.lead_on": "操作中。押すと解除"});
 
 CY.i18n.register("ja", {"arch.elder": "典型的なお年寄り", "arch.toddler1": "1歳の子", "arch.toddler2": "2歳の子", "arch.toddler3": "3歳の子", "arch.toddler4": "4歳の子", "arch.child12": "12歳の子", "arch.woman25": "25歳の女性", "arch.man25": "25歳の男性", "add.helper": "家にいて、世話を自動で分担する"});
 

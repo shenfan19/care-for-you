@@ -19,6 +19,7 @@
     U.applyTheme();
     if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => U.applyTheme());
     U.buildRoom($('room'));
+    G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); });
     U.onFloatChange = () => U.renderBar();
     U.renderBar(); U.renderFeed(true); U.renderSaid(true); U.renderClock(); U.renderControls(); U.renderLife();
     let lastFeed = 0;

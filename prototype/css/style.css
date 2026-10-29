@@ -315,3 +315,10 @@ header { align-items:center; }
 .pop.event { background:#fff4c8; border-color:#e5d38a; animation-duration:3s; }
 @keyframes popin { 0% { transform:translate(-50%,10px) scale(.3); opacity:0; } 8% { transform:translate(-50%,-3px) scale(1.18); opacity:1; } 16% { transform:translate(-50%,0) scale(1); } 78% { transform:translate(-50%,-8px); opacity:1; } 100% { transform:translate(-50%,-20px); opacity:0; } }
 @media (prefers-reduced-motion: reduce) { .pop { animation:none; } }
+
+/* 悬停的人轻轻亮一圈，重叠时看得出要弹谁的菜单；坐在电脑前的人，两只手轮流敲键盘 */
+.cx.hov .body { filter:drop-shadow(0 0 6px var(--accent)); }
+.cx.working .hand.l { animation:typeL .34s ease-in-out infinite; } .cx.working .hand.r { animation:typeR .34s ease-in-out infinite; }
+@keyframes typeL { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+@keyframes typeR { 0%,100% { transform:translateY(-3px); } 50% { transform:translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .cx.working .hand { animation:none !important; } }

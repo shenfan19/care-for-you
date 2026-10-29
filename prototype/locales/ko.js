@@ -23,7 +23,7 @@ CY.i18n.register("ko", {
 "glasses.none": "없음", "glasses.round": "둥근", "glasses.square": "네모난", "hair.short": "짧은 머리", "hair.long": "긴 머리", "hair.bob": "단발", "hair.ponytail": "포니테일", "hair.bun": "올림머리", "hair.curly": "곱슬", "hair.bald": "민머리",
 "theme.auto": "시스템 따라가기", "theme.light": "밝게", "theme.dark": "어둡게", "bg.warm": "따뜻한", "bg.mint": "민트", "bg.sky": "하늘", "bg.rose": "로즈", "bg.gray": "회색", "lang.auto": "브라우저 따라가기",
 "scene.auto": "자동", "scene.living": "거실", "scene.bedroom": "침실", "scene.kitchen": "주방", "scene.lawn": "잔디밭", "scene.balcony": "발코니", "scene.none": "단색", "scene.tip": "방 배경", "set.scene": "배경 장면",
-"arch.grandpa": "할아버지", "arch.grandma": "할머니", "arch.waigong": "외할아버지", "arch.waipo": "외할머니", "arch.dad": "아빠", "arch.mom": "엄마", "arch.aunt": "이모·고모", "arch.uncle": "삼촌", "arch.brother": "형제", "arch.sister": "자매", "arch.daughter": "딸", "arch.son": "아들", "arch.nephew": "조카", "arch.friend": "친구", "arch.cat": "고양이", "arch.dog": "강아지", "arch.snake": "뱀",
+"arch.grandpa": "할아버지", "arch.grandma": "할머니", "arch.waigong": "외할아버지", "arch.waipo": "외할머니", "arch.dad": "아빠", "arch.mom": "엄마", "arch.aunt": "이모·고모", "arch.uncle": "삼촌", "arch.me": "나", "arch.brother": "형제", "arch.sister": "자매", "arch.daughter": "딸", "arch.son": "아들", "arch.nephew": "조카", "arch.friend": "친구", "arch.cat": "고양이", "arch.dog": "강아지", "arch.snake": "뱀",
 "arch.baby": "아기", "arch.toddler": "유아", "arch.teen": "십대", "arch.rabbit": "토끼", "arch.hamster": "햄스터", "arch.bird": "새", "arch.fish": "금붕어", "arch.turtle": "거북이", "arch.succulent": "다육식물", "arch.flower": "꽃 화분", "arch.tree": "화분 나무",
 "arch.husband": "남편", "arch.wife": "아내", "arch.neighbor": "이웃 어르신", "arch.roommate": "룸메이트", "arch.parrot": "앵무새", "arch.cactus": "선인장",
 "ob.title": "돌보고 싶은 사람이 있나요?", "ob.sub": "하나를 골라 시작하세요. 나중에 언제든 더 추가할 수 있습니다.", "ob.recommend": "추천", "ob.added": "추가됨: {names}", "ob.start": "시작", "ob.skip": "일단 둘러볼게요", "sep.list": ", ",
@@ -149,7 +149,7 @@ CY.i18n.register("ko", {"add.helper": "재택근무로 알아서 벌고 돌봄�
 
 CY.i18n.register("ko", {"intro.p2": "책상을 떠나 돌보는 동안에는 돈을 벌지 못합니다. 돈은 물품을 사거나 돌보미를 고용하는 데 씁니다."});
 
-CY.i18n.register("ko", {"people.lead": "주인공으로", "people.lead_on": "주인공, 누르면 해제"});
+CY.i18n.register("ko", {"people.lead": "조작 대상으로", "people.lead_on": "조작 대상, 누르면 해제"});
 
 CY.i18n.register("ko", {"arch.elder": "전형적인 노인", "arch.toddler1": "1살 아이", "arch.toddler2": "2살 아이", "arch.toddler3": "3살 아이", "arch.toddler4": "4살 아이", "arch.child12": "12살 아이", "arch.woman25": "25세 여성", "arch.man25": "25세 남성", "add.helper": "집에서 돌봄을 알아서 나눈다"});
 

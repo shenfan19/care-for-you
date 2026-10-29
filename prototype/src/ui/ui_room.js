@@ -51,8 +51,52 @@
     let sx = null;
     root.addEventListener('pointerdown', e => { sx = e.target.closest('.cx') || e.target.closest('#ringLayer') || e.target.closest('#placeNav') ? null : e.clientX; });
     root.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 70) U.cyclePlace(dx < 0 ? 1 : -1); });
+    /* 鼠标悬停：移到谁身上，谁的菜单就弹出，不用点 */
+    root.addEventListener('pointermove', onHover);
     U.renderRoom(true);
   };
+
+  /* ---------- 悬停弹出，重叠的人怎么选 ----------
+     命中区只算身体，不算名字和气泡；指针落在几个人的命中区里，选离身体中心最近的那个，一样近的取站得靠前的。
+     停够 0.12 秒才弹，扫过的不算；菜单已经开着时，换人要停 0.35 秒，指针在菜单圈里不会换；指针离开人和菜单圈 0.4 秒后收起。
+     只有悬停弹出的菜单会自动收起，点开的和名单里点开的不会。 */
+  const HIT = { l: 0.18, r: 0.82, t: 0.12, b: 0.97 };
+  U.pickAt = function (x, y) {
+    let best = null, bd = 1e9, bz = -1e9;
+    for (const c of U.room.querySelectorAll('.stage .cx[data-id]')) {
+      if (c.style.display === 'none') continue;
+      const b = c.querySelector('.body').getBoundingClientRect(); if (!b.width) continue;
+      const l = b.left + b.width * HIT.l, r = b.left + b.width * HIT.r, tp = b.top + b.height * HIT.t, bt = b.top + b.height * HIT.b;
+      if (x < l || x > r || y < tp || y > bt) continue;
+      const d = Math.hypot(x - (l + r) / 2, (y - (tp + (bt - tp) * 0.45)) * 0.8), z = +(c.style.getPropertyValue('--z') || 0);
+      if (d < bd - 4 || (Math.abs(d - bd) <= 4 && z > bz)) { best = c; bd = d; bz = z; }
+    }
+    return best;
+  };
+  let hoverT = null, closeT = null;
+  const setHov = id => { for (const c of U.room.querySelectorAll('.cx.hov')) if (c.dataset.id !== id) c.classList.remove('hov'); const c = id && $r(`.cx[data-id="${id}"]`); if (c) c.classList.add('hov'); };
+  function onHover(e) {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    if (U.holdPid || e.buttons) return;
+    if (e.target.closest('.bubble, .away, .info, .edit, #placeNav, #roster, .cornerbox')) { clearTimeout(hoverT); hoverT = null; setHov(null); return; }
+    const ring = $r('#ringLayer'), g = ring && U.ringGeom;
+    const overRing = ring && (e.target.closest('#ringLayer') || (g && Math.hypot(e.clientX - g.x, e.clientY - g.y) <= g.r));
+    const hit = overRing && e.target.closest('#ringLayer') ? null : U.pickAt(e.clientX, e.clientY), id = hit ? hit.dataset.id : null;
+    setHov(id);
+    if (id && ring && U.sel === id) { clearTimeout(hoverT); hoverT = null; clearTimeout(closeT); closeT = null; return; }
+    if (id) {
+      clearTimeout(closeT); closeT = null;
+      if (hoverT && hoverT.id === id) return;
+      clearTimeout(hoverT && hoverT.t);
+      hoverT = { id, t: setTimeout(() => { hoverT = null; if (U.holdPid) return; U.hoverId = id; U.sel = id; U.openRing(id); U.ringByHover = true; }, ring ? 350 : 120) };
+      U.hoverId = id; U.syncFreeze();
+      return;
+    }
+    if (hoverT) { clearTimeout(hoverT.t); hoverT = null; }
+    if (ring && U.ringByHover && !overRing && !closeT) closeT = setTimeout(() => { closeT = null; if (!U.holdPid && U.ringByHover) { U.closeRing(); U.hoverId = null; U.syncFreeze(); } }, 400);
+    else if (overRing) { clearTimeout(closeT); closeT = null; }
+    if (!ring && !id && U.hoverId) { U.hoverId = null; U.syncFreeze(); }
+  }
 
   /* 页面：家，办公室，医院是斜视的房子，最后一页是全家总览，原来的大头像加状态 */
   U.viewPlace = 'home';
@@ -78,13 +122,19 @@
     const q = CY.world.project(place, gx, gy);
     el.style.left = (q.x / CY.world.VW * 100) + '%'; el.style.top = (q.y / CY.world.VH * 100) + '%'; el.style.setProperty('--z', Math.round(q.y));
   };
+  /* 斜视里走的方向对应四个朝向：格子 x 增大朝右下 se，y 增大朝左下 sw，x 减小朝左上 nw，y 减小朝右上 ne */
+  const dirOf = (dx, dy) => (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'se' : 'nw') : (dy > 0 ? 'sw' : 'ne'));
   U.moveFig = function (el, place, gx, gy) {
     if (el._frozen) return;
     const cur = el._pos;
     if (cur && cur.place === place && Math.abs(cur.gx - gx) + Math.abs(cur.gy - gy) < 0.01) return;
     el._pos = { place, gx, gy }; paint(el, place, gx, gy);
-    /* 走的时候身体轻轻起伏，到了就停 */
-    if (cur && cur.place === place) { el.classList.add('walking'); clearTimeout(el._wt); el._wt = setTimeout(() => el.classList.remove('walking'), el.classList.contains('lead') || el.classList.contains('player') ? 1300 : 7200); }
+    /* 走的时候朝着走的方向，身体轻轻起伏，到了就停 */
+    if (cur && cur.place === place) {
+      el._dir = dirOf(gx - cur.gx, gy - cur.gy);
+      el.classList.add('walking'); clearTimeout(el._wt);
+      el._wt = setTimeout(() => { el.classList.remove('walking'); el._dir = null; }, el.classList.contains('lead') || el.classList.contains('player') ? 1300 : 7200);
+    }
   };
 
   /* 悬停或点选的人停在原地，包括正在慢慢走的：把当前位置固定下来，放开后再接着往目标走 */
@@ -128,10 +178,9 @@
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
         c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="pops"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
-        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; U.sel = p.id; U.openRing(p.id); };
+        /* 鼠标移上去就弹出菜单，不用点；触屏没有移上去，还是点一下。重叠的人由 pickAt 按指针离谁近选 */
+        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; if ($r('#ringLayer') && U.sel === p.id) return; U.sel = p.id; U.ringByHover = false; U.openRing(p.id); };
         c.style.transition = 'none';
-        c.onpointerenter = () => { U.hoverId = p.id; U.syncFreeze(); };
-        c.onpointerleave = () => { if (U.hoverId === p.id) { U.hoverId = null; U.syncFreeze(); } };
         stage.appendChild(c);
         win().requestAnimationFrame(() => { if (!c._frozen) c.style.transition = ''; });
       }
@@ -141,8 +190,11 @@
         const lp = laid.get(p.id);
         U.moveFig(c, U.viewPlace, lp.gx, lp.gy);
       }
-      const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M');
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p); c.dataset.av = look; }
+      const working = p === G.protagonist() && !fam && CY.world.atWork();
+      const dir = fam ? '' : c._dir || (working ? 'ne' : '');
+      c.classList.toggle('working', working && !c._dir);
+      const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p));
@@ -239,6 +291,9 @@
     const pages = U.PAGES(), show = !G.protagonist() && v.place === U.viewPlace && U.viewPlace !== 'family' && pages.length > 0 && !v.traveling;
     c.style.display = show ? '' : 'none';
     if (show) U.moveFig(c, v.place, v.gx, v.gy);
+    const working = show && W.atWork(), dir = c._dir || (working ? 'ne' : '');
+    c.classList.toggle('working', working && !c._dir);
+    if (c.dataset.dir !== dir) { c.dataset.dir = dir; c.querySelector('.body').innerHTML = CY.avatar(PLAYER, dir); }
   };
   U.renderNav = function () {
     const nav = $r('#placeNav'); if (!nav) return;
@@ -282,7 +337,7 @@
     box.querySelectorAll('.rcard').forEach(el => el.onclick = e => {
       e.stopPropagation();
       if (e.target.closest('.ri')) { U.statusDialog(el.dataset.id); return; }
-      U.sel = el.dataset.id; U.openRing(el.dataset.id, el);
+      U.sel = el.dataset.id; U.ringByHover = false; U.openRing(el.dataset.id, el);
     });
   };
 
@@ -304,7 +359,7 @@
   /* 这个动作能不能解决角色现在的某个需求 */
   U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > 0.45);
   const ringOff = () => { if (U.room) U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); };
-  U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); ringOff(); };
+  U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; ringOff(); };
   U.openRing = function (pid, anchor) {
     U.closeRing();
     const p = G.get(pid), acts = Object.values(G.actionsOf(p));
@@ -319,6 +374,7 @@
     const layer = doc().createElement('div');
     layer.id = 'ringLayer'; layer.className = 'ring';
     layer.style.left = ox + 'px'; layer.style.top = oy + 'px';
+    U.ringGeom = { x: ox, y: oy, r: R + half + 14 };
     const label = doc().createElement('div'); label.className = 'ringlabel';
     const home = () => { label.innerHTML = `<b>${esc(p.person.name)}</b>`; };
     home(); layer.appendChild(label);

@@ -20,6 +20,7 @@
     H('uncle', '舅舅', 48, 'aunt', '他', { skin: 4, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f8a7a' }),
     H('brother', '哥哥', 28, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#4f6d8f' }),
     H('sister', '姐姐', 26, 'sibling', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#b5677a' }),
+    H('me', '我', 32, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'round', beard: false, cloth: '#4f6d8f' }),
     H('friend', '朋友', 30, 'sibling', '她', { skin: 1, hair_style: 'long', hair_color: 'auburn', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
     H('baby', '宝宝', 0.5, 'infant', '她', { skin: 0, hair_style: 'bald', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#f2c9c4' }),
     H('toddler', '幼儿', 2, 'toddler', '她', { skin: 0, hair_style: 'bun', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e7a6a1' }),

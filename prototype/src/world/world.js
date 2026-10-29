@@ -23,17 +23,17 @@
     const P = W.PLACES[place], ox = W.VW / 2 + (P.h - P.w) * W.TW / 4;
     return { x: ox + (gx - gy) * W.TW / 2, y: 120 + (gx + gy) * W.TH / 2 };
   };
-  /* 各房间里站人的位置，用房间宽高的比例表示。sleep 是床位，cradle 是婴儿床，player 是主角的位置 */
+  /* 各房间里站人的位置，用房间宽高的比例表示。sleep 是床位，cradle 是婴儿床，player 是操纵对象的位置，书房和办公室里是坐在桌前椅子的位置 */
   const SLOTS = {
     bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.8, .33]], player: [.18, .9] },
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
-    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.5, .5] },
+    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .42] },
     living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
-    desk: { stand: [[.5, .7], [.3, .8], [.7, .8]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .55] },
+    desk: { stand: [[.5, .7], [.3, .8], [.7, .8]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.28, .45] },
     lawn: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5], [.2, .55], [.8, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     road: { stand: [[.5, .56], [.3, .6], [.7, .6], [.4, .4], [.6, .4], [.2, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
   };
@@ -179,6 +179,8 @@
   W.holding = false;      /* 正在长按 */
   W.IDLE_MS = 4000;       /* 动作停下后，原地停几秒再自动回去 */
   W.lastActive = Date.now();
+  /* 坐在电脑前：家里的书房和办公室的工位，椅子在桌子前面，人朝着桌子，也就是背对着我们 */
+  W.atWork = () => { const pl = W.player(); return !W.holding && ((pl.place === 'home' && pl.room === 'study') || (pl.place === 'office' && pl.room === 'desk')); };
   W.atDesk = () => { const pl = W.player(); return pl.place === 'home' && pl.room === 'study' && !W.holding; };
   W.where = () => ({ place: W.player().place, room: W.player().room });
   W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; W.lastActive = Date.now(); };

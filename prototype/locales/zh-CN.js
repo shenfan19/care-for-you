@@ -37,7 +37,7 @@ CY.i18n.register('zh-CN', {
   'hair.short': '短发', 'hair.long': '长发', 'hair.bob': '齐肩', 'hair.ponytail': '马尾', 'hair.bun': '发髻', 'hair.curly': '卷发', 'hair.bald': '光头',
   'theme.auto': '跟随系统', 'theme.light': '浅色', 'theme.dark': '深色',
   'bg.warm': '暖米', 'bg.mint': '薄荷', 'bg.sky': '天青', 'bg.rose': '玫瑰', 'bg.gray': '中性灰', 'lang.auto': '跟随浏览器',
-  'arch.grandpa': '爷爷', 'arch.grandma': '奶奶', 'arch.waigong': '外公', 'arch.waipo': '外婆', 'arch.dad': '爸爸', 'arch.mom': '妈妈', 'arch.aunt': '姑姑', 'arch.uncle': '舅舅',
+  'arch.grandpa': '爷爷', 'arch.grandma': '奶奶', 'arch.waigong': '外公', 'arch.waipo': '外婆', 'arch.dad': '爸爸', 'arch.mom': '妈妈', 'arch.aunt': '姑姑', 'arch.uncle': '舅舅', 'arch.me': '我',
   'arch.brother': '哥哥', 'arch.sister': '姐姐', 'arch.daughter': '女儿', 'arch.son': '儿子', 'arch.nephew': '侄子', 'arch.friend': '朋友', 'arch.cat': '猫', 'arch.dog': '狗', 'arch.snake': '蛇',
 
   'ob.title': '你有什么人要照顾吗？', 'ob.sub': '选一个开始就行，之后随时可以再添加。', 'ob.recommend': '推荐',
@@ -50,7 +50,7 @@ CY.i18n.register('zh-CN', {
   'sec.interrupt': '打扰', 'sec.time': '时间', 'sec.player': '称呼', 'sec.interaction': '互动', 'sec.ui': '界面', 'sec.privacy': '隐私', 'sec.account': '账号', 'sec.ai': 'AI 接入',
   'set.title': '设置', 'set.look': '外观与语言', 'set.theme': '明暗', 'set.bg': '背景', 'set.lang': '语言',
   'set.data': '数据位置', 'set.data_note': '{where}。所有数据都是明文文件，选文件夹时请确认它不会被同步到别人能看到的地方。',
-  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'ob.more': '更多场景', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'corner.money_tip': '钱。点开可以请保姆', 'corner.music_tip': '音乐。点一下开或关', 'help.title': '家里的帮手', 'help.income': '工作时段在书桌前会赚钱，每小时 {n}；老人主角领固定的退休金，每小时 {p}。钱只用来请保姆。', 'nanny.title': '保姆', 'nanny.note': '白天帮你照顾家里的人，每天 {n}，从钱里自动付。钱不够的那天保姆休息，不会欠账。', 'nanny.status': '保姆在白天帮你照顾家里的人，每天 {n}。', 'nanny.hire': '请保姆', 'nanny.dismiss': '不请了', 'nanny.name': '保姆', 'log.nanny_hired': '请了一位保姆。', 'log.nanny_paid': '付了今天保姆的钱，{n}。', 'log.nanny_rest': '钱不够，今天保姆休息。', 'log.nanny_end': '保姆不来了。', 'arch.nanny': '保姆', 'set.figure': '人物造型', 'figure.dressed': '穿衣小豆', 'figure.plain': '素色小豆', 'figure.dumpling': '团子', 'sec.audio': '声音', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
+  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'ob.more': '更多场景', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'corner.money_tip': '钱。点开可以请保姆', 'corner.music_tip': '音乐。点一下开或关', 'help.title': '家里的帮手', 'help.income': '工作时段在书桌前会赚钱，每小时 {n}；你操纵的老人领固定的退休金，每小时 {p}。钱只用来请保姆。', 'nanny.title': '保姆', 'nanny.note': '白天帮你照顾家里的人，每天 {n}，从钱里自动付。钱不够的那天保姆休息，不会欠账。', 'nanny.status': '保姆在白天帮你照顾家里的人，每天 {n}。', 'nanny.hire': '请保姆', 'nanny.dismiss': '不请了', 'nanny.name': '保姆', 'log.nanny_hired': '请了一位保姆。', 'log.nanny_paid': '付了今天保姆的钱，{n}。', 'log.nanny_rest': '钱不够，今天保姆休息。', 'log.nanny_end': '保姆不来了。', 'arch.nanny': '保姆', 'set.figure': '人物造型', 'figure.dressed': '穿衣小豆', 'figure.plain': '素色小豆', 'figure.dumpling': '团子', 'sec.audio': '声音', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
   'set.wipe': '删除全部本地数据', 'set.folder_had': '已切换到该文件夹里已有的数据', 'set.folder_copied': '已把当前数据复制到该文件夹', 'set.restored': '补回了 {n} 个文件',
   'wipe.title': '删除全部本地数据', 'wipe.body': '这会清除这台设备上的所有角色、记录和设置，无法恢复。建议先下载一份存档。',
   'wipe.save_first': '先下载存档', 'wipe.sure': '我知道删除后无法恢复', 'wipe.go': '删除',
@@ -332,7 +332,7 @@ CY.i18n.register("zh-CN", {"add.helper": "在家办公，自动赚钱，也分�
 
 CY.i18n.register("zh-CN", {"intro.p2": "离开书桌去照顾人，那段时间就赚不了钱。钱用来买物品，也可以请保姆。"});
 
-CY.i18n.register("zh-CN", {"people.lead": "设为主角", "people.lead_on": "主角，点击取消"});
+CY.i18n.register("zh-CN", {"people.lead": "设为操纵对象", "people.lead_on": "操纵对象，点击取消"});
 
 CY.i18n.register("zh-CN", {"arch.elder": "典型老人", "arch.toddler1": "1岁孩子", "arch.toddler2": "2岁孩子", "arch.toddler3": "3岁孩子", "arch.toddler4": "4岁孩子", "arch.child12": "12岁孩子", "arch.woman25": "25岁女性", "arch.man25": "25岁男性", "add.helper": "在家，自动分担照顾"});
 

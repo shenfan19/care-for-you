@@ -278,7 +278,8 @@
 
   /* ---------- 豆子造型：头和身子是一个轮廓，可在设置里选 ----------
      A 整只衣服色加肤色脸盘，没有手脚；B 同 A，加手和脚；C 上半肤色下半衣服，加手脚。
-     手脚是独立的小椭圆，走路和照顾时用 CSS 动起来，不用骨骼。 */
+     手脚是独立的小椭圆，走路和照顾时用 CSS 动起来，不用骨骼。
+     朝向：dir 是斜视里的四个方向 se、sw、ne、nw，朝下的两个脸转向一侧，朝上的两个只看见后脑勺和头发，左右靠整体镜像得到；没有 dir 就是正对着看的样子。 */
 const BEAN_STAGE = { infant: { w: 66, h: 62 }, toddler: { w: 64, h: 70 }, child: { w: 62, h: 80 }, teen: { w: 60, h: 90 }, adult: { w: 64, h: 92 }, elder: { w: 66, h: 88 } };
 let beanUid = 0;
 
@@ -290,6 +291,7 @@ function beanDraw(o, V) {
   const shape = `M${L} ${y1} A${w / 2} ${r1} 0 0 1 ${R} ${y1} L${R} ${y2} Q${R} ${bot} ${R - w * 0.22} ${bot} L${L + w * 0.22} ${bot} Q${L} ${bot} ${L} ${y2}Z`;
   const eyeY = top + r1 * 0.98, eyeDx = Math.min(11, w * 0.2), mood = o.mood;
   const hasLimbs = V !== 'A';
+  const dir = o.dir, away = dir === 'ne' || dir === 'nw', turned = dir === 'se' || dir === 'sw', mirror = dir === 'sw' || dir === 'nw', fx = turned ? 11 : 0;
   let back = '', front = '';
   const fy = top + r1 * 0.6;
   const capPath = `M${L - 4} ${top - 4} L${R + 4} ${top - 4} L${R + 4} ${fy} Q${cx + w * 0.22} ${fy + 9} ${cx + 2} ${fy - 2} Q${cx - w * 0.2} ${fy + 7} ${L - 4} ${fy + 3}Z`;
@@ -297,9 +299,13 @@ function beanDraw(o, V) {
   if (st === 'long') back = `<path d="M${L - 5} ${y1} Q${L - 9} ${bot - 14} ${L + 4} ${bot - 18} L${R - 4} ${bot - 18} Q${R + 9} ${bot - 14} ${R + 5} ${y1}Z" fill="${hc}"/>`;
   else if (st === 'bob') back = `<path d="M${L - 4} ${y1} Q${L - 7} ${y1 + 22} ${L + 3} ${y1 + 24} L${R - 3} ${y1 + 24} Q${R + 7} ${y1 + 22} ${R + 4} ${y1}Z" fill="${hc}"/>`;
   else if (st === 'bun') back = `<circle cx="${cx}" cy="${top - 4}" r="${small ? 8 : 10}" fill="${hc}"/>`;
+  else if (st === 'ponytail' && away) back = `<ellipse cx="${cx}" cy="${top + r1 * 1.3}" rx="7" ry="14" fill="${hc}"/>`;
+  else if (st === 'ponytail' && turned) back = `<path d="M${L + 4} ${top + r1 * 0.5} Q${L - 22} ${top + r1 * 0.5} ${L - 12} ${top + r1 * 1.6} Q${L - 8} ${top + r1 * 0.9} ${L + 6} ${top + r1 * 0.9}Z" fill="${hc}"/>`;
   else if (st === 'ponytail') back = `<path d="M${R - 4} ${top + r1 * 0.5} Q${R + 22} ${top + r1 * 0.5} ${R + 12} ${top + r1 * 1.6} Q${R + 8} ${top + r1 * 0.9} ${R - 6} ${top + r1 * 0.9}Z" fill="${hc}"/>`;
   else if (st === 'curly') back = [[-12, 2], [0, -3], [12, 2], [-19, 12], [19, 12]].map(([dx, dy]) => `<circle cx="${cx + dx}" cy="${top + dy + 4}" r="11" fill="${hc}"/>`).join('');
-  if (st !== 'bald') front = `<path d="${capPath}" fill="${hc}"/>`;
+  const hb = top + r1 * 1.3, backCap = `<path d="M${L - 4} ${top - 4} L${R + 4} ${top - 4} L${R + 4} ${hb} Q${cx} ${hb + 8} ${L - 4} ${hb}Z" fill="${hc}"/>`;
+  if (away) front = st === 'bald' ? '' : backCap;
+  else if (st !== 'bald') front = `<path d="${capPath}" fill="${hc}"/>`;
   else if (o.stage === 'infant') front = `<path d="M${cx - 4} ${top + 3} Q${cx} ${top - 6} ${cx + 5} ${top + 3}" fill="none" stroke="${hc}" stroke-width="3" stroke-linecap="round"/>`;
   else if (o.stage === 'elder') front = `<ellipse cx="${L + 3}" cy="${eyeY - 4}" rx="3.5" ry="9" fill="${hc}"/><ellipse cx="${R - 3}" cy="${eyeY - 4}" rx="3.5" ry="9" fill="${hc}"/>`;
 
@@ -320,7 +326,7 @@ function beanDraw(o, V) {
     const sp = top + h * 0.6;
     torso = `<path d="${shape}" fill="${sk[0]}" ${stroke}/><g clip-path="url(#${id})"><rect x="${L - 2}" y="${sp}" width="${w + 4}" height="${h}" fill="${cloth}"/><path d="M${L - 2} ${sp} Q${cx} ${sp + 9} ${R + 2} ${sp}" fill="none" stroke="${dark(cloth, 0.78)}" stroke-width="1.4"/></g>`;
   } else {
-    torso = `<path d="${shape}" fill="${cloth}" ${stroke}/><ellipse cx="${cx}" cy="${eyeY + 3}" rx="${w * 0.44}" ry="${r1 * 0.8}" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>`;
+    torso = `<path d="${shape}" fill="${cloth}" ${stroke}/>${away ? '' : `<ellipse cx="${cx + fx * 0.7}" cy="${eyeY + 3}" rx="${w * 0.44}" ry="${r1 * 0.8}" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>`}`;
   }
   const limbs = hasLimbs
     ? `<ellipse class="foot l" cx="${cx - w * 0.2}" cy="${bot + 1}" rx="${small ? 7 : 8.5}" ry="4.5" fill="#4a4048"/><ellipse class="foot r" cx="${cx + w * 0.2}" cy="${bot + 1}" rx="${small ? 7 : 8.5}" ry="4.5" fill="#4a4048"/>`
@@ -329,19 +335,22 @@ function beanDraw(o, V) {
     ? `<ellipse class="hand l" cx="${L - 1}" cy="${top + h * 0.7}" rx="5" ry="6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/><ellipse class="hand r" cx="${R + 1}" cy="${top + h * 0.7}" rx="5" ry="6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>`
     : '';
   const lean = o.stage === 'elder' ? ' transform="rotate(-2 50 122)"' : '';
-  return `<svg viewBox="0 0 100 135" class="av"><defs><clipPath id="${id}"><path d="${shape}"/></clipPath></defs>
-    <ellipse cx="50" cy="127" rx="${w * 0.6}" ry="3.5" fill="#00000018"/>
-    ${limbs}
-    <g class="bean"${lean}>${back}${torso}
+  /* 朝上的人看不见脸，长头发垂在身后，画在躯体上面 */
+  const face = away ? '' : `<g${fx ? ` transform="translate(${cx + fx} 0) scale(.86 1) translate(${-cx} 0)"` : ''}>${cheeks}${eyes}${lids}${glasses}${beard}</g>`;
+  const hairOver = away ? back : '';
+  const body = `${limbs}<g class="bean"${lean}>${away ? '' : back}${torso}${hairOver}
       <g clip-path="url(#${id})">${front}</g>
-      ${cheeks}${eyes}${lids}${glasses}${beard}
+      ${face}
       ${hands}
-    </g></svg>`;
+    </g>`;
+  return `<svg viewBox="0 0 100 135" class="av"${dir ? ` data-dir="${dir}"` : ''}><defs><clipPath id="${id}"><path d="${shape}"/></clipPath></defs>
+    ${mirror ? '<g transform="translate(100 0) scale(-1 1)">' : '<g>'}<ellipse cx="50" cy="127" rx="${w * 0.6}" ry="3.5" fill="#00000018"/>
+    ${body}</g></svg>`;
 }
-  const beanHuman = (p, V) => {
+  const beanHuman = (p, V, dir) => {
     const a = p.person.appearance || {}, G = CY.game;
     const stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
-    return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: a.cloth || '#8fa3b8', glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)) }, V);
+    return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: a.cloth || '#8fa3b8', glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)), dir: dir || '' }, V);
   };
   const DRAW = { hedgehog, duck, ferret, axolotl, chicken, orchid, bamboo, cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
   /* CY.figure：人的造型，设置里选。dressed 上半肤色下半衣服，默认；plain 整只衣服色加肤色脸盘，有手脚；dumpling 同 plain 但没有手脚。
@@ -350,7 +359,8 @@ function beanDraw(o, V) {
   CY.FIGURES = ['dressed', 'plain', 'dumpling'];
   CY.figureOf = v => ({ classic: 'dressed', bean_c: 'dressed', bean_b: 'plain', bean_a: 'dumpling' }[v]) || (CY.FIGURES.includes(v) ? v : 'dressed');
   CY.figure = 'dressed';
-  CY.avatar = p => DRAW[p.species.id] ? DRAW[p.species.id](p) : beanHuman(p, FIG_V[CY.figure] || 'C');
+  CY.DIRS = ['se', 'sw', 'ne', 'nw'];
+  CY.avatar = (p, dir) => DRAW[p.species.id] ? DRAW[p.species.id](p) : beanHuman(p, FIG_V[CY.figure] || 'C', dir);
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {
     const years = typeof age === 'number' ? age : arch.age;

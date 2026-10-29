@@ -27,7 +27,7 @@ CY.i18n.register("fr", {
 "theme.auto": "Suivre le système", "theme.light": "Clair", "theme.dark": "Sombre",
 "bg.warm": "Chaud", "bg.mint": "Menthe", "bg.sky": "Ciel", "bg.rose": "Rose", "bg.gray": "Gris", "lang.auto": "Suivre le navigateur",
 "scene.auto": "Auto", "scene.living": "Salon", "scene.bedroom": "Chambre", "scene.kitchen": "Cuisine", "scene.lawn": "Pelouse", "scene.balcony": "Balcon", "scene.none": "Uni", "scene.tip": "Décor de la pièce", "set.scene": "Décor",
-"arch.grandpa": "Grand-père", "arch.grandma": "Grand-mère", "arch.waigong": "Grand-père maternel", "arch.waipo": "Grand-mère maternelle", "arch.dad": "Papa", "arch.mom": "Maman", "arch.aunt": "Tante", "arch.uncle": "Oncle", "arch.brother": "Frère", "arch.sister": "Sœur", "arch.daughter": "Fille", "arch.son": "Fils", "arch.nephew": "Neveu", "arch.friend": "Ami", "arch.cat": "Chat", "arch.dog": "Chien", "arch.snake": "Serpent",
+"arch.grandpa": "Grand-père", "arch.grandma": "Grand-mère", "arch.waigong": "Grand-père maternel", "arch.waipo": "Grand-mère maternelle", "arch.dad": "Papa", "arch.mom": "Maman", "arch.aunt": "Tante", "arch.uncle": "Oncle", "arch.me": "Moi", "arch.brother": "Frère", "arch.sister": "Sœur", "arch.daughter": "Fille", "arch.son": "Fils", "arch.nephew": "Neveu", "arch.friend": "Ami", "arch.cat": "Chat", "arch.dog": "Chien", "arch.snake": "Serpent",
 "arch.baby": "Bébé", "arch.toddler": "Tout-petit", "arch.teen": "Ado", "arch.rabbit": "Lapin", "arch.hamster": "Hamster", "arch.bird": "Oiseau", "arch.fish": "Poisson rouge", "arch.turtle": "Tortue", "arch.succulent": "Plante grasse", "arch.flower": "Plante à fleurs", "arch.tree": "Arbre en pot",
 "arch.husband": "Mari", "arch.wife": "Épouse", "arch.neighbor": "Voisin âgé", "arch.roommate": "Colocataire", "arch.parrot": "Perroquet", "arch.cactus": "Cactus",
 "ob.title": "De qui devez-vous prendre soin ?", "ob.sub": "Choisissez-en un pour commencer. Vous pourrez en ajouter à tout moment.", "ob.recommend": "Suggestions", "ob.added": "Ajouté : {names}", "ob.start": "Commencer", "ob.skip": "Juste regarder pour l'instant", "sep.list": ", ",
@@ -153,7 +153,7 @@ CY.i18n.register("fr", {"add.helper": "Travaille à la maison, gagne de l’arge
 
 CY.i18n.register("fr", {"intro.p2": "Quitter le bureau, c’est ne plus gagner d’argent. L’argent sert à acheter des fournitures et à engager une nounou."});
 
-CY.i18n.register("fr", {"people.lead": "Jouer ce rôle", "people.lead_on": "Rôle principal, toucher pour retirer"});
+CY.i18n.register("fr", {"people.lead": "Contrôler celui-ci", "people.lead_on": "Contrôlé, toucher pour retirer"});
 
 CY.i18n.register("fr", {"arch.elder": "Personne âgée typique", "arch.toddler1": "Enfant d’1 an", "arch.toddler2": "Enfant de 2 ans", "arch.toddler3": "Enfant de 3 ans", "arch.toddler4": "Enfant de 4 ans", "arch.child12": "Enfant de 12 ans", "arch.woman25": "Femme de 25 ans", "arch.man25": "Homme de 25 ans", "add.helper": "À la maison, partage les soins"});
 
