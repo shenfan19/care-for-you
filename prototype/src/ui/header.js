@@ -50,6 +50,16 @@
     tm.textContent = c.hh + ':' + c.mm + ' · ' + wd;
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     mn.onclick = () => U.helpDialog();
+    const ms = root.querySelector('#cornerMusic');
+    if (ms) {
+      const on = CY.ini.bool(G.cfg, 'audio', 'music');
+      ms.textContent = on ? '🎵' : '🔇'; ms.classList.toggle('off', !on);
+      ms.title = t('corner.music_tip');
+      ms.onclick = async () => {
+        G.cfg.audio = G.cfg.audio || {}; G.cfg.audio.music = on ? 'false' : 'true';
+        await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderClock();
+      };
+    }
   };
 
   /* 房间下方的条不要了：添加，编辑，归档，删除，叫回离开的人，都在顶栏的角色里 */
