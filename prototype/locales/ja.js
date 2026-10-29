@@ -13,7 +13,7 @@ CY.i18n.register("ja", {
 "clock.dh": "{d}日 {h}時間", "clock.hm": "{h}時間{m}分", "clock.m": "{m}分", "clock.elapsed": "一緒に過ごした時間 {t}",
 "clock.elapsed_tip": "選んだ速さで進んだゲーム内の時間。一時停止中は増えません。", "clock.tip_system": "現在の時刻。パソコンの時計に従うので、昼夜が窓の外と同じになります", "clock.tip_game": "ゲーム内の時刻。昼夜はゲーム内の時間で巡ります",
 "bar.away": "{name}は席を外しています", "bar.recall": "呼び戻す",
-"feed.title": "できごと", "feed.all": "みんな", "feed.stat": "お世話 {care}回、会話 {talk}回、間に合わなかった {missed}回", "feed.stat_back": "、{name}からの気遣い {n}回",
+"feed.title": "できごと", "feed.all": "みんな", "feed.quiet": "日常のできごとを隠す", "feed.stat": "お世話 {care}回、会話 {talk}回、間に合わなかった {missed}回", "feed.stat_back": "、{name}からの気遣い {n}回",
 "feed.day": "{n}日目", "feed.empty": "まだ何も起きていません。", "feed.more": "もっと見る", "fmt.datetime": "{m}/{d} {hh}:{mm}",
 "said.title": "交わした言葉", "said.count": "思い出した言葉 {n}件、あなたの返事 {m}件", "said.you": "あなた", "said.lib": "ライブラリID。ドットのあとの数字は用意された返事の番号",
 "said.empty": "まだありません。ゲームが時々質問したり、誰かが何と言うかを尋ねたりします。", "said.nobody": "まだキャラクターがいません。",

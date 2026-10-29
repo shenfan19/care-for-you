@@ -13,7 +13,7 @@ CY.i18n.register("es", {
 "clock.dh": "{d} d {h} h", "clock.hm": "{h} h {m} min", "clock.m": "{m} min", "clock.elapsed": "Juntos desde hace {t}",
 "clock.elapsed_tip": "Tiempo de juego transcurrido a la velocidad elegida. No avanza en pausa.", "clock.tip_system": "La hora actual, según el reloj de tu ordenador: el día y la noche coinciden con tu ventana", "clock.tip_game": "La hora dentro del juego; el día y la noche siguen el tiempo de juego",
 "bar.away": "{name} se ha apartado", "bar.recall": "llamar",
-"feed.title": "Lo que pasó", "feed.all": "Todos", "feed.stat": "{care} cuidados, {talk} charlas, {missed} veces que no llegaste", "feed.stat_back": ", {n} detalles de {name}",
+"feed.title": "Lo que pasó", "feed.all": "Todos", "feed.quiet": "Ocultar lo cotidiano", "feed.stat": "{care} cuidados, {talk} charlas, {missed} veces que no llegaste", "feed.stat_back": ", {n} detalles de {name}",
 "feed.day": "Día {n}", "feed.empty": "Todavía no ha pasado nada.", "feed.more": "Ver más", "fmt.datetime": "{d}/{m} {hh}:{mm}",
 "said.title": "Lo que se dijo", "said.count": "{n} recordadas, {m} respuestas tuyas", "said.you": "Tú", "said.lib": "Id de la biblioteca; el número tras el punto es la respuesta predefinida",
 "said.empty": "Nada todavía. El juego te hará alguna pregunta de vez en cuando, o te preguntará qué diría alguien.", "said.nobody": "Todavía no hay personajes.",

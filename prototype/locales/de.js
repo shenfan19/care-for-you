@@ -13,7 +13,7 @@ CY.i18n.register("de", {
 "clock.dh": "{d} T {h} Std.", "clock.hm": "{h} Std. {m} Min.", "clock.m": "{m} Min.", "clock.elapsed": "Zusammen seit {t}",
 "clock.elapsed_tip": "Spielzeit, die in der gewählten Geschwindigkeit vergangen ist. In der Pause wächst sie nicht.", "clock.tip_system": "Die aktuelle Uhrzeit nach deinem Computer: Tag und Nacht entsprechen deinem Fenster", "clock.tip_game": "Die Uhrzeit im Spiel; Tag und Nacht laufen nach Spielzeit",
 "bar.away": "{name} ist weggegangen", "bar.recall": "zurückrufen",
-"feed.title": "Was passiert ist", "feed.all": "Alle", "feed.stat": "{care} Mal gekümmert, {talk} Mal gesprochen, {missed} Mal verpasst", "feed.stat_back": ", {n} Aufmerksamkeiten von {name}",
+"feed.title": "Was passiert ist", "feed.all": "Alle", "feed.quiet": "Alltägliches ausblenden", "feed.stat": "{care} Mal gekümmert, {talk} Mal gesprochen, {missed} Mal verpasst", "feed.stat_back": ", {n} Aufmerksamkeiten von {name}",
 "feed.day": "Tag {n}", "feed.empty": "Es ist noch nichts passiert.", "feed.more": "Mehr anzeigen", "fmt.datetime": "{d}.{m}. {hh}:{mm}",
 "said.title": "Gesagtes", "said.count": "{n} erinnert, {m} deiner Antworten", "said.you": "Du", "said.lib": "Bibliotheks-ID; die Zahl nach dem Punkt ist die vorgegebene Antwort",
 "said.empty": "Noch nichts. Das Spiel stellt dir gelegentlich eine Frage oder fragt, was jemand sagen würde.", "said.nobody": "Noch keine Figuren.",

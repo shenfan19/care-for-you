@@ -41,7 +41,7 @@ CY.i18n.register("zh-TW", {
  "bar.away": "{name}暫時離開",
  "bar.recall": "叫回來",
  "feed.title": "發生的事",
- "feed.all": "大家",
+ "feed.all": "大家", "feed.quiet": "隱藏日常動態",
  "feed.stat": "一共照顧了 {care} 次，談話 {talk} 次，沒趕上 {missed} 次",
  "feed.stat_back": "，{name}給你的心意 {n} 次",
  "feed.day": "第 {n} 天",

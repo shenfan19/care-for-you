@@ -15,7 +15,7 @@ CY.i18n.register("fr", {
 "clock.tip_system": "L'heure actuelle, celle de votre ordinateur : le jour et la nuit suivent votre fenêtre",
 "clock.tip_game": "L'heure dans le jeu, le jour et la nuit suivent le temps de jeu",
 "bar.away": "{name} s'est éloigné", "bar.recall": "rappeler",
-"feed.title": "Ce qui s'est passé", "feed.all": "Tout le monde", "feed.stat": "{care} soins, {talk} conversations, {missed} occasions manquées", "feed.stat_back": ", {n} gentillesses de {name}",
+"feed.title": "Ce qui s'est passé", "feed.all": "Tout le monde", "feed.quiet": "Masquer le quotidien", "feed.stat": "{care} soins, {talk} conversations, {missed} occasions manquées", "feed.stat_back": ", {n} gentillesses de {name}",
 "feed.day": "Jour {n}", "feed.empty": "Rien ne s'est encore passé.", "feed.more": "Afficher plus", "fmt.datetime": "{d}/{m} {hh}:{mm}",
 "said.title": "Paroles", "said.count": "{n} souvenirs, {m} de vos réponses", "said.you": "Vous", "said.lib": "Identifiant de la bibliothèque ; le nombre après le point est la réponse prédéfinie",
 "said.empty": "Rien pour l'instant. Le jeu vous posera parfois une question, ou vous demandera ce que dirait quelqu'un.", "said.nobody": "Aucun personnage pour l'instant.",

@@ -21,7 +21,7 @@ CY.i18n.register('zh-CN', {
   'clock.tip_game': '游戏里的时间，昼夜按游戏时间循环，后面是你电脑的系统时间',
 
   'bar.away': '{name}暂时离开', 'bar.recall': '叫回来',
-  'feed.title': '发生的事', 'feed.all': '大家', 'feed.stat': '一共照顾了 {care} 次，谈话 {talk} 次，没赶上 {missed} 次',
+  'feed.title': '发生的事', 'feed.all': '大家', 'feed.quiet': '隐藏日常动态', 'feed.stat': '一共照顾了 {care} 次，谈话 {talk} 次，没赶上 {missed} 次',
   'feed.stat_back': '，{name}给你的心意 {n} 次', 'feed.day': '第 {n} 天', 'feed.empty': '还没有发生什么。', 'feed.more': '再看一些',
   'fmt.datetime': '{m}月{d}日 {hh}:{mm}',
   'said.title': '说过的话', 'said.count': '记起的话 {n} 句，你回答的 {m} 句', 'said.you': '你', 'said.lib': '库编号，点号后面是预设回答的序号',

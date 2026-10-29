@@ -21,7 +21,7 @@ CY.i18n.register('en', {
   'clock.tip_game': 'Time inside the game, with day and night cycling on game time. The real clock is shown after it.',
 
   'bar.away': '{name} stepped away', 'bar.recall': 'call back',
-  'feed.title': 'What happened', 'feed.all': 'Everyone', 'feed.stat': 'Cared {care} times, talked {talk} times, missed {missed} times',
+  'feed.title': 'What happened', 'feed.all': 'Everyone', 'feed.quiet': 'Hide everyday chatter', 'feed.stat': 'Cared {care} times, talked {talk} times, missed {missed} times',
   'feed.stat_back': ', {n} kindnesses from {name}', 'feed.day': 'Day {n}', 'feed.empty': 'Nothing has happened yet.', 'feed.more': 'Show more',
   'fmt.datetime': '{m}/{d} {hh}:{mm}',
   'said.title': 'Things said', 'said.count': '{n} remembered, {m} of your answers', 'said.you': 'You', 'said.lib': 'Library id; the number after the dot is the preset answer',

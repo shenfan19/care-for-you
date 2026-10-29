@@ -13,7 +13,7 @@ CY.i18n.register("ko", {
 "clock.dh": "{d}일 {h}시간", "clock.hm": "{h}시간 {m}분", "clock.m": "{m}분", "clock.elapsed": "함께한 시간 {t}",
 "clock.elapsed_tip": "선택한 속도로 흐른 게임 내 시간입니다. 일시정지 중에는 늘지 않습니다.", "clock.tip_system": "현재 시각입니다. 컴퓨터 시계를 따르므로 낮과 밤이 창밖과 같습니다", "clock.tip_game": "게임 안의 시각입니다. 낮과 밤은 게임 시간으로 돕니다",
 "bar.away": "{name}이(가) 자리를 비웠습니다", "bar.recall": "불러오기",
-"feed.title": "있었던 일", "feed.all": "모두", "feed.stat": "돌봄 {care}회, 대화 {talk}회, 놓친 것 {missed}회", "feed.stat_back": ", {name}의 마음 씀 {n}회",
+"feed.title": "있었던 일", "feed.all": "모두", "feed.quiet": "일상 소식 숨기기", "feed.stat": "돌봄 {care}회, 대화 {talk}회, 놓친 것 {missed}회", "feed.stat_back": ", {name}의 마음 씀 {n}회",
 "feed.day": "{n}일째", "feed.empty": "아직 아무 일도 없었습니다.", "feed.more": "더 보기", "fmt.datetime": "{m}/{d} {hh}:{mm}",
 "said.title": "나눈 말", "said.count": "떠올린 말 {n}개, 내 대답 {m}개", "said.you": "나", "said.lib": "라이브러리 ID. 점 뒤의 숫자는 준비된 대답의 번호입니다",
 "said.empty": "아직 없습니다. 게임이 가끔 질문을 하거나 누군가 뭐라고 할지 물어봅니다.", "said.nobody": "아직 캐릭터가 없습니다.",
