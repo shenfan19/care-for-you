@@ -20,6 +20,7 @@
     ['ui', 'theme', 'auto', 'auto 跟随系统；light 浅色；dark 深色'],
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],
+    ['ui', 'figure', 'classic', '人物的画法：classic 原来的；bean_a 豆子，没有手脚；bean_b 豆子加手脚；bean_c 豆子，上半肤色下半衣服'],
     ['ui', 'hide_when_fullscreen', 'true', '桌面版使用，全屏程序运行时隐藏'],
     ['account', 'enabled', 'false', '账号功能，预留。目前没有服务器，保持关闭'],
     ['account', 'server_url', '', '预留，将来账号和云端存档服务的地址'],

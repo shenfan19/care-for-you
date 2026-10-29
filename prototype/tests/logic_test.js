@@ -82,7 +82,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const needKeys = new Set(), actKeys = new Set();
   for (const f of Object.keys(CY.seed.files()).filter(f => /^templates\/(species|conditions)\//.test(f))) { const o = ctx.jsyaml.load(CY.seed.files()[f]); Object.keys(o.needs || {}).forEach(k => needKeys.add(k)); Object.keys(o.actions || {}).forEach(k => actKeys.add(k)); }
   check('英文包覆盖所有需求和动作标签', [...needKeys].every(k => 'need.' + k in en) && [...actKeys].every(k => 'act.' + k in en), [...needKeys].filter(k => !('need.' + k in en)).concat([...actKeys].filter(k => !('act.' + k in en))).join());
-  const iniMiss = CY.ini.SCHEMA.filter(([s, k]) => !['ui.theme', 'ui.background', 'ui.language'].includes(s + '.' + k) && !(`ini.${s}.${k}` in en)).map(x => x[0] + '.' + x[1]);
+  const iniMiss = CY.ini.SCHEMA.filter(([s, k]) => !['ui.theme', 'ui.background', 'ui.language', 'ui.figure'].includes(s + '.' + k) && !(`ini.${s}.${k}` in en)).map(x => x[0] + '.' + x[1]);
   check('英文包覆盖所有设置说明', iniMiss.length === 0, iniMiss.join());
 
   /* 运行包清单和页面一致 */
@@ -370,6 +370,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('花草和宠物各有自己的动作，花草不是人', 'sun' in G.actionsOf(flowerP) && !('feed' in G.actionsOf(flowerP)) && 'clean' in G.actionsOf(fishP) && G.askBank(flowerP).length === 0 && flowerP.person.kind === 'plant');
   [bb, sis2, eld, tdl] = [bb, sis2, eld, tdl].map(p => G.get(p.id));
   check('每种原型都能画出形象', CY.content.archetypes.every(a => /<svg/.test(CY.avatarPreview(a, a.look))));
+  check('四种人物造型都能画，豆子带可动的手脚', (() => { const old = CY.figure; const ok = []; for (const fg of CY.FIGURES) { CY.figure = fg; for (const age of [0.5, 2, 8, 15, 35, 70]) { const svg = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look, age); ok.push(svg.startsWith('<svg')); if (fg === 'bean_b' || fg === 'bean_c') ok.push(svg.includes('class="foot l"') && svg.includes('class="hand r"')); if (fg === 'bean_a') ok.push(svg.includes('class="bean"') && !svg.includes('class="foot')); } } CY.figure = old; return ok.every(Boolean); })());
   check('两种画法都能画', (() => { CY.avatarStyle = 'detailed'; const d = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look); CY.avatarStyle = 'simple'; const s2 = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look); return d.length > s2.length; })());
   check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 

@@ -10,6 +10,7 @@
     let th = ini.get(G.cfg, 'ui', 'theme');
     if (th !== 'light' && th !== 'dark') th = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const bg = ini.get(G.cfg, 'ui', 'background');
+    CY.figure = CY.FIGURES.includes(ini.get(G.cfg, 'ui', 'figure')) ? ini.get(G.cfg, 'ui', 'figure') : 'classic';
     for (const d of [document, U.pipDoc]) if (d) { d.documentElement.dataset.theme = th; d.documentElement.dataset.bg = bg; }
   };
   /* 顶栏已经没有语言和明暗的快捷控件，都在设置里 */

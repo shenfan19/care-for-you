@@ -292,3 +292,17 @@ header { align-items:center; }
 .corner { position:absolute; top:8px; z-index:9; padding:3px 10px; border-radius:12px; font-size:13px; background:color-mix(in srgb, var(--card) 82%, transparent); border:1px solid var(--line); font-variant-numeric:tabular-nums; line-height:1.4; }
 .corner.cl { top:auto; bottom:10px; right:10px; pointer-events:none; } .corner.cr { right:10px; cursor:pointer; }
 .money.big { font-size:22px; font-weight:600; }
+/* 豆子造型：整张图的呼吸换成豆子本身，走路时脚和手交替，照顾时手抬起 */
+.cx .av:has(.bean) { animation:none; }
+.cx .bean, .cx .foot, .cx .hand { transform-box:fill-box; transform-origin:50% 100%; }
+.cx .bean { animation:breathe 4s ease-in-out infinite; }
+.cx.walking .bean { animation:bob .44s ease-in-out infinite; }
+.cx.walking .foot.l { animation:stepL .44s ease-in-out infinite; } .cx.walking .foot.r { animation:stepR .44s ease-in-out infinite; }
+.cx.walking .hand.l { animation:swingL .44s ease-in-out infinite; } .cx.walking .hand.r { animation:swingR .44s ease-in-out infinite; }
+.cx[data-fx] .hand.r { animation:raise 1.2s ease-in-out 2; }
+@keyframes bob { 0%,100% { transform:translateY(0) rotate(-3deg); } 25%,75% { transform:translateY(-3px) rotate(0); } 50% { transform:translateY(0) rotate(3deg); } }
+@keyframes stepL { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+@keyframes stepR { 0%,100% { transform:translateY(-5px); } 50% { transform:translateY(0); } }
+@keyframes swingL { 0%,100% { transform:translateY(2px); } 50% { transform:translateY(-3px); } }
+@keyframes swingR { 0%,100% { transform:translateY(-3px); } 50% { transform:translateY(2px); } }
+@keyframes raise { 0%,100% { transform:translateY(0); } 50% { transform:translate(-6px,-14px); } }
