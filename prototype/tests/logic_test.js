@@ -406,8 +406,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('妈妈默认分担', MM.person.helper === true && G.helpers().some(h => h.id === MM.id));
   const tpn = G.get(tp.id); for (const p of G.people) p.person.active = p === tpn || p === MM;
   tpn.state.needs.hunger = 0.9; let momHelped = false;
-  for (let i = 0; i < 80 && !momHelped; i++) { G.assistTick(60); tpn.state.needs.hunger = Math.max(tpn.state.needs.hunger, 0.9); momHelped = Object.values(G.journal[tpn.id] || {}).flat().some(e => e.type === 'care' && /分担妈妈/.test(e.text)); }
-  check('分担的家人自动照顾', momHelped);
+  for (let i = 0; i < 80 && !momHelped; i++) { G.agentState.declined = []; G.world.game_minutes += 60; G.assistTick(60); tpn.state.needs.hunger = Math.max(tpn.state.needs.hunger, 0.9); momHelped = Object.values(G.journal[tpn.id] || {}).flat().some(e => e.type === 'care' && /分担妈妈/.test(e.text)); }
+  check('分担的家人响应后台的请求去照顾', momHelped);
   /* 外出和耽误的工作 */
   G.cfg.economy.work_hours = '00:00-23:59'; G.cfg.time.daynight = 'system'; await store_write_cfg();
   const elderX = await mk('grandpa', '外出爷爷'), babyX = await mk('toddler', '外出宝宝'); const EX = G.get(elderX.id), BX = G.get(babyX.id);
@@ -659,7 +659,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = x === mm2 || x === bb2;
  mm2.state.needs.hunger = 0.1; bb2.state.needs.hunger = 0.9; G.act[bb2.id] = 'awake';
     W.agents[mm2.id] = { room: 'kitchen', next: Date.now() + 1e9 }; W.frozen.clear();
-    mm2.person.helper = true; G.assistTick(1000);
+    mm2.person.helper = true; for (let i = 0; i < 40 && CY.world.errandOf(mm2) !== 'help'; i++) { W.agents[mm2.id] = { room: 'kitchen', next: Date.now() + 1e9 }; bb2.state.needs.hunger = 0.9; G.agentState.declined = []; G.world.game_minutes += 60; G.assistTick(60); }
     check('帮忙的人先走去要照顾的人那里并带着标记', W.agents[mm2.id].room === 'living' && W.errandOf(mm2) === 'help', JSON.stringify(W.agents[mm2.id]));
     for (const x of G.people) x.person.active = true;
     /* 角色卡里的喜好优先 */
@@ -742,6 +742,54 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const enLine = G.lines(p, 'request', 'thirst').join('');
     CY.i18n.lang = keep;
     check('卡里的中文专属台词只在中文界面用', zhLine.includes('倒杯水') && !enLine.includes('倒杯水'), enLine.slice(0, 40));
+  }
+
+  /* 前后台分离：后台产生状态表和策略，前台按个人卡和自身状态响应 */
+  {
+    for (const x of G.people) x.person.active = false;
+    const ids4 = []; for (const [a, nm] of [['baby', '宝宝'], ['mom', '妈妈'], ['dog', '小狗'], ['elder', '老爷子']]) ids4.push((await mk(a, nm)).id);
+    for (const x of G.people) x.person.active = ids4.includes(x.id);
+    let [bab, mom3, dg, el] = ids4.map(i => G.get(i));
+    const snap = () => CY.backend.buildPlan({ minutes: 600 });
+    const sn = snap(), sb = sn.people.find(x => x.id === bab.id), se = sn.people.find(x => x.id === el.id);
+    check('快照带个人卡的判断：宝宝自己什么都做不了，妈妈能帮忙', sb.abilities.self_needs.length === 0 && sn.people.find(x => x.id === mom3.id).abilities.help && !sb.abilities.help && se.abilities.go_actions.includes('street'), JSON.stringify(sb.abilities));
+    let toSelf = 0, toMom = 0, toOther = 0, n = 0;
+    const T = G.tpl.system.agents, keep = JSON.stringify(T);
+    for (let i = 0; i < 300; i++) {
+      bab.state.needs.hunger = 0.9; bab.state.needs.diaper = 0.9; G.act[mom3.id] = 'awake'; G.act[bab.id] = 'awake'; G.act[el.id] = 'awake';
+      const r = CY.backend.plan(Object.assign(snap(), { minutes: 600 }));
+      for (const s of r.strategies.filter(x => x.from === bab.id)) { n++; if (s.to === bab.id) toSelf++; else if (s.to === mom3.id) toMom++; else toOther++; }
+    }
+    check('宝宝的请求从不发给自己，也不发给不能帮忙的人', n > 20 && toSelf === 0 && toOther === 0 && toMom === n, n + ' ' + toSelf + ' ' + toOther);
+    /* 保姆优先级最高：同一个人的请求，多数发给保姆 */
+    const nid = (await mk('mom', '保姆')).id; [bab, mom3, dg, el] = ids4.map(i => G.get(i)); for (const x of G.people) x.person.active = ids4.includes(x.id) || x.id === nid; const nan = G.get(nid); nan.person.help = Object.assign({}, nan.person.help, { role: 'nanny' }); G.act[nan.id] = 'awake';
+    let toNan = 0, tot = 0;
+    for (let i = 0; i < 400; i++) { bab.state.needs.hunger = 0.9; const r = CY.backend.plan(Object.assign(CY.backend.buildPlan({ minutes: 600 }), {})); for (const s of r.strategies.filter(x => x.from === bab.id)) { tot++; if (s.to === nan.id) toNan++; } }
+    check('保姆的权重最高', tot > 20 && toNan / tot > 0.55, toNan + '/' + tot);
+    nan.person.active = false;
+    /* 调低请求倍率为 0 就不再发请求 */
+    G.tpl.system.agents.request.scale = 0;
+    const r0 = CY.backend.plan(snap());
+    check('请求倍率为 0 时不发请求', r0.strategies.length === 0);
+    G.tpl.system.agents = JSON.parse(keep);
+    /* 状态表给位置愿望：白天狗想去公园，老人想上街 */
+    G.act[dg.id] = 'awake'; dg.state.needs.play = 0.8; el.state.needs.hunger = 0.1; G.setClockHour && G.setClockHour(10);
+    let wants = 0;
+    for (let i = 0; i < 400 && !(G.wants[dg.id] && G.wants[el.id]); i++) { const r = CY.backend.plan(Object.assign(snap(), { minutes: 600, world: Object.assign(snap().world, { hour: 10 }) })); for (const s of r.states) if (s.want) { wants++; G.wants[s.person] = G.wants[s.person] || { id: s.want.id, action: s.want.action, until: Date.now() + 1e6 }; } }
+    check('状态表会产生位置愿望', wants > 0 && !!G.wants[dg.id], JSON.stringify(G.wants));
+    /* 前台响应：妈妈陪狗去遛 */
+    G.wants[dg.id] = { id: 'dog_park', action: 'walk', until: Date.now() + 1e6 };
+    let went = false;
+    for (let i = 0; i < 60 && !went; i++) { G.act[mom3.id] = 'awake'; G.act[dg.id] = 'awake'; G.agentState.declined = []; G.world.game_minutes += 60; if (!G.flag(dg, 'outing') && !G.wants[dg.id]) G.wants[dg.id] = { id: 'dog_park', action: 'walk', until: Date.now() + 1e6 }; G.agentTick(60); went = !!G.flag(dg, 'outing'); }
+    check('愿望得到响应：狗被带出去了，同行的人也在外面', went && !!G.flag(mom3, 'outing') && !G.wants[dg.id]);
+    /* 检查：后台回的策略不合卡的会被丢掉 */
+    const clean = CY.protocol.sanitizePlan({ states: [{ person: 'nobody' }, { person: bab.id, needs: { hunger: 5 }, mood: -3 }], strategies: [{ from: bab.id, to: mom3.id, kind: 'care', need: 'hunger' }, { from: bab.id, to: mom3.id, kind: 'fly' }, { from: 'x', to: mom3.id, kind: 'care', need: 'hunger' }] });
+    check('策略与状态表的检查：不认识的丢掉，数值压回范围', clean.states.length === 1 && clean.states[0].needs.hunger === 1 && clean.states[0].mood === 0 && clean.strategies.length === 1);
+    const bad = { from: bab.id, to: bab.id, kind: 'self', need: 'hunger' };
+    G.agentState.inbox = []; bab.state.needs.hunger = 0.95;
+    const before = bab.state.needs.hunger; G.agentState.inbox.push(Object.assign({ id: 99, born: Date.now(), phase: 'sent', wait: 0, tries: 0 }, bad)); G.agentTick(10);
+    check('宝宝发给自己的请求不会被执行', bab.state.needs.hunger >= before && G.agentState.inbox.length === 0);
+    for (const x of G.people) x.person.active = true;
   }
 
   /* zip：不压缩的写出，读回内容一致 */

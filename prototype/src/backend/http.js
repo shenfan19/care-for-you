@@ -16,4 +16,5 @@
   };
   H.drive = req => H.post(req);
   H.line = req => H.post(req);
+  H.plan = req => H.post(req);
 })(globalThis.CY = globalThis.CY || {});

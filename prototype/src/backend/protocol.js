@@ -4,9 +4,11 @@
    请求 request，都是明文 JSON：
      { v: 1, kind: 'drive', trigger: 'tick' | 'action', minutes, world, people: [person], expired: [{ person, name }], person, action }
      { v: 1, kind: 'line', person, group, key, situation, world }
+     { v: 1, kind: 'plan', world, people: [person], minutes }
    回应 response：
      drive → { v: 1, directives: [directive] }
      line  → { v: 1, text: '一句话' }，没有就回 text: null
+     plan  → { v: 1, states: [{ person, needs?, mood?, frailty?, want?: { id, action } }], strategies: [{ from, to, kind: 'care' | 'self' | 'go', need?, action? }] }
 
    person 是一个角色此刻的快照：id, name（设置里允许才带）, species, stage, age, mood, frailty, needs, conditions,
    traits, voice, flags, sleeping, location, care_total, counters。
@@ -35,7 +37,7 @@
       id: p.id, card: p.person.card || p.person.archetype || '', health: +(1 - p.state.frailty).toFixed(2), name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
       mood: +p.state.mood.toFixed(2), frailty: +p.state.frailty.toFixed(2), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(2)])),
       conditions: (p.person.conditions || []).slice(), traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
-      sleeping: G.isSleeping(p), protagonist: G.protagonist() === p, location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),
+      sleeping: G.isSleeping(p), protagonist: G.protagonist() === p, abilities: P.abilities(p), want: G.wants && G.wants[p.id] ? Object.assign({}, G.wants[p.id]) : null, location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),
     };
   };
   P.world = () => {
@@ -44,6 +46,42 @@
     const date = { month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000) };
     return { v: P.V, date, working: G.isWorkTime(), at_desk: !CY.world || CY.world.atDesk(), days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
       player: { place: pl.place, room: pl.room }, protagonist: G.protagonist() ? G.protagonist().id : null, params: {} };
+  };
+
+
+  /* 个人卡的判断，随快照发给后台：后台挑接收者、挑动作时只看这些，不用去读游戏内部。
+     help 是这个人能不能帮别人，role 为 nanny 或 helper；care_needs 是别人能替他做的需求，self_needs 是他自己能做的需求；go_actions 是他能去的外出动作 */
+  P.abilities = p => {
+    const G = CY.game, acts = Object.values(G.actionsOf(p)), care = new Set(), self = new Set(), go = [];
+    for (const a of acts) {
+      if (a.outing) { go.push(a.id); continue; }
+      if (a.selfonly || a.away) continue;
+      for (const k in a.effect || {}) if (a.effect[k] < 0) care.add(k);
+    }
+    for (const k of Object.keys(p.state.needs)) if (G.selfActFor(p, k)) self.add(k);
+    const can = G.canHelp ? G.canHelp(p) : false;
+    return { help: can ? { role: (p.person.help && p.person.help.role) || 'helper', efficiency: (p.person.help && p.person.help.efficiency) || 0 } : null, care_needs: [...care], self_needs: [...self], go_actions: go };
+  };
+
+  /* 后台回的状态表和策略：状态表每行是一个人，可以给需求，心情，虚弱的新值，也可以给一个位置愿望；策略是 from 向 to 发的一个请求 */
+  P.sanitizePlan = plan => {
+    const G = CY.game, out = { states: [], strategies: [] };
+    for (const r of Array.isArray(plan && plan.states) ? plan.states : []) {
+      if (!r || !G.get(r.person)) continue;
+      const o = { person: r.person };
+      if (r.needs && typeof r.needs === 'object') { o.needs = {}; for (const k in r.needs) if (typeof r.needs[k] === 'number') o.needs[str(k, 24)] = clamp(r.needs[k], 0, 1); }
+      if (typeof r.mood === 'number') o.mood = clamp(r.mood, 0, 1);
+      if (typeof r.frailty === 'number') o.frailty = clamp(r.frailty, 0, 1);
+      if (r.want && typeof r.want === 'object' && typeof r.want.action === 'string') o.want = { id: str(r.want.id, 32), action: str(r.want.action, 24) };
+      out.states.push(o);
+    }
+    for (const s of Array.isArray(plan && plan.strategies) ? plan.strategies : []) {
+      if (!s || !G.get(s.from) || !G.get(s.to) || !['care', 'self', 'go'].includes(s.kind)) continue;
+      const o = { from: s.from, to: s.to, kind: s.kind, need: str(s.need, 24), action: str(s.action, 24) };
+      if (s.kind === 'care' || s.kind === 'self') { if (!o.need) continue; } else if (!o.action) continue;
+      out.strategies.push(o);
+    }
+    return out;
   };
 
   /* 检查后端回的指令，不认识的丢掉，数值压回范围 */

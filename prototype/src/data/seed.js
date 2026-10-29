@@ -298,6 +298,44 @@ actions:
   F['templates/species/orchid.yaml'] = plant('orchid', '兰花', 0.02, 0.01, 0.004, 0.004);
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
+  /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
+  F['templates/system.yaml'] = `version: 1
+# 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
+plan:
+  interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
+agents:
+  request:
+    threshold: 0.55           # 需求超过这个值的角色才会向别人发请求
+    rate_per_hour: 20         # 超过门槛的角色每游戏小时发请求的次数，约三分钟一次
+    go_rate_per_hour: 6       # 有位置愿望的角色每游戏小时发邀请的次数
+    scale: 1.0                # 发请求的整体倍率，调低让玩家有更多自己操作的余地，0 为不发
+    max_open: 6               # 同时在路上的请求最多几个
+  role_weight:                # 挑接收者时的权重，卡里 help.role 为 nanny 的优先级最高，help.proactive 的家人其次
+    nanny: 4
+    helper: 1.5
+    self: 0.7                 # 发给自己，要自己的卡里有这个需求能自己做的动作
+    other: 0                  # 其他人不接请求
+  same_room_bonus: 1.5        # 接收者与发请求的人在同一个房间时权重乘这个数
+  respond:
+    base: 0.7                 # 接收者响应的基础几率
+    mood_weight: 0.6          # 心情的影响，几率乘 (1 - 0.3 + 0.6 × 心情)，心情好更愿意
+    own_need_block: 0.8       # 自己的需求超过这个值就不响应别人
+    self: 0.5                 # 发给自己时的响应几率
+    ttl_seconds: 120          # 请求多久没响应就作废
+    decline_cooldown_seconds: 90   # 被拒绝后，同一对人多久内不再发同一个请求
+    walk_seconds: 12          # 不在同一个房间时，走过去用的秒数
+    near_seconds: 3           # 在同一个房间时，反应用的秒数
+    efficiency: 0.5           # 卡里没写效率时，别人帮忙的效果比例
+  want:                       # 愿望概率表：状态里的位置愿望，比如狗想去公园，爷爷想上街
+    ttl_seconds: 600
+    respond_alone: 0.6        # 愿望的主人自己能去时，自己去的几率
+    rows:
+      - { id: dog_park, species: [dog], action: walk, chance_per_hour: 0.6, hour_from: 8, hour_to: 19, min_need: { play: 0.3 } }
+      - { id: elder_street, stage: [elder], action: street, chance_per_hour: 0.3, hour_from: 9, hour_to: 17 }
+      - { id: elder_park, stage: [elder], action: park, chance_per_hour: 0.2, hour_from: 9, hour_to: 17 }
+      - { id: kid_park, stage: [toddler, child], action: park, chance_per_hour: 0.3, hour_from: 9, hour_to: 17, min_need: { play: 0.3 } }
+`;
+
   /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */
   F['templates/classes.yaml'] = `version: 6
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。

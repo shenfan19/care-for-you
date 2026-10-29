@@ -89,7 +89,7 @@
     for (const p in seed) {
       if (!/^templates\//.test(p)) continue;
       if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
-      if (/^templates\/(species|conditions|cards)\/|^templates\/(classes|traits|events\/rules)\.yaml$/.test(p)) {
+      if (/^templates\/(species|conditions|cards)\/|^templates\/(classes|traits|system|events\/rules)\.yaml$/.test(p)) {
         try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
       }
     }
@@ -109,6 +109,7 @@
     }
     G.tpl.persona = await store.readYaml('templates/ai/persona.yaml');
     G.tpl.rules = ((await store.readYaml('templates/events/rules.yaml')) || {}).rules || [];
+    G.tpl.system = (await store.readYaml('templates/system.yaml')) || {};
     G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
     G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
     delete G.world.money; delete G.world.inv; delete G.world.nanny;
@@ -472,6 +473,7 @@
     return true;
   }
   G.selfActFor = selfActionFor;
+  G.selfAct = selfAct;
 
   function advance(gmin, offline) {
     if (gmin <= 0) return;
@@ -826,7 +828,7 @@
     G._wk = wk;
     if (G.worldTick) G.worldTick(now);
     G.nagTick(now);
-    if (G.assistTick) G.assistTick(dt);
+    if (G.agentTick) G.agentTick(dt);
     if (G.socialTick) G.socialTick(dt);
     if (now >= (G.nextAmbient || 0)) { G.nextAmbient = now + 30000 + Math.random() * 40000; if (!G.isPaused() && G.activePeople().length) ambientChat(); }
     emit();

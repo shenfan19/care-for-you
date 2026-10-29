@@ -16,6 +16,18 @@
     return req;
   };
 
+  /* 状态和策略：前台定期要一次。pending 是还在路上的请求，declined 是刚被拒绝的，后台据此不重复发 */
+  B.buildPlan = (extra = {}) => {
+    const G = CY.game, P = CY.protocol, names = B.names();
+    return { v: P.V, kind: 'plan', world: P.world(), minutes: extra.minutes || 0, people: G.people.filter(p => p.person.active !== false).map(p => P.person(p, { names })), pending: extra.pending || [], declined: extra.declined || [] };
+  };
+  /* 返回 { states, strategies }（内置）或 Promise（远程，出错退回内置） */
+  B.plan = req => {
+    const P = CY.protocol;
+    if (!useHttp()) return P.sanitizePlan(CY.backendLocal.plan(req));
+    return CY.backendHttp.plan(req).then(r => { B.failed = false; return P.sanitizePlan(r); }, e => { fail(e); return P.sanitizePlan(CY.backendLocal.plan(req)); });
+  };
+
   const fail = (e) => {
     if (!B.failed) { B.failed = true; CY.game.backendError && CY.game.backendError(e); }
   };
