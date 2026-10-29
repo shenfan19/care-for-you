@@ -37,8 +37,9 @@
     const asleep = !!(CY.game && CY.game.isSleeping && p.id && CY.game.isSleeping(p));
     const sk = SKIN[a.skin] || SKIN[1], hc = HAIR[a.hair_color] || HAIR.black, cloth = a.cloth || '#8fa3b8';
     const B = BODY[stage] || BODY.adult, small = stage === 'infant' || stage === 'toddler' || stage === 'child';
-    const cx = 50, cy = B.cy, rx = B.rx, ry = B.ry, shY = B.shY, sh0 = B.sh0;
-    const L = cx - rx, R = cx + rx, chin = cy + ry;
+    /* 头和身子放大一成，肩膀贴近下巴，脖子很短，头也不比宠物小 */
+    const HEAD_K = 1.12, cx = 50, cy = B.cy + 3, rx = B.rx * HEAD_K, ry = B.ry * HEAD_K, sh0 = Math.max(4, B.sh0 - 3);
+    const L = cx - rx, R = cx + rx, chin = cy + ry, shY = chin + (small ? 1 : 2);
     const elder = stage === 'elder';
     let hairStyle = a.hair_style || 'short';
     let back = '', front = '';
