@@ -1,11 +1,11 @@
-"""Care for You 远程后端的最小示例，只用标准库。
+"""Care for You 远程后端的基础后端，最小可用，只用标准库。
 游戏设置里 backend_provider 改成 http，backend_url 填 http://127.0.0.1:8787/ 即可。
 协议见仓库根目录 README_backend_protocol_ai.md。
 
 这里放一个一阶的需求模型当占位：每个需求按自己的速率往上涨，涨多少由 minutes 决定。
 把 step() 换成你的 ODE，或者把快照转给聊天 AI，再把它的回答整理成指令列表就行。
 
-hello 声明：这个示例只管需求的涨法，事件、台词、谁向谁求助都交给游戏的内置后端。
+hello 声明：这个基础后端只管需求的涨法，事件、台词、谁向谁求助都交给游戏的内置后端。
 心情和虚弱度它不管，游戏自己算。
 """
 import json
@@ -13,7 +13,7 @@ import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 RATE_PER_HOUR = 0.05
-NAME = "care-example-backend"
+NAME = "care-basic-backend"
 VERSION = "0.2.0"
 
 

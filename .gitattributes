@@ -1,3 +1,3 @@
 *.sh text eol=lf
 *.cmd text eol=crlf
-prototype/vendor/* -text -diff
+frontend/vendor/* -text -diff

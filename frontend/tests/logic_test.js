@@ -213,7 +213,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('默认不把名字发出去', ctx.__lastReq.people.every(p => p.name === ''));
     const rw = ctx.__lastReq.world;
     check('请求里带工作时段和玩家位置', 'working' in rw && !('money' in rw) && rw.player && rw.player.place && ctx.__lastReq.people.every(p => p.needs && p.location));
-    /* 设了环境变量就对真实的示例后端走一遍：CARE_BACKEND_URL=http://127.0.0.1:8787/ */
+    /* 设了环境变量就对真实的基础后端走一遍：CARE_BACKEND_URL=http://127.0.0.1:8787/ */
     if (process.env.CARE_BACKEND_URL) {
       ctx.fetch = fetch; G.cfg.play.backend_url = process.env.CARE_BACKEND_URL;
       CY.backend.caps = null; CY.backend.ensureHello();
@@ -364,6 +364,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 时间显示 */
   G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'auto';
   G.cfg.time.mode = 'real';
+  check('默认倍速是 24', CY.ini.get(CY.ini.parse(''), 'time', 'speed') === '24' && G.speed() === 24);
+  check('加快时昼夜用游戏时钟', G.daySource() === 'game');
+  G.cfg.time.speed = '1';
+  check('一倍速下昼夜跟随系统时钟', G.daySource() === 'system');
+  /* 切到加快时，游戏时钟对齐到系统时钟，不跳变 */
+  { G.world.game_minutes = 12345; delete G.world.clock_shift;
+    const d = new Date(), sys = d.getHours() * 60 + d.getMinutes();
+    await G.setSpeed(24);
+    const gm = G.dayMinutes(), diff = Math.min(Math.abs(gm - sys), 1440 - Math.abs(gm - sys));
+    check('切到加快时游戏时钟对齐系统时钟', diff <= 1 && G.daySource() === 'game', gm + ' ' + sys);
+    check('倍速循环 1、6、24、60', (G.cfg.time.speed = '1', G.nextSpeed() === 6) && (G.cfg.time.speed = '60', G.nextSpeed() === 1));
+    G.cfg.time.speed = '24'; const gap = [...Array(50)].map(() => G.nextGapSeconds());
+    check('打断间隔按倍速缩短', Math.min(...gap) >= 20 && Math.max(...gap) <= 180 * 60 / 24 + 1, Math.min(...gap) + ' ' + Math.max(...gap));
+    G.cfg.time.speed = '999'; check('倍速封顶 240', G.speed() === 240); G.cfg.time.speed = 'abc'; check('倍速无效时按 1', G.speed() === 1);
+    G.cfg.time.speed = '1'; delete G.world.clock_shift; G.world.game_minutes = 0; await G.saveCfg(); await G.save(true); }
   check('真实时间下昼夜跟随系统时钟', G.daySource() === 'system');
   G.cfg.time.daynight = 'game';
   check('可以强制用游戏时钟', G.daySource() === 'game');

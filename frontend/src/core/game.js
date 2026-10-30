@@ -464,8 +464,9 @@
   const needyW = p => (learnOn() ? 0.4 + p.state.learn.needy : 1);
 
   /* ---------- 时间推进 ---------- */
-  function gameMinutes(realSeconds) {
-    return realSeconds / 60;
+  /* 离开游戏期间按现实速度推算，不随倍速 */
+  function gameMinutes(realSeconds, offline) {
+    return realSeconds / 60 * (offline ? 1 : G.speed());
   }
   const foodOf = p => p.species.food || 'food';
   const itemForNeed = (p, k) => (k === 'hunger' ? foodOf(p) : (G.tpl.items.for_need || {})[k]);
@@ -550,7 +551,7 @@
     const f = ini.get(G.cfg, 'interrupt', 'frequency');
     if (f === 'test') return GAP_TEST[0] + Math.random() * (GAP_TEST[1] - GAP_TEST[0]);
     const [lo, hi] = GAP[f] || GAP.normal;
-    return (lo + Math.random() * (hi - lo)) * 60;
+    return Math.max(20, (lo + Math.random() * (hi - lo)) * 60 / G.speed());
   };
   function scheduleNext() {
     const s = G.nextGapSeconds();
@@ -868,10 +869,11 @@
   };
   G.start = function () {
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
+    if (G.speed() > 1 && typeof G.world.clock_shift !== 'number') G.alignClock();
     const last = Date.parse(G.world.last_seen);
     if (last) {
       const cap = 12 * 60;      /* 离开期间最多推算十二个游戏小时，需求也封顶在七成，不会等回来一团糟 */
-      advance(Math.min(cap, gameMinutes((Date.now() - last) / 1000)), true);
+      advance(Math.min(cap, gameMinutes((Date.now() - last) / 1000, true)), true);
     }
     G.lastTick = Date.now();
     scheduleNext();

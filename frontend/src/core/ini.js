@@ -2,9 +2,10 @@
 (function (CY) {
   /* 节，键，默认值，说明 */
   const SCHEMA = [
-    ['interrupt', 'frequency', 'normal', 'test 试玩（现实秒）；often 经常；normal 适中；rare 很少。后三档按游戏时间算，所以压缩时间下会更频繁'],
+    ['interrupt', 'frequency', 'normal', 'test 试玩（现实秒）；often 经常；normal 适中；rare 很少。后三档按游戏时间算，所以加快时间时间隔按倍速缩短'],
     ['interrupt', 'countdown_seconds', '25', '提醒和问答的倒计时秒数，到时没赶上，能自理的自己处理，没有惩罚'],
-    ['time', 'daynight', 'auto', 'auto 真实时间跟随系统时钟，压缩时间用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
+    ['time', 'speed', '24', '时间流速的倍数。1 是现实速度，24 是现实一小时过游戏里一整天，60 是现实 24 分钟过一天。点房间左上角的时间可以在 1、6、24、60 之间切换。离开游戏期间一律按 1 倍推算'],
+    ['time', 'daynight', 'auto', 'auto 倍速为 1 时跟随系统时钟，加快时用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
     ['play', 'auto_return', 'true', '为 true 时，照顾完没有别的事，主角会自己回到书桌前工作；false 时留在原地等你手动移动'],
     ['play', 'backend_provider', 'builtin', 'builtin 是内置后端，规则和台词都在数据文件夹的明文 YAML 里；http 是把状态发给一个远程地址，由它决定谁说话、发生什么事，失败时退回内置'],
     ['play', 'backend_url', '', '远程后端的地址，只在 backend_provider 为 http 时用。发出去的只有状态快照，不含名字'],

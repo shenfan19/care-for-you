@@ -4,8 +4,8 @@
 
 仓库里有三个后端，用同一份接口：
 
-- 内置后端：在浏览器里用 JS 跑，随游戏一起，规则在数据文件夹的明文 YAML 里，默认使用。代码在 prototype/src/backend 的 local.js 和 local_plan.js。
-- 示例后端：backend_example_ai/server.py，标准库，一阶线性的需求模型，用来演示接口最小要写什么。
+- 内置后端：在浏览器里用 JS 跑，随游戏一起，规则在数据文件夹的明文 YAML 里，默认使用。代码在 frontend/src/backend 的 local.js 和 local_plan.js。
+- 基础后端：backend_basic_ai/server.py，标准库，一阶线性的需求模型，用来演示接口最小要写什么。
 - LM 后端：backend_lm_ai，把需求、心情、虚弱度当作 Life Matters 风格的模型状态来积分，说明见 backend_lm_ai/README_lm_backend_ai.md。
 
 ## 切换
@@ -13,7 +13,7 @@
 设置的高级设置折叠区里：
 
 - backend_provider：builtin 或 http。改成 http 以后游戏向 backend_url 发请求，出错自动退回内置，只提示一次。
-- backend_url：远程后端的地址，例如 http://127.0.0.1:8787/ 是示例后端，http://127.0.0.1:8788/ 是 LM 后端。
+- backend_url：远程后端的地址，例如 http://127.0.0.1:8787/ 是基础后端，http://127.0.0.1:8788/ 是 LM 后端。
 - backend_timeout：单次请求的超时，毫秒，默认 4000。
 - backend_send_names：为 true 时快照里带角色的名字，默认不带。
 - needs_source：builtin 或 backend。backend 表示全部需求都由后端给，游戏不再自己涨。有 drives 声明时（见下文）不需要设这一项。
@@ -44,7 +44,7 @@
 请求：
 
 ```json
-{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.39.0" } }
+{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.40.0" } }
 ```
 
 回应：
@@ -71,7 +71,7 @@
   "world": { }, "people": [ { } ], "expired": [ { "person": "p1", "name": "wc" } ] }
 ```
 
-- minutes：距离上次 drive tick 过去的游戏分钟数，可以是小数。积分类的后端用它做步长。
+- minutes：距离上次 drive tick 过去的游戏分钟数，可以是小数。积分类的后端用它做步长。游戏时间有倍速设置 time.speed，默认 24，所以每 5 秒一次的 tick 大约带 2 分钟，60 倍时约 5 分钟，不要假定它很小。
 - world：世界快照，见下。
 - people：全体在场角色的快照，见下，不含已归档的。
 - expired：刚到期的带时限标记，比如夜里起夜结束了，规则可以据此决定跌倒还是回床。
@@ -237,5 +237,5 @@ drive 回应里的 directives，每条都有 op 和 person，op 只能是下面�
 - drive tick 里按 minutes 做步长，回增量指令，并在 drives 里声明你负责的变量。
 - 对没见过的角色，用快照里的值初始化；对不认识的需求，不碰。
 - 角色编号稳定，角色消失（归档、删除）就清掉自己的内部状态。
-- 用 python backend_example_ai/server.py 起示例，改它的 step()；或者看 backend_lm_ai 里怎么把模型写成 YAML。
-- 验证：CARE_BACKEND_URL=你的地址 node prototype/tests/logic_test.js 会对真实后端走一遍；CARE_BACKEND_URL=你的地址 node prototype/tests/sim_eval.js 1 120 family 让一家人在虚拟时钟里过一天，输出请求次数和往返耗时。
+- 用 python backend_basic_ai/server.py 起基础后端，改它的 step()；或者看 backend_lm_ai 里怎么把模型写成 YAML。
+- 验证：CARE_BACKEND_URL=你的地址 node frontend/tests/logic_test.js 会对真实后端走一遍；CARE_BACKEND_URL=你的地址 node frontend/tests/sim_eval.js 1 120 family 让一家人在虚拟时钟里过一天，输出请求次数和往返耗时。

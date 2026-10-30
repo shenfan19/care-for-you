@@ -1,6 +1,6 @@
 # Care for You：轻量 LM 后端
 
-一个独立的小进程，把游戏里每个角色的需求、心情、虚弱度当作 Life Matters 风格的模型状态变量来积分。它与 backend_example_ai 并列，用同一份接口，游戏里改一下 backend_url 就能换。接口见仓库根目录的 README_backend_protocol_ai.md。
+一个独立的小进程，把游戏里每个角色的需求、心情、虚弱度当作 Life Matters 风格的模型状态变量来积分。它与 backend_basic_ai 并列，用同一份接口，游戏里改一下 backend_url 就能换。接口见仓库根目录的 README_backend_protocol_ai.md。
 
 它只做积分。随机事件、台词、谁向谁求助都不管，握手时声明了，游戏把这几样交给内置后端。
 
