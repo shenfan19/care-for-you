@@ -14,6 +14,8 @@
       return j;
     } finally { clearTimeout(timer); }
   };
+  /* 握手：问一下对面是谁，哪些事它管。老后端不认识 hello，回一个没有 handles 的普通回应，路由按“全都管”处理 */
+  H.hello = () => H.post({ v: 1, kind: 'hello', client: { name: 'care-for-you', version: (CY.meta || {}).version || '' } });
   H.drive = req => H.post(req);
   H.line = req => H.post(req);
   H.plan = req => H.post(req);

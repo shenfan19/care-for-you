@@ -495,25 +495,35 @@
   G.selfActFor = selfActionFor;
   G.selfAct = selfAct;
 
+  /* 虚弱度跨过 0.7 或 0.5 时记一笔，游戏自己算的和后端给的都走这里 */
+  G.frailCross = (p, was) => {
+    const s = p.state;
+    if (was < 0.7 && s.frailty >= 0.7) { G.logK(p.id, 'frail', 'log.frail', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
+    if (was >= 0.5 && s.frailty < 0.5) G.logK(p.id, 'recovered', 'log.recovered', { name: p.person.name });
+  };
+
   function advance(gmin, offline) {
     if (gmin <= 0) return;
     const hours = gmin / 60;
     const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
     G.world.game_minutes += gmin;
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
+    const driven = (p, k) => external || (CY.backend && CY.backend.isDriven(p.id, k));
     for (const p of G.activePeople()) {
       const defs = G.needsOf(p), s = p.state, mods = G.traitMods(p);
       const prevAct = G.act[p.id];
       const act = G.act[p.id] = G.activityOf(p), sleeping = act === 'sleeping';
       const night = G.isNight();
       for (const k in defs) {
-        if (external) continue;
+        if (driven(p, k)) continue;
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
         const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
-      let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
-      s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
+      if (!driven(p, 'mood')) {
+        const target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
+        s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
+      }
       if (offline) continue;
       if (prevAct === 'awake' && act === 'sleeping') G.toastFor(p, t('toast.sleep', { name: p.person.name }), 'soft');
       /* 没人管的时候，有的会自己动手：老人自己倒水做饭，孩子能做的少，婴儿什么也做不了 */
@@ -524,11 +534,12 @@
           if (a && selfAct(p, a, k, offline)) break;
         }
       }
-      const was = s.frailty;
-      if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hours * boost * mods.frailty);
-      else if (G.maxNeed(p) < 0.4) s.frailty = clamp(s.frailty - 0.01 * hours);
-      if (was < 0.7 && s.frailty >= 0.7) { G.logK(p.id, 'frail', 'log.frail', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
-      if (was >= 0.5 && s.frailty < 0.5) G.logK(p.id, 'recovered', 'log.recovered', { name: p.person.name });
+      if (!driven(p, 'frailty')) {
+        const was = s.frailty;
+        if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hours * boost * mods.frailty);
+        else if (G.maxNeed(p) < 0.4) s.frailty = clamp(s.frailty - 0.01 * hours);
+        G.frailCross(p, was);
+      }
     }
     if (G.economyTick) G.economyTick(gmin, offline);
     if (!offline) G.driveTick(gmin);

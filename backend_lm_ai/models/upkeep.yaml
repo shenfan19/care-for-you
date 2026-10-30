@@ -1,0 +1,64 @@
+metadata:
+  name: upkeep
+  version: "1.0"
+  lm_format_version: "1.0"
+  source: 自建的杂务累积，没有对应的 LM 组件
+  description:
+    problem: |
+      洗澡、换尿布、作业、清猫砂、晒太阳、施肥、修剪这些杂务按各自的速率积攒。
+    method: |
+      - 每一项是一个 0 到 1 的缺口，按自己的速率累积，睡着时放慢，住院时放慢。
+      - 尿布缺口与失水缺口反向耦合：刚喝过水的婴幼儿换得更勤。
+    limitations: |
+      - 纯累积，没有机理。保留在 LM 后端里只是为了让一个角色的全部需求都由同一套积分驱动。
+  ratings:
+    importance: 0.25 - 杂务不是主线
+    variable: 0.0 - 速率取游戏原值
+    equation: 0.0 - 线性累积
+    simulation: 0.5 - 与游戏内置速率表对表
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 只是对表
+
+parameters:
+  k_hygiene: 0.025
+  k_diaper: 0.06
+  k_homework: 0.05
+  k_clean: 0.04
+  k_sun: 0.01
+  k_fert: 0.005
+  k_prune: 0.005
+
+variables:
+  grime: { description: 想洗澡的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+  diaper_load: { description: 尿布湿的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+  homework_left: { description: 作业没写完的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+  litter: { description: 砂盆笼子脏的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+  light_deficit: { description: 花草缺光的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+  nutrient_deficit: { description: 花草缺肥的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+  overgrowth: { description: 花草该修剪的程度, value: 0.1, unit: fraction, type: state, bounds: [0.0, 1.0] }
+
+auxiliary:
+  slow_factor: "(1.0 - 0.5 * asleep) * (1.0 - 0.75 * inpatient)"
+
+equations:
+  chores:
+    description: 各杂务缺口累积。
+    priority: 20
+    step_unit: hour
+    dynamics:
+      grime: "grime + step * k_hygiene * speed_hygiene * slow_factor"
+      diaper_load: "diaper_load + step * k_diaper * speed_diaper * slow_factor * (1.4 - 0.8 * min(1.0, water_deficit))"
+      homework_left: "homework_left + step * k_homework * speed_homework * awake"
+      litter: "litter + step * k_clean * speed_clean * slow_factor"
+      light_deficit: "light_deficit + step * k_sun * speed_sun"
+      nutrient_deficit: "nutrient_deficit + step * k_fert * speed_fertilize"
+      overgrowth: "overgrowth + step * k_prune * speed_prune"
+
+drives:
+  hygiene: { state: grime, kinds: [human] }
+  diaper: { state: diaper_load, kinds: [human] }
+  homework: { state: homework_left, kinds: [human] }
+  clean: { state: litter, kinds: [animal] }
+  sun: { state: light_deficit, kinds: [plant] }
+  fertilize: { state: nutrient_deficit, kinds: [plant] }
+  prune: { state: overgrowth, kinds: [plant] }

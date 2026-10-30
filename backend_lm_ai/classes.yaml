@@ -1,0 +1,87 @@
+# 角色类的派生。一个 human 类，按年龄阶段派生；动物和花草按物种派生。
+# 派生链：organism，大类（human 或 animal 或 plant），human_阶段 或 物种名，再叠疾病。
+# 越靠后越具体，后面的覆盖前面的。性格不在这里：游戏把性格折算好的速率倍数、心情偏移、虚弱倍数随快照发来，单一来源。
+# 这里只写和模型里默认值不同的参数。参数名在 models/*.yaml 的 parameters 里。
+# 速率的数值对表游戏内置的速率表（seed.js），所以空放时 LM 后端和内置后端的平均需求曲线量级一致，
+# 不同在于 LM 后端里的耦合：脱水加深疲倦，睡眠债加快饥饿，长期被忽视的需求累积成虚弱。
+version: 1
+
+kinds:
+  human: human
+  cat: animal
+  dog: animal
+  rabbit: animal
+  hamster: animal
+  bird: animal
+  fish: animal
+  turtle: animal
+  snake: animal
+  guineapig: animal
+  gecko: animal
+  hedgehog: animal
+  duck: animal
+  ferret: animal
+  axolotl: animal
+  chicken: animal
+  succulent: plant
+  flower: plant
+  tree: plant
+  cactus: plant
+  orchid: plant
+  bamboo: plant
+
+classes:
+  organism:
+    params: {}
+  human:
+    params: {}
+  human_infant:
+    params: { k_water_loss: 0.1, k_hunger: 0.22, k_rest: 0.12, k_company: 0.12, k_play: 0.08, k_diaper: 0.14, k_hygiene: 0.04 }
+  human_toddler:
+    params: { k_hunger: 0.15, k_rest: 0.08, k_company: 0.1, k_play: 0.12, k_hygiene: 0.04 }
+  human_child:
+    params: { k_hunger: 0.1, k_company: 0.08, k_hygiene: 0.035 }
+  human_teen:
+    params: {}
+  human_adult:
+    params: {}
+  human_elder:
+    params: {}
+  animal:
+    params: { k_water_loss: 0.09, k_hunger: 0.09, k_company: 0.07, k_play: 0.1, k_clean: 0.04 }
+  cat:
+    params: { k_water_loss: 0.09, k_hunger: 0.09, k_company: 0.07, k_play: 0.1, k_clean: 0.04 }
+  dog:
+    params: { k_water_loss: 0.09, k_hunger: 0.09, k_company: 0.09, k_play: 0.12 }
+  rabbit:
+    params: { k_water_loss: 0.08, k_hunger: 0.09, k_company: 0.05, k_play: 0.07, k_clean: 0.04 }
+  hamster:
+    params: { k_water_loss: 0.07, k_hunger: 0.07, k_play: 0.05, k_clean: 0.03 }
+  succulent:
+    params: { k_water_loss: 0.008, k_sun: 0.01, k_fert: 0.003, k_prune: 0.002 }
+  flower:
+    params: { k_water_loss: 0.025, k_sun: 0.015, k_fert: 0.006, k_prune: 0.006 }
+  tree:
+    params: { k_water_loss: 0.012, k_sun: 0.01, k_fert: 0.004, k_prune: 0.008 }
+  cactus:
+    params: { k_water_loss: 0.004, k_sun: 0.012, k_fert: 0.002, k_prune: 0.002 }
+  orchid:
+    params: { k_water_loss: 0.02, k_sun: 0.01, k_fert: 0.004, k_prune: 0.004 }
+  bamboo:
+    params: { k_water_loss: 0.025, k_sun: 0.012, k_fert: 0.005, k_prune: 0.006 }
+
+conditions:
+  diabetes:
+    params: { glucose_impair: 1.5 }
+  arthritis:
+    params: { k_mobility: 0.045 }
+  heart:
+    params: { frailty_vuln: 1.3 }
+  parkinson:
+    params: { k_mobility: 0.04, frailty_vuln: 1.3 }
+  depress:
+    params: { mood_offset: -0.08 }
+  fracture:
+    params: { k_mobility: 0.05 }
+  hypertension:
+    params: { frailty_vuln: 1.15 }

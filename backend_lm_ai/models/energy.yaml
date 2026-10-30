@@ -1,0 +1,67 @@
+metadata:
+  name: energy
+  version: "1.0"
+  lm_format_version: "1.0"
+  source: LM human_body/glucose_insulin_2026 与 appetite_intake_regulation_2026 的缩小版
+  description:
+    problem: |
+      吃下去的能量被消耗的快慢决定饿的速度，血糖跟着饱腹程度走，血糖异常又会拖低心情。
+    method: |
+      - 饱腹 satiety 以一顿饭为 1，每小时按 k_hunger 消耗，睡着时降到 hunger_sleep_factor 倍，睡眠债使消耗加快。
+      - 饥饿需求等于 1 减饱腹。
+      - 血糖向饱腹决定的目标松弛，时间常数 glucose_tau_h，糖尿病使饱腹的升糖幅度乘 1 加 glucose_impair。
+      - 血糖过高或过低折算成 glycemic_stress，进入心情。
+    limitations: |
+      - 没有胰岛素和胰高血糖素，血糖只是饱腹的一阶滞后。
+      - 进食量由快照里饥饿的下降反推，不区分吃了什么。
+  ratings:
+    importance: 0.75 - 饥饿与血糖是最核心的两个量
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一阶松弛
+    simulation: 0.5 - 与游戏内置速率表对表
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  k_hunger: 0.08
+  hunger_sleep_factor: 0.4
+  hunger_sleepdebt_gain: 0.04
+  glucose_tau_h: 1.0
+  glucose_base: 90.0
+  glucose_meal_gain: 40.0
+  glucose_impair: 0.0
+
+variables:
+  satiety:
+    description: 饱腹程度，1 刚吃饱，0 饿到极点。
+    value: 0.8
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  glucose:
+    description: 血糖。
+    value: 95.0
+    unit: mg/dL
+    type: state
+    bounds: [40.0, 400.0]
+
+auxiliary:
+  energy_burn: "k_hunger * speed_hunger * (1.0 - asleep * (1.0 - hunger_sleep_factor)) * (1.0 - 0.75 * inpatient) * (1.0 + hunger_sleepdebt_gain * sleep_debt)"
+  glycemic_stress: "max(0.0, glucose - 180.0) / 100.0 + max(0.0, 70.0 - glucose) / 30.0"
+
+equations:
+  energy_balance:
+    description: 饱腹按消耗速率下降。
+    priority: 38
+    step_unit: hour
+    dynamics:
+      satiety: "satiety - step * energy_burn"
+  glucose_dynamics:
+    description: 血糖向饱腹决定的目标松弛。
+    priority: 37
+    step_unit: hour
+    dynamics:
+      glucose: "glucose + (glucose_base + glucose_meal_gain * satiety * (1.0 + glucose_impair) - glucose) * (1.0 - exp(-step / glucose_tau_h))"
+
+drives:
+  hunger: { state: satiety, lo: 1.0, hi: 0.0, kinds: [human, animal] }

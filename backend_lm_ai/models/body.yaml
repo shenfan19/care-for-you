@@ -1,0 +1,86 @@
+metadata:
+  name: body
+  version: "1.0"
+  lm_format_version: "1.0"
+  source: LM human_body/aging_health_summary_2026 与 musculoskeletal_2026 的缩小版
+  description:
+    problem: |
+      久坐少动攒下活动需求，长期被忽视的需求累积成稳态负荷，负荷慢慢拖高虚弱度，被照顾好了又慢慢回落。
+    method: |
+      - 活动缺口 mobility_debt 按 k_mobility 累积，睡着时降到 0.4 倍。
+      - 稳态负荷 allostatic_load 向需求最高者超过 0.6 的部分、睡眠债和压力的合成松弛，时间常数 72 小时。
+      - 虚弱度向 frailty_base 加 frailty_gain 乘 frailty_vuln 乘负荷松弛，上升时间常数 48 小时，回落时间常数 120 小时，住院时回落加快。
+      - frailty_base 是这个角色第一次被后端看见时的虚弱度，代表他的体质基线。
+    limitations: |
+      - 没有年龄随时间的衰老，基线固定。
+      - 跌倒受伤等突发事件由游戏的事件规则给，进入快照后被后端对表。
+  ratings:
+    importance: 0.75 - 虚弱度是游戏里被忽视的后果的唯一读出
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一阶松弛
+    simulation: 0.5 - 与游戏内置虚弱度规则对表
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  k_mobility: 0.03
+  load_threshold: 0.6
+  frailty_gain: 0.35
+  frailty_vuln: 1.0
+  tau_load_h: 72.0
+  tau_frail_up_h: 48.0
+  tau_frail_down_h: 120.0
+
+variables:
+  mobility_debt:
+    description: 想活动活动的程度。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  allostatic_load:
+    description: 稳态负荷，长期需求高企的累积。
+    value: 0.1
+    unit: index
+    type: state
+    bounds: [0.0, 2.0]
+  frailty_base:
+    description: 体质基线，第一次见到这个角色时的虚弱度，之后不变。
+    value: 0.1
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  frailty:
+    description: 虚弱度，0 健壮，1 极度虚弱。
+    value: 0.1
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+
+auxiliary:
+  mobility_rate: "k_mobility * speed_mobility * (1.0 - 0.6 * asleep) * (1.0 - 0.75 * inpatient)"
+  frailty_target: "min(1.0, frailty_base + frailty_gain * frailty_vuln * allostatic_load)"
+
+equations:
+  mobility:
+    description: 活动缺口累积。
+    priority: 31
+    step_unit: hour
+    dynamics:
+      mobility_debt: "mobility_debt + step * mobility_rate"
+  allostatic:
+    description: 稳态负荷向需求超限、睡眠债和压力的合成松弛。
+    priority: 30
+    step_unit: hour
+    dynamics:
+      allostatic_load: "allostatic_load + (max(0.0, need_max - load_threshold) / (1.0 - load_threshold) + 0.3 * sleep_debt + 0.2 * stress - allostatic_load) * (1.0 - exp(-step / tau_load_h))"
+  frailty_dynamics:
+    description: 虚弱度向目标松弛，上升慢，回落更慢，住院回落加快。
+    priority: 29
+    step_unit: hour
+    dynamics:
+      frailty: "frailty + (frailty_target - frailty) * (1.0 - exp(-step / (tau_frail_up_h if frailty_target > frailty else tau_frail_down_h / (1.0 + 1.5 * inpatient))))"
+
+drives:
+  mobility: { state: mobility_debt, lo: 0.0, hi: 1.0, kinds: [human] }
+  frailty: { state: frailty, lo: 0.0, hi: 1.0 }

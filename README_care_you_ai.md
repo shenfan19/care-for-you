@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-原型 0.15，纯网页，没有后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
+原型 0.39，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
 
 ![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 
@@ -18,15 +18,17 @@
 - 八种语言，界面和对话都有：简体中文，繁體中文，English，Français，日本語，한국어，Español，Deutsch
 - 数据全部是明文 YAML 和 settings.ini，AI 接口默认关闭，存档下载、运行包下载、存档导入
 
-## 接自己的模型
+## 后端
 
-游戏本体不写死谁说话、发生什么，只把每个角色的状态快照发出去，把回来的指令执行掉。
+游戏本体不写死谁说话、发生什么、需求怎么涨，只把每个角色的状态快照发出去，把回来的指令执行掉。有三个后端，用同一份接口，在设置的高级设置里改 backend_provider 和 backend_url 就能换：
 
-- 远程后端：设置里 backend_provider 改成 http，填 backend_url。示例在 backend_example_ai，只用标准库，换掉里面的 step() 就是自己的模型
-- 需求完全由外部给：needs_source 改成 backend，用 need_set、mood_set、frailty_set、move 指令写
-- 页面内：CY.api.state()、apply()、cards()、onTick()；页面外：打开 api_bridge 后用 postMessage
+- 内置后端：默认，在浏览器里跑，规则和台词是数据文件夹里的明文 YAML，不需要任何服务进程。
+- 示例后端：backend_example_ai，标准库，一阶线性需求，换掉 step() 就是自己的模型。
+- LM 后端：backend_lm_ai，把需求、心情、虚弱度当作 Life Matters 风格的六个模型来积分，一个 human 类按年龄阶段、疾病派生到每个角色，说明见 backend_lm_ai/README_lm_backend_ai.md。
 
-协议和字段在 prototype/src/backend/protocol.js 开头的注释里。
+远程后端先握手，声明自己只管积分还是什么都管；不管的部分游戏交给内置后端，两边合起来用。远程不通自动退回内置。完整接口在 README_backend_protocol_ai.md：请求与回应、指令表、快照字段、跨域与超时、分工规则、写自己后端的清单。
+
+页面内也有接口：CY.api.state()、apply()、cards()、onTick()；页面外打开 api_bridge 后用 postMessage。
 
 ## 运行
 
@@ -44,7 +46,11 @@
 ```
 node tests/logic_test.js
 node tests/sim_eval.js 3 120 family
+python backend_lm_ai/test_lm_backend.py
+python prototype/tests/backend_compare.py 1 3
 ```
+
+CARE_BACKEND_URL 设成某个后端的地址，logic_test 会对它走一遍真实往返，sim_eval 会改用它并统计请求次数和耗时，CARE_SEED 固定随机种子。backend_compare.py 把内置、示例、LM 三个后端放在同一个种子下比较服务耗时和仿真指标。
 
 logic_test 覆盖载入、创建角色、角色卡、行动者走动、帮忙与互动、时间、问答、打断、动作、存档、多语言完整性、AI 校验。sim_eval 让一家人在虚拟时钟里过几天，玩家按注意力策略去照顾，输出急需占比、哭闹时长、被打扰次数、换房间次数，并检查数值不变量。界面部分没有自动测试。
 
@@ -59,6 +65,7 @@ logic_test 覆盖载入、创建角色、角色卡、行动者走动、帮忙与
 - prototype/locales：界面语言包，一个语言一个文件；content_开头的是对话内容包
 - prototype/tests：逻辑测试、仿真评估，avatar_sheet.html 看全部角色形象
 - backend_example_ai：远程后端的最小示例
+- backend_lm_ai：轻量 LM 后端，models 是六个 YAML 模型，classes.yaml 是类的派生
 - media_ai：动作动画预览
 - prototype/vendor：js-yaml
 - android：预留，暂时搁置

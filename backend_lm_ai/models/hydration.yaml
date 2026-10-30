@@ -1,0 +1,50 @@
+metadata:
+  name: hydration
+  version: "1.0"
+  lm_format_version: "1.0"
+  source: LM human_body/renal_fluid_2026 的缩小版
+  description:
+    problem: |
+      一个人或动物每小时失去多少水，缺水多少，决定口渴有多急。
+    method: |
+      - 失水缺口 water_deficit 以一天的水周转量为单位，每小时按 k_water_loss 累积，睡着时降到 water_sleep_factor 倍，住院时降到四分之一，发热时按 water_fever_gain 加快。
+      - 口渴需求等于缺口，花草的土干了需求也是同一个缺口。
+      - 玩家倒水的动作由后端按快照反推，缺口随之回落。
+    limitations: |
+      - 没有渗透压和肾脏调节，只是一个单室累积。
+      - 速率按年龄阶段和物种取经验值，对表游戏里原有的速率表。
+  ratings:
+    importance: 0.5 - 口渴是最常见的需求之一
+    variable: 0.25 - 速率为经验取值
+    equation: 0.25 - 单室线性累积
+    simulation: 0.5 - 与游戏内置速率表对表
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 量级合理，未校准
+
+parameters:
+  k_water_loss: 0.08
+  water_sleep_factor: 0.4
+  water_fever_gain: 0.8
+
+variables:
+  water_deficit:
+    description: 失水缺口，1 为一整天的水周转量，对应口渴到极点。
+    value: 0.15
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.5]
+
+auxiliary:
+  water_loss_rate: "k_water_loss * speed_thirst * speed_water * (1.0 - asleep * (1.0 - water_sleep_factor)) * (1.0 - 0.75 * inpatient) * (1.0 + water_fever_gain * n_fever)"
+
+equations:
+  water_balance:
+    description: 失水缺口按失水速率累积。
+    priority: 40
+    step_unit: hour
+    dynamics:
+      water_deficit: "water_deficit + step * water_loss_rate"
+
+drives:
+  thirst: { state: water_deficit, lo: 0.0, hi: 1.0, kinds: [human, animal] }
+  water: { state: water_deficit, lo: 0.0, hi: 1.0, kinds: [plant] }

@@ -1,6 +1,6 @@
 /* 测试和仿真共用的载入：把页面脚本按顺序放进一个虚拟环境，用内存代替浏览器存储。 */
 const fs = require('fs'), vm = require('vm'), path = require('path'), zlib = require('zlib');
-const ctx = vm.createContext({ console, Math, Date, JSON, RegExp, Promise, setInterval, clearInterval, setTimeout, clearTimeout, TextEncoder, TextDecoder, Blob, Response, DecompressionStream, Uint8Array, DataView, ArrayBuffer, fetch: undefined });
+const ctx = vm.createContext({ console, Math, Date, JSON, RegExp, Promise, AbortController, setInterval, clearInterval, setTimeout, clearTimeout, TextEncoder, TextDecoder, Blob, Response, DecompressionStream, Uint8Array, DataView, ArrayBuffer, fetch: undefined });
 ctx.globalThis = ctx;
 const root = path.join(__dirname, '..');
 const run = f => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);

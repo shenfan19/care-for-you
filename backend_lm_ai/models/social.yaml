@@ -1,0 +1,88 @@
+metadata:
+  name: social
+  version: "1.0"
+  lm_format_version: "1.0"
+  source: LM human_body/nervous_sleep_stress_2026 的压力与情绪部分
+  description:
+    problem: |
+      孤独和无聊随时间累积，所有需求的最高者构成压力，压力、睡眠债和血糖异常共同决定心情。
+    method: |
+      - 孤独 loneliness 和无聊 boredom 各按自己的速率累积，睡着时孤独减半，无聊停止。
+      - 压力 stress 向需求最高者超过 0.5 的部分加睡眠债的贡献松弛，时间常数 6 小时。
+      - 心情向目标松弛，目标是 1 减压力权重乘最高需求，再减睡眠债与血糖异常的贡献，加性格偏移，时间常数 tau_mood_h。
+    limitations: |
+      - 心情只有一个维度，没有区分焦虑和低落。
+      - 玩家的陪伴动作对孤独的缓解由快照反推。
+  ratings:
+    importance: 0.75 - 情绪是游戏里角色状态的主要读出
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一阶松弛
+    simulation: 0.5 - 与游戏内置心情公式对表
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  k_company: 0.05
+  k_play: 0.1
+  mood_pressure_weight: 0.7
+  mood_debt_weight: 0.08
+  mood_glycemic_weight: 0.1
+  mood_offset: 0.0
+  tau_mood_h: 2.0
+
+variables:
+  loneliness:
+    description: 想有人陪的程度。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  boredom:
+    description: 想玩的程度。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  stress:
+    description: 压力，需求高企和睡眠债推高。
+    value: 0.1
+    unit: index
+    type: state
+    bounds: [0.0, 1.5]
+  mood:
+    description: 心情，1 最好。
+    value: 0.7
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+
+auxiliary:
+  loneliness_rate: "k_company * speed_company * (1.0 - 0.5 * asleep) * (1.0 - 0.75 * inpatient)"
+  boredom_rate: "k_play * speed_play * awake * (1.0 - 0.75 * inpatient)"
+  mood_target: "1.0 - mood_pressure_weight * need_max - mood_debt_weight * sleep_debt - mood_glycemic_weight * glycemic_stress + mood_offset"
+
+equations:
+  company_play:
+    description: 孤独与无聊累积。
+    priority: 34
+    step_unit: hour
+    dynamics:
+      loneliness: "loneliness + step * loneliness_rate"
+      boredom: "boredom + step * boredom_rate"
+  stress_dynamics:
+    description: 压力向需求最高者超过 0.5 的部分松弛。
+    priority: 33
+    step_unit: hour
+    dynamics:
+      stress: "stress + (max(0.0, need_max - 0.5) * 2.0 + 0.3 * sleep_debt - stress) * (1.0 - exp(-step / 6.0))"
+  mood_dynamics:
+    description: 心情向目标松弛。
+    priority: 32
+    step_unit: hour
+    dynamics:
+      mood: "mood + (max(0.0, min(1.0, mood_target)) - mood) * (1.0 - exp(-step / tau_mood_h))"
+
+drives:
+  company: { state: loneliness, lo: 0.0, hi: 1.0, kinds: [human, animal] }
+  play: { state: boredom, lo: 0.0, hi: 1.0, kinds: [human, animal] }
+  mood: { state: mood, lo: 0.0, hi: 1.0 }

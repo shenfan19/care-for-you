@@ -34,9 +34,9 @@
         case 'need': if (d.need in s.needs) s.needs[d.need] = clamp(s.needs[d.need] + d.delta); break;
         case 'need_set': if (d.need in s.needs) s.needs[d.need] = d.value; break;
         case 'mood_set': s.mood = d.value; break;
-        case 'frailty_set': s.frailty = d.value; break;
+        case 'frailty_set': { const was = s.frailty; s.frailty = d.value; G.frailCross(p, was); break; }
         case 'mood': s.mood = clamp(s.mood + d.delta); break;
-        case 'frailty': s.frailty = clamp(s.frailty + d.delta); break;
+        case 'frailty': { const was = s.frailty; s.frailty = clamp(s.frailty + d.delta); G.frailCross(p, was); break; }
         case 'condition_add':
           if (!(p.person.conditions || []).includes(d.id)) { p.person.conditions = (p.person.conditions || []).concat(d.id); store.writeYaml(`people/${p.id}/person.yaml`, p.person); initNeeds(p); }
           break;

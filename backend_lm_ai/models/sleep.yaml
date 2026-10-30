@@ -1,0 +1,65 @@
+metadata:
+  name: sleep
+  version: "1.0"
+  lm_format_version: "1.0"
+  source: LM human_body/nervous_sleep_stress_2026 的睡眠部分，加两过程模型的写法
+  description:
+    problem: |
+      清醒越久越困，夜里更困，睡着才恢复；睡不够会攒睡眠债，睡眠债再去影响食欲、心情和虚弱。
+    method: |
+      - 睡眠压力 sleep_pressure 清醒时按 k_rest 上升，夜里加成，脱水和饥饿使它更高；睡着时按 rest_recover 回落。
+      - 睡眠债在睡眠压力超过 0.85 时累积，睡着时回落。
+      - 疲倦需求等于睡眠压力。
+    limitations: |
+      - 作息由游戏给的 sleeping 和钟点决定，后端不决定什么时候睡。
+      - 没有昼夜节律相位偏移，夜猫子和早起鸟的差别由游戏的作息表给。
+  ratings:
+    importance: 0.75 - 睡眠是情绪与健康的主要中介
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 两过程模型的简化
+    simulation: 0.5 - 与游戏内置速率表对表
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  k_rest: 0.05
+  rest_night_gain: 1.0
+  rest_recover: 0.12
+  rest_thirst_gain: 0.25
+  debt_up: 0.3
+  debt_down: 0.1
+
+variables:
+  sleep_pressure:
+    description: 睡眠压力，1 为困到极点。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  sleep_debt:
+    description: 睡眠债，反复困到极点又没睡够时累积。
+    value: 0.0
+    unit: index
+    type: state
+    bounds: [0.0, 3.0]
+
+auxiliary:
+  night_boost: "1.0 + rest_night_gain * (1.0 if (hour >= 22.0 or hour < 6.0) else 0.0)"
+  rest_rise: "k_rest * speed_rest * night_boost * awake * (1.0 + rest_thirst_gain * water_deficit + 0.2 * max(0.0, 0.3 - satiety)) * (1.0 - 0.75 * inpatient)"
+
+equations:
+  sleep_pressure_dynamics:
+    description: 清醒时上升，睡着时回落。
+    priority: 36
+    step_unit: hour
+    dynamics:
+      sleep_pressure: "sleep_pressure + step * (rest_rise - asleep * rest_recover * (1.0 + sleep_pressure))"
+  sleep_debt_dynamics:
+    description: 睡眠压力超过 0.85 时累积，睡着时回落。
+    priority: 35
+    step_unit: hour
+    dynamics:
+      sleep_debt: "sleep_debt + step * (debt_up * max(0.0, sleep_pressure - 0.85) / 0.15 * awake - debt_down * asleep)"
+
+drives:
+  rest: { state: sleep_pressure, lo: 0.0, hi: 1.0, kinds: [human, animal] }

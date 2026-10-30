@@ -202,9 +202,12 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     let calls = 0, errs = 0; G.backendError = () => { errs++; };
     ctx.AbortController = AbortController;
     G.cfg.play.backend_provider = 'http'; G.cfg.play.backend_url = 'http://example.invalid/drive';
-    ctx.fetch = async (url, opt) => { calls++; const body = JSON.parse(opt.body); ctx.__lastReq = body; return { ok: true, json: async () => ({ v: 1, directives: [{ op: 'mood', person: body.people[0].id, delta: 5 }, { op: 'nope', person: body.people[0].id }] }) }; };
+    ctx.fetch = async (url, opt) => { const body = JSON.parse(opt.body); if (body.kind === 'hello') return { ok: true, json: async () => ({ v: 1, directives: [] }) }; calls++; ctx.__lastReq = body; return { ok: true, json: async () => ({ v: 1, directives: [{ op: 'mood', person: body.people[0].id, delta: 5 }, { op: 'nope', person: body.people[0].id }] }) }; };
     const m0 = G.get(body0Id()).state.mood = 0.5;
     function body0Id() { return G.activePeople()[0].id; }
+    CY.backend.caps = null; CY.backend.ensureHello();
+    await new Promise(r => setTimeout(r, 5));
+    check('没有声明 handles 的老后端当成什么都管', CY.backend.caps && CY.backend.handles('events') && CY.backend.handles('strategies') && CY.backend.handles('lines'));
     await CY.backend.drive(CY.backend.build('tick', { minutes: 1 })).then(list => G.applyDirectives(list));
     check('远程后端回来的指令被执行且被检查', calls === 1 && G.get(body0Id()).state.mood === 1 && ctx.__lastReq.kind === 'drive' && ctx.__lastReq.v === 1);
     check('默认不把名字发出去', ctx.__lastReq.people.every(p => p.name === ''));
@@ -213,13 +216,43 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     /* 设了环境变量就对真实的示例后端走一遍：CARE_BACKEND_URL=http://127.0.0.1:8787/ */
     if (process.env.CARE_BACKEND_URL) {
       ctx.fetch = fetch; G.cfg.play.backend_url = process.env.CARE_BACKEND_URL;
+      CY.backend.caps = null; CY.backend.ensureHello();
+      while (CY.backend.pending) await new Promise(r => setTimeout(r, 10));
+      check('真实后端握手成功', !!CY.backend.caps && !CY.backend.failed);
       const pe = G.activePeople()[0], k = Object.keys(pe.state.needs)[0]; pe.state.needs[k] = 0.1;
       await CY.backend.drive(CY.backend.build('tick', { minutes: 60 })).then(list => G.applyDirectives(list));
-      check('真实远程后端的 need_set 生效', Math.abs(pe.state.needs[k] - 0.15) < 0.011 && !CY.backend.failed);
+      check('真实远程后端的需求增量生效', Math.abs(pe.state.needs[k] - 0.15) < 0.011 && !CY.backend.failed);
     }
     ctx.fetch = async () => { throw new Error('offline'); };
     const r1 = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 })), r2 = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 }));
     check('远程失败退回内置，只提示一次', Array.isArray(r1) && Array.isArray(r2) && errs === 1);
+    /* 声明了只管积分的后端：事件交给内置，积分的变量游戏不再自己涨，plan 不再发给它，失败时变量还给游戏 */
+    {
+      const kinds = [], pe = G.activePeople()[0], nk = Object.keys(pe.state.needs)[0];
+      ctx.fetch = async (url, opt) => {
+        const b = JSON.parse(opt.body); kinds.push(b.kind + (b.trigger ? ':' + b.trigger : ''));
+        if (b.kind === 'hello') return { ok: true, json: async () => ({ v: 1, name: 'fake-lm', handles: { events: false, strategies: false, lines: false } }) };
+        return { ok: true, json: async () => ({ v: 1, directives: [{ op: 'need', person: pe.id, need: nk, delta: 0.1 }], drives: { [pe.id]: [nk, 'mood'] } }) };
+      };
+      G.cfg.play.backend_url = 'http://fake-lm.invalid/';
+      CY.backend.caps = null; CY.backend.failed = false; CY.backend.driven = {}; CY.backend.ensureHello();
+      await new Promise(r => setTimeout(r, 5));
+      check('握手读到后端只管积分', CY.backend.caps.name === 'fake-lm' && CY.backend.handles('events') === false && CY.backend.handles('strategies') === false);
+      pe.state.needs[nk] = 0.2;
+      const list = await CY.backend.drive(CY.backend.build('tick', { minutes: 1 }));
+      G.applyDirectives(list);
+      check('后端的积分指令被执行', Math.abs(pe.state.needs[nk] - 0.3) < 1e-6);
+      check('后端声明驱动的变量被记下', CY.backend.isDriven(pe.id, nk) && CY.backend.isDriven(pe.id, 'mood') && !CY.backend.isDriven(pe.id, 'frailty'));
+      kinds.length = 0;
+      CY.backend.plan(CY.backend.buildPlan({ minutes: 1 }));
+      check('不管策略的后端不收 plan 请求', !kinds.includes('plan'));
+      const act = CY.backend.drive(CY.backend.build('action', { person: pe, action: { id: 'pet' } }));
+      check('玩家动作的指令同步返回，不等远程', Array.isArray(act) && !kinds.includes('drive:action'));
+      ctx.fetch = async () => { throw new Error('offline'); };
+      await CY.backend.drive(CY.backend.build('tick', { minutes: 1 }));
+      check('远程失败后变量还给游戏', !CY.backend.isDriven(pe.id, nk));
+      CY.backend.caps = null; CY.backend.driven = {}; G.cfg.play.needs_source = 'builtin';
+    }
     G.cfg.play.backend_provider = 'builtin'; CY.backend.failed = false;
     const sayText = CY.backend.line({ v: 1, kind: 'line', person: P.person(G.get(gp), {}), group: 'events', key: 'discharge' });
     check('台词也走后端接口', typeof sayText === 'string' && sayText.length > 0);

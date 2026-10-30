@@ -1,17 +1,20 @@
 /* 后端协议，第一版。游戏本体只做两件事：把现在的状态打包发给后端，把后端回的指令一条条执行。
    谁在说话，发生什么事，都是后端决定的，游戏本体不再写死某个人或某件事。
 
+   完整的接口说明（传输、指令表、快照字段、分工规则）在仓库根目录 README_backend_protocol_ai.md，下面是速查。
+
    请求 request，都是明文 JSON：
+     { v: 1, kind: 'hello', client: { name, version } }   握手。回 { v: 1, name, version, handles: { events, strategies, lines } }，handles 里写 false 的由内置后端接手，没写当作 true
      { v: 1, kind: 'drive', trigger: 'tick' | 'action', minutes, world, people: [person], expired: [{ person, name }], person, action }
      { v: 1, kind: 'line', person, group, key, situation, world }
      { v: 1, kind: 'plan', world, people: [person], minutes }
    回应 response：
-     drive → { v: 1, directives: [directive] }
+     drive → { v: 1, directives: [directive], drives?: { 角色编号: [它替这个角色算的变量名：需求名、mood、frailty] } }，声明过的变量游戏本体不再自己推进
      line  → { v: 1, text: '一句话' }，没有就回 text: null
      plan  → { v: 1, states: [{ person, needs?, mood?, frailty?, want?: { id, action } }], strategies: [{ from, to, kind: 'care' | 'self' | 'go', need?, action? }] }
 
    person 是一个角色此刻的快照：id, name（设置里允许才带）, species, stage, age, mood, frailty, needs, conditions,
-   traits, voice, flags, sleeping, location, care_total, counters。
+   traits, voice, flags, sleeping, location, care_total, counters, rate_mult（每个需求的个性化速率倍数）, mood_offset, frailty_mult。
    flag 是带时限的标记，比如在医院，夜里起夜，受了伤。带 place 的标记会让这个人出现在那个地点。
 
    directive 是后端要游戏做的事，op 只能是下面这些，别的一律丢弃，数值会被压回范围：
@@ -34,11 +37,18 @@
     for (const n in p.state.flags || {}) { const f = p.state.flags[n]; if (f.until === undefined || f.until > now) flags[n] = Object.assign({}, f); }
     const loc = W ? W.locationOf(p) : { place: 'home', room: 'living' };
     return {
-      id: p.id, card: p.person.card || p.person.archetype || '', health: +(1 - p.state.frailty).toFixed(2), name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
-      mood: +p.state.mood.toFixed(2), frailty: +p.state.frailty.toFixed(2), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(2)])),
+      id: p.id, card: p.person.card || p.person.archetype || '', health: +(1 - p.state.frailty).toFixed(4), name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
+      mood: +p.state.mood.toFixed(4), frailty: +p.state.frailty.toFixed(4), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(4)])),
       conditions: (p.person.conditions || []).slice(), traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
+      rate_mult: P.rateMult(p), mood_offset: +G.traitMods(p).mood_offset.toFixed(3), frailty_mult: +G.traitMods(p).frailty.toFixed(3),
       sleeping: G.isSleeping(p), protagonist: G.protagonist() === p, abilities: P.abilities(p), want: G.wants && G.wants[p.id] ? Object.assign({}, G.wants[p.id]) : null, location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),
     };
+  };
+  /* 这个角色每个需求的个性化速率倍数：性格的倍数乘角色卡的 need_rate。基础速率不发，由后端的类按年龄阶段和物种自己定 */
+  P.rateMult = p => {
+    const m = CY.game.traitMods(p).rate, nr = p.person.need_rate || {}, out = {};
+    for (const k in p.state.needs) out[k] = +((m[k] || 1) * (nr[k] || 1)).toFixed(3);
+    return out;
   };
   P.world = () => {
     const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {}, d = new Date();
