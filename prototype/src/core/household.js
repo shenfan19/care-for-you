@@ -5,7 +5,7 @@
   const t = (k, v) => CY.t(k, v);
   const { emit, clamp } = G._h;
 
-  /* ---------- 操纵对象：玩家操纵的那个角色，内部叫 protagonist。没有时，玩家是一个成年人的影子，在书桌前工作。
+  /* ---------- 操纵对象：玩家操纵的那个角色，内部叫 protagonist。没有时，玩家是一个看不见的成年人。
      选了一个人做操纵对象，玩家的手就是他的手：他站在玩家所在的位置，不睡觉，不被打扰，也能照顾自己。
      老人做操纵对象，圈转得慢些。 ---------- */
   const LEAD_STAGES = ['child', 'teen', 'adult', 'elder'];
@@ -19,15 +19,18 @@
     G.save(); emit(); return true;
   };
 
-  /* 操纵对象是家里的一个真角色，和别人一样设置。第一次有人住进来而还没有操纵对象，就替玩家建一个“我”，只做一次，以后删了或归档了不会再自己冒出来 */
+  /* 操纵对象是玩家从菜单里选的家里一个真角色，不另造一个“我”。第一次有人住进来而还没有选，默认选爸爸，没有爸爸选妈妈，再没有就选第一个成年人，只选一次，以后玩家取消了不会再自己选上。
+     早先版本自动建过一个“我”，这里顺手删掉 */
   G.ensurePlayer = async () => {
+    const old = G.people.find(p => (p.person.archetype || p.person.card) === 'me');
+    if (old) { if (G.world.protagonist === old.id) G.world.protagonist = null; await G.deletePerson(old.id); await G.load(); G.world.player_char = false; }
     if (G.world.player_char || !G.activePeople().length) return false;
     G.world.player_char = true;
     if (G.protagonist()) { G.save(); return false; }
-    const id = await G.createPerson({ arch: 'me', name: t('preset.name.self'), roleText: CY.tOr('arch.me', '我') });
-    G.world.player_char = true;
-    await G.load(); G.world.player_char = true;
-    G.setProtagonist(id);
+    const arch = p => p.person.archetype || p.person.card, live = G.activePeople().filter(G.canLead);
+    const pick = live.find(p => arch(p) === 'dad') || live.find(p => arch(p) === 'mom') || live.find(p => G.stage(p) === 'adult') || live[0];
+    if (!pick) { G.save(); return false; }
+    G.setProtagonist(pick.id);
     return true;
   };
 

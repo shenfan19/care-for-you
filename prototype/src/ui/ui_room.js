@@ -133,7 +133,7 @@
     if (cur && cur.place === place) {
       el._dir = dirOf(gx - cur.gx, gy - cur.gy);
       el.classList.add('walking'); clearTimeout(el._wt);
-      el._wt = setTimeout(() => { el.classList.remove('walking'); el._dir = null; }, el.classList.contains('lead') || el.classList.contains('player') ? 1300 : 7200);
+      el._wt = setTimeout(() => { el.classList.remove('walking'); el._dir = null; if (U.renderRoom) U.renderRoom(false); }, el.classList.contains('lead') || el.classList.contains('player') ? 1300 : 7200);
     }
   };
 

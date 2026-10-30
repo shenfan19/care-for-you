@@ -28,7 +28,7 @@
     bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.8, .33]], player: [.18, .9] },
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
-    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .42], seat: [[.52, .42], [.76, .46]] },
+    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.2, .88], seat: [[.52, .42], [.76, .46]] },
     living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
@@ -45,10 +45,11 @@
   };
   W.playerAnchor = (place, room) => W.slotPoint(place, room, 'player', 0);
   W.WORK = { place: 'home', room: 'study' };
-  /* 谁办公：默认只有爸爸妈妈在家办公。有他们在，操纵对象平时就待在客厅，书桌留给他们 */
-  W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && ['dad', 'mom'].includes(p.person.archetype || p.person.card);
+  /* 谁办公：默认只有爸爸妈妈在家办公，家里没有爸爸妈妈时才轮到别的成年人。操纵对象不特别：选了谁，谁也只是照常过日子 */
+  const isParent = p => ['dad', 'mom'].includes(p.person.archetype || p.person.card);
+  W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && (isParent(p) || !G.activePeople().some(q => G.isHuman(q) && isParent(q)));
   W.hasWorker = () => G.activePeople().some(W.worker);
-  W.workRoom = () => (W.hasWorker() ? 'living' : W.WORK.room);
+  W.workRoom = () => 'living';
   /* 宝宝还不会走，只待在垫子和婴儿床上 */
   W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
   W.driven = p => !!p && p === G.protagonist();
@@ -162,8 +163,8 @@
   /* 此刻是不是坐在电脑前办公 */
   W.isWorking = p => {
     if (!p || G.isSleeping(p) || W.frozen.has(p.id)) return false;
-    if (W.worker(p)) { const l = W.locationOf(p); return l.place === 'home' && l.mode === 'work'; }
-    return W.driven(p) && !W.hasWorker() && W.atWork();
+    const l = W.worker(p) && W.locationOf(p);
+    return !!l && l.place === 'home' && l.mode === 'work';
   };
 
   /* 一个地点里所有人的位置：按房间分配站位 */
