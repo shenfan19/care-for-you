@@ -939,6 +939,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('保姆每天只招呼一次、放一杯茶、留一次条', G.world.nanny_hi_day === d5 && G.world.nanny_tea_day === d5 && G.world.nanny_bye_day === d5);
     G.world.nanny_on = false;
   }
+  {
+    const W = CY.world;
+    for (const x of G.people) x.person.active = false;
+    const mkp = async (arch, age) => { const id = await G.createPerson({ arch, name: arch, age }); return id; };
+    const ids = [await mkp('grandpa'), await mkp('grandma'), await mkp('dad'), await mkp('mom'), await mkp('toddler'), await mkp('daughter'), await mkp('baby')];
+    await G.load(); for (const x of G.people) x.person.active = ids.includes(x.id);
+    const plan = W.bedPlan(), humans = G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant').length;
+    const placed = plan.bedroom.length + plan.elder.length + plan.living.length;
+    check('每个不是婴儿的人都有床位', placed === humans, placed + '/' + humans);
+    check('老人睡老人房，床位不超上限', plan.elder.length >= 2 && plan.bedroom.length <= W.BED_CAP.bedroom && plan.elder.length <= W.BED_CAP.elder, JSON.stringify(plan));
+    const seen = new Set(); let dup = false;
+    for (const r in plan) plan[r].forEach((id, i) => { const k = r + i; if (seen.has(k)) dup = true; seen.add(k); });
+    check('同一间房里每个人的床位序号不同', !dup);
+    const bb = G.activePeople().find(p => G.stage(p) === 'infant'); G.act[bb.id] = 'sleeping';
+    check('婴儿睡婴儿床，不占床位', W.locationOf(bb).mode === 'cradle');
+    for (const x of G.people) x.person.active = true;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

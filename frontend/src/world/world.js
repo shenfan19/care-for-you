@@ -37,7 +37,24 @@
     lawn: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5], [.2, .55], [.8, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     road: { stand: [[.5, .56], [.3, .6], [.7, .6], [.4, .4], [.6, .4], [.2, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
   };
+  /* 床位：每个住家的人有自己的床。老人睡老人房，其余睡卧室，各有床位上限；睡不下的先去另一间，还不够睡客厅沙发。
+     婴儿睡婴儿床，不占床位。顺序按角色编号，位置固定，不会因为谁醒了而挪动 */
+  W.BED_CAP = { bedroom: 3, elder: 3 };
+  W.BED_MIN = { bedroom: 2, elder: 2 };
+  W.bedPlan = () => {
+    const plan = { bedroom: [], elder: [], living: [] };
+    const sleepers = G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant').sort((a, b) => (a.id < b.id ? -1 : 1));
+    const put = (p, order) => { for (const r of order) if (r === 'living' || plan[r].length < W.BED_CAP[r]) { plan[r].push(p.id); return; } };
+    for (const p of sleepers) if (G.stage(p) === 'elder') put(p, ['elder', 'bedroom', 'living']);
+    for (const p of sleepers) if (G.stage(p) !== 'elder') put(p, ['bedroom', 'elder', 'living']);
+    return plan;
+  };
+  /* 画床用：这个房间要几张床 */
+  W.bedCount = room => Math.max(W.BED_MIN[room] || 0, (W.bedPlan()[room] || []).length);
+  W.bedKey = () => W.bedCount('bedroom') + ',' + W.bedCount('elder');
+  W.bedOf = p => { const plan = W.bedPlan(); for (const r in plan) { const i = plan[r].indexOf(p.id); if (i >= 0) return { room: r, i }; } return null; };
   W.slotPoint = (place, room, kind, i) => {
+    if (kind === 'sleep' && W.BED_CAP[room]) { const r0 = W.PLACES[place].rooms[room], w = r0.w; return { gx: r0.gx + ((0.1 + i * 0.95 + 0.43) / w) * w, gy: r0.gy + 0.42 * r0.h }; }
     const r = W.PLACES[place].rooms[room], list = SLOTS[room][kind] || SLOTS[room].stand;
     const s = Array.isArray(list[0]) ? list[i % list.length] : list;
     const lap = Math.floor(i / list.length);
@@ -153,7 +170,7 @@
       return { place: 'home', room: PET_ROOM[sp] || 'living', mode: 'stand' };
     }
     const st = G.stage(p), sleeping = G.isSleeping(p);
-    if (sleeping) return { place: 'home', room: st === 'elder' ? 'elder' : 'bedroom', mode: st === 'infant' ? 'cradle' : 'sleep' };
+    if (sleeping) { if (st === 'infant') return { place: 'home', room: 'bedroom', mode: 'cradle' }; const b = W.bedOf(p); return { place: 'home', room: b ? b.room : st === 'elder' ? 'elder' : 'bedroom', mode: 'sleep' }; }
     /* 宝宝困了在婴儿床，醒着就在玩具垫上，自己不会走 */
     if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
     if (st === 'toddler' && G.age(p) < 2.5) return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
@@ -184,7 +201,7 @@
       let ns = 0, nb = 0, nw = 0;
       for (const { p, mode } of byRoom[room]) {
         const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : mode === 'mat' ? 'mat' : mode === 'work' ? 'seat' : 'stand';
-        const i = kind === 'stand' ? ns++ : kind === 'sleep' ? nb++ : kind === 'seat' ? nw++ : 0;
+        const i = kind === 'stand' ? ns++ : kind === 'sleep' ? ((W.bedOf(p) || { i: nb++ }).i) : kind === 'seat' ? nw++ : 0;
         out.push({ id: p.id, place, room, kind, ...W.slotPoint(place, room, kind, i) });
       }
     }
