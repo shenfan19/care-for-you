@@ -6,7 +6,7 @@ Pause for a moment and look after the people at home. They call for you now and 
 
 ## 当前状态
 
-原型 0.42，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
+原型 0.43，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
 
 ![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 
@@ -80,13 +80,3 @@ logic_test 覆盖载入、创建角色、角色卡、行动者走动、帮忙与
 ## 许可证与联系
 
 MIT，见 LICENSE。意见与问题：shenfan19@gmail.com，或在 GitHub 仓库提 issue。
-
-## 同类的小游戏
-
-喜欢这类安静温和的小游戏的话，下面这些也值得去玩。链接只是方便找到，各自的内容与授权以原页面为准。
-
-- [Granny's Home](https://robto.itch.io/grannys-home)：温馨的整理游戏，帮奶奶在搬家前决定留下什么。
-- [Neko Atsume](https://en.wikipedia.org/wiki/Neko_Atsume)：布置院子，等猫来做客。
-- [Weyrdlets](https://weyrdworks.itch.io/weyrdlets)：桌面宠物，陪你工作。
-
-名单会补充，只放核对过内容温和的。

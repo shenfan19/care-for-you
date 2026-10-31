@@ -52,7 +52,7 @@ CY.i18n.register("ko", {
 "pack.readme": "Care for You {version} 로컬 앱\n\n1. 원하는 폴더에 압축을 풉니다.\n2. index.html을 더블클릭합니다. 데스크톱 Chrome이나 Edge를 권장합니다.\n3. my-save.zip이 들어 있다면 오른쪽 위의 저장과 다운로드를 열고, 저장 파일 불러오기에서 그 파일을 고르세요.\n\n데이터는 내 기기에만 남고 전송되지 않습니다.",
 "gate.fail": "저장소를 열 수 없습니다", "gate.perm": "지난번에 데이터 폴더 {name}을(를) 선택했습니다. 브라우저가 접근 권한을 다시 확인해야 합니다.", "gate.continue": "이 폴더 계속 사용", "gate.browser": "대신 브라우저 저장소 사용",
 "about.title": "Care for You 소개", "about.tab_about": "소개", "about.tab_privacy": "개인정보와 면책", "about.tab_credits": "크레딧과 라이선스", "about.tab_version": "버전",
-"about.p1": "잠깐 손을 멈추고 집안 식구를 돌봐 주세요. 일하는 동안 가끔 당신을 부릅니다. 점수도 벌도 없습니다.", "about.like_h": "비슷한 게임", "about.like_p": "이런 차분하고 부드러운 게임을 좋아하신다면 이 게임들도 한번 해 보세요.",
+"about.p1": "잠깐 손을 멈추고 집안 식구를 돌봐 주세요. 일하는 동안 가끔 당신을 부릅니다. 점수도 벌도 없습니다.",
 "about.p2": "한 사람이 만든 개인 프로젝트입니다. 어떤 학교, 직장, 단체와도 관련이 없으며 그들의 입장을 대변하지 않습니다.",
 "about.p3": "모든 캐릭터는 가상입니다. 세상을 떠난 사람을 재현하는 것을 게임은 제공하지도 권하지도 않습니다. 떠올린 말은 어떤 유형의 사람에 대한 나만의 인상일 뿐입니다.",
 "about.p4": "초기 버전이라 거친 부분이 있습니다. 의견은 shenfan19@gmail.com 또는 github.com/shenfan19/care-for-you 의 issue로 보내 주세요.",

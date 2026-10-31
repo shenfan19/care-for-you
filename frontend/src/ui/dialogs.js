@@ -133,14 +133,12 @@
   };
 
   /* ---------- 关于：个人项目的说明、隐私与免责、致谢、版本 ---------- */
-  /* 同类的安静小游戏，只放名字和链接，点开才会联网 */
-  const LIKES = [["Granny's Home", 'https://robto.itch.io/grannys-home'], ['Neko Atsume', 'https://en.wikipedia.org/wiki/Neko_Atsume'], ['Weyrdlets', 'https://weyrdworks.itch.io/weyrdlets']];
   U.aboutDialog = function (tab) {
     tab = tab || 'about';
     const M = CY.meta, tabs = ['about', 'privacy', 'credits', 'version'];
     const para = keys => keys.map(k => `<p>${esc(t(k))}</p>`).join('');
     const body = {
-      about: para(['about.p1', 'about.p5', 'about.p2', 'about.p3', 'about.p4']) + `<h3>${esc(t('about.like_h'))}</h3><p>${esc(t('about.like_p'))}</p><p class="likes">${LIKES.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${esc(n)}</a>`).join(' · ')}</p>`,
+      about: para(['about.p1', 'about.p5', 'about.p2', 'about.p3', 'about.p4']),
       privacy: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}<h3>${esc(t('priv.h2'))}</h3>${para(['priv.p4', 'priv.p5'])}
         <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}<div class="mute">${esc(t('priv.note'))}</div>`,
       credits: para(['cred.p1', 'cred.p2', 'cred.p3']),
