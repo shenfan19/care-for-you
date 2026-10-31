@@ -2,8 +2,6 @@
 
 Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no failing, no download, no account.
 
-中文说明见 [README_care_you_ai.md](README_care_you_ai.md)。
-
 ![Care for You](media_ai/screenshot_home.png)
 
 ## What it is
