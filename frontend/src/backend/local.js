@@ -88,7 +88,11 @@
     const s = req.situation || {};
     if (req.group === 'ambient' && !key) {
       const hn = (req.person.counters || {}).hospital_n || 0;
-      key = !s.asleep && hn > 0 && Math.random() < 0.18 ? 'memory_hospital' : !s.asleep && s.room && s.room !== 'ward' && Math.random() < 0.55 ? s.room : s.band;
+      const hr = G.dayMinutes() / 60, W = CY.world;
+      /* 日程里的场景：早起，工作，午饭，晚饭，看电视，睡前，有这个键的台词才用 */
+      const rk = s.asleep ? null : hr >= 7 && hr < 8.5 && Math.random() < 0.4 ? 'wakeup' : hr >= 12 && hr < 13 && s.room === 'kitchen' ? 'lunch' : hr >= 18 && hr < 19 && s.room === 'kitchen' ? 'dinner'
+        : hr >= 19 && hr < 22 && s.room === 'living' ? 'tv' : hr >= 9 && hr < 18 && s.room === 'study' && W && W.isWorking(p) ? 'work' : hr >= 21.5 && hr < 22.5 ? 'goodnight' : null;
+      key = rk && Math.random() < 0.6 && G.lines(p, req.group, rk).length ? rk : !s.asleep && hn > 0 && Math.random() < 0.18 ? 'memory_hospital' : !s.asleep && s.room && s.room !== 'ward' && Math.random() < 0.55 ? s.room : s.band;
     }
     let arr = G.lines(p, req.group, key);
     if (!arr.length && req.group === 'ambient' && s.band) arr = G.lines(p, req.group, s.band);

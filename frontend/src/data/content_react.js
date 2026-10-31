@@ -13,6 +13,12 @@
   const ZH = {
     adult: {
       ambient: {
+        tv: ['{ta}窝在沙发里看电视，笑了一声。', '{ta}拿着遥控器换了几个台，又换回来了。', '{ta}看着电视，手里的水杯快凉了。'],
+        lunch: ['{ta}端着午饭站在灶台边吃了两口。', '{ta}把饭菜热了热，问你要不要来一口。'],
+        dinner: ['{ta}在灶台前忙着，厨房里开始有香味。', '{ta}摆好碗筷，朝你这边看了一眼。'],
+        work: ['{ta}在敲键盘，敲得很快。', '{ta}盯着屏幕，皱了皱眉，又舒展开。', '{ta}戴着耳机，轻轻点着头。'],
+        wakeup: ['{ta}揉着眼睛，说了声早。', '{ta}伸了个懒腰，关节响了一声。'],
+        goodnight: ['{ta}打了个哈欠，说该睡了。', '{ta}把客厅的灯关了一半。'],
         morning: ['{ta}端着一杯热水，在窗边站了一会儿。', '{ta}在厨房里哼着不成调的歌。', '{ta}把窗帘拉开，说今天天不错。', '{ta}一边刷牙一边看手机，被你看见了，笑了一下。'],
         noon: ['{ta}看了看时间，问你吃了没有。', '{ta}靠在椅背上，揉了揉后颈。', '{ta}把午饭的碗叠起来，又放下了。'],
         evening: ['{ta}在厨房里弄出一阵香味。', '{ta}把鞋摆整齐，换上了拖鞋。', '{ta}坐在沙发上，长长地呼了一口气。'],
@@ -38,6 +44,11 @@
     },
     elder: {
       ambient: {
+        tv: ['{ta}坐在电视前，把音量调大了一格。', '{ta}看着戏曲频道，手指在膝盖上打着拍子。'],
+        lunch: ['{ta}慢慢吃着，说今天的菜咸淡刚好。'],
+        dinner: ['{ta}坐在桌边，等着开饭。'],
+        wakeup: ['{ta}早就醒了，坐在床边活动手脚。'],
+        goodnight: ['{ta}把拖鞋摆正，说：睡了。'],
         morning: ['{ta}起得很早，坐在窗边晒太阳。', '{ta}慢慢地打了一套不成样子的太极。', '{ta}把昨天的报纸又看了一遍。', '{ta}摸着杯子，说今天的水温刚好。'],
         noon: ['{ta}靠在椅子上打盹，手里还拿着遥控器。', '{ta}说中午想吃点软的。', '{ta}眯着眼睛，数着墙上的光斑。'],
         evening: ['{ta}坐在门口，看着天一点点暗下来。', '{ta}把拖鞋摆在了你常坐的位置旁边。', '{ta}说，这个时候，以前家里都开饭了。'],
@@ -63,6 +74,11 @@
     },
     child: {
       ambient: {
+        tv: ['{ta}盘腿坐在地上，离电视太近了。'],
+        lunch: ['{ta}把青菜拨到了碗边。'],
+        dinner: ['{ta}踮着脚想看锅里。'],
+        wakeup: ['{ta}抱着枕头不肯起床。'],
+        goodnight: ['{ta}抱着玩具，说再玩一会儿。'],
         morning: ['{ta}顶着乱糟糟的头发出来，揉着眼睛。', '{ta}一边刷牙一边打哈欠。', '{ta}说今天想吃煎蛋。'],
         noon: ['{ta}抱着一本书，趴在地上看。', '{ta}把玩具一个个排好，说是在开会。'],
         evening: ['{ta}问：今天晚饭吃什么？', '{ta}把画好的画举起来给你看。'],
@@ -109,6 +125,9 @@
     },
     cat: {
       ambient: {
+        tv: ['{ta}蜷在沙发角落，尾巴一甩一甩。'],
+        dinner: ['{ta}蹲在厨房门口，一直盯着你。'],
+        goodnight: ['{ta}占了你的位置，闭着眼装睡。'],
         morning: ['{ta}伸了个很长的懒腰，尾巴竖得高高的。', '{ta}蹲在窗台上，看外面的鸟。'],
         noon: ['{ta}趴在阳光里，打起了呼噜。', '{ta}舔了舔爪子，认真地洗脸。'],
         evening: ['{ta}突然在家里狂奔了一圈，又若无其事地坐下。'],
@@ -133,6 +152,9 @@
     },
     dog: {
       ambient: {
+        tv: ['{ta}趴在脚边，耳朵动了动。'],
+        dinner: ['{ta}在厨房门口摇着尾巴。'],
+        wakeup: ['{ta}早就守在门口了。'],
         morning: ['{ta}一看到你，尾巴摇成了螺旋桨。', '{ta}叼来了拖鞋，放在你脚边。'],
         noon: ['{ta}趴在门口，下巴搁在爪子上。', '{ta}打了个哈欠，翻过身晒肚皮。'],
         evening: ['{ta}听到钥匙响，飞快地冲到了门口。'],
@@ -182,6 +204,12 @@
   const EN = {
     adult: {
       ambient: {
+        tv: ['{ta} curled up on the sofa in front of the TV and laughed once.', '{ta} flipped through a few channels and went back to the first.', '{ta} watched TV while the glass of water went cold.'],
+        lunch: ['{ta} stood at the stove eating a few bites of lunch.', '{ta} reheated lunch and asked if you wanted some.'],
+        dinner: ['{ta} was busy at the stove and the kitchen began to smell good.', '{ta} set out bowls and chopsticks and glanced your way.'],
+        work: ['{ta} was typing, fast.', '{ta} frowned at the screen, then relaxed.', '{ta} nodded along to something in the headphones.'],
+        wakeup: ['{ta} rubbed the eyes and said good morning.', '{ta} stretched, and a joint cracked.'],
+        goodnight: ['{ta} yawned and said it was time for bed.', '{ta} turned off half of the living room lights.'],
         morning: ['{ta} stood by the window with a cup of hot water.', '{ta} hummed something off-key in the kitchen.', '{ta} pulled the curtains open and said it looked like a good day.', '{ta} brushed teeth while checking the phone, and smiled when you noticed.'],
         noon: ['{ta} glanced at the clock and asked if you had eaten.', '{ta} leaned back and rubbed the back of the neck.', '{ta} stacked the lunch bowls, then put them down again.'],
         evening: ['{ta} filled the kitchen with a good smell.', '{ta} lined up the shoes and slipped into slippers.', '{ta} dropped onto the sofa and let out a long breath.'],
@@ -207,6 +235,11 @@
     },
     elder: {
       ambient: {
+        tv: ['{ta} sat close to the TV and turned the volume up one notch.', '{ta} watched the opera channel, tapping a finger on the knee.'],
+        lunch: ['{ta} ate slowly and said the food was seasoned just right.'],
+        dinner: ['{ta} sat at the table, waiting for dinner.'],
+        wakeup: ['{ta} had been awake for a while, moving the arms and legs on the edge of the bed.'],
+        goodnight: ['{ta} lined up the slippers and said: bedtime.'],
         morning: ['{ta} was up early, sitting by the window in the sun.', '{ta} slowly went through a rough version of tai chi.', '{ta} read yesterday’s paper once more.', '{ta} held the cup and said the water was just right today.'],
         noon: ['{ta} dozed in the chair with the remote still in hand.', '{ta} said something soft would be nice for lunch.', '{ta} squinted, counting the spots of light on the wall.'],
         evening: ['{ta} sat by the door, watching the sky darken little by little.', '{ta} put the slippers beside the place where you usually sit.', '{ta} said that at this hour, supper used to be on the table.'],
@@ -232,6 +265,11 @@
     },
     child: {
       ambient: {
+        tv: ['{ta} sat cross-legged on the floor, much too close to the TV.'],
+        lunch: ['{ta} pushed the greens to the edge of the bowl.'],
+        dinner: ['{ta} stood on tiptoe trying to see into the pot.'],
+        wakeup: ['{ta} hugged the pillow and refused to get up.'],
+        goodnight: ['{ta} hugged a toy and asked for a little more play.'],
         morning: ['{ta} came out with messy hair, rubbing both eyes.', '{ta} yawned through brushing teeth.', '{ta} said today felt like a fried egg day.'],
         noon: ['{ta} lay on the floor with a book.', '{ta} lined up the toys and said it was a meeting.'],
         evening: ['{ta} asked what was for dinner.', '{ta} held up a drawing to show you.'],
@@ -274,6 +312,9 @@
     },
     cat: {
       ambient: {
+        tv: ['{ta} curled up in the corner of the sofa, tail flicking.'],
+        dinner: ['{ta} sat at the kitchen door, watching you the whole time.'],
+        goodnight: ['{ta} took your spot and pretended to be asleep.'],
         morning: ['{ta} stretched long, tail straight up.', '{ta} sat on the windowsill, watching the birds.'],
         noon: ['{ta} lay in a patch of sun and started to purr.', '{ta} licked a paw and washed the face with great seriousness.'],
         evening: ['{ta} suddenly sprinted around the house, then sat down as if nothing happened.'],
@@ -291,6 +332,9 @@
     },
     dog: {
       ambient: {
+        tv: ['{ta} lay by your feet, one ear twitching.'],
+        dinner: ['{ta} wagged at the kitchen door.'],
+        wakeup: ['{ta} was already waiting by the door.'],
         morning: ['{ta} saw you and wagged like a propeller.', '{ta} brought a slipper and left it at your feet.'],
         noon: ['{ta} lay at the door with the chin on both paws.', '{ta} yawned and rolled over to sun the belly.'],
         evening: ['{ta} heard the key and raced to the door.'],

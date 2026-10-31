@@ -168,7 +168,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.clearFlag(G.get(gp), 'outing');   /* 随机的外出愿望可能刚好让他出门，会盖过住院，测试先清掉 */
     G.applyDirectives(P.sanitize([{ op: 'flag_set', person: gp, name: 'hospital', minutes: 4320, place: 'hospital', room: 'ward', mode: 'sleep' }]));
     const off = W.presenceNeed(G.get(gp));
-    check('在医院的人要先去医院', off && off.offsite && off.place === 'hospital');
+    check('在医院的人要先去医院', off && off.offsite && off.place === 'hospital', JSON.stringify(off) + ' ' + JSON.stringify(G.get(gp).state.flags) + ' lead=' + (G.protagonist() && G.protagonist().id === gp) + ' gp=' + gp);
     check('去医院，主角位置变了', W.travel('hospital') && W.player().place === 'hospital');
     check('长按去医院的时间不是线性的', W.travelHold('home', 'hospital') <= 8 && W.travelHold('home', 'hospital') >= 3);
     G.clearFlag(G.get(gp), 'hospital');
@@ -1002,6 +1002,15 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       for (const v of Object.values(eng.people.x.state)) if (!(v === v)) bad.push(sp + '/' + st + ' state');
     }
     check('积分后端：每类角色空放十四天没有 NaN', bad.length === 0, bad.join(','));
+  }
+  {
+    const mkv = async arch => { const id = await G.createPerson({ arch, name: arch }); await G.load(); for (const x of G.people) x.person.active = x.id === id; return G.get(id); };
+    const keys = ['tv', 'lunch', 'dinner', 'wakeup', 'goodnight'];
+    const okAll = []; for (const arch of ['dad', 'grandpa', 'toddler2', 'cat', 'dog']) { const pp = await mkv(arch); for (const k of keys) { const has = G.lines(pp, 'ambient', k).length > 0; if (!has && !(['cat', 'dog'].includes(arch) && ['lunch', 'wakeup'].includes(k) && arch === 'cat') && !(arch === 'dog' && ['lunch', 'goodnight'].includes(k)) && !(arch === 'cat' && ['lunch', 'wakeup'].includes(k)) && !(arch === 'dog' && k === 'goodnight')) okAll.push(arch + '.' + k); } }
+    check('日程台词：大人，老人，孩子都有早起，午饭，晚饭，看电视，睡前', !okAll.some(x => /^(dad|grandpa|toddler2)\./.test(x)), okAll.join(','));
+    const dad = await mkv('dad'); G.setClock(20 * 60); let seen = 0; for (let i = 0; i < 60; i++) { const r = CY.backendLocal.line({ person: { id: dad.id, counters: {} }, group: 'ambient', situation: { room: 'living', band: 'evening' } }); if (G.lines(dad, 'ambient', 'tv').includes(r.text)) seen++; }
+    check('晚上在客厅，大人闲谈里会说到看电视', seen > 5, seen);
+    for (const x of G.people) x.person.active = true;
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
