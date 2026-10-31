@@ -8,11 +8,16 @@
   const B = CY.backend = { failed: false, caps: null, driven: {}, pending: 0 };
   const provider = () => CY.ini.get(CY.game.cfg, 'play', 'backend_provider');
   const useHttp = () => provider() === 'http';
+  const useLm = () => provider() === 'lm';
   B.names = () => CY.ini.bool(CY.game.cfg, 'play', 'backend_send_names');
 
   /* ---------- 握手 ---------- */
   const hs = { url: null, t: 0, busy: false };
   B.ensureHello = () => {
+    if (useLm()) {   /* 浏览器里的积分后端：不用握手，只管积分 */
+      if (!B.caps || B.caps.url !== 'lm') { const h = CY.lm.hello(); B.caps = { url: 'lm', name: h.name, version: h.version, handles: h.handles }; B.failed = false; }
+      B.driven = B.driven || {}; if (!CY.lm.ready) CY.lm.load(); return;
+    }
     if (!useHttp()) { B.caps = null; B.driven = {}; return; }
     const u = CY.ini.get(CY.game.cfg, 'play', 'backend_url');
     if (B.caps && B.caps.url === u) return;
@@ -25,7 +30,7 @@
     }, e => { B.caps = null; fail(e); }).then(() => { hs.busy = false; B.pending--; });
   };
   B.handles = k => (B.caps ? B.caps.handles[k] !== false : false);
-  B.isDriven = (pid, name) => !!(useHttp() && B.driven[pid] && B.driven[pid].includes(name));
+  B.isDriven = (pid, name) => !!((useHttp() || useLm()) && B.driven[pid] && B.driven[pid].includes(name));
   B.noteDrives = d => {
     B.driven = {};
     if (d && typeof d === 'object') for (const id in d) if (Array.isArray(d[id])) B.driven[id] = d[id].filter(x => typeof x === 'string').slice(0, 40);
@@ -63,6 +68,11 @@
   B.drive = req => {
     const P = CY.protocol, local = () => P.sanitize(CY.backendLocal.drive(req).directives);
     B.ensureHello();
+    if (useLm()) {
+      if (req.trigger === 'action') return local();
+      const r = CY.lm.drive(req); B.noteDrives(r.drives);
+      return local().concat(P.sanitize(r.directives));
+    }
     if (!useHttp()) return local();
     if (!B.caps) return local();
     const compose = B.caps.handles.events === false;

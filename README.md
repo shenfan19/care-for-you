@@ -47,7 +47,7 @@ Everything is stored on your own device as plain files. There is no account, no 
 The game does not hard-code who speaks or what happens. It sends a snapshot of each character's state to a backend and carries out the instructions that come back. Three ways of driving it are planned:
 
 1. Probability tables. Done, and the default. The built-in backend runs in the browser and reads plain YAML rules.
-2. Numerical integration. Unfinished. `backend_lm_ai` is an experimental Python backend that advances needs, mood and frailty with continuous models. It is not wired into the interface and is not validated.
+2. Numerical integration. Experimental. Set the backend to `lm` in the advanced settings and needs, mood and frailty are integrated step by step by differential-equation models that run in the browser; the models are YAML files in the data folder (`templates/lm`). Events and lines still come from the tables. `backend_lm_ai` is the same engine in Python, kept as a reference and checked against the browser version by `frontend/tests/lm_parity.py`. The numbers are not validated.
 3. AI connection. Unfinished and off by default. It lets an external AI service rewrite lines. Turning it on sends a small amount of context to the service you choose.
 
 All backends use the same JSON interface, described in [README_backend_protocol_ai.md](README_backend_protocol_ai.md). `backend_basic_ai` is a minimal example you can replace with your own model. A remote backend that fails falls back to the built-in one.

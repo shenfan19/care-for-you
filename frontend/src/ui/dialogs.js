@@ -7,7 +7,7 @@
   const $ = id => document.getElementById(id);
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'play.backend_provider': ['builtin', 'lm', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'ui.figure', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
