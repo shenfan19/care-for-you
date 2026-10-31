@@ -365,3 +365,4 @@ CY.i18n.register("zh-CN", {"cred.p3": "家具图：Kenney 的 Furniture Kit（CC
 CY.i18n.register("zh-CN", {"add.model": "形象", "add.model_auto": "自动"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit 和 Mini Characters（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色在游戏里按玩家的选择重着色。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动物，花草，动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
 CY.i18n.register("zh-CN", {"corner.eff_tip": "现在的工作效率是 {n}%，你的心情好，收入就多；工作和家里有人没人管会让心情下降，照顾，被关心会让它回升。"});
+CY.i18n.register("zh-CN", {"nanny.mood": "她现在的心情：{n}%。心情好，帮忙的效果好一点；在岗慢慢下降，下班后回升。", "nanny.tip": "给奖金 {n}", "nanny.tip_done": "今天已经给过了", "nanny.tip_wait": "要等她在岗时才能给", "log.nanny_tip": "保姆收下奖金，笑着说了声谢谢，干活更起劲了。"});

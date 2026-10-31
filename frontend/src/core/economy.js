@@ -43,6 +43,8 @@
     }
     const here = G.world.nanny_paid_day === d && work;
     setDuty(n, here);
+    /* 保姆的心情：在岗每小时降 0.003，慢，不在岗每小时回 0.02；奖金只会加。心情决定她帮忙的效果，最低八成 */
+    n.state.mood = Math.min(1, Math.max(0, n.state.mood + (here ? -G.NANNY_MOOD.drain : G.NANNY_MOOD.recover) * hours));
     if (offline) return;
     /* 不用互动的礼貌：到了打个招呼，下午放一杯茶，下班留一句话。只进日志，不弹窗，不要回应 */
     if (here && G.world.nanny_hi_day !== d) { G.world.nanny_hi_day = d; G.logK('you', 'event', 'log.nanny_arrive', {}); }
@@ -50,6 +52,15 @@
     if (!work && G.world.nanny_paid_day === d && G.world.nanny_bye_day !== d) { G.world.nanny_bye_day = d; G.logK('you', 'event', 'log.nanny_leave', {}); }
   };
   /* 保姆现在的状态：here 在岗，wait 还没到上班时间或已下班，rest 今天钱不够休息，off 没请 */
+  G.NANNY_MOOD = { drain: 0.003, recover: 0.02, tip_cost: 40, tip_gain: 0.15, eff_floor: 0.8 };
+  G.nannyEfficiency = () => { const n = G.nanny(); return n ? G.NANNY_MOOD.eff_floor + (1 - G.NANNY_MOOD.eff_floor) * n.state.mood : 1; };
+  /* 奖金：每天一次，她在岗时才能给，只有加分，没有批评，克扣，加班这类操作 */
+  G.canTip = () => G.nannyState() === 'here' && G.world.nanny_tip_day !== today() && G.world.money >= G.NANNY_MOOD.tip_cost;
+  G.tipNanny = () => {
+    const n = G.nanny(); if (!n || !G.canTip()) return false;
+    G.world.money -= G.NANNY_MOOD.tip_cost; G.world.nanny_tip_day = today(); n.state.mood = Math.min(1, n.state.mood + G.NANNY_MOOD.tip_gain);
+    G.logK('you', 'event', 'log.nanny_tip', {}); G.save(true); emit(); return true;
+  };
   G.nannyState = () => {
     if (!G.nannyOn()) return 'off';
     const d = today();

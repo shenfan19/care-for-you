@@ -182,3 +182,4 @@ CY.i18n.register("ko", {"cred.p3": "가구 그림: Kenney의 Furniture Kit(CC0 1
 CY.i18n.register("ko", {"add.model": "모습", "add.model_auto": "자동"});
 CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit와 Mini Characters(둘 다 CC0 1.0, kenney.nl). CC0는 표기를 요구하지 않지만 출처를 밝힙니다. 3D 모델은 이 프로젝트가 비스듬한 시점으로 렌더링했고, 캐릭터의 피부색은 게임 안에서 플레이어의 선택에 따라 다시 칠합니다. 렌더링에는 three.js(MIT 라이선스, 게임에는 포함되지 않음)를 썼습니다. 동물, 식물, 애니메이션, 글은 직접 만든 것입니다. 코드는 MIT 라이선스로 공개되어 있으며 저장소의 LICENSE를 보세요."});
 CY.i18n.register("ko", {"corner.eff_tip": "지금 업무 효율은 {n}%입니다. 기분이 좋을수록 수입이 늘어납니다. 일과 집에서 방치된 사람이 있으면 기분이 내려가고, 돌보거나 보살핌을 받으면 올라갑니다."});
+CY.i18n.register("ko", {"nanny.mood": "지금 기분: {n}%. 기분이 좋을수록 도움이 조금 더 잘 듭니다. 근무 중에는 천천히 내려가고 퇴근 후 회복됩니다.", "nanny.tip": "보너스 주기 {n}", "nanny.tip_done": "오늘은 이미 줬습니다", "nanny.tip_wait": "근무 중일 때만 줄 수 있습니다", "log.nanny_tip": "보모는 보너스를 받고 웃으며 고맙다고 한 뒤 더 힘차게 일했다."});

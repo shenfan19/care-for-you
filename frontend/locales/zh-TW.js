@@ -648,3 +648,4 @@ CY.i18n.register("zh-TW", {"cred.p3": "家具圖：Kenney 的 Furniture Kit（CC
 CY.i18n.register("zh-TW", {"add.model": "形象", "add.model_auto": "自動"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit 和 Mini Characters（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色在遊戲裡按玩家的選擇重新著色。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動物、花草、動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"corner.eff_tip": "現在的工作效率是 {n}%，你的心情好，收入就多；工作和家裡有人沒人管會讓心情下降，照顧、被關心會讓它回升。"});
+CY.i18n.register("zh-TW", {"nanny.mood": "她現在的心情：{n}%。心情好，幫忙的效果好一點；在崗慢慢下降，下班後回升。", "nanny.tip": "給獎金 {n}", "nanny.tip_done": "今天已經給過了", "nanny.tip_wait": "要等她在崗時才能給", "log.nanny_tip": "保姆收下獎金，笑著說了聲謝謝，幹活更起勁了。"});

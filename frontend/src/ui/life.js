@@ -14,11 +14,13 @@
       <div class="money big">💰 ${Math.floor(G.world.money || 0)}</div>
       <div class="mute" style="margin:6px 0 10px">${esc(t('help.income', { n: G.WAGE, p: G.PENSION }))}</div>
       <h3>${esc(t('nanny.title'))}</h3><div class="mute">${esc(t(on ? 'nanny.status' : 'nanny.note', { n: G.NANNY_DAILY }))}</div>
+      ${on && G.nanny() ? `<div class="mute">${esc(t('nanny.mood', { n: Math.round(G.nanny().state.mood * 100) }))}</div><div class="row" style="margin-top:6px"><button id="nntip" ${G.canTip() ? '' : 'disabled'}>${esc(t('nanny.tip', { n: G.NANNY_MOOD.tip_cost }))}</button><span class="mute">${esc(G.world.nanny_tip_day === Math.floor(G.world.game_minutes / 1440) ? t('nanny.tip_done') : G.nannyState() !== 'here' ? t('nanny.tip_wait') : '')}</span></div>` : ''}
       ${on ? `<div class="mute">${esc(t('nanny.st_' + G.nannyState(), { n: G.NANNY_DAILY, from: ini.get(G.cfg, 'economy', 'work_hours').split('-')[0] }))}</div>` : ''}
       <div class="row" style="margin-top:8px">${on ? `<button id="nndis">${esc(t('nanny.dismiss'))}</button>` : `<button id="nnhire" class="primary">${esc(t('nanny.hire'))}</button>`}</div>
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="hpclose">${esc(t('btn.close'))}</button></div>`, true);
     const done = () => { U.closeDialog(); U.afterPeopleChange(); U.renderClock(); };
     const h = dlg.querySelector('#nnhire'); if (h) h.onclick = async () => { await G.hireNanny(); done(); };
+    const tp = dlg.querySelector('#nntip'); if (tp) tp.onclick = () => { G.tipNanny(); U.helpDialog(); U.renderClock(); };
     const d = dlg.querySelector('#nndis'); if (d) d.onclick = async () => { await G.dismissNanny(); done(); };
     dlg.querySelector('#hpclose').onclick = U.closeDialog;
   };

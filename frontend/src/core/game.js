@@ -544,7 +544,7 @@
         const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
-      if (!driven(p, 'mood')) {
+      if (!driven(p, 'mood') && !(p.person.help && p.person.help.role === 'nanny')) {
         let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
         if (p === G.protagonist() && !offline) {
           const M = G.MOOD, W = CY.world;

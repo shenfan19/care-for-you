@@ -182,3 +182,4 @@ CY.i18n.register("ja", {"cred.p3": "家具の絵：Kenney の Furniture Kit（CC
 CY.i18n.register("ja", {"add.model": "見た目", "add.model_auto": "自動"});
 CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit と Mini Characters（どちらも CC0 1.0、kenney.nl）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが斜めから描画し、キャラクターの肌の色はゲーム内で選んだ色に塗り替えます。描画には three.js（MIT ライセンス、ゲームには同梱しません）を使いました。動物、植物、アニメーション、文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。"});
 CY.i18n.register("ja", {"corner.eff_tip": "いまの仕事の効率は {n}% です。気分がよいほど収入が増えます。仕事や、家で放っておかれる人がいると気分が下がり、世話をしたり気遣われたりすると戻ります。"});
+CY.i18n.register("ja", {"nanny.mood": "いまの気分：{n}%。気分がよいほど手伝いが少し効きます。勤務中はゆっくり下がり、仕事のあとで戻ります。", "nanny.tip": "ボーナスを渡す {n}", "nanny.tip_done": "今日はもう渡しました", "nanny.tip_wait": "勤務中のみ渡せます", "log.nanny_tip": "ベビーシッターはボーナスを受け取り、笑顔でお礼を言って、張り切って働いた。"});

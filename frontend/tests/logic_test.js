@@ -1012,6 +1012,16 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('晚上在客厅，大人闲谈里会说到看电视', seen > 5, seen);
     for (const x of G.people) x.person.active = true;
   }
+  {
+    G.world.money = 500; G.world.game_minutes = 8 * 1440; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined; G.world.nanny_tip_day = undefined;
+    if (!G.nanny()) { await G.hireNanny(); }
+    G.world.nanny_on = true; const nn = G.nanny(); G.setClock(10 * 60); G.economyTick(0, true);
+    nn.state.mood = 0.5; const m0 = G.world.money; const ok1 = G.tipNanny();
+    check('给保姆奖金：花 40，心情加 0.15，一天一次', ok1 && Math.abs(G.world.money - (m0 - 40)) < 1e-6 && Math.abs(nn.state.mood - 0.65) < 1e-6 && !G.tipNanny());
+    const m1 = nn.state.mood; G.economyTick(60, false);
+    check('保姆在岗心情慢慢降，效果不低于八成', nn.state.mood < m1 && G.nannyEfficiency() >= 0.8 - 1e-9);
+    G.world.nanny_on = false;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

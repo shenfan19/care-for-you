@@ -86,7 +86,7 @@
     const from = G.get(e.from), to = G.get(e.to);
     if ((from.state.needs[e.need] || 0) < 0.35) return true;
     const a = careAction(from, e.need); if (!a) return true;
-    applyEffects(from, a, (to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5);
+    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5) * ((to.person.help || {}).role === 'nanny' ? G.nannyEfficiency() : 1));
     from.state.mood = clamp(from.state.mood + 0.03);
     const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label });
     G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); G.playFx(from.id, a.id);
