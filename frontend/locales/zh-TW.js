@@ -639,3 +639,4 @@ CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "share.note": "只在你
 CY.i18n.register("zh-TW", {"corner.day": "第 {m} 個月 第 {d} 天"});
 CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到 100，0 是關掉。現場合成的安靜音樂，夜裡更低更慢。瀏覽器要求先點一下頁面才會出聲", "ini.audio.sfx_volume": "音效音量，0 到 100，0 是關掉。點按、有人開口、完成打勾、發生了事情時的輕響"});
 CY.i18n.register("zh-TW", {"lbl.interrupt.countdown_seconds": "提醒倒數，秒", "lbl.economy.work_hours": "工作時段", "lbl.audio.music_volume": "背景音樂", "lbl.audio.sfx_volume": "音效", "set.clock_note": "改它不改變陪伴天數和任何計時。"});
+CY.i18n.register("zh-TW", {"about.p1": "照顧你是一個在網頁裡玩的小遊戲。家裡有老人、寶寶、貓狗、花草，你一邊工作，他們會不定時來叫你一聲：要杯水，說句話，陪一會兒。你停下手，照看一下，再回去做自己的事。沒有分數，沒有失敗，不用下載，不用帳號。", "about.how": "點一個人看他想要什麼，按住動作鍵，等圓圈走滿就做完了。點視窗右上角的時間可以調快慢。開著分頁放在一邊做自己的事就行。", "about.title": "關於照顧你"});
