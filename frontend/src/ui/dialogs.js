@@ -136,18 +136,20 @@
   /* ---------- 关于：个人项目的说明、隐私与免责、致谢、版本 ---------- */
   U.aboutDialog = function (tab) {
     tab = tab || 'about';
-    const M = CY.meta, tabs = ['about', 'data', 'privacy', 'credits', 'version'];
+    const M = CY.meta, tabs = ['about', 'data', 'author'];
     const para = keys => keys.map(k => `<p>${esc(t(k))}</p>`).join('');
+    const link = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${esc(text || href)}</a>`;
+    const ISSUES = 'https://github.com/shenfan19/care-for-you/issues', PAGE = 'https://shenfan19.github.io', GH = 'https://github.com/shenfan19';
     const body = {
-      about: para(['about.p1', 'about.how', 'about.p3', 'about.p4', 'about.p2']),
-      data: `<p>${esc(t('data.intro'))}</p><h3>${esc(t('data.h1'))}</h3><p>${esc(t('data.p1'))}</p><h3>${esc(t('data.h2'))}</h3><p>${esc(t('data.p2'))}</p><h3>${esc(t('data.h3'))}</h3><p>${esc(t('data.p3'))}</p>`,
-      privacy: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}
+      about: para(['about.p1', 'about.how', 'about.p3', 'about.p4']) + `<p>${link(ISSUES)}</p>`,
+      data: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}<h3>${esc(t('data.head'))}</h3><p>${esc(t('data.intro'))}</p>
+        <h4>${esc(t('data.h1'))}</h4><p>${esc(t('data.p1'))}</p><h4>${esc(t('data.h2'))}</h4><p>${esc(t('data.p2'))}</p><h4>${esc(t('data.h3'))}</h4><p>${esc(t('data.p3'))}</p>
         <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}`,
-      credits: para(['cred.p1', 'cred.p2', 'cred.p3']),
-      version: `<p>${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</p><p>${esc(t('ver.lang', { l: I.names[I.lang] || I.lang }))}</p><p class="mute">${esc(t('ver.account'))}</p>`,
+      author: `<h3>Fan Shen</h3>${para(['about.p2'])}<p>${esc(t('au.page'))}：${link(PAGE)}<br>GitHub：${link(GH)}<br>${esc(t('au.issues'))}：${link(ISSUES)}<br>${esc(t('au.mail'))}：shenfan19@gmail.com</p>
+        <h3>${esc(t('au.credits'))}</h3>${para(['cred.p1', 'cred.p2', 'cred.p3'])}`,
     };
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('about.title'))}</h2><div class="chips">${tabs.map(k => `<button class="chip ${k === tab ? 'on' : ''}" data-t="${k}">${esc(t('about.tab_' + k))}</button>`).join('')}</div>
-      <div class="aboutbody">${body[tab]}</div><div class="row" style="justify-content:flex-end;margin-top:10px"><button id="aclose">${esc(t('btn.close'))}</button></div>`, true);
+      <div class="aboutbody">${body[tab]}</div><div class="row" style="justify-content:space-between;margin-top:10px"><span class="mute" style="font-size:12px">${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</span><button id="aclose">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelectorAll('.chip').forEach(b => b.onclick = () => U.aboutDialog(b.dataset.t));
     dlg.querySelector('#aclose').onclick = U.closeDialog;
   };
