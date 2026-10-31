@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -173,6 +173,8 @@
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
     $r('#roomEmpty') && $r('#roomEmpty').remove();
     if (!all.length) { const d = doc().createElement('div'); d.id = 'roomEmpty'; d.className = 'mute'; d.textContent = t('room.empty'); stage.appendChild(d); }
+    /* 同时摊开的气泡最多两个，窄屏一个，取最新的，加上玩家自己点开过的；其余收成小气泡，免得盖住一屋子人 */
+    const openIds = new Set(people.filter(p => G.req[p.id] && !G.req[p.id].folded).sort((a, b) => G.req[b.id].since - G.req[a.id].since).slice(0, (U.room && U.room.clientWidth < 560) ? 1 : 2).map(p => p.id));
     for (const p of people) {
       let c = stage.querySelector(`.cx[data-id="${p.id}"]`);
       if (!c) {
@@ -238,17 +240,17 @@
       const bs = b.join('');
       if (c.dataset.bd !== bs) { c.querySelector('.badges').innerHTML = bs; c.dataset.bd = bs; }
       /* 气泡 */
-      const req = G.req[p.id], toast = G.toast[p.id];
-      c.classList.toggle('calling', !!req && !req.folded && (req.kind === 'need' || req.kind === 'ask'));
-      const sig = req ? 'r' + req.kind + (req.folded ? 'f' : '') + req.text + (req.options ? req.options.map(o => o.id).join() : '') + CY.i18n.lang : toast ? 't' + toast.text : '';
+      const req = G.req[p.id], toast = G.toast[p.id], hid = !!req && (req.folded || (!req.pinned && !openIds.has(p.id)));
+      c.classList.toggle('calling', !!req && !hid && (req.kind === 'need' || req.kind === 'ask'));
+      const sig = req ? 'r' + req.kind + (hid ? 'f' : '') + req.text + (req.options ? req.options.map(o => o.id).join() : '') + CY.i18n.lang : toast ? 't' + toast.text : '';
       c.classList.toggle('talk', !!sig);
       const slot = c.querySelector('.slot');
       if (c.dataset.sig !== sig) {
         c.dataset.sig = sig;
         if (!sig) slot.innerHTML = '';
-        else if (req && req.folded) {
-          slot.innerHTML = '<div class="bubble chip" role="button" tabindex="0">💬</div>';
-          const open = e => { e.stopPropagation(); req.folded = false; req.deadline = 0; c.dataset.sig = ''; U.renderRoom(true); };
+        else if (req && hid) {
+          slot.innerHTML = '<div class="bubble chip" role="button" tabindex="0">' + (req.kind === 'need' ? esc(((G.needsOf(p) || {})[req.need] || {}).icon || '💬') : '💬') + '</div>';
+          const open = e => { e.stopPropagation(); req.folded = false; req.pinned = true; if (req.kind !== 'need') req.deadline = 0; c.dataset.sig = ''; U.renderRoom(true); };
           const ch = slot.querySelector('.chip'); ch.onclick = open; ch.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') open(e); };
         } else if (req) {
           let btn = '';
@@ -279,7 +281,41 @@
         if (cd) cd.style.width = Math.max(0, (req.deadline - Date.now()) / (req.deadline - req.since) * 100) + '%';
       }
     }
+    U.fitBubbles(U.room);
     U.syncFreeze(); U.renderPlayer(); U.renderNav(); U.renderRoster();
+  };
+
+  /* 对话气泡不出框，不互相压：每次画完量一下。超出左右就往里挪，尖角仍指着说话的人；顶上放不下就压低一点；两个气泡重叠，后面的往上让 */
+  U.fitBubbles = function (root) {
+    const rr = root.getBoundingClientRect(), bs = [...root.querySelectorAll('.cx .bubble')];
+    for (const b of bs) { b.style.marginLeft = ''; b.style.transform = ''; b.style.setProperty('--dx', '0px'); }
+    const top = rr.top + 44;
+    for (const b of bs) {
+      const r = b.getBoundingClientRect();
+      let dx = 0, dy = 0;
+      if (r.left < rr.left + 6) dx = rr.left + 6 - r.left; else if (r.right > rr.right - 6) dx = rr.right - 6 - r.right;
+      if (r.top < top) dy = top - r.top;
+      if (dx) { b.style.marginLeft = dx + 'px'; b.style.setProperty('--dx', dx + 'px'); }
+      if (dy) b.style.transform = 'translateX(-50%) translateY(' + dy + 'px)';
+    }
+    const seen = [];
+    for (const b of bs) {
+      let r = b.getBoundingClientRect();
+      for (const o of seen) {
+        const q = o.getBoundingClientRect();
+        if (r.left < q.right && r.right > q.left && r.top < q.bottom && r.bottom > q.top) {
+          const up = r.bottom - q.top + 4;
+          const cur = /translateY\((-?[\d.]+)px\)/.exec(b.style.transform);
+          b.style.transform = 'translateX(-50%) translateY(' + ((cur ? +cur[1] : 0) - up) + 'px)';
+          r = b.getBoundingClientRect();
+        }
+      }
+      seen.push(b);
+    }
+    for (const b of bs) {
+      const r = b.getBoundingClientRect();
+      if (r.top < top) { const cur = /translateY\((-?[\d.]+)px\)/.exec(b.style.transform); b.style.transform = 'translateX(-50%) translateY(' + ((cur ? +cur[1] : 0) + top - r.top) + 'px)'; }
+    }
   };
 
   /* ---------- 主角，地点导航，角上的名单 ---------- */
