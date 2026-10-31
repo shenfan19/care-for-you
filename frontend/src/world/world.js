@@ -63,8 +63,9 @@
   W.playerAnchor = (place, room) => W.slotPoint(place, room, 'player', 0);
   W.WORK = { place: 'home', room: 'study' };
   /* 谁办公：默认只有爸爸妈妈在家办公，家里没有爸爸妈妈时才轮到别的成年人。操纵对象不特别：选了谁，谁也只是照常过日子 */
-  const isParent = p => ['dad', 'mom'].includes(p.person.archetype || p.person.card);
-  W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && (isParent(p) || !G.activePeople().some(q => G.isHuman(q) && isParent(q)));
+  const isCouple = p => ['dad', 'mom', 'husband', 'wife'].includes(p.person.archetype || p.person.card);
+  /* 谁上班挣钱：只有夫妻，姐姐妹妹哥哥弟弟朋友室友都不收入。家里一对夫妻都没有时，主角自己上班，免得完全没有收入 */
+  W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && (isCouple(p) || (p === G.protagonist() && !G.activePeople().some(q => G.isHuman(q) && G.stage(q) === 'adult' && isCouple(q))));
   W.hasWorker = () => G.activePeople().some(W.worker);
   /* 日程：一天的默认去处，只给一个倾向，需求会盖过它。上班的人白天在书房办公，中午和傍晚去厨房，晚上在客厅看电视，夜里回卧室。
      老人早晚在院子，上午在客厅，中午和傍晚去厨房。其他人没有固定日程，按各自喜好和需求走 */
@@ -81,7 +82,7 @@
   };
   W.ROUTINE_W = 7;
   /* 主角空闲时回到的地方：照日程走，没有日程就是客厅 */
-  W.workRoom = () => { const l = G.protagonist(); return (l && W.routineRoom(l)) || 'living'; };
+  W.workRoom = () => { const f = G.focusPerson && G.focusPerson(); if (f) { const fl = W.locationOf(f); if (fl.place === 'home') return fl.room; } const l = G.protagonist(); return (l && W.routineRoom(l)) || 'living'; };
   /* 宝宝还不会走，只待在垫子和婴儿床上 */
   W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
   W.driven = p => !!p && p === G.protagonist();

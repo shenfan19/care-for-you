@@ -430,7 +430,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('旧设置的造型名转成新的，默认穿衣小豆', CY.figureOf('classic') === 'dressed' && CY.figureOf('bean_a') === 'dumpling' && CY.figureOf('bean_b') === 'plain' && CY.figureOf('') === 'dressed' && CY.figure === 'dressed');
   check('四个方向都能画：朝上看不到脸，朝下脸转向一侧，左右是镜像', (() => { const mom = CY.content.archOf('mom'), at = d => CY.avatarPreview(mom, mom.look, 35).length && CY.avatar({ species: { id: 'human' }, state: { mood: 0.7 }, person: { age: 35, appearance: mom.look } }, d); const f = at(''), se = at('se'), sw = at('sw'), ne = at('ne'), nw = at('nw'); return CY.DIRS.length === 4 && f.includes('class="eyes"') && se.includes('class="eyes"') && sw.includes('scale(-1 1)') && !se.includes('scale(-1 1)') && !ne.includes('class="eyes"') && !nw.includes('class="eyes"') && nw.includes('scale(-1 1)') && ne.includes('data-dir="ne"') && ne.includes('class="foot l"'); })());
   check('书桌前的椅子在书房和办公室都有', (() => { const W = CY.world; const a = W.slotPoint('home', 'study', 'seat', 0), c = W.slotPoint('office', 'desk', 'player', 0); const old = Object.assign({}, W.player()); W.moveTo('home', 'study'); const s1 = W.atWork(); W.moveTo('office', 'desk'); const s2 = W.atWork(); W.moveTo('home', 'living'); const s3 = W.atWork(); Object.assign(W.player(), old); return s1 && s2 && !s3 && a.gy < 2 && c.gx < 3; })());
-  check('有爸爸妈妈时只有他们办公，操纵对象不办公；没有他们才轮到别的成年人', (() => { const W = CY.world, G2 = CY.game, ar = p => p.person.archetype || p.person.card, act = G2.activePeople(), parents = act.filter(p => ['dad', 'mom'].includes(ar(p))); return act.every(p => W.worker(p) === (G2.isHuman(p) && G2.stage(p) === 'adult' && (!parents.length || parents.includes(p)))) && !(G2.protagonist() && W.isWorking(G2.protagonist()) && !W.worker(G2.protagonist())); })());
+  check('只有夫妻办公；家里没有夫妻时才轮到主角自己', (() => { const W = CY.world, G2 = CY.game, ar = p => p.person.archetype || p.person.card, act = G2.activePeople(), couple = act.filter(p => G2.isHuman(p) && G2.stage(p) === 'adult' && ['dad', 'mom', 'husband', 'wife'].includes(ar(p))); return act.every(p => W.worker(p) === (couple.includes(p) || (!couple.length && p === G2.protagonist() && G2.isHuman(p) && G2.stage(p) === 'adult'))); })());
   check('头上弹出的事件：完成打勾和有人开口', (() => { const GG = CY.game, p = GG.people[0]; if (!p) return false; const n0 = GG.popSeq; GG.playFx(p.id, 'talk'); const e = GG.pops[GG.pops.length - 1]; return GG.popSeq === n0 + 1 && e.kind === 'done' && e.icon === '✓' && e.pid === p.id; })());
   check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 
@@ -970,6 +970,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('问答超时先折成小气泡，还在', !!G.req[pid0] && G.req[pid0].folded === true && G.req[pid0].deadline > Date.now());
     G.req[pid0].deadline = Date.now() - 1; G.tick();
     check('折起来再过时间才真的作废', !G.req[pid0]);
+  }
+  {
+    for (const x of G.people) x.person.active = false;
+    const mk2 = async (arch, name) => { const id = await G.createPerson({ arch, name }); return id; };
+    const dadId = await mk2('dad', '爸'), momId = await mk2('mom', '妈'), sisId = await mk2('sister', '姐'), babId = await mk2('baby', '宝'), husId = await mk2('husband', '夫');
+    await G.load(); const ids = [dadId, momId, sisId, babId, husId]; for (const x of G.people) x.person.active = ids.includes(x.id);
+    const W = CY.world;
+    check('夫妻上班，姐姐不上班', W.worker(G.get(dadId)) && W.worker(G.get(momId)) && W.worker(G.get(husId)) && !W.worker(G.get(sisId)));
+    G.setProtagonist(dadId);
+    G.world.auto = false; G.world.focus = null; const bb = G.get(babId); bb.state.needs.hunger = 0.9; bb.state.needs.rest = 0; G.act[babId] = 'awake';
+    check('没开自动不会自己照顾', G.autoStep(Date.now() + 1e7) === false && bb.state.needs.hunger === 0.9);
+    G.setAuto(true); const before = bb.state.needs.hunger; const acted = G.autoStep(Date.now() + 2e7);
+    check('开自动后急需的人被自动照顾，效果打折', acted && bb.state.needs.hunger < before, before + '->' + bb.state.needs.hunger);
+    G.setAuto(false); bb.state.needs.hunger = 0.5; bb.state.needs.company = 0.5; G.setFocus({ kind: 'person', pid: babId });
+    check('专注某人，需求超过 0.35 就处理', G.autoStep(Date.now() + 3e7) === true);
+    G.setFocus(null);
+    for (const x of G.people) x.person.active = true;
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);

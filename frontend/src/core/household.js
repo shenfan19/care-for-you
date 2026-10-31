@@ -97,4 +97,34 @@
       G.logK(tgt.id, 'event', 'social.' + kind, { a: who.person.name, b: tgt.person.name });
     }
   };
+
+  /* ---------- 长期执行：专注和自动 ----------
+     专注：主角长期做一件事，工作，或者陪着一个人；那个人的需求超过 0.35 就自动处理。
+     自动：没有专注时，家里谁的需求超过 0.7 就自动处理，其余时间照日程工作和休息。
+     自动只处理身体上的需求，效果六成，每六秒最多一次；问答，回想，提醒，选择永远留给玩家，所以不会错过叙事 */
+  G.AUTO = { need: 0.7, focus_need: 0.35, gap_ms: 6000, efficiency: 0.6 };
+  G.focusPerson = () => { const f = G.world.focus; return f && f.kind === 'person' ? G.get(f.pid) : null; };
+  G.setFocus = f => { G.world.focus = f && f.kind ? { kind: f.kind, pid: f.pid } : null; G.save(true); emit(); };
+  G.setAuto = on => { G.world.auto = !!on; G.save(true); emit(); };
+  let nextAuto = 0;
+  G.autoStep = now => {
+    const lead = G.protagonist(), W = CY.world;
+    if (!lead || !(G.world.auto || G.world.focus) || now < nextAuto || (W && W.holding)) return false;
+    nextAuto = now + G.AUTO.gap_ms;
+    const ok = p => p && p !== lead && p.person.active !== false && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty') && !(p.person.help && p.person.help.role === 'nanny');
+    const f = G.focusPerson();
+    let target = f && ok(f) && G.maxNeed(f) > G.AUTO.focus_need ? f : null;
+    if (!target && G.world.auto) target = G.activePeople().filter(ok).filter(p => G.maxNeed(p) > G.AUTO.need).sort((a, b) => G.maxNeed(b) - G.maxNeed(a))[0] || null;
+    if (!target) return false;
+    const a = G.careAction(target, G.topNeed(target));
+    if (!a) return false;
+    if (W && W.presenceNeed(target) && W.presenceNeed(target).offsite) return false;
+    if (W && W.blink) W.blink(target);
+    G._h.applyEffects(target, a, G.AUTO.efficiency);
+    target.state.mood = G._h.clamp(target.state.mood + 0.02);
+    G.logK(target.id, 'care', 'log.assist', { who: lead.person.name, name: target.person.name, label: G.refAct(a, target) });
+    G.playFx(target.id, a.id);
+    emit();
+    return true;
+  };
 })(globalThis.CY = globalThis.CY || {});

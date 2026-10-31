@@ -29,6 +29,7 @@
     }
     return best;
   };
+  G.careAction = careAction;
   const goAction = (p, id) => { const a = G.actionsOf(p)[id]; return a && a.outing ? a : null; };
   const GO_ALONE = ['teen', 'adult', 'elder'];
   const valid = e => {
