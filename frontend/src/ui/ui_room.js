@@ -231,7 +231,7 @@
       }
       /* 徽标 */
       const defs = G.needsOf(p), b = [];
-      for (const k in defs) if (p.state.needs[k] > 0.6) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);
+      for (const k in defs) if (p.state.needs[k] > U.NEED_LIT) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);
       if (CY.world.errandOf(p) === 'help') b.unshift('<span title="' + esc(t('badge.help')) + '">🤝</span>');
       if (G.flag(p, 'hospital')) b.unshift('<span title="' + esc(t('loc.hospital')) + '">🏥</span>');
       if (G.flag(p, 'hurt')) b.unshift('<span class="urgent" title="' + esc(t('log.fall_minor', { name: p.person.name })) + '">❗</span>');
@@ -329,7 +329,7 @@
     if (box.dataset.sig === sig) return;
     box.dataset.sig = sig;
     box.innerHTML = people.map(p => {
-      const defs = G.needsOf(p), tn = G.topNeed(p), urgent = p.state.needs[tn] > 0.6;
+      const defs = G.needsOf(p), tn = G.topNeed(p), urgent = p.state.needs[tn] > U.NEED_LIT;
       return `<div class="rcard ${G.req[p.id] || G.needy(p) ? 'calling' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name)}"><div class="av">${CY.avatar(p)}</div>
         <div class="rn">${esc(p.person.name)}${G.isSleeping(p) ? ' 💤' : ''}${G.flag(p, 'hospital') ? ' 🏥' : ''}${G.flag(p, 'hurt') ? ' ❗' : ''}</div>
         <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${p.state.needs[tn] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
@@ -357,7 +357,9 @@
     return '•';
   };
   /* 这个动作能不能解决角色现在的某个需求 */
-  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > 0.45);
+  /* 头顶的需求图标和环里亮起的行动用同一个门槛，也是宝宝和宠物开始催人的线 */
+  U.NEED_LIT = 0.5;
+  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > U.NEED_LIT);
   const ringOff = () => { if (U.room) U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); };
   U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; ringOff(); };
   U.openRing = function (pid, anchor) {

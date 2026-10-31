@@ -83,6 +83,8 @@
     G.cfg = ini.parse((await store.read('settings.ini')) || '');
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     G.world = Object.assign({ game_minutes: 0, last_seen: '' }, await store.readYaml('world.yaml'));
+    /* 新档开局对齐系统时间，之后游戏时钟自己走 */
+    if (typeof G.world.clock_shift !== 'number') G.alignClock();
     const files = await store.list();
     /* 新增的模板文件补上；内置模板的版本比文件里新，就用新的覆盖，旧的留在 _backup 里 */
     const seed = CY.seed.files();
@@ -464,9 +466,8 @@
   const needyW = p => (learnOn() ? 0.4 + p.state.learn.needy : 1);
 
   /* ---------- 时间推进 ---------- */
-  /* 离开游戏期间按现实速度推算，不随倍速 */
-  function gameMinutes(realSeconds, offline) {
-    return realSeconds / 60 * (offline ? 1 : G.speed());
+  function gameMinutes(realSeconds) {
+    return realSeconds / 60 * G.speed();
   }
   const foodOf = p => p.species.food || 'food';
   const itemForNeed = (p, k) => (k === 'hunger' ? foodOf(p) : (G.tpl.items.for_need || {})[k]);
@@ -869,12 +870,7 @@
   };
   G.start = function () {
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
-    if (!G.isRealTime() && typeof G.world.clock_shift !== 'number') G.alignClock();
-    const last = Date.parse(G.world.last_seen);
-    if (last) {
-      const cap = 12 * 60;      /* 离开期间最多推算十二个游戏小时，需求也封顶在七成，不会等回来一团糟 */
-      advance(Math.min(cap, gameMinutes((Date.now() - last) / 1000, true)), true);
-    }
+    /* 离开期间世界暂停，回来从离开的那一刻接着走，不推算 */
     G.lastTick = Date.now();
     scheduleNext();
     G.nextAt = Date.now() + 4000;

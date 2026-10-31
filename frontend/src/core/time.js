@@ -1,24 +1,22 @@
-/* 时间：只有一条，没有暂停，没有任务队列，世界只在页面开着的时候走。
-   流速 time.speed 有五档：real 是实时，昼夜跟随系统时钟；1、6、24、60 是倍数，昼夜用游戏内时钟，默认 24，现实一小时过游戏里一整天。
-   动作靠长按，不随倍速变。从实时切到倍数时，游戏时钟对齐到此刻的系统时间，不跳变。 */
+/* 时间：只有一条，没有暂停，没有任务队列，世界只在页面开着的时候走，离开期间不推算，回来从离开的那一刻接着走。
+   流速 time.speed 是游戏时钟的倍数，四档 1、6、24、60，默认 24，现实一小时过游戏里一整天；动作靠长按，不随倍速变。
+   游戏里几点由 world.clock_shift 加游戏分钟算出，和陪伴天数、各种倒计时分开存，所以改几点不会弄乱任何计时。
+   新档开局对齐系统时间；之后切倍速不动时钟，想对回系统时间或自己设几点，在设置里。 */
 (function (CY) {
   const G = CY.game;
   G.timeMode = () => 'real';
-  G.SPEEDS = ['real', 1, 6, 24, 60];
-  /* 倍数，实时算 1 */
+  G.SPEEDS = [1, 6, 24, 60];
   G.speed = () => { const v = parseFloat(CY.ini.get(G.cfg, 'time', 'speed')); return isFinite(v) ? Math.min(240, Math.max(1, v)) : 1; };
-  /* 实时：设置是 real，或者写坏了；这时昼夜跟随系统时钟 */
-  G.isRealTime = () => !isFinite(parseFloat(CY.ini.get(G.cfg, 'time', 'speed')));
-  G.speedLabel = () => (G.isRealTime() ? CY.t('speed.real') : '×' + G.speed());
-  /* 把游戏时钟对齐到系统时钟，之后用游戏内时钟走 */
-  G.alignClock = () => { const d = new Date(), sys = d.getHours() * 60 + d.getMinutes(); G.world.clock_shift = (((sys - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440; };
+  G.speedLabel = () => '×' + G.speed();
+  /* 让游戏里现在是几点几分，0 到 1439 */
+  G.setClock = minutes => { G.world.clock_shift = ((((Math.round(minutes) - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440); };
+  /* 对齐到系统时钟 */
+  G.alignClock = () => { const d = new Date(); G.setClock(d.getHours() * 60 + d.getMinutes()); };
   G.setSpeed = async v => {
-    const was = G.isRealTime();
     G.cfg.time = G.cfg.time || {}; G.cfg.time.speed = String(v);
-    if (was && !G.isRealTime()) G.alignClock();
     await G.saveCfg(); G.save(true);
   };
-  G.nextSpeed = () => { const s = G.isRealTime() ? 'real' : G.speed(), i = G.SPEEDS.indexOf(s); return G.SPEEDS[(i + 1) % G.SPEEDS.length]; };
+  G.nextSpeed = () => { const i = G.SPEEDS.indexOf(G.speed()); return G.SPEEDS[(i + 1) % G.SPEEDS.length]; };
   G.playMode = () => 'reality';
   G.isPaused = () => false;
   G.inputMode = () => 'hold';

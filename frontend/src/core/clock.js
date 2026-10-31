@@ -6,8 +6,7 @@
   /* ---------- 时间显示：经历了多少时间，以及现在是几点 ---------- */
   G.daySource = () => {
     const s = ini.get(G.cfg, 'time', 'daynight');
-    if (s === 'system' || s === 'game') return s;
-    return G.isRealTime() ? 'system' : 'game';
+    return s === 'system' ? 'system' : 'game';
   };
   /* 当天已过的分钟数，0 到 1439 */
   G.dayMinutes = () => {

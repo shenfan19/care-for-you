@@ -136,7 +136,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const bb = await G.createPerson({ arch: 'baby', name: '宝宝' });
     const ct = await G.createPerson({ arch: 'cat', name: '猫' });
     await G.load();
-    const setHour = h => { G.cfg.time.daynight = 'game'; G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
+    const setHour = h => { G.cfg.time.daynight = 'game'; G.world.clock_shift = 480; G.world.game_minutes = (h * 60 - 480 + 1440) % 1440; for (const p of G.people) G.act[p.id] = G.activityOf(p); };
     setHour(14);
     check('白天爷爷在客厅或院子或厨房', ['living', 'yard', 'kitchen'].includes(W.locationOf(G.get(gp)).room));
     G.get(bb).state.needs.rest = 0.2;
@@ -364,32 +364,38 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 时间显示 */
   G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'auto';
   G.cfg.time.mode = 'real';
-  check('默认倍速是 24', CY.ini.get(CY.ini.parse(''), 'time', 'speed') === '24' && G.speed() === 24);
-  check('加快时昼夜用游戏时钟', G.daySource() === 'game');
-  G.cfg.time.speed = '1';
-  check('1 倍是游戏时钟，和实时分开', G.daySource() === 'game' && G.speed() === 1 && !G.isRealTime());
-  G.cfg.time.speed = 'real';
-  check('实时下昼夜跟随系统时钟', G.daySource() === 'system' && G.speed() === 1 && G.isRealTime() && G.speedLabel() === CY.t('speed.real'));
-  /* 切到加快时，游戏时钟对齐到系统时钟，不跳变 */
-  { G.world.game_minutes = 12345; delete G.world.clock_shift;
-    const d = new Date(), sys = d.getHours() * 60 + d.getMinutes();
-    G.cfg.time.speed = 'real'; await G.setSpeed(24);
-    const gm = G.dayMinutes(), diff = Math.min(Math.abs(gm - sys), 1440 - Math.abs(gm - sys));
-    check('切到加快时游戏时钟对齐系统时钟', diff <= 1 && G.daySource() === 'game', gm + ' ' + sys);
-    check('五档循环 实时、1、6、24、60', (G.cfg.time.speed = 'real', G.nextSpeed() === 1) && (G.cfg.time.speed = '1', G.nextSpeed() === 6) && (G.cfg.time.speed = '24', G.nextSpeed() === 60) && (G.cfg.time.speed = '60', G.nextSpeed() === 'real'));
+  check('默认倍速是 24，昼夜用游戏时钟', CY.ini.get(CY.ini.parse(''), 'time', 'speed') === '24' && G.speed() === 24 && G.daySource() === 'game');
+  check('倍速写坏了按 1，旧设置 real 也按 1', (G.cfg.time.speed = 'abc', G.speed() === 1) && (G.cfg.time.speed = 'real', G.speed() === 1 && G.daySource() === 'game'));
+  check('四档循环 1、6、24、60', (G.cfg.time.speed = '1', G.nextSpeed() === 6) && (G.cfg.time.speed = '6', G.nextSpeed() === 24) && (G.cfg.time.speed = '24', G.nextSpeed() === 60) && (G.cfg.time.speed = '60', G.nextSpeed() === 1));
+  { /* 切倍速不动时钟；校准和自己设几点只改钟点，不动陪伴天数 */
+    G.world.game_minutes = 12345; G.alignClock();
+    const sysNow = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }, near = (a, b) => Math.min(Math.abs(a - b), 1440 - Math.abs(a - b)) <= 1;
+    check('对齐系统时间', near(G.dayMinutes(), sysNow()), G.dayMinutes() + ' ' + sysNow());
+    G.setClock(6 * 60 + 30); const before = G.world.game_minutes, shift = G.world.clock_shift;
+    await G.setSpeed(60); await G.setSpeed(6); await G.setSpeed(24);
+    check('切倍速不动游戏时钟', G.world.clock_shift === shift && G.dayMinutes() === 6 * 60 + 30 + (Math.floor(G.world.game_minutes) - before), G.dayMinutes());
+    G.world.game_minutes = 7 * 1440 + 100; G.setClock(23 * 60 + 59);
+    check('自己设几点，陪伴天数不变', G.clock().hh === '23' && G.clock().mm === '59' && G.clock().d === 7);
     G.cfg.time.speed = '24'; const gap = [...Array(50)].map(() => G.nextGapSeconds());
     check('打断间隔按倍速缩短', Math.min(...gap) >= 20 && Math.max(...gap) <= 180 * 60 / 24 + 1, Math.min(...gap) + ' ' + Math.max(...gap));
-    G.cfg.time.speed = '999'; check('倍速封顶 240', G.speed() === 240); G.cfg.time.speed = 'abc'; check('倍速写坏了按实时', G.speed() === 1 && G.isRealTime());
-    G.cfg.time.speed = 'real'; delete G.world.clock_shift; G.world.game_minutes = 0; await G.saveCfg(); await G.save(true); }
-  check('真实时间下昼夜跟随系统时钟', G.daySource() === 'system');
-  G.cfg.time.daynight = 'game';
-  check('可以强制用游戏时钟', G.daySource() === 'game');
+    G.cfg.time.speed = '999'; check('倍速封顶 240', G.speed() === 240);
+    G.cfg.time.speed = '24'; delete G.world.clock_shift; G.world.game_minutes = 0; await G.saveCfg(); await G.save(true); }
+  G.cfg.time.daynight = 'system';
+  check('可以强制跟随系统时钟', G.daySource() === 'system');
+  { /* 离开期间世界暂停，回来从离开的那一刻接着走 */
+    const q = G.activePeople()[0], gm0 = G.world.game_minutes, n0 = JSON.stringify(q.state.needs);
+    G.world.last_seen = new Date(Date.now() - 5 * 3600e3).toISOString();
+    G.start(); G.stop();
+    check('离开几小时回来，游戏时间和需求都不变', G.world.game_minutes === gm0 && JSON.stringify(q.state.needs) === n0);
+    check('新档开局把游戏时钟对齐系统时间', await (async () => { const w = G.world.clock_shift; { const wy = Object.assign({}, G.world); delete wy.clock_shift; await CY.store.writeYaml('world.yaml', wy); } await G.load(); const d = new Date(), sys = d.getHours() * 60 + d.getMinutes(), df = Math.abs(G.dayMinutes() - sys); const ok = typeof G.world.clock_shift === 'number' && (G.cfg.time.daynight === 'system' || Math.min(df, 1440 - df) <= 1); G.world.clock_shift = w; return ok; })());
+  }
+  G.cfg.time.daynight = 'game'; delete G.world.clock_shift;
   G.world.game_minutes = 3 * 1440 + 5 * 60 + 7;
   const ck = G.clock();
   check('已陪伴的时间按游戏时间累计', ck.d === 3 && ck.h === 5 && ck.m === 7, JSON.stringify([ck.d, ck.h, ck.m]));
   check('游戏时钟从早上八点开始', (G.world.game_minutes = 0, G.clock().hh === '08'));
   G.world.game_minutes = 15 * 60; check('游戏时钟夜里是夜晚', G.clock().night === true, G.clock().hh);
-  G.cfg.time.daynight = 'auto';
+  G.cfg.time.daynight = 'system'; await G.saveCfg();
   G.cfg.interrupt.frequency = 'normal';
   check('时间只有现实，一倍速，长按', G.timeMode() === 'real' && G.playMode() === 'reality' && G.inputMode() === 'hold');
   check('长按时间不是线性的', G.holdFor(1) < G.holdFor(10) && G.holdFor(10) < G.holdFor(60) && G.holdFor(60) <= 6 && G.holdFor(600) === 6);
@@ -509,7 +515,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('自己做的动作不在菜单里，但属于角色自己', !('drink' in G.actionsOf(eld2)) && 'drink' in G.allActionsOf(eld2) && 'cook' in G.allActionsOf(eld2) && !('drink' in G.allActionsOf(await mk('baby', '宝'))));
   const bby = G.people[G.people.length - 1];
   check('婴儿自己只能玩一玩、咿呀几声，吃喝拉睡一样都做不了', (() => { const own = Object.values(G.allActionsOf(bby)).filter(a => a.self); return own.length >= 2 && own.every(a => Object.keys(a.effect).every(k => ['play', 'company'].includes(k))); })());
-  G.cfg.time.daynight = 'game'; G.cfg.interrupt.frequency = 'test'; G.nextAt = Date.now() + 1e9;
+  G.cfg.time.daynight = 'game'; G.world.clock_shift = 480; G.cfg.interrupt.frequency = 'test'; G.nextAt = Date.now() + 1e9;
   for (const p of G.people) p.person.active = false;
   const E = G.get(eld2.id); E.person.active = true; E.state.needs.thirst = 0.95; E.state.needs.hunger = 0.95;
   G.world.game_minutes = 12 * 60 - 8 * 60;
@@ -521,7 +527,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 作息 */
   const K = G.get(kid2.id), HA = G.get(hamP.id), OW = G.get(owl.id), LA = G.get(lark.id);
   for (const p of [K, HA, OW, LA]) p.person.active = true;
-  const at = (h) => { G.cfg.time.daynight = 'game'; G.world.game_minutes = ((h * 60 - 8 * 60) + 1440 * 5) % 1440 + 1440 * 5; for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p); };
+  const at = (h) => { G.cfg.time.daynight = 'game'; G.world.clock_shift = 480; G.world.game_minutes = ((h * 60 - 8 * 60) + 1440 * 5) % 1440 + 1440 * 5; for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p); };
   for (const p of [K, E]) p.state.needs = Object.fromEntries(Object.keys(p.state.needs).map(k => [k, 0.1]));
   at(23); check('夜里成人孩子在睡觉', G.act[K.id] === 'sleeping' && G.act[E.id] === 'sleeping');
   at(12); check('白天醒着', G.act[K.id] === 'awake' && G.act[E.id] === 'awake');
@@ -529,7 +535,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   at(23); check('夜猫子晚上十一点还醒着，凌晨两点在睡', G.act[OW.id] === 'awake' && (at(2), G.act[OW.id] === 'sleeping'));
   at(5); check('早起的人五点已经醒了', G.act[LA.id] === 'awake' && G.act[K.id] === 'sleeping');
   at(23); const babyS = G.get(bby.id); babyS.person.active = true; babyS.state.needs = Object.fromEntries(Object.keys(babyS.state.needs).map(k => [k, 0.1]));
-  const wakeups = new Set(); for (let dm = 0; dm < 180; dm += 10) { G.world.game_minutes = 1440 * 5 + (23 * 60 - 8 * 60) + dm; wakeups.add(G.activityOf(babyS)); }
+  G.world.clock_shift = 480; const wakeups = new Set(); for (let dm = 0; dm < 180; dm += 10) { G.world.game_minutes = 1440 * 5 + (23 * 60 - 8 * 60) + dm; wakeups.add(G.activityOf(babyS)); }
   check('婴儿夜里睡睡醒醒', wakeups.has('sleeping') && wakeups.has('awake'));
   babyS.state.needs.hunger = 0.95; at(23); check('婴儿很饿时醒着', G.activityOf(babyS) === 'awake');
   /* 睡觉时的效果 */
