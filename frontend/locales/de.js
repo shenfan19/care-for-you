@@ -169,3 +169,4 @@ CY.i18n.register("de", {"badge.help": "Hilft gleich"});
 
 CY.i18n.register("de", {"social.pets": "{a} und {b} sind eine Weile hinterhergejagt."});
 CY.i18n.register("de", {"nanny.st_here": "Gerade: Die Nanny ist im Haus.", "nanny.st_wait": "Gerade: Die Nanny ist nicht da. Sie beginnt täglich um {from} und bekommt {n}, wenn sie kommt.", "nanny.st_rest": "Gerade: Für {n} reicht das Geld nicht, die Nanny ruht heute und kommt wieder, sobald es reicht.", "log.nanny_wait": "Die Nanny hat zugesagt und kommt, sobald die Arbeit um {from} beginnt."});
+CY.i18n.register("de", {"log.nanny_arrive": "Die Nanny ist angekommen, hat dem Haushalt zugenickt und angefangen.", "log.nanny_tea": "Die Nanny hat dir eine Tasse Tee neben die Hand gestellt und ist wortlos wieder an die Arbeit gegangen.", "log.nanny_leave": "Die Nanny hat Feierabend gemacht und einen Zettel hinterlassen: Heute wurden alle versorgt."});

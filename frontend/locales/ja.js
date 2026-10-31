@@ -169,3 +169,4 @@ CY.i18n.register("ja", {"badge.help": "手伝いに行く"});
 
 CY.i18n.register("ja", {"social.pets": "{a}と{b}がしばらく追いかけっこをした。"});
 CY.i18n.register("ja", {"nanny.st_here": "今：ベビーシッターは家にいます。", "nanny.st_wait": "今：ベビーシッターはいません。毎日 {from} に始まり、来たときに {n} を払います。", "nanny.st_rest": "今：{n} に足りないので、ベビーシッターは今日は休みです。足りたらまた来ます。", "log.nanny_wait": "ベビーシッターが引き受けました。{from} の勤務開始に来ます。"});
+CY.i18n.register("ja", {"log.nanny_arrive": "ベビーシッターが来て、家の人にうなずいて仕事を始めた。", "log.nanny_tea": "ベビーシッターがお茶をそっと手元に置いて、何も言わず仕事に戻った。", "log.nanny_leave": "ベビーシッターは仕事を終え、メモを残した。今日はみんなを見ておきました。"});

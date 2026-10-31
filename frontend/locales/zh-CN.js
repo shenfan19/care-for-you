@@ -352,3 +352,4 @@ CY.i18n.register("zh-CN", {"badge.help": "去帮忙"});
 
 CY.i18n.register("zh-CN", {"social.pets": "{a}和{b}追着玩了一阵。"});
 CY.i18n.register("zh-CN", {"nanny.st_here": "现在：保姆在家里。", "nanny.st_wait": "现在：保姆不在。每天 {from} 上班，到点才来，来的时候收 {n}。", "nanny.st_rest": "现在：钱不够 {n}，保姆今天休息，明天钱够了再来。", "log.nanny_wait": "保姆接下了活，{from} 上班时间到了就来。"});
+CY.i18n.register("zh-CN", {"log.nanny_arrive": "保姆到了，朝家里人点点头，开始忙。", "log.nanny_tea": "保姆在你手边放了一杯茶，没说话，转身去忙了。", "log.nanny_leave": "保姆下班了，留了张条：今天都照看过了。"});

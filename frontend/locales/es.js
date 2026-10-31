@@ -169,3 +169,4 @@ CY.i18n.register("es", {"badge.help": "Va a ayudar"});
 
 CY.i18n.register("es", {"social.pets": "{a} y {b} jugaron a perseguirse un rato."});
 CY.i18n.register("es", {"nanny.st_here": "Ahora: la niñera está en casa.", "nanny.st_wait": "Ahora: la niñera no está. Empieza a las {from} cada día y cobra {n} al llegar.", "nanny.st_rest": "Ahora: no alcanza para {n}, así que la niñera descansa hoy y vuelve cuando haya suficiente.", "log.nanny_wait": "La niñera aceptó el trabajo y vendrá cuando empiece la jornada a las {from}."});
+CY.i18n.register("es", {"log.nanny_arrive": "La niñera llegó, saludó a la casa con un gesto y se puso a trabajar.", "log.nanny_tea": "La niñera dejó una taza de té junto a tu mano y volvió al trabajo sin decir nada.", "log.nanny_leave": "La niñera terminó su jornada y dejó una nota: hoy todos quedaron atendidos."});

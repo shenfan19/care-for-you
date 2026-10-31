@@ -169,3 +169,4 @@ CY.i18n.register("ko", {"badge.help": "도우러 가는 중"});
 
 CY.i18n.register("ko", {"social.pets": "{a}와 {b}가 한동안 서로 쫓아다니며 놀았다."});
 CY.i18n.register("ko", {"nanny.st_here": "지금: 보모가 집에 있습니다.", "nanny.st_wait": "지금: 보모는 없습니다. 매일 {from}에 출근하고, 올 때 {n}을 받습니다.", "nanny.st_rest": "지금: {n}이 모자라 보모는 오늘 쉽니다. 돈이 되면 다시 옵니다.", "log.nanny_wait": "보모가 일을 맡았고 {from} 근무 시간에 옵니다."});
+CY.i18n.register("ko", {"log.nanny_arrive": "보모가 와서 식구들에게 고개를 끄덕이고 일을 시작했다.", "log.nanny_tea": "보모가 손 옆에 차 한 잔을 놓고 말없이 다시 일하러 갔다.", "log.nanny_leave": "보모가 퇴근하며 쪽지를 남겼다. 오늘도 모두 잘 돌봤습니다."});

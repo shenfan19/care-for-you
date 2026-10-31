@@ -38,7 +38,13 @@
       if (G.world.money >= G.NANNY_DAILY) { G.world.money -= G.NANNY_DAILY; G.world.nanny_paid_day = d; if (!offline) G.logK('you', 'event', 'log.nanny_paid', { n: G.NANNY_DAILY }); }
       else { G.world.nanny_rest_day = d; if (!offline) G.logK('you', 'event', 'log.nanny_rest', {}); }
     }
-    setDuty(n, G.world.nanny_paid_day === d && work);
+    const here = G.world.nanny_paid_day === d && work;
+    setDuty(n, here);
+    if (offline) return;
+    /* 不用互动的礼貌：到了打个招呼，下午放一杯茶，下班留一句话。只进日志，不弹窗，不要回应 */
+    if (here && G.world.nanny_hi_day !== d) { G.world.nanny_hi_day = d; G.logK('you', 'event', 'log.nanny_arrive', {}); }
+    if (here && G.world.nanny_tea_day !== d && G.dayMinutes() >= 14 * 60) { G.world.nanny_tea_day = d; G.logK('you', 'event', 'log.nanny_tea', {}); }
+    if (!work && G.world.nanny_paid_day === d && G.world.nanny_bye_day !== d) { G.world.nanny_bye_day = d; G.logK('you', 'event', 'log.nanny_leave', {}); }
   };
   /* 保姆现在的状态：here 在岗，wait 还没到上班时间或已下班，rest 今天钱不够休息，off 没请 */
   G.nannyState = () => {

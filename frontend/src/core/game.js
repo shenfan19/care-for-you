@@ -627,7 +627,7 @@
 
   function fire() {
     const awake = p => !G.isSleeping(p);
-    const free = G.activePeople().filter(p => !G.req[p.id] && awake(p) && p !== G.protagonist());
+    const free = G.activePeople().filter(p => !G.req[p.id] && awake(p) && p !== G.protagonist() && !(p.person.help && p.person.help.role === 'nanny'));
     if (!free.length) return;
     const needy = free.filter(p => G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
     if (needy.length && Math.random() < 0.65) {

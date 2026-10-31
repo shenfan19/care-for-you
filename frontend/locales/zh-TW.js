@@ -634,3 +634,4 @@ CY.i18n.register("zh-TW", {"badge.help": "去幫忙"});
 
 CY.i18n.register("zh-TW", {"social.pets": "{a}和{b}追著玩了一陣。"});
 CY.i18n.register("zh-TW", {"nanny.st_here": "現在：保姆在家裡。", "nanny.st_wait": "現在：保姆不在。每天 {from} 上班，到點才來，來的時候收 {n}。", "nanny.st_rest": "現在：錢不夠 {n}，保姆今天休息，明天錢夠了再來。", "log.nanny_wait": "保姆接下了工作，{from} 上班時間到了就來。"});
+CY.i18n.register("zh-TW", {"log.nanny_arrive": "保姆到了，朝家裡人點點頭，開始忙。", "log.nanny_tea": "保姆在你手邊放了一杯茶，沒說話，轉身去忙了。", "log.nanny_leave": "保姆下班了，留了張條：今天都照看過了。"});

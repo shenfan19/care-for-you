@@ -931,6 +931,14 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.setClock(10 * 60); G.economyTick(0, true); check('上班时间到了保姆来并收费', G.nannyState() === 'here' && G.world.money === 380, G.world.money);
     G.world.nanny_on = false;
   }
+  {
+    G.world.money = 500; G.world.game_minutes = 5 * 1440; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined; G.world.nanny_hi_day = G.world.nanny_tea_day = G.world.nanny_bye_day = undefined;
+    G.setClock(10 * 60); G.economyTick(0, false); const n0 = G.log ? 0 : 0;
+    G.setClock(15 * 60); G.economyTick(0, false); G.setClock(20 * 60); G.economyTick(0, false);
+    const d5 = Math.floor(G.world.game_minutes / 1440);
+    check('保姆每天只招呼一次、放一杯茶、留一次条', G.world.nanny_hi_day === d5 && G.world.nanny_tea_day === d5 && G.world.nanny_bye_day === d5);
+    G.world.nanny_on = false;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

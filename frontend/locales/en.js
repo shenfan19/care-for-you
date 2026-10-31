@@ -472,3 +472,4 @@ CY.i18n.register("en", {"badge.help": "Going to help"});
 
 CY.i18n.register("en", {"social.pets": "{a} and {b} chased each other around for a bit."});
 CY.i18n.register("en", {"nanny.st_here": "Right now: the nanny is at home.", "nanny.st_wait": "Right now: the nanny is away. She starts at {from} each day and is paid {n} when she arrives.", "nanny.st_rest": "Right now: not enough money for {n}, so the nanny rests today and comes back once there is enough.", "log.nanny_wait": "The nanny took the job and will come when work starts at {from}."});
+CY.i18n.register("en", {"log.nanny_arrive": "The nanny arrived, nodded to the household and got to work.", "log.nanny_tea": "The nanny set a cup of tea by your hand and went back to work without a word.", "log.nanny_leave": "The nanny clocked off and left a note: everyone was looked after today."});

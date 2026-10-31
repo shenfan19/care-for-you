@@ -173,3 +173,4 @@ CY.i18n.register("fr", {"badge.help": "Va aider"});
 
 CY.i18n.register("fr", {"social.pets": "{a} et {b} ont couru l’un après l’autre un moment."});
 CY.i18n.register("fr", {"nanny.st_here": "En ce moment : la nounou est à la maison.", "nanny.st_wait": "En ce moment : la nounou est absente. Elle commence à {from} chaque jour et reçoit {n} à son arrivée.", "nanny.st_rest": "En ce moment : pas assez d'argent pour {n}, la nounou se repose aujourd'hui et reviendra quand il y en aura assez.", "log.nanny_wait": "La nounou a accepté le poste et viendra à {from}, au début du travail."});
+CY.i18n.register("fr", {"log.nanny_arrive": "La nounou est arrivée, a salué la maisonnée d'un signe de tête et s'est mise au travail.", "log.nanny_tea": "La nounou a posé une tasse de thé près de ta main et est repartie sans un mot.", "log.nanny_leave": "La nounou a fini sa journée et a laissé un mot : tout le monde a été bien suivi aujourd'hui."});
