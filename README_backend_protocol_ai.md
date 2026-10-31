@@ -44,7 +44,7 @@
 请求：
 
 ```json
-{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.50.2" } }
+{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.51.0" } }
 ```
 
 回应：

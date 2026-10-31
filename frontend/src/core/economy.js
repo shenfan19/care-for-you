@@ -16,6 +16,9 @@
   G.START_MONEY = 200;
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
+  /* 心情和收益：主角的心情决定工作效率，最低四成，心情满了是十成。工作和家里有人没人管会拉低心情，照顾别人，被照顾，照顾自己会抬高 */
+  G.MOOD = { eff_min: 0.4, work_drag: 0.15, stress_each: 0.06, stress_cap: 0.12, stress_need: 0.8, act_gain: 0.03, cares_back_gain: 0.04 };
+  G.efficiency = () => { const l = G.protagonist(); return l ? G.MOOD.eff_min + (1 - G.MOOD.eff_min) * l.state.mood : 1; };
   G.nanny = () => G.people.find(p => p.person.help && p.person.help.role === 'nanny') || null;
   G.nannyOn = () => !!G.world.nanny_on;
   const setDuty = (n, on) => {
@@ -29,7 +32,7 @@
     const hours = gmin / 60, W = CY.world, lead = G.protagonist();
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
-    else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours;
+    else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency();
     const n = G.nanny();
     if (!n) return;
     if (!G.nannyOn()) { return; }

@@ -364,3 +364,4 @@ CY.i18n.register("zh-CN", {"data.h2": "二，数值积分，实验阶段", "data
 CY.i18n.register("zh-CN", {"cred.p3": "家具图：Kenney 的 Furniture Kit（CC0 1.0，kenney.nl/assets/furniture-kit）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，渲染工具用到 three.js（MIT 许可证），不随游戏发布。其余形象、动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
 CY.i18n.register("zh-CN", {"add.model": "形象", "add.model_auto": "自动"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit 和 Mini Characters（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色在游戏里按玩家的选择重着色。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动物，花草，动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
+CY.i18n.register("zh-CN", {"corner.eff_tip": "现在的工作效率是 {n}%，你的心情好，收入就多；工作和家里有人没人管会让心情下降，照顾，被关心会让它回升。"});
