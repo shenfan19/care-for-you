@@ -165,6 +165,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     Object.assign(W.player(), { place: 'home', room: 'study' }, W.playerAnchor('home', 'study'));
     check('同一个地点不需要走路', W.presenceNeed(G.get(ct)) === null);
     check('做事时主角直接出现在他旁边', (W.guard(ct, () => true), W.player().room === W.locationOf(G.get(ct)).room));
+    G.clearFlag(G.get(gp), 'outing');   /* 随机的外出愿望可能刚好让他出门，会盖过住院，测试先清掉 */
     G.applyDirectives(P.sanitize([{ op: 'flag_set', person: gp, name: 'hospital', minutes: 4320, place: 'hospital', room: 'ward', mode: 'sleep' }]));
     const off = W.presenceNeed(G.get(gp));
     check('在医院的人要先去医院', off && off.offsite && off.place === 'hospital');

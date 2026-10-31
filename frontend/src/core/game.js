@@ -165,7 +165,8 @@
   const defaultSelf = (species, stage) => { const acts = ((G.tpl.species[species] || {}).actions) || {}; return Object.keys(acts).filter(k => { const x = acts[k]; return x.self && (x.self === true || x.self.includes(stage)); }); };
   G.createPerson = async function (spec) {
     const arch = CY.content.archOf(spec.arch) || {};
-    const id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 46656).toString(36);
+    /* 编号带一个递增序号，同一毫秒里连着建人也不会撞 */
+    const id = 'c' + Date.now().toString(36) + (G._seq = ((G._seq || 0) + 1) % 1296).toString(36).padStart(2, '0') + Math.floor(Math.random() * 1296).toString(36).padStart(2, '0');
     const species = spec.species || arch.species || 'human';
     const human = species === 'human';
     const age = human ? (typeof spec.age === 'number' ? spec.age : typeof arch.age === 'number' ? arch.age : 35) : undefined;
