@@ -168,3 +168,4 @@ CY.i18n.register("es", {"card.title": "Ficha de rol", "card.note": "Todo sobre e
 CY.i18n.register("es", {"badge.help": "Va a ayudar"});
 
 CY.i18n.register("es", {"social.pets": "{a} y {b} jugaron a perseguirse un rato."});
+CY.i18n.register("es", {"nanny.st_here": "Ahora: la niñera está en casa.", "nanny.st_wait": "Ahora: la niñera no está. Empieza a las {from} cada día y cobra {n} al llegar.", "nanny.st_rest": "Ahora: no alcanza para {n}, así que la niñera descansa hoy y vuelve cuando haya suficiente.", "log.nanny_wait": "La niñera aceptó el trabajo y vendrá cuando empiece la jornada a las {from}."});

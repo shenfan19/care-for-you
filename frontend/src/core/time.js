@@ -6,7 +6,9 @@
   const G = CY.game;
   G.timeMode = () => 'real';
   G.SPEEDS = [1, 6, 24, 60];
-  G.speed = () => { const v = parseFloat(CY.ini.get(G.cfg, 'time', 'speed')); return isFinite(v) ? Math.min(240, Math.max(1, v)) : 1; };
+  /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */
+  G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
+  G.speed = () => { if (G.DEV) return G.DEV; const v = parseFloat(CY.ini.get(G.cfg, 'time', 'speed')); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; };
   G.speedLabel = () => '×' + G.speed();
   /* 让游戏里现在是几点几分，0 到 1439 */
   G.setClock = minutes => { G.world.clock_shift = ((((Math.round(minutes) - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440); };

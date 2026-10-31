@@ -351,3 +351,4 @@ CY.i18n.register("zh-CN", {"card.title": "角色卡", "card.note": "这一类角
 CY.i18n.register("zh-CN", {"badge.help": "去帮忙"});
 
 CY.i18n.register("zh-CN", {"social.pets": "{a}和{b}追着玩了一阵。"});
+CY.i18n.register("zh-CN", {"nanny.st_here": "现在：保姆在家里。", "nanny.st_wait": "现在：保姆不在。每天 {from} 上班，到点才来，来的时候收 {n}。", "nanny.st_rest": "现在：钱不够 {n}，保姆今天休息，明天钱够了再来。", "log.nanny_wait": "保姆接下了活，{from} 上班时间到了就来。"});

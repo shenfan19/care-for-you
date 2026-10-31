@@ -63,7 +63,7 @@
           return;
         }
         const a = C.archOf(st.arch), role = U.archName(a.id);
-        await G.createPerson({ arch: a.id, name: st.name.trim() || role, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], helper: st.helper });
+        await G.createPerson({ arch: a.id, name: st.name.trim() || role, name_auto: st.name.trim() && st.name.trim() !== role ? undefined : a.id, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], helper: st.helper });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }
@@ -106,9 +106,14 @@
     }
     return members;
   };
+  /* 家里没有爸爸妈妈也没有指定主角的开局，补一个在家办公的成年人当主角，男女随机。没有他，就没有人坐在书桌前，也就没有工作和打断 */
+  U.withWorker = function (members) {
+    if (members.some(m => m.lead || ['dad', 'mom', 'wife', 'husband'].includes(m.arch))) return members;
+    return [{ arch: rnd(['man25', 'woman25']), name: t('preset.name.self'), age: 26 + Math.floor(Math.random() * 15), lead: true }].concat(members);
+  };
   U.createMembers = async function (members) {
     let lead = null;
-    for (const m of members) { const id = await G.createPerson({ arch: m.arch, name: m.name, roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
+    for (const m of members) { const id = await G.createPerson({ arch: m.arch, name: m.name, name_auto: m.lead ? 'self' : m.arch, roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
     await G.load();
     if (lead) G.setProtagonist(lead);
   };
@@ -119,7 +124,7 @@
     const wireLang = dlg => { dlg.querySelector('#oblang').onchange = async e => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.language = e.target.value; await G.saveCfg(); await U.applyLang(); render(); }; };
     const start = async members => { await U.createMembers(members); U.closeDialog(); U.afterPeopleChange(); U.maybeIntro(); };
     const tile = id => { const p = C.presets.find(x => x.id === id); return p ? `<button class="tile" data-p="${id}"><b>${esc(t('preset.' + id + '.label'))}</b><span class="mute">${esc(t('preset.' + id + '.note'))}</span></button>` : ''; };
-    const wireTiles = dlg => dlg.querySelectorAll('.tile').forEach(b => b.onclick = () => { const pr = C.presets.find(x => x.id === b.dataset.p); start(pr.members.map(m => Object.assign({}, m, { name: CY.tOr('preset.name.' + (m.lead ? 'self' : m.arch), U.archName(m.arch)) }))); });
+    const wireTiles = dlg => dlg.querySelectorAll('.tile').forEach(b => b.onclick = () => { const pr = C.presets.find(x => x.id === b.dataset.p); start(U.withWorker(pr.members.map(m => Object.assign({}, m, { name: CY.tOr('preset.name.' + (m.lead ? 'self' : m.arch), U.archName(m.arch)) })))); });
     const footer = () => `<div class="row" style="margin-top:12px;justify-content:space-between"><span class="mute">${added.length ? esc(t('ob.added', { names: added.join(t('sep.list')) })) : ''}</span>
           <button id="obgo" class="primary">${esc(t(added.length ? 'ob.start' : 'ob.skip'))}</button></div>`;
     const wireGo = dlg => { dlg.querySelector('#obgo').onclick = () => { U.closeDialog(); U.afterPeopleChange(); if (G.people.length) U.maybeIntro(); }; };
@@ -132,7 +137,7 @@
         <div class="row" style="margin-top:10px"><button id="obrand">🎲 ${esc(t('ob.random'))}</button><button id="obcustom">${esc(t('ob.custom'))}</button></div>
         <details class="adv"><summary>${esc(t('ob.more'))}</summary><div class="tiles" style="margin-top:6px">${more.map(p => tile(p.id)).join('')}</div></details>${footer()}`, true);
       wireLang(dlg); wireTiles(dlg); wireGo(dlg);
-      dlg.querySelector('#obrand').onclick = () => start(U.randomHousehold());
+      dlg.querySelector('#obrand').onclick = () => start(U.withWorker(U.randomHousehold()));
       dlg.querySelector('#obcustom').onclick = () => { page = 'custom'; render(); };
     }
     function renderCustom() {

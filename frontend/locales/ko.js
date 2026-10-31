@@ -168,3 +168,4 @@ CY.i18n.register("ko", {"card.title": "캐릭터 카드", "card.note": "이 종�
 CY.i18n.register("ko", {"badge.help": "도우러 가는 중"});
 
 CY.i18n.register("ko", {"social.pets": "{a}와 {b}가 한동안 서로 쫓아다니며 놀았다."});
+CY.i18n.register("ko", {"nanny.st_here": "지금: 보모가 집에 있습니다.", "nanny.st_wait": "지금: 보모는 없습니다. 매일 {from}에 출근하고, 올 때 {n}을 받습니다.", "nanny.st_rest": "지금: {n}이 모자라 보모는 오늘 쉽니다. 돈이 되면 다시 옵니다.", "log.nanny_wait": "보모가 일을 맡았고 {from} 근무 시간에 옵니다."});

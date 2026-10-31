@@ -172,3 +172,4 @@ CY.i18n.register("fr", {"card.title": "Fiche de rôle", "card.note": "Tout sur c
 CY.i18n.register("fr", {"badge.help": "Va aider"});
 
 CY.i18n.register("fr", {"social.pets": "{a} et {b} ont couru l’un après l’autre un moment."});
+CY.i18n.register("fr", {"nanny.st_here": "En ce moment : la nounou est à la maison.", "nanny.st_wait": "En ce moment : la nounou est absente. Elle commence à {from} chaque jour et reçoit {n} à son arrivée.", "nanny.st_rest": "En ce moment : pas assez d'argent pour {n}, la nounou se repose aujourd'hui et reviendra quand il y en aura assez.", "log.nanny_wait": "La nounou a accepté le poste et viendra à {from}, au début du travail."});

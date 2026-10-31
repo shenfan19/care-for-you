@@ -378,7 +378,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('自己设几点，陪伴天数不变', G.clock().hh === '23' && G.clock().mm === '59' && G.clock().d === 7);
     G.cfg.time.speed = '24'; const gap = [...Array(50)].map(() => G.nextGapSeconds());
     check('打断间隔按倍速缩短', Math.min(...gap) >= 20 && Math.max(...gap) <= 180 * 60 / 24 + 1, Math.min(...gap) + ' ' + Math.max(...gap));
-    G.cfg.time.speed = '999'; check('倍速封顶 240', G.speed() === 240);
+    G.cfg.time.speed = '999'; check('倍速封顶 360', G.speed() === 360);
     G.cfg.time.speed = '24'; delete G.world.clock_shift; G.world.game_minutes = 0; await G.saveCfg(); await G.save(true); }
   G.cfg.time.daynight = 'system';
   check('可以强制跟随系统时钟', G.daySource() === 'system');
@@ -915,6 +915,22 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const back = await CY.store.readZip(new Uint8Array(await blob.arrayBuffer()));
   check('zip 写出再读回一致', back.length === 2 && new TextDecoder().decode(back[0].data) === '名字: 爷爷\n');
   check('第一次有人住进来，默认选爸爸（没有就妈妈、成年人）做操纵对象，不另造“我”，只选一次', await (async () => { const GG = CY.game, had = GG.protagonist(); GG.setProtagonist(null); GG.world.player_char = false; const n0 = GG.people.length; const made = await GG.ensurePlayer(); GG.setProtagonist(null); const again = await GG.ensurePlayer(); const lead = GG.protagonist(); const ar = p => p.person.archetype || p.person.card; const want = GG.activePeople().filter(GG.canLead); const ok = made && !again && !lead && GG.people.length === n0 && !GG.people.some(p => ar(p) === 'me') && (ar(want.find(p => ar(p) === 'dad') || want[0]) !== undefined); GG.setProtagonist(had ? had.id : null); return !!ok; })());
+  {
+    CY.i18n.set('zh-CN');
+    const ida = await G.createPerson({ arch: 'grandpa', name: '爷爷', name_auto: 'grandpa', roleText: '爷爷' }), idb = await G.createPerson({ arch: 'grandma', name: '奶奶', name_auto: 'grandma', roleText: '奶奶' });
+    await G.load();
+    CY.i18n.set('en'); await G.refreshAutoNames();
+    check('系统起的名字跟界面语言走', G.get(ida).person.name === 'Grandpa' && G.get(ida).person.role !== '爷爷', G.get(ida).person.name);
+    await G.updatePerson(idb, { name: '阿婆' });
+    CY.i18n.set('zh-CN'); await G.refreshAutoNames(); CY.i18n.set('en'); await G.refreshAutoNames();
+    check('玩家改过的名字不再跟语言变', G.get(idb).person.name === '阿婆' && !G.get(idb).person.name_auto);
+    CY.i18n.set('zh-CN'); await G.refreshAutoNames();
+    check('切回中文名字回到中文', G.get(ida).person.name === '爷爷');
+    G.world.money = 500; G.world.game_minutes = 0; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined;
+    G.setClock(7 * 60); check('上班时间前保姆状态是等待', G.nannyState() === 'wait');
+    G.setClock(10 * 60); G.economyTick(0, true); check('上班时间到了保姆来并收费', G.nannyState() === 'here' && G.world.money === 380, G.world.money);
+    G.world.nanny_on = false;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

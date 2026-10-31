@@ -411,7 +411,7 @@
     const fg = h.querySelector('.fg'), C = 2 * Math.PI * 26;
     fg.style.strokeDasharray = C; fg.style.strokeDashoffset = C;
     U.holdPid = pid;
-    hold = { pid, a, start: performance.now(), dur: G.holdSeconds(a) * 1000, C, fg, win: win() };
+    hold = { pid, a, start: performance.now(), dur: Math.max(1, G.holdSeconds(a) * 1000), C, fg, win: win() };
     const step = () => {
       if (!hold) return;
       const k = Math.min(1, (performance.now() - hold.start) / hold.dur);

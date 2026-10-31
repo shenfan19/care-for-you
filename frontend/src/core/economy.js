@@ -33,12 +33,20 @@
     const n = G.nanny();
     if (!n) return;
     if (!G.nannyOn()) { return; }
-    const d = today();
-    if (G.world.nanny_paid_day !== d && G.world.nanny_rest_day !== d) {
+    const d = today(), work = G.isWorkTime();
+    if (work && G.world.nanny_paid_day !== d && G.world.nanny_rest_day !== d) {
       if (G.world.money >= G.NANNY_DAILY) { G.world.money -= G.NANNY_DAILY; G.world.nanny_paid_day = d; if (!offline) G.logK('you', 'event', 'log.nanny_paid', { n: G.NANNY_DAILY }); }
       else { G.world.nanny_rest_day = d; if (!offline) G.logK('you', 'event', 'log.nanny_rest', {}); }
     }
-    setDuty(n, G.world.nanny_paid_day === d && G.isWorkTime());
+    setDuty(n, G.world.nanny_paid_day === d && work);
+  };
+  /* 保姆现在的状态：here 在岗，wait 还没到上班时间或已下班，rest 今天钱不够休息，off 没请 */
+  G.nannyState = () => {
+    if (!G.nannyOn()) return 'off';
+    const d = today();
+    if (G.isWorkTime() && G.world.nanny_paid_day === d) return 'here';
+    if (G.world.nanny_rest_day === d) return 'rest';
+    return 'wait';
   };
 
   G.hireNanny = async () => {
@@ -51,7 +59,9 @@
       await G.load(); Object.assign(G.world, keep); n = G.nanny();
     } else await G.setActive(n.id, true);
     G.logK('you', 'event', 'log.nanny_hired', {});
-    G.economyTick(0, true); G.save(true); emit();
+    G.economyTick(0, true);
+    if (G.nannyState() === 'wait') G.logK('you', 'event', 'log.nanny_wait', { from: ini.get(G.cfg, 'economy', 'work_hours').split('-')[0] });
+    G.save(true); emit();
     return true;
   };
   G.dismissNanny = async () => {

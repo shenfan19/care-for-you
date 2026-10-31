@@ -65,6 +65,15 @@
     }
     for (const p of G.people) p.voice = G.tpl.voices[p.person.voice || DEFAULT_VOICE[p.person.species] || 'sibling'] || {};
   }
+  /* 系统起的名字和身份（开局预设、随机、没填名字时用的角色名）跟界面语言走；玩家自己改过的名字不动。name_auto 存名字键，玩家改名时清掉 */
+  G.refreshAutoNames = async function () {
+    for (const p of G.people) {
+      const k = p.person.name_auto; if (!k) continue;
+      const arch = p.person.archetype || p.person.card, role = CY.tOr('arch.' + arch, (CY.content.archOf(arch) || {}).role || p.person.role);
+      const name = CY.tOr('preset.name.' + k, role);
+      if (name !== p.person.name || role !== p.person.role) { p.person.name = name; p.person.role = role; await store.writeYaml(`people/${p.id}/person.yaml`, p.person); }
+    }
+  };
   G.reloadContent = async function () {
     const files = await store.list();
     for (const p of files) {
@@ -72,6 +81,7 @@
       if (m) { const x = await store.readYaml(p); if (x) G.tpl.conditions[x.id || m[1]] = x; }
     }
     await loadContent(files);
+    await G.refreshAutoNames();
     emit();
   };
 
@@ -168,6 +178,7 @@
       appearance: Object.assign({}, spec.look || arch.look || {}, typeof (spec.look || arch.look || {}).skin === 'number' ? { skin_v: 2 } : {}), personality: { talkative: 0.5, temper: '', catchphrases: [] },
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
     };
+    if (spec.name_auto) person.name_auto = spec.name_auto;
     if (spec.arch) { person.card = spec.arch; if (Object.keys(person.lines).length) person.lines_lang = 'zh-CN'; }
     const hp = arch.help || {};
     if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : !!hp.proactive;
@@ -195,7 +206,7 @@
   G.updatePerson = async function (pid, patch) {
     const p = G.get(pid); if (!p) return;
     const o = p.person;
-    if (typeof patch.name === 'string' && patch.name.trim()) o.name = patch.name.trim();
+    if (typeof patch.name === 'string' && patch.name.trim() && patch.name.trim() !== o.name) { o.name = patch.name.trim(); delete o.name_auto; }
     if (patch.pronoun) o.pronoun = patch.pronoun;
     if (patch.look) o.appearance = Object.assign({}, o.appearance, patch.look);
     if (Array.isArray(patch.traits)) o.traits = patch.traits.slice(0, 2);
@@ -289,7 +300,7 @@
   G.urgency = p => G.maxNeed(p) * G.classOf(p).urgency;
   /* 长按多久：动作本身的时长，乘以主角的年纪。老人手慢，圈转得慢些 */
   const ACTOR_SLOW = { elder: 1.6 };
-  G.holdSeconds = a => { const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; return +((typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k).toFixed(1); };
+  G.holdSeconds = a => { if (G.DEV) return 0; const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; return +((typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k).toFixed(1); };
   /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
   G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
   G.fmt = (s, p) => {

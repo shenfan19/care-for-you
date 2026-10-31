@@ -471,3 +471,4 @@ CY.i18n.register("en", {"card.title": "Role card", "card.note": "Everything abou
 CY.i18n.register("en", {"badge.help": "Going to help"});
 
 CY.i18n.register("en", {"social.pets": "{a} and {b} chased each other around for a bit."});
+CY.i18n.register("en", {"nanny.st_here": "Right now: the nanny is at home.", "nanny.st_wait": "Right now: the nanny is away. She starts at {from} each day and is paid {n} when she arrives.", "nanny.st_rest": "Right now: not enough money for {n}, so the nanny rests today and comes back once there is enough.", "log.nanny_wait": "The nanny took the job and will come when work starts at {from}."});
