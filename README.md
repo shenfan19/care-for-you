@@ -47,7 +47,7 @@ Everything is stored on your own device as plain files. There is no account, no 
 The game does not hard-code who speaks or what happens. It sends a snapshot of each character's state to a backend and carries out the instructions that come back. Three ways of driving it are planned:
 
 1. Probability tables. Done, and the default. The built-in backend runs in the browser and reads plain YAML rules.
-2. Numerical integration. Experimental. Set the backend to `lm` in the advanced settings and needs, mood and frailty are integrated step by step by differential-equation models that run in the browser; the models are YAML files in the data folder (`templates/lm`). Events and lines still come from the tables. `backend_lm_ai` is the same engine in Python, kept as a reference and checked against the browser version by `frontend/tests/lm_parity.py`. The numbers are not validated.
+2. Numerical integration. Experimental. Set the backend to `lm` in the advanced settings and needs, mood and frailty are integrated step by step by differential-equation models that run in the browser; the models are YAML files in the data folder (`templates/lm`, sources in `frontend/src/data/lm`). Events and lines still come from the tables. The numbers are not validated.
 3. AI connection. Unfinished and off by default. It lets an external AI service rewrite lines. Turning it on sends a small amount of context to the service you choose.
 
 All backends use the same JSON interface, described in [README_backend_protocol_ai.md](README_backend_protocol_ai.md). `backend_basic_ai` is a minimal example you can replace with your own model. A remote backend that fails falls back to the built-in one.
@@ -59,7 +59,6 @@ cd frontend
 node tests/logic_test.js
 node tests/sim_eval.js 3 120 family
 cd ..
-python backend_lm_ai/test_lm_backend.py
 python frontend/tests/backend_compare.py 1 3
 ```
 
@@ -69,7 +68,6 @@ python frontend/tests/backend_compare.py 1 3
 
 - `frontend`: the game. `src/core` is the game itself, `src/world` the rooms and drawing, `src/backend` the protocol and built-in backend, `src/data` the starting data, `src/ui` the interface, `locales` the language packs, `tests` the tests.
 - `backend_basic_ai`: a minimal remote backend.
-- `backend_lm_ai`: the experimental numerical backend.
 - `media_ai`: screenshots and action previews.
 - `android`: reserved, on hold.
 
@@ -83,4 +81,13 @@ This is a game. It is not a medical, psychological or care product and gives no 
 
 ## License and credits
 
-Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen. Furniture art is rendered from [Kenney's Furniture Kit](https://kenney.nl/assets/furniture-kit) (CC0); the rendering tool is in `tools_ai/render_iso`. Characters, animations and text are original. YAML parsing uses [js-yaml](https://github.com/nodeca/js-yaml) (MIT). AI-assisted tools were used during development.
+Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen.
+
+| What | Source | License | Use |
+| --- | --- | --- | --- |
+| Furniture art | [Kenney, Furniture Kit](https://kenney.nl/assets/furniture-kit) | CC0 1.0 | The 3D models are rendered into isometric images by `tools_ai/render_iso`. The license text is kept in `frontend/assets/iso`. |
+| YAML parsing | [js-yaml](https://github.com/nodeca/js-yaml) | MIT | Shipped in `frontend/vendor`. |
+| Rendering tool | [three.js](https://threejs.org) | MIT | Used only by the rendering tool, not shipped with the game. |
+| Characters, animations, text | This project | MIT | Original. |
+
+CC0 does not require attribution, and the sources are listed anyway. AI-assisted tools were used during development.

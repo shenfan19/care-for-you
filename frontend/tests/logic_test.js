@@ -979,6 +979,29 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('夫妻上班，姐姐不上班', W.worker(G.get(dadId)) && W.worker(G.get(momId)) && W.worker(G.get(husId)) && !W.worker(G.get(sisId)));
     for (const x of G.people) x.person.active = true;
   }
+  {
+    /* 浏览器里的积分后端自检：每一类角色空放十四天，状态不越界，没有 NaN；表达式解析和 Python 语法一致 */
+    const LM = CY.lm, docs = Object.keys(CY.lmSeed).filter(p => p.startsWith('templates/lm/models/')).sort().map(p => [p.split('/').pop(), ctx.jsyaml.load(CY.lmSeed[p])]);
+    const lib = new LM.Library(docs, ctx.jsyaml.load(CY.lmSeed['templates/lm/classes.yaml']));
+    const ev = (src, env) => LM.compile(src, 't').fn(env || {});
+    check('表达式：乘方右结合，一元负号，三元式，and or not，比较连写', ev('2 ** 3 ** 2') === 512 && ev('-2 ** 2') === -4 && ev('1 if 2 > 1 else 0') === 1 && ev('0 or 5') === 5 && ev('3 and 0') === 0 && ev('not 0') === 1 && ev('1 < 2 < 3') === 1 && ev('1 < 3 < 2') === 0 && ev('-7 % 3') === 2 && ev('min(3, 1, 2) + max(1, 4)') === 5);
+    const probes = [];
+    for (const st of ['infant', 'toddler', 'child', 'teen', 'adult', 'elder']) probes.push(['human', st, ['thirst', 'hunger', 'rest', 'company', 'play', 'diaper', 'hygiene', 'homework', 'mobility']]);
+    for (const sp in lib.classes.kinds) { const k = lib.classes.kinds[sp]; if (k === 'animal') probes.push([sp, 'adult', ['thirst', 'hunger', 'company', 'play', 'clean']]); else if (k === 'plant') probes.push([sp, 'adult', ['water', 'sun', 'fertilize', 'prune']]); }
+    let bad = [];
+    for (const [sp, st, needs] of probes) {
+      const eng = new LM.Engine(lib), snap = { id: 'x', species: sp, stage: st, age: 30, needs: Object.fromEntries(needs.map(n => [n, 0.2])), mood: 0.7, frailty: 0.1, sleeping: false, conditions: [], flags: {} };
+      for (let i = 0; i < 14 * 24 * 12; i++) {
+        snap.sleeping = ((i * 5 / 60) % 24) < 7;
+        for (const d of eng.drive({ minutes: 5, people: [JSON.parse(JSON.stringify(snap))], world: { hour: (i * 5 / 60) % 24 } }).directives) {
+          const cur = d.need ? snap.needs[d.need] : snap[d.op], nv = Math.min(1, Math.max(0, cur + d.delta));
+          if (!(nv === nv)) bad.push(sp + '/' + st); if (d.need) snap.needs[d.need] = nv; else snap[d.op] = nv;
+        }
+      }
+      for (const v of Object.values(eng.people.x.state)) if (!(v === v)) bad.push(sp + '/' + st + ' state');
+    }
+    check('积分后端：每类角色空放十四天没有 NaN', bad.length === 0, bad.join(','));
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

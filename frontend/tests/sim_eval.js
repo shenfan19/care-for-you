@@ -3,6 +3,7 @@
    看什么：急需占比（需求超过八成的人的时间占比），婴儿哭闹时长，每小时被打扰次数，大人帮忙次数，换房间的次数，住院次数。
    环境变量：
      CARE_BACKEND_URL  设了就把后端换成这个地址的远程后端（设置 backend_provider=http），并统计每次请求的耗时和字节数
+     CARE_PROVIDER     设为 lm 就用浏览器里的数值积分后端
      CARE_SEED         随机种子，同一个种子下不同后端的对比才公平
      CARE_SPEED        时间倍速，1、6、24、60，默认 1（1 时昼夜用虚拟的系统时钟，保持以前的对比基线）
      CARE_SIM_JSON     设为 1 时最后多输出一行 JSON 汇总，给 backend_compare.py 读 */
@@ -27,6 +28,7 @@ const FAMILIES = {
   for (const [arch, name, cond] of FAMILIES[kind]) await G.createPerson({ arch, name, conditions: cond });
   await G.load();
   G.world.intro_done = true;
+  if (process.env.CARE_PROVIDER === 'lm') { G.cfg.play.backend_provider = 'lm'; await CY.lm.load(); if (!CY.lm.ready) throw new Error(CY.lm.error); }
   if (URL) {
     G.cfg.play.backend_provider = 'http'; G.cfg.play.backend_url = URL; G.cfg.play.backend_timeout = '8000';
     ctx.fetch = async (url, opt) => {

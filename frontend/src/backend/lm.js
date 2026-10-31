@@ -1,6 +1,6 @@
 /* 浏览器里跑的数值积分后端：把每个角色的需求，心情，虚弱度当作 LM 风格模型的状态变量，在页面里直接积分，不需要任何服务进程。
    模型文件是数据文件夹 templates/lm 下的明文 YAML：models 里一个文件一个模型，classes.yaml 是类的派生。
-   写法和 backend_lm_ai 的 Python 版一致，方程是 Python 语法的表达式字符串，这里用一个小的解析器求值，不用 eval。
+   方程是 Python 语法的表达式字符串，和 Life Matters 引擎的写法一致，这里用一个小的解析器求值，不用 eval。
    设置里 backend_provider 选 lm 就用它。它只管积分，事件，台词，谁向谁求助仍由内置后端管。 */
 (function (CY) {
   const LM = CY.lm = { ready: false, error: null, lib: null, engine: null, loading: false };

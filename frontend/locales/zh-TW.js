@@ -644,3 +644,4 @@ CY.i18n.register("zh-TW", {"about.tab_data": "資料驅動", "data.intro": "角�
 CY.i18n.register("zh-TW", {"about.tab_data": "資料與隱私", "about.tab_author": "作者與致謝", "data.head": "資料怎麼驅動", "about.p4": "目前是早期版本，會有不完善的地方。歡迎到 GitHub 倉庫提 issue 回饋：", "au.page": "個人主頁", "au.issues": "意見與問題", "au.mail": "郵件", "au.credits": "致謝與授權"});
 CY.i18n.register("zh-TW", {"cred.p3": "家具圖來自 Kenney 的 Furniture Kit，CC0 授權，由三維模型渲染成斜視圖。其餘形象、動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"data.h2": "二，數值積分，實驗階段", "data.p2": "把需求、心情和身體當成連續變化的數值，按方程一步步積分，直接在瀏覽器裡算，模型是資料資料夾裡的明文 YAML。在進階設定裡把後端改成 lm 就能用。只管需求、心情和虛弱度，事件和台詞仍由查表決定。數值沒有經過驗證，不建議當真。"});
+CY.i18n.register("zh-TW", {"cred.p3": "家具圖：Kenney 的 Furniture Kit（CC0 1.0，kenney.nl/assets/furniture-kit）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，渲染工具用到 three.js（MIT 授權），不隨遊戲發布。其餘形象、動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});

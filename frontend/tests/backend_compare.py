@@ -1,4 +1,4 @@
-"""比较三个后端：内置（浏览器里的 JS），基础后端（一阶线性需求），LM 后端（六个 LM 模型积分）。
+"""比较三个后端：内置查表（浏览器里的 JS），基础后端（Python 进程，一阶线性需求），积分后端（浏览器里的 lm.js，六个模型积分）。
 用法：python tests/backend_compare.py [天数=1] [种子数=3] [压测请求数=3000]
 
 分两段，不能同时跑，否则耗时被互相拖慢：
@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
-EX_PORT, LM_PORT = 18787, 18788
+EX_PORT = 18787
 days = float(sys.argv[1]) if len(sys.argv) > 1 else 1
 seeds = int(sys.argv[2]) if len(sys.argv) > 2 else 3
 N = int(sys.argv[3]) if len(sys.argv) > 3 else 3000
@@ -111,7 +111,10 @@ def micro(name, port, script, cwd):
 
 def sim(name, url, seed):
     env = dict(os.environ, CARE_SEED=str(seed), CARE_SIM_JSON="1")
-    if url:
+    env.pop("CARE_PROVIDER", None)
+    if url == "lm":
+        env["CARE_PROVIDER"] = "lm"; env.pop("CARE_BACKEND_URL", None)
+    elif url:
         env["CARE_BACKEND_URL"] = url
     else:
         env.pop("CARE_BACKEND_URL", None)
@@ -132,7 +135,7 @@ def fmt(x, n=2):
 
 if __name__ == "__main__":
     print("## 微基准（%d 次顺序请求，9 个角色的快照，4 路并发另测）\n" % N)
-    rows = [micro("基础后端", EX_PORT, "server.py", os.path.join(ROOT, "backend_basic_ai")), micro("LM 后端", LM_PORT, "server.py", os.path.join(ROOT, "backend_lm_ai"))]
+    rows = [micro("基础后端", EX_PORT, "server.py", os.path.join(ROOT, "backend_basic_ai"))]
     print("| 后端 | 往返中位 ms | p95 ms | p99 ms | 服务端处理均值 ms | 4 路吞吐 req/s | 请求 KB | 回应 KB | 内存 MB |")
     print("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
     for r in rows:
@@ -141,17 +144,15 @@ if __name__ == "__main__":
 
     print("\n## 游戏仿真（%s 天，玩家每 120 秒看一眼，一家九口，%d 个种子取均值）\n" % (days, seeds))
     ex = start("server.py", os.path.join(ROOT, "backend_basic_ai"), EX_PORT)
-    lm = start("server.py", os.path.join(ROOT, "backend_lm_ai"), LM_PORT)
     try:
-        jobs = [(n, u, s) for s in range(1, seeds + 1) for n, u in (("内置", ""), ("基础后端", "http://127.0.0.1:%d/" % EX_PORT), ("LM 后端", "http://127.0.0.1:%d/" % LM_PORT))]
+        jobs = [(n, u, s) for s in range(1, seeds + 1) for n, u in (("内置", ""), ("基础后端", "http://127.0.0.1:%d/" % EX_PORT), ("积分后端", "lm"))]
         with ThreadPoolExecutor(3) as exr:
             res = list(exr.map(lambda j: sim(*j), jobs))
     finally:
         ex.terminate()
-        lm.terminate()
     print("| 后端 | 清醒时平均需求 | 平均心情 | 平均虚弱度 | 急需占比 % | 每小时被打扰 | 玩家每小时动作 | 不变量失败 | 请求次数 | 往返中位 ms | 墙钟 s |")
     print("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |")
-    for n in ("内置", "基础后端", "LM 后端"):
+    for n in ("内置", "基础后端", "积分后端"):
         rs = [r for r in res if r["name"] == n]
         m = lambda k: statistics.mean(r[k] for r in rs)
         net = [r["net"] for r in rs if r["net"]]
