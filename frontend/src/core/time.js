@@ -9,6 +9,14 @@
   /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */
   G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
   G.speed = () => { if (G.DEV) return G.DEV; const v = parseFloat(CY.ini.get(G.cfg, 'time', 'speed')); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; };
+  /* 游戏日历：新存档从现实当天开始，每过一个游戏日加一天；第几天，星期，节日都按它算 */
+  G.gameDate = () => {
+    if (!G.world.start_date) { const d = new Date(); G.world.start_date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+    const [y, m, dd] = G.world.start_date.split('-').map(Number);
+    const n = Math.floor((Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) / 1440);
+    const d = new Date(y, m - 1, dd + n), pad = x => String(x).padStart(2, '0');
+    return { n: n + 1, month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000) };
+  };
   G.speedLabel = () => '×' + G.speed();
   /* 让游戏里现在是几点几分，0 到 1439 */
   G.setClock = minutes => { G.world.clock_shift = ((((Math.round(minutes) - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440); };

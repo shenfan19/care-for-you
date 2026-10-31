@@ -353,3 +353,4 @@ CY.i18n.register("zh-CN", {"badge.help": "去帮忙"});
 CY.i18n.register("zh-CN", {"social.pets": "{a}和{b}追着玩了一阵。"});
 CY.i18n.register("zh-CN", {"nanny.st_here": "现在：保姆在家里。", "nanny.st_wait": "现在：保姆不在。每天 {from} 上班，到点才来，来的时候收 {n}。", "nanny.st_rest": "现在：钱不够 {n}，保姆今天休息，明天钱够了再来。", "log.nanny_wait": "保姆接下了活，{from} 上班时间到了就来。"});
 CY.i18n.register("zh-CN", {"log.nanny_arrive": "保姆到了，朝家里人点点头，开始忙。", "log.nanny_tea": "保姆在你手边放了一杯茶，没说话，转身去忙了。", "log.nanny_leave": "保姆下班了，留了张条：今天都照看过了。"});
+CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天", "share.note": "只在你的设备上生成一张图，放什么内容由你勾选，名字也由你决定。游戏不会上传，也不推荐你分享。", "brand.name": "照顾你", "wd.0": "周日", "wd.1": "周一", "wd.2": "周二", "wd.3": "周三", "wd.4": "周四", "wd.5": "周五", "wd.6": "周六", "tag.1": "手停一停，照看一下家里人。", "tag.2": "没有什么急事，只是有人想让你抬抬头。", "tag.3": "给自己一个离开工作五分钟的小借口。", "tag.4": "没有分数，没人记你做得怎么样。", "tag.5": "你照看他们，他们也在悄悄照看你。", "tag.6": "慢一点，他们会等你。", "app.title": "照顾你 · Care for You"});

@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="corner cl" id="cornerTime"></div><div class="cornerbox"><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerMoney"></button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerPeople">👥</button><button class="corner" id="cornerShare">🖼</button><button class="corner" id="cornerGear">⚙</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -434,33 +434,4 @@
     U.renderRoom(true);
   };
 
-  /* ---------- 浮出小窗（文档画中画） ---------- */
-  U.floating = false;
-  U.floatToggle = async function () {
-    if (U.pip) { U.pip.close(); return; }
-    if (!('documentPictureInPicture' in window)) { alert(t('float.unsupported')); return; }
-    const w = await documentPictureInPicture.requestWindow({ width: 380, height: 340 });
-    U.moveRoomTo(w.document, w);
-    U.pip = w;
-    w.addEventListener('pagehide', () => { U.pip = null; U.moveRoomBack(); });
-  };
-  /* 把房间搬进另一个文档。样式用同样的 link 引用，主题属性一起带过去。 */
-  U.moveRoomTo = function (d, w) {
-    for (const l of document.querySelectorAll('link[rel=stylesheet]')) { const n = d.createElement('link'); n.rel = 'stylesheet'; n.href = l.href; d.head.appendChild(n); }
-    d.body.className = 'pip';
-    U.pipDoc = d; U.syncTheme && U.syncTheme();
-    d.body.appendChild(U.room);
-    U.prevView = U.viewPlace; U.viewPlace = 'family';
-    U.floating = true; U.closeRing();
-    U.onFloatChange && U.onFloatChange();
-    setTimeout(() => U.renderRoom(true), 50);
-  };
-  U.moveRoomBack = function () {
-    U.pipDoc = null;
-    document.getElementById('roomSlot').appendChild(U.room);
-    if (U.prevView) { U.viewPlace = U.prevView; U.prevView = null; }
-    U.floating = false; U.closeRing();
-    U.onFloatChange && U.onFloatChange();
-    U.renderRoom(true);
-  };
 })(globalThis.CY = globalThis.CY || {});

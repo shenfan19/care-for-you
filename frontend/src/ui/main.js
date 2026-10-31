@@ -15,12 +15,11 @@
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     CY.i18n.applyDom(document);
     document.title = t('app.title');
-    $('footTxt').textContent = t('foot.text');
+    U.renderBrand();
     U.applyTheme();
     if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => U.applyTheme());
     U.buildRoom($('room'));
     G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); });
-    U.onFloatChange = () => U.renderBar();
     U.renderBar(); U.renderFeed(true); U.renderSaid(true); U.renderClock(); U.renderControls(); U.renderLife();
     let lastFeed = 0;
     G.on(() => {
@@ -30,15 +29,9 @@
       U.renderLife();
       if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); U.renderSaid(false); }
     });
-    $('peopleBtn').onclick = () => U.peopleDialog();
     G.backendError = () => U.flash(t('backend.error'));
-    $('floatBtn').onclick = () => U.floatToggle();
-    $('unfloatBtn').onclick = () => U.floatToggle();
     CY.world.enforce = true;
-    $('shareBtn').onclick = () => U.shareDialog();
-    $('gearBtn').onclick = () => U.settingsDialog();
     $('aboutBtn').onclick = () => U.aboutDialog();
-    $('footAbout').onclick = e => { e.preventDefault(); U.aboutDialog(); };
     document.addEventListener('visibilitychange', () => { if (document.hidden) G.save(true); });
     window.addEventListener('pagehide', () => G.save(true));
     if (!G.people.length && q.get('onboard') !== '0') U.onboard();

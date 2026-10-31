@@ -207,13 +207,23 @@
     const p = G.get(pid); if (!p) return;
     const o = p.person;
     if (typeof patch.name === 'string' && patch.name.trim() && patch.name.trim() !== o.name) { o.name = patch.name.trim(); delete o.name_auto; }
+    if (patch.arch && patch.arch !== (o.archetype || o.card)) {
+      const a = CY.content.archOf(patch.arch);
+      if (a && a.species === o.species) {
+        o.archetype = patch.arch; o.card = patch.arch; o.role = CY.tOr('arch.' + patch.arch, a.role);
+        if (o.name_auto) o.name_auto = patch.arch;
+        if (G.isHuman(p) && a.voice && !CHILDLIKE.includes(o.voice)) o.voice = a.voice;
+        o.lines = JSON.parse(JSON.stringify((a.dialogue && a.dialogue.lines) || {})); if (Object.keys(o.lines).length) o.lines_lang = 'zh-CN';
+        if (a.help) { o.help = { efficiency: a.help.efficiency, interval: a.help.interval, role: a.help.role }; }
+      }
+    }
     if (patch.pronoun) o.pronoun = patch.pronoun;
     if (patch.look) o.appearance = Object.assign({}, o.appearance, patch.look);
     if (Array.isArray(patch.traits)) o.traits = patch.traits.slice(0, 2);
     if (typeof patch.helper === 'boolean') o.helper = patch.helper;
     if (Array.isArray(patch.conditions)) o.conditions = patch.conditions.slice();
     if (G.isHuman(p) && typeof patch.age === 'number') {
-      o.age = patch.age;
+      o.age = Math.round(patch.age);
       if (CHILDLIKE.includes(o.voice)) o.voice = CY.content.STAGE_VOICE[CY.content.stageOf(o.age)] || o.voice;
       p.voice = G.tpl.voices[o.voice] || p.voice;
     }

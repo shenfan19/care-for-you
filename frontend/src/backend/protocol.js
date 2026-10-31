@@ -51,9 +51,8 @@
     return out;
   };
   P.world = () => {
-    const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {}, d = new Date();
-    const pad = n => String(n).padStart(2, '0');
-    const date = { month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((d.getTime() - d.getTimezoneOffset() * 60000) / 86400000) };
+    const G = CY.game, ini = CY.ini, c = G.clock(), pl = CY.world ? CY.world.player() : {};
+    const gd = G.gameDate(), date = { month: gd.month, day: gd.day, weekday: gd.weekday, iso: gd.iso, day_index: gd.day_index };
     return { v: P.V, date, working: G.isWorkTime(), at_desk: !CY.world || CY.world.atDesk(), days_together: Math.floor(G.world.game_minutes / 1440), game_minutes: Math.floor(G.world.game_minutes), day_minutes: G.dayMinutes(), hour: +(G.dayMinutes() / 60).toFixed(2), night: c.night, mode: G.timeMode(),
       player: { place: pl.place, room: pl.room }, protagonist: G.protagonist() ? G.protagonist().id : null, params: {} };
   };

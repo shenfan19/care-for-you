@@ -6,7 +6,7 @@
   const esc = U.esc;
 
   const FIELDS = ['time', 'care', 'talk', 'back', 'names'];
-  const choice = { time: true, care: true, talk: true, back: false, names: false };
+  const choice = { time: true, care: true, talk: true, back: true, names: true };
 
   /* 从记录里数出来，不另存 */
   U.shareStats = function () {

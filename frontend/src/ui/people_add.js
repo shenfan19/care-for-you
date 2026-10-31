@@ -19,11 +19,11 @@
     const GROUPS = ['family', 'animal', 'plant'];
     function render() {
       const arch = C.archOf(st.arch), human = arch.species === 'human';
-      const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g && !a.hidden).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
+      const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g && !a.hidden && (!editP || a.species === arch0.species)).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
       const look = st.look, stage = C.stageOf(st.age);
       const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look, st.age)}</div><div>
-        <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa" ${editP ? 'disabled' : ''}>${archSel}</select></div>
-        ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="0.25" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
+        <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa">${archSel}</select></div>
+        ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="1" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
           ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
           <div class="row">${esc(t('add.glasses'))} ${sel('glasses', O.glasses, O.glasses.map(g => t('glasses.' + g)), look.glasses === true ? 'round' : look.glasses || 'none')}
@@ -43,7 +43,7 @@
       };
       dlg.querySelectorAll('[data-tr]').forEach(b => b.onclick = () => { const k = b.dataset.tr, i = st.traits.indexOf(k); if (i >= 0) st.traits.splice(i, 1); else if (st.traits.length < 2) st.traits.push(k); render(); });
       const ag = dlg.querySelector('#aage');
-      if (ag) ag.onchange = () => { const v = parseFloat(ag.value); st.age = isNaN(v) ? 35 : Math.min(110, Math.max(0, v)); render(); };
+      if (ag) ag.onchange = () => { const v = parseFloat(ag.value); st.age = isNaN(v) ? 35 : Math.min(110, Math.max(0, Math.round(v))); render(); };
       dlg.querySelectorAll('.sw').forEach(s => s.onclick = () => { st.look[s.dataset.k] = s.dataset.k === 'skin' ? +s.dataset.v : s.dataset.v; render(); });
       dlg.querySelectorAll('select[data-s]').forEach(s => s.onchange = () => {
         const k = s.dataset.s;
@@ -58,7 +58,7 @@
           const first = (editP.person.conditions || [])[0] || '';
           let conds = (editP.person.conditions || []).slice();
           if (st.cond !== first) { conds = conds.filter(c => c !== first); if (st.cond) conds.unshift(st.cond); }
-          await G.updatePerson(editP.id, { name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, helper: st.helper });
+          await G.updatePerson(editP.id, { arch: st.arch !== arch0.id ? st.arch : undefined, name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, helper: st.helper });
           U.closeDialog(); U.afterPeopleChange(); done && done(true);
           return;
         }
@@ -109,11 +109,14 @@
   /* 家里没有爸爸妈妈也没有指定主角的开局，补一个在家办公的成年人当主角，男女随机。没有他，就没有人坐在书桌前，也就没有工作和打断 */
   U.withWorker = function (members) {
     if (members.some(m => m.lead || ['dad', 'mom', 'wife', 'husband'].includes(m.arch))) return members;
-    return [{ arch: rnd(['man25', 'woman25']), name: t('preset.name.self'), age: 26 + Math.floor(Math.random() * 15), lead: true }].concat(members);
+    const kids = members.some(m => { const a = C.archOf(m.arch); return a && a.species === 'human' && ['infant', 'toddler', 'child', 'teen'].includes(C.stageOf(a.age)); });
+    const hasPeople = members.some(m => { const a = C.archOf(m.arch); return a && a.species === 'human'; });
+    const pool = kids ? ['dad', 'mom'] : hasPeople ? ['husband', 'wife'] : ['man25', 'woman25'], arch = rnd(pool);
+    return [{ arch, name: CY.tOr('preset.name.' + arch, U.archName(arch)), age: arch === 'dad' || arch === 'mom' ? 32 + Math.floor(Math.random() * 10) : 26 + Math.floor(Math.random() * 15), lead: true, name_key: arch }].concat(members);
   };
   U.createMembers = async function (members) {
     let lead = null;
-    for (const m of members) { const id = await G.createPerson({ arch: m.arch, name: m.name, name_auto: m.lead ? 'self' : m.arch, roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
+    for (const m of members) { const id = await G.createPerson({ arch: m.arch, name: m.name, name_auto: m.name_key || (m.lead ? 'self' : m.arch), roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
     await G.load();
     if (lead) G.setProtagonist(lead);
   };

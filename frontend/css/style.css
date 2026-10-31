@@ -291,7 +291,10 @@ header { align-items:center; }
 .tile b { font-size:14px; } .tile .mute { font-size:12px; line-height:1.35; }
 @media (max-width:480px) { .tiles { grid-template-columns:1fr; } }
 .corner { position:absolute; top:8px; z-index:9; padding:3px 10px; border-radius:12px; font-size:13px; background:color-mix(in srgb, var(--card) 82%, transparent); border:1px solid var(--line); font-variant-numeric:tabular-nums; line-height:1.4; }
-.corner.cl { top:auto; bottom:10px; right:10px; cursor:pointer; user-select:none; } .cornerbox { position:absolute; top:8px; right:10px; z-index:9; display:flex; gap:6px; }
+#cornerTime { cursor:pointer; user-select:none; } .cornerbox { position:absolute; top:8px; right:10px; z-index:9; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
+@media (max-width:640px) { .cornerbox { top:auto; bottom:10px; } }
+header .tagline { flex:1; margin:0 0 0 18px; color:var(--mute); font-size:14px; font-style:italic; align-self:center; min-width:0; }
+@media (max-width:760px) { header .tagline { display:none; } }
 .cornerbox .corner { position:static; cursor:pointer; } #cornerMusic.off { opacity:.55; }
 .money.big { font-size:22px; font-weight:600; }
 /* 豆子造型：整张图的呼吸换成豆子本身，走路时脚和手交替，照顾时手抬起 */
