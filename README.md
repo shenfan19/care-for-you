@@ -1,0 +1,88 @@
+# Care for You
+
+Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no failing, no download, no account.
+
+中文说明见 [README_care_you_ai.md](README_care_you_ai.md)。
+
+![Care for You](media_ai/screenshot_home.png)
+
+## What it is
+
+Care for You is a small game that runs in your browser. A household of people, pets and plants lives in an isometric house. While you work, they call out to you at random: a glass of water, a word, some company, a pill to remember. You stop, look after them, and go back to what you were doing.
+
+It is meant to sit in a tab beside your work. Nothing is urgent, nothing is punished, and nobody keeps score.
+
+## Features
+
+- A household you build: more than 40 kinds of people (babies to grandparents, relatives, friends, a nanny), 16 kinds of animals and 6 kinds of plants, with 14 health conditions and 20 personality traits that change how they behave and talk.
+- Every character is a small agent. They move between rooms on a daily routine, eat at mealtimes, sleep at night, and help each other. Needs push them off their routine.
+- Care is done by pressing and holding an action. There are no countdown penalties and no failure states.
+- A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a nanny you can hire with the money you earn at the desk.
+- Eight interface languages, with dialogue in each: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch.
+- Everything is data. Characters, rules, probabilities and lines are plain YAML files you can open and edit. Saves are plain files too.
+
+## Run it
+
+Open `frontend/index.html` in a browser. There is no build step and no server to start. Desktop Chrome or Edge is recommended, because choosing a data folder needs the File System Access API.
+
+URL options for trying it out:
+
+- `?onboard=0` skips the first-run screen.
+- `?freq=test` makes interruptions very frequent. It is not saved.
+- `?lang=en` forces a language.
+
+Python 3 is only needed if you want to run one of the optional backends below.
+
+## How to play
+
+- Click a person to see what they want, then press and hold an action until the ring fills.
+- Click the time at the top right of the game window to change the speed of the in-game clock. Settings and sharing are at the top right of the page.
+- The people button opens the household: add, edit, archive or remove characters.
+- You play one adult in the household, and you can switch to anyone grown-up from the people menu. Couples earn money at the desk during work hours, or you do if there is no couple.
+
+## Data and privacy
+
+Everything is stored on your own device as plain files. There is no account, no server, no analytics and no cookies. By default the page sends your game data nowhere. Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Saves can be downloaded, imported and deleted from the settings.
+
+## Data-driven by design
+
+The game does not hard-code who speaks or what happens. It sends a snapshot of each character's state to a backend and carries out the instructions that come back. Three ways of driving it are planned:
+
+1. Probability tables. Done, and the default. The built-in backend runs in the browser and reads plain YAML rules.
+2. Numerical integration. Unfinished. `backend_lm_ai` is an experimental Python backend that advances needs, mood and frailty with continuous models. It is not wired into the interface and is not validated.
+3. AI connection. Unfinished and off by default. It lets an external AI service rewrite lines. Turning it on sends a small amount of context to the service you choose.
+
+All backends use the same JSON interface, described in [README_backend_protocol_ai.md](README_backend_protocol_ai.md). `backend_basic_ai` is a minimal example you can replace with your own model. A remote backend that fails falls back to the built-in one.
+
+## Tests
+
+```
+cd frontend
+node tests/logic_test.js
+node tests/sim_eval.js 3 120 family
+cd ..
+python backend_lm_ai/test_lm_backend.py
+python frontend/tests/backend_compare.py 1 3
+```
+
+`logic_test.js` covers loading, characters, rules, time, dialogue, saves and language completeness. `sim_eval.js` runs a household for a few virtual days with a simple attention strategy and checks invariants. The interface itself has no automated tests yet.
+
+## Project layout
+
+- `frontend`: the game. `src/core` is the game itself, `src/world` the rooms and drawing, `src/backend` the protocol and built-in backend, `src/data` the starting data, `src/ui` the interface, `locales` the language packs, `tests` the tests.
+- `backend_basic_ai`: a minimal remote backend.
+- `backend_lm_ai`: the experimental numerical backend.
+- `media_ai`: screenshots and action previews.
+- `android`: reserved, on hold.
+
+## Status
+
+Early version, currently 0.49. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
+
+## Not a health product
+
+This is a game. It is not a medical, psychological or care product and gives no diagnosis, treatment or medication advice. Conditions in the game are simple scenarios, not medical judgments. If you are having a hard time, please reach out to someone you trust or to a local professional service.
+
+## License and credits
+
+Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen. Characters, animations and text are original. YAML parsing uses [js-yaml](https://github.com/nodeca/js-yaml) (MIT). AI-assisted tools were used during development.

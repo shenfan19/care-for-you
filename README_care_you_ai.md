@@ -1,5 +1,7 @@
 # Care for You
 
+English: [README.md](README.md)
+
 手停一停，照看一下家里人。工作的时候，他们会不定时叫你一声。没有分数，也没有惩罚。
 
 Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.
@@ -10,9 +12,9 @@ Pause for a moment and look after the people at home. They call for you now and 
 
 ![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 
-- 时间只有一条，流速可调，默认 24 倍，现实一小时过游戏里一整天，四档 1、6、24、60，点房间右下角的时间切换；游戏里几点在设置的游戏时钟里调，新档开局对齐系统时间；离开期间世界暂停，回来接着走；动作只有长按，没有倒计时压力，没有惩罚
+- 时间只有一条，流速可调，默认 24 倍，现实一小时过游戏里一整天，四档 1、6、24、60，点游戏窗体右上角的时间切换；游戏里几点在设置的游戏时钟里调，新档开局对齐系统时间；离开期间世界暂停，回来接着走；动作只有长按，没有倒计时压力，没有惩罚
 - 每个角色是一个小行动者：按自己的喜好和当下的需求在家里慢慢换房间，饿了去厨房，困了去卧室，饭点一起吃饭，大人会走过去照顾最需要的人，同一个房间的人会聊天、玩、逗宠物。鼠标悬停或点选一个人，他就停住
-- 你默认是一个看不见的成年人，也可以选一个角色做主角，老人主角手慢，孩子也可以照顾别人，主角也能照顾自己
+- 你扮演家里的一个成年人，可以在角色菜单里换成别的大人或老人，老人主角手慢，主角也能照顾自己；夫妻白天在书桌前工作挣钱，没有夫妻时由你自己挣
 - 每类典型角色是一张明文 YAML 角色卡：年龄、外观、声线、健康度、自理、需求速率、爱去的房间、主动帮忙、对话。典型老人，1 到 4 岁孩子，12 岁孩子，25 岁男女，妻子，婆婆，全部原型都有卡，加一张卡就多一种角色
 - 年龄是数字，婴儿幼儿儿童少年成人老人各不相同，婴儿没人管会一直哭，老人和孩子能自己动手做一部分，做了就记下来
 - 夜里会睡觉，睡着不打扰；每个角色有状态面板和最多两个性格特征
@@ -34,14 +36,14 @@ Pause for a moment and look after the people at home. They call for you now and 
 
 ## 运行
 
-双击前端文件夹里的 index.html 就能玩，不需要启动任何服务。建议用桌面版 Chrome 或 Edge，选择数据文件夹和浮动小窗只有这两个浏览器支持。
+双击前端文件夹里的 index.html 就能玩，不需要启动任何服务。建议用桌面版 Chrome 或 Edge，选择数据文件夹只有这两个浏览器支持。
 只有“下载本地运行包”需要从网址打开页面，因为它要读取程序文件。
 基础后端和 LM 后端是可选的独立进程，用 python 直接运行各自文件夹里的 server.py，见各自的说明。
 
 ## 试玩技巧
 
 - 地址后加 ?freq=test 会让打断变得很频繁，仅用于试玩，不会写入设置。
-- 齿轮里或 settings.ini 里可以改打断频率、倒计时、工作时段等，改了立刻生效。
+- 齿轮里或 settings.ini 里可以改倒计时、工作时段、音乐和音效音量等，改了立刻生效。
 - 地址后加 ?onboard=0 可以跳过引导页。
 
 ## 测试与仿真
@@ -79,4 +81,4 @@ logic_test 覆盖载入、创建角色、角色卡、行动者走动、帮忙与
 
 ## 许可证与联系
 
-MIT，见 LICENSE。意见与问题：shenfan19@gmail.com，或在 GitHub 仓库提 issue。
+MIT，见 LICENSE。意见与问题请到 GitHub 仓库提 issue。作者 Fan Shen。

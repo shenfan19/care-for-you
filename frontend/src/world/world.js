@@ -28,7 +28,7 @@
     bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.8, .33]], player: [.18, .9] },
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
-    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.2, .88], seat: [[.52, .42], [.76, .46]] },
+    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .42], seat: [[.52, .42], [.76, .46]] },
     living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
@@ -214,7 +214,7 @@
     if (W.driven(lead) && W.player().place === place) { const pl = W.player(); out.push({ id: lead.id, place, room: pl.room, kind: 'stand', gx: pl.gx, gy: pl.gy }); }
     for (const room in byRoom) {
       byRoom[room].sort((a, b) => (a.p.id < b.p.id ? -1 : 1));
-      let ns = 0, nb = 0, nw = 0;
+      let ns = 0, nb = 0, nw = (room === 'study' && W.driven(lead) && W.player().place === place && W.player().room === 'study') ? 1 : 0;   /* 主角坐第一张椅子，其他人从第二张起 */
       for (const { p, mode } of byRoom[room]) {
         const kind = mode === 'cradle' ? 'cradle' : mode === 'sleep' ? 'sleep' : mode === 'mat' ? 'mat' : mode === 'work' ? 'seat' : 'stand';
         const i = kind === 'stand' ? ns++ : kind === 'sleep' ? ((W.bedOf(p) || { i: nb++ }).i) : kind === 'seat' ? nw++ : 0;
