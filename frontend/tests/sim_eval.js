@@ -4,7 +4,7 @@
    环境变量：
      CARE_BACKEND_URL  设了就把后端换成这个地址的远程后端（设置 backend_provider=http），并统计每次请求的耗时和字节数
      CARE_SEED         随机种子，同一个种子下不同后端的对比才公平
-     CARE_SPEED        时间倍速，默认 1
+     CARE_SPEED        时间倍速，real 或 1、6、24、60，默认 real
      CARE_SIM_JSON     设为 1 时最后多输出一行 JSON 汇总，给 backend_compare.py 读 */
 const { ctx, CY, G } = require('./harness');
 const days = +process.argv[2] || 3, look = +process.argv[3] || 90, kind = process.argv[4] || 'family', leadName = process.argv[5] || '';
@@ -45,9 +45,9 @@ const FAMILIES = {
   const Real = Date;
   ctx.Date = class extends Real { static now() { return fake; } constructor(...a) { if (a.length) super(...a); else super(fake); } };
   /* 倍速：默认 1，保持以前的对比基线；CARE_SPEED 设成别的倍数，昼夜改用游戏时钟，days 仍是现实里的天数 */
-  G.cfg.time.speed = process.env.CARE_SPEED || '1';
-  G.cfg.time.daynight = G.speed() > 1 ? 'game' : 'system';
-  if (G.speed() > 1) G.alignClock();
+  G.cfg.time.speed = process.env.CARE_SPEED || 'real';
+  G.cfg.time.daynight = G.isRealTime() ? 'system' : 'game';
+  if (!G.isRealTime()) G.alignClock();
   G.lastTick = fake; G.nextAt = fake + 4000;
 
   const stat = { crowdSum: 0, crowdN: 0, ticks: 0, urgentTicks: 0, sleepSkip: 0, cryTicks: 0, awakePersonTicks: 0, reqs: 0, asks: 0, acts: 0, roomMoves: 0, hospital: 0, assists: 0, falls: 0 };

@@ -46,9 +46,9 @@
     const root = U.room; if (!root) return;
     const tm = root.querySelector('#cornerTime'), mn = root.querySelector('#cornerMoney');
     if (!tm || !mn) return;
-    const c = G.clock(), sp = G.speed();
-    tm.textContent = c.hh + ':' + c.mm + ' · ' + (sp > 1 ? '×' + sp : new Date().toLocaleDateString(I.lang, { weekday: 'short' }));
-    tm.title = t('corner.speed_tip', { speed: sp });
+    const c = G.clock();
+    tm.textContent = c.hh + ':' + c.mm + ' · ' + (G.isRealTime() ? new Date().toLocaleDateString(I.lang, { weekday: 'short' }) : G.speedLabel());
+    tm.title = t('corner.speed_tip', { speed: G.speedLabel() });
     tm.style.cursor = 'pointer';
     tm.onclick = async () => { await G.setSpeed(G.nextSpeed()); U.renderClock(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');

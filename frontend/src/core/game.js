@@ -869,7 +869,7 @@
   };
   G.start = function () {
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
-    if (G.speed() > 1 && typeof G.world.clock_shift !== 'number') G.alignClock();
+    if (!G.isRealTime() && typeof G.world.clock_shift !== 'number') G.alignClock();
     const last = Date.parse(G.world.last_seen);
     if (last) {
       const cap = 12 * 60;      /* 离开期间最多推算十二个游戏小时，需求也封顶在七成，不会等回来一团糟 */
