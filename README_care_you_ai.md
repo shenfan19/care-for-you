@@ -83,15 +83,10 @@ MIT，见 LICENSE。意见与问题：shenfan19@gmail.com，或在 GitHub 仓库
 
 ## 同类的小游戏
 
-喜欢这类安静的照看游戏的话，下面这些也值得去玩。链接只是方便找到，各自的内容与授权以原页面为准。
+喜欢这类安静温和的小游戏的话，下面这些也值得去玩。链接只是方便找到，各自的内容与授权以原页面为准。
 
-- [Mama](https://gg.deals/game/mama-1/)：叙事冒险，女儿照顾患痴呆症的母亲。
-- [The Cost of Care](https://octopun.itch.io/the-cost-of-care)：第一人称，照顾开始痴呆的母亲，同时做家务。
-- [She Was 98](https://playpile.gg/games/she-was-98)：和一位老太太相处的一个安静的下午。
-- [Granny's Home](https://robto.itch.io/grannys-home)：帮奶奶在搬家前整理东西。
-- [Forgotten, Not Lost](https://store.steampowered.com/app/457490)：作者照顾痴呆亲人的亲身经历改成的短篇视觉小说。
-- [Spiritfarer](https://en.wikipedia.org/wiki/Spiritfarer)：在船上照顾灵魂，温和的经营加告别的故事。
+- [Granny's Home](https://robto.itch.io/grannys-home)：温馨的整理游戏，帮奶奶在搬家前决定留下什么。
 - [Neko Atsume](https://en.wikipedia.org/wiki/Neko_Atsume)：布置院子，等猫来做客。
 - [Weyrdlets](https://weyrdworks.itch.io/weyrdlets)：桌面宠物，陪你工作。
 
-这份名单来自 2026 年 10 月的一次英文检索，不完整。欢迎补充。
+名单会补充，只放核对过内容温和的。

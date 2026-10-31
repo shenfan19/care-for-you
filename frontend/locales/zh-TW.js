@@ -211,7 +211,7 @@ CY.i18n.register("zh-TW", {
  "about.tab_privacy": "隱私與免責",
  "about.tab_credits": "致謝與許可",
  "about.tab_version": "版本",
- "about.p1": "手停一停，照看一下家裡人。你在工作，他們會不定時來叫你一聲。沒有分數，也沒有懲罰。", "about.like_h": "同類的小遊戲", "about.like_p": "喜歡這類安靜的照看遊戲的話，下面這些也值得去玩。",
+ "about.p1": "手停一停，照看一下家裡人。你在工作，他們會不定時來叫你一聲。沒有分數，也沒有懲罰。", "about.like_h": "同類的小遊戲", "about.like_p": "喜歡這類安靜溫和的小遊戲的話，下面這些也值得去玩。",
  "about.p2": "這是一個個人專案，作者是一個人，與任何學校、單位或機構無關，也不代表它們的立場。",
  "about.p3": "遊戲裡的角色都是虛構的。遊戲不提供也不鼓勵複製已故的人。你記起的話，只是你自己對一類人的印象。",
  "about.p4": "目前是早期版本，會有不完善的地方。歡迎提意見：shenfan19@gmail.com，或在 github.com/shenfan19/care-for-you 提 issue。",

@@ -134,8 +134,7 @@
 
   /* ---------- 关于：个人项目的说明、隐私与免责、致谢、版本 ---------- */
   /* 同类的安静小游戏，只放名字和链接，点开才会联网 */
-  const LIKES = [['Mama', 'https://gg.deals/game/mama-1/'], ['The Cost of Care', 'https://octopun.itch.io/the-cost-of-care'], ['She Was 98', 'https://playpile.gg/games/she-was-98'], ["Granny's Home", 'https://robto.itch.io/grannys-home'],
-    ['Forgotten, Not Lost', 'https://store.steampowered.com/app/457490'], ['Spiritfarer', 'https://en.wikipedia.org/wiki/Spiritfarer'], ['Neko Atsume', 'https://en.wikipedia.org/wiki/Neko_Atsume'], ['Weyrdlets', 'https://weyrdworks.itch.io/weyrdlets']];
+  const LIKES = [["Granny's Home", 'https://robto.itch.io/grannys-home'], ['Neko Atsume', 'https://en.wikipedia.org/wiki/Neko_Atsume'], ['Weyrdlets', 'https://weyrdworks.itch.io/weyrdlets']];
   U.aboutDialog = function (tab) {
     tab = tab || 'about';
     const M = CY.meta, tabs = ['about', 'privacy', 'credits', 'version'];

@@ -73,7 +73,7 @@ CY.i18n.register('en', {
   'gate.fail': 'Cannot open storage', 'gate.perm': 'Last time you chose the data folder {name}. The browser needs you to confirm access again.', 'gate.continue': 'Continue with this folder', 'gate.browser': 'Use browser storage instead',
 
   'about.title': 'About Care for You', 'about.tab_about': 'About', 'about.tab_privacy': 'Privacy and disclaimer', 'about.tab_credits': 'Credits and license', 'about.tab_version': 'Version',
-  'about.p1': 'Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.', 'about.like_h': 'Similar games', 'about.like_p': 'If you like quiet caregiving games, these are worth a visit too.',
+  'about.p1': 'Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.', 'about.like_h': 'Similar games', 'about.like_p': 'If you like quiet, gentle games like this, these are worth a visit too.',
   'about.p2': 'This is a personal project by one person. It is not affiliated with any school, employer or organization and does not represent their views.',
   'about.p3': 'All characters are fictional. The game does not offer or encourage recreating someone who has passed away. A line you remember is only your own impression of a kind of person.',
   'about.p4': 'This is an early version and will be rough in places. Feedback is welcome: shenfan19@gmail.com, or open an issue at github.com/shenfan19/care-for-you.',

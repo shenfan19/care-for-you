@@ -73,7 +73,7 @@ CY.i18n.register('zh-CN', {
   'gate.fail': '打不开存储', 'gate.perm': '上次你选了数据文件夹 {name}。浏览器需要你再确认一次访问权限。', 'gate.continue': '继续使用这个文件夹', 'gate.browser': '改用浏览器内部存储',
 
   'about.title': '关于 Care for You', 'about.tab_about': '关于', 'about.tab_privacy': '隐私与免责', 'about.tab_credits': '致谢与许可', 'about.tab_version': '版本',
-  'about.p1': '手停一停，照看一下家里人。你在工作，他们会不定时来叫你一声。没有分数，也没有惩罚。', 'about.like_h': '同类的小游戏', 'about.like_p': '喜欢这类安静的照看游戏的话，下面这些也值得去玩。',
+  'about.p1': '手停一停，照看一下家里人。你在工作，他们会不定时来叫你一声。没有分数，也没有惩罚。', 'about.like_h': '同类的小游戏', 'about.like_p': '喜欢这类安静温和的小游戏的话，下面这些也值得去玩。',
   'about.p2': '这是一个个人项目，作者是一个人，与任何学校、单位或机构无关，也不代表它们的立场。',
   'about.p3': '游戏里的角色都是虚构的。游戏不提供也不鼓励复制已故的人。你记起的话，只是你自己对一类人的印象。',
   'about.p4': '目前是早期版本，会有不完善的地方。欢迎提意见：shenfan19@gmail.com，或在 github.com/shenfan19/care-for-you 提 issue。',
