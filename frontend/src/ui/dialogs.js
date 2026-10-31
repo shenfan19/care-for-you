@@ -136,12 +136,13 @@
   /* ---------- 关于：个人项目的说明、隐私与免责、致谢、版本 ---------- */
   U.aboutDialog = function (tab) {
     tab = tab || 'about';
-    const M = CY.meta, tabs = ['about', 'privacy', 'credits', 'version'];
+    const M = CY.meta, tabs = ['about', 'data', 'privacy', 'credits', 'version'];
     const para = keys => keys.map(k => `<p>${esc(t(k))}</p>`).join('');
     const body = {
       about: para(['about.p1', 'about.how', 'about.p3', 'about.p4', 'about.p2']),
-      privacy: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}<h3>${esc(t('priv.h2'))}</h3>${para(['priv.p4', 'priv.p5'])}
-        <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}<div class="mute">${esc(t('priv.note'))}</div>`,
+      data: `<p>${esc(t('data.intro'))}</p><h3>${esc(t('data.h1'))}</h3><p>${esc(t('data.p1'))}</p><h3>${esc(t('data.h2'))}</h3><p>${esc(t('data.p2'))}</p><h3>${esc(t('data.h3'))}</h3><p>${esc(t('data.p3'))}</p>`,
+      privacy: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}
+        <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}`,
       credits: para(['cred.p1', 'cred.p2', 'cred.p3']),
       version: `<p>${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</p><p>${esc(t('ver.lang', { l: I.names[I.lang] || I.lang }))}</p><p class="mute">${esc(t('ver.account'))}</p>`,
     };
