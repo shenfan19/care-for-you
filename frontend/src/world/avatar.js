@@ -400,7 +400,8 @@ function beanDraw(o, V) {
   CY.avatar = (p, dir, pose) => {
     if (DRAW[p.species.id]) return DRAW[p.species.id](p);
     const G = CY.game, asleep = !!(G && G.isSleeping && p.id && G.isSleeping(p));
-    return sprite(p, dir || '', asleep ? 'sleep' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand') || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
+    const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
+    return sprite(p, dir || '', asleep ? 'sleep' : wc ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand') || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
   };
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {

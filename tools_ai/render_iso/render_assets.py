@@ -64,13 +64,13 @@ def main(kind):
         if kind == 'characters':
             os.makedirs(os.path.join(OUT, 'char'), exist_ok=True)
             names = ['character-female-' + c for c in 'abcdef'] + ['character-male-' + c for c in 'abcdef']
-            POSES = {'stand': ('idle', 0.0), 'walk': ('walk', 0.12), 'sit': ('sit', 5.0), 'sleep': ('die', 5.0)}
+            POSES = {'stand': ('idle', 0.0), 'walk': ('walk', 0.12), 'sit': ('sit', 5.0), 'sleep': ('die', 5.0), 'chair': ('wheelchair-sit', 0.5)}
             for name in names:
                 key = name.replace('character-', '')
                 m = manifest.setdefault('char', {}).setdefault(key, {})
                 for pose, (clip, t) in POSES.items():
                     for rot in range(4):
-                        r = pg.evaluate('o => window.renderModel(o)', {'url': '/char/%s.glb' % name, 'rot': rot, 'scale': CHAR_SCALE, 'clip': clip, 't': t, 'mask': True})
+                        r = pg.evaluate('o => window.renderModel(o)', {'url': '/char/%s.glb' % name, 'rot': rot, 'scale': CHAR_SCALE, 'clip': clip, 't': t, 'mask': True, 'extra': ['/char/wheelchair.glb'] if pose == 'chair' else []})
                         base = os.path.join(OUT, 'char', '%s_%s_%d' % (key, pose, rot))
                         open(base + '.png', 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
                         open(base + '_m.png', 'wb').write(base64.b64decode(r['maskPng'].split(',', 1)[1]))

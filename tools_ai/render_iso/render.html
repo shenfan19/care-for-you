@@ -43,6 +43,7 @@ window.renderModel = async (opts) => {
     const clip = g.animations.find(a => a.name === opts.clip);
     if (clip) { const mixer = new THREE.AnimationMixer(root), act = mixer.clipAction(clip); act.setLoop(THREE.LoopOnce); act.clampWhenFinished = true; act.play(); mixer.setTime(opts.t || 0); window.__dur = clip.duration; }
   }
+  for (const u of opts.extra || []) { const eg = await load(u), er = SkeletonUtils.clone(eg.scene); er.scale.setScalar(opts.scale || 1); er.rotation.y = (opts.rot || 0) * Math.PI / 2; holder.add(er); }
   holder.updateMatrixWorld(true);
   renderer.render(scene, cam);
   const b = readBox();
