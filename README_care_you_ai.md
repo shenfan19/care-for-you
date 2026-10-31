@@ -1,10 +1,12 @@
 # Care for You
 
-一个需要你照看的人，不定时出现在你的桌面上，打断你的工作。你以为是你在照顾他们，其实他们也一直在照顾你。没有分数。
+手停一停，照看一下家里人。工作的时候，他们会不定时叫你一声。没有分数，也没有惩罚。
+
+Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.
 
 ## 当前状态
 
-原型 0.41，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
+原型 0.42，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
 
 ![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 
@@ -78,3 +80,18 @@ logic_test 覆盖载入、创建角色、角色卡、行动者走动、帮忙与
 ## 许可证与联系
 
 MIT，见 LICENSE。意见与问题：shenfan19@gmail.com，或在 GitHub 仓库提 issue。
+
+## 同类的小游戏
+
+喜欢这类安静的照看游戏的话，下面这些也值得去玩。链接只是方便找到，各自的内容与授权以原页面为准。
+
+- [Mama](https://gg.deals/game/mama-1/)：叙事冒险，女儿照顾患痴呆症的母亲。
+- [The Cost of Care](https://octopun.itch.io/the-cost-of-care)：第一人称，照顾开始痴呆的母亲，同时做家务。
+- [She Was 98](https://playpile.gg/games/she-was-98)：和一位老太太相处的一个安静的下午。
+- [Granny's Home](https://robto.itch.io/grannys-home)：帮奶奶在搬家前整理东西。
+- [Forgotten, Not Lost](https://store.steampowered.com/app/457490)：作者照顾痴呆亲人的亲身经历改成的短篇视觉小说。
+- [Spiritfarer](https://en.wikipedia.org/wiki/Spiritfarer)：在船上照顾灵魂，温和的经营加告别的故事。
+- [Neko Atsume](https://en.wikipedia.org/wiki/Neko_Atsume)：布置院子，等猫来做客。
+- [Weyrdlets](https://weyrdworks.itch.io/weyrdlets)：桌面宠物，陪你工作。
+
+这份名单来自 2026 年 10 月的一次英文检索，不完整。欢迎补充。

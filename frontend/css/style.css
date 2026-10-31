@@ -154,7 +154,7 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .warn { color:#c0453d; font-size:13px; margin:4px 0; } .ok { color:var(--ok); }
 .chips.inl { display:inline-flex; margin:0; }
 .foot { margin-top:36px; font-size:12px; text-align:center; }
-.aboutbody { max-height:56vh; overflow:auto; font-size:14px; } .aboutbody p { margin:0 0 10px; }
+.aboutbody { max-height:56vh; overflow:auto; font-size:14px; } .aboutbody p { margin:0 0 10px; } .aboutbody .likes { line-height:1.9; }
 .clock { font-variant-numeric:tabular-nums; }
 
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
