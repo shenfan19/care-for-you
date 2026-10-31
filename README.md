@@ -83,4 +83,4 @@ This is a game. It is not a medical, psychological or care product and gives no 
 
 ## License and credits
 
-Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen. Characters, animations and text are original. YAML parsing uses [js-yaml](https://github.com/nodeca/js-yaml) (MIT). AI-assisted tools were used during development.
+Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen. Furniture art is rendered from [Kenney's Furniture Kit](https://kenney.nl/assets/furniture-kit) (CC0); the rendering tool is in `tools_ai/render_iso`. Characters, animations and text are original. YAML parsing uses [js-yaml](https://github.com/nodeca/js-yaml) (MIT). AI-assisted tools were used during development.

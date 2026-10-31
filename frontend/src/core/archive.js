@@ -9,7 +9,7 @@
 
   /* 运行包里的文件，测试会核对它和 index.html 里的脚本一致 */
   A.APP_FILES = ['index.html', 'css/style.css', 'favicon.svg', 'manifest.webmanifest', 'vendor/js-yaml.min.js',
-    'src/core/meta.js', 'src/core/i18n.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js', 'src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/household.js', 'src/core/agents.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/local_plan.js', 'src/backend/http.js', 'src/backend/index.js', 'src/backend/api.js', 'src/world/avatar.js', 'src/world/world.js', 'src/world/iso.js', 'src/world/scenes.js', 'src/ui/ui_room.js', 'src/ui/header.js', 'src/ui/feed.js', 'src/ui/people_add.js', 'src/ui/people.js', 'src/ui/life.js', 'src/ui/dialogs.js', 'src/ui/share.js', 'src/ui/sound.js', 'src/ui/main.js',
+    'src/core/meta.js', 'src/core/i18n.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js', 'src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'src/data/seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/household.js', 'src/core/agents.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/local_plan.js', 'src/backend/http.js', 'src/backend/index.js', 'src/backend/api.js', 'src/world/avatar.js', 'src/world/world.js', 'assets/iso/manifest.js', 'src/world/iso.js', 'src/world/scenes.js', 'src/ui/ui_room.js', 'src/ui/header.js', 'src/ui/feed.js', 'src/ui/people_add.js', 'src/ui/people.js', 'src/ui/life.js', 'src/ui/dialogs.js', 'src/ui/share.js', 'src/ui/sound.js', 'src/ui/main.js',
     'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js'];
 
   const DATA_OK = /^(people\/[^/]+\/(person|state|story|sayings)\.yaml|people\/[^/]+\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|world\.yaml|README\.txt)$/;
@@ -43,7 +43,8 @@
   /* ---------- 运行包 ---------- */
   A.exportApp = async function (opts = {}) {
     const files = [], dir = `careforyou-app-${meta.version}/`;
-    for (const p of A.APP_FILES) {
+    const sprites = Object.keys(((CY.isoSprites || {}).furn) || {}).flatMap(n => [0, 1, 2, 3].map(r => `assets/iso/furn/${n}_${r}.png`));
+    for (const p of A.APP_FILES.concat(sprites)) {
       let r;
       try { r = await fetch(p); } catch (e) { throw new Error('fetch'); }
       if (!r.ok) throw new Error('fetch');

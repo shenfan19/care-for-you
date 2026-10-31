@@ -12,6 +12,7 @@
   const FLOOR = { bedroom: '#e8d2ae', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', desk: '#dbd7c9' };
   const WALL = { bedroom: '#f3e6d0', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
+  const SPR = () => (CY.isoSprites || {}).furn || {};
 
   function sky(hour) {
     if (hour >= 7 && hour < 17) return { c: '#bfe3f5', sun: true };
@@ -88,40 +89,53 @@
           const cx = x + w * 0.5; poly([pt(cx - 0.18, y, 36), pt(cx + 0.18, y, 36), pt(cx + 0.18, y, 62), pt(cx - 0.18, y, 62)], '#d9534f');
           poly([pt(cx - 0.45, y, 46), pt(cx + 0.45, y, 46), pt(cx + 0.45, y, 52), pt(cx - 0.45, y, 52)], '#d9534f');
         }
-        /* 家具，相对房间左上角 */
+        /* 家具：Kenney 的 CC0 模型渲染成斜视精灵。坐标是相对房间左上角的格子，精灵的包围盒中心放在这一点；rot 0 面朝 gy 增加（靠后墙），1 面朝 gx 增加（靠左墙），2 面朝 gy 减少，3 面朝 gx 减少；lift 是抬高的像素，桌面上的东西用 */
         const f = (a, b, c, d, e, col, z) => box(x + a, y + b, c, d, e, col, z);
         const fl = (a, b, c, d, col) => flat(x + a, y + b, c, d, col);
+        const q = [];
+        const spr = (nm, rot, a, b, lift = 0, key) => {
+          const m = SPR()[nm], e = m && m[rot]; if (!e) return;
+          const [px, py] = pt(x + a - e.cx, y + b - e.cz, 0).split(',').map(Number);
+          q.push({ k: key === undefined ? a + b : key, s: `<image href="assets/iso/furn/${nm}_${rot}.png" x="${(px - e.ax).toFixed(1)}" y="${(py - e.ay - lift).toFixed(1)}" width="${e.w}" height="${e.h}"/>` });
+        };
+        const L = 32;   /* 桌面的高度，像素 */
         if (name === 'bedroom') {
-          fl(0.2, 3.1, 2.4, 0.8, '#cfa98e');
-          const nb = W.bedCount('bedroom'), BL = ['#8fb3cf', '#c9a0a0', '#a9c29a', '#d6c28a'];
-          for (let i = 0; i < nb; i++) { const bx = 0.1 + i * 0.95; f(bx, 0.85, 0.85, 2.1, 10, '#b88a62'); f(bx + 0.04, 0.92, 0.77, 1.98, 8, '#f4ece6', 10); f(bx + 0.1, 0.95, 0.65, 0.45, 5, '#ffffff', 18); f(bx + 0.04, 1.6, 0.77, 1.3, 3, BL[i % BL.length], 18); }
-          f(2.3, 0.12, 1.5, 0.6, 62, '#c9a77c');
-          f(2.95, 1.0, 0.85, 1.3, 12, '#d9b98b'); f(2.99, 1.05, 0.77, 1.2, 4, '#fbeed8', 12);
+          const nb = W.bedCount('bedroom');
+          spr('rugRound', 0, 2.2, 3.0, 0, -9);
+          for (let i = 0; i < nb; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
+          spr('bookcaseClosedWide', 1, 0.3, 3.2);
+          spr('cardboardBoxOpen', 0, 3.55, 3.2); spr('pillow', 0, 3.55, 3.2, 14, 3.21 + 3.55);
+          spr('lampRoundFloor', 0, 3.7, 0.4);
         } else if (name === 'elder') {
-          const ne = W.bedCount('elder'), EL = ['#a9c29a', '#c9a0a0', '#8fb3cf'];
-          for (let i = 0; i < ne; i++) { const bx = 0.1 + i * 0.95; f(bx, 0.3, 0.85, 2.4, 10, '#a98a62'); f(bx + 0.04, 0.38, 0.77, 2.28, 8, '#efe6dc', 10); f(bx + 0.1, 0.42, 0.65, 0.45, 5, '#ffffff', 18); f(bx + 0.04, 1.5, 0.77, 1.1, 3, EL[i % EL.length], 18); }
+          const ne = W.bedCount('elder');
+          for (let i = 0; i < ne; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
+          spr('sideTableDrawers', 0, 2.5, 0.35); spr('lampRoundTable', 0, 2.5, 0.35, 22, 2.86);
+          spr('rugRound', 0, 1.5, 3.1, 0, -9);
         } else if (name === 'toilet') {
-          f(0.7, 0.3, 0.7, 0.9, 14, '#f6f8f8'); f(0.7, 0.12, 0.7, 0.25, 34, '#eef2f2'); f(1.4, 0.3, 0.5, 0.8, 26, '#e8eef0'); f(0.2, 2.8, 1.5, 0.9, 6, '#cfe0e4');
+          spr('toilet', 0, 0.55, 0.5); spr('bathroomSink', 0, 1.45, 0.4);
+          spr('washer', 1, 0.35, 2.2); spr('shower', 0, 1.4, 3.2);
         } else if (name === 'study') {
-          f(0.6, 0.25, 1.9, 0.8, 26, '#a9805a'); f(1.2, 0.35, 0.6, 0.12, 20, '#3a3f48', 26); f(1.3, 1.2, 0.5, 0.5, 16, '#4f6d8f'); f(2.55, 0.12, 0.4, 1.4, 66, '#8a6540');
-          f(2.62, 0.2, 0.26, 1.2, 4, '#d9a05a', 40);
+          spr('desk', 0, 1.5, 0.45); spr('computerScreen', 0, 1.5, 0.35, L, 1.86); spr('computerKeyboard', 0, 1.5, 0.75, L, 2.26);
+          spr('lampSquareTable', 0, 2.2, 0.35, L, 2.56);
+          spr('chairDesk', 2, 1.56, 1.5);
+          spr('bookcaseOpen', 1, 0.3, 2.8); spr('pottedPlant', 0, 2.7, 3.4);
         } else if (name === 'living') {
-          fl(0.9, 1.5, 2.2, 1.5, '#c98f7a');
-          f(0.6, 0.3, 2.6, 0.9, 20, '#7b8fb0'); f(0.6, 0.25, 2.6, 0.2, 40, '#6c7fa0'); f(1.2, 1.8, 1.2, 0.7, 12, '#b08a62'); f(0.12, 1.4, 0.4, 1.6, 28, '#2f3440');
+          spr('rugRound', 0, 1.9, 2.0, 0, -9);
+          spr('cabinetTelevision', 1, 0.3, 2.0); spr('televisionModern', 1, 0.3, 2.0, 22, 2.31);
+          spr('loungeSofaLong', 3, 3.35, 2.0); spr('tableCoffee', 1, 1.9, 2.0);
+          spr('pottedPlant', 0, 0.35, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);
         } else if (name === 'kitchen') {
-          f(0.2, 0.12, 3.4, 0.7, 28, '#d9d3c4'); f(1.4, 0.14, 0.8, 0.6, 3, '#4a4d55', 28); f(3.3, 0.15, 0.6, 0.8, 66, '#e8eef0');
-          f(1.2, 1.7, 1.4, 1.1, 20, '#c79a6a'); f(0.8, 1.9, 0.3, 0.3, 12, '#9a7a52'); f(2.8, 1.9, 0.3, 0.3, 12, '#9a7a52');
+          spr('kitchenFridge', 0, 0.5, 0.45); spr('kitchenCabinet', 0, 1.35, 0.45); spr('kitchenSink', 0, 2.2, 0.45); spr('kitchenStove', 0, 3.05, 0.45);
+          spr('table', 0, 2.0, 2.4); spr('chair', 0, 1.5, 1.75); spr('chair', 0, 2.5, 1.75); spr('chair', 2, 1.5, 3.05); spr('chair', 2, 2.5, 3.05);
+          spr('trashcan', 0, 3.7, 3.5);
         } else if (name === 'ward') {
-          [0.8, 2.8, 4.8, 6.8].forEach((bx, i) => {
-            f(bx, 0.3, 1.2, 2.4, 12, '#cfd8dc'); f(bx + 0.04, 0.4, 1.12, 2.2, 7, '#ffffff', 12); f(bx + 0.04, 1.5, 1.12, 1.1, 4, '#8fb9d6', 19);
-            if (i < 3) f(bx + 1.5, 0.3, 0.06, 2.4, 44, '#aed0e0');
-          });
-          f(8.6, 1.0, 0.8, 0.8, 24, '#c7d0d4'); f(8.6, 3.6, 0.9, 0.5, 34, '#d6dde0');
+          [0.8, 2.8, 4.8, 6.8].forEach((bx, i) => { spr('bedSingle', 0, bx + 0.55, 1.4); if (i < 3) f(bx + 1.5, 0.3, 0.06, 2.4, 44, '#aed0e0'); });
+          spr('sideTable', 0, 8.9, 1.0); spr('kitchenFridge', 0, 8.9, 3.8);
         } else if (name === 'desk') {
-          f(1.0, 1.0, 2.6, 0.9, 26, '#a9805a'); f(1.6, 1.1, 0.7, 0.1, 20, '#3a3f48', 26); f(2.0, 2.1, 0.5, 0.5, 16, '#4f6d8f');
-          f(4.6, 1.0, 2.6, 0.9, 26, '#b08a62'); f(5.2, 1.1, 0.7, 0.1, 20, '#3a3f48', 26); f(5.6, 2.1, 0.5, 0.5, 16, '#6a7a8a');
-          f(7.2, 0.4, 0.5, 0.5, 14, '#8a6540');
+          [1.7, 5.4].forEach(cx => { spr('desk', 0, cx + 0.2, 1.3); spr('computerScreen', 0, cx + 0.2, 1.2, L, cx + 1.6); spr('chairDesk', 2, cx + 0.2, 2.3); });
+          spr('pottedPlant', 0, 7.4, 0.8);
         }
+        q.sort((a2, b2) => a2.k - b2.k).forEach(it => out.push(it.s));
         /* 房间名，淡淡的 */
         const [lx, ly] = pt(x + w * 0.08, y + h * 0.96, 0).split(',');
         out.push(`<text x="${lx}" y="${ly}" font-size="14" fill="#5a4a38" opacity=".6" font-family="system-ui,sans-serif">${t('loc.' + name)}</text>`);

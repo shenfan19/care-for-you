@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>render</title>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js","three/addons/":"/three/examples/jsm/"}}</script>
+<canvas id="c" width="640" height="640"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+/* 斜视渲染：正交相机，方位角 45 度，俯角 30 度，所以地面的一格是 2:1 的菱形。
+   世界的 x 对应游戏格子的 gx，z 对应 gy。灯光固定在相机上，转的是物体，所以四个朝向的光影一致。 */
+const SIZE = 640, UNIT = 72 / Math.SQRT2;       /* 一个世界单位的地砖，投影后宽 72 像素，和游戏里一格一样 */
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(SIZE, SIZE, false); renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+const half = SIZE / 2 / UNIT;
+const cam = new THREE.OrthographicCamera(-half, half, half, -half, 0.1, 100);
+const el = Math.PI / 6, az = Math.PI / 4, D = 30;
+cam.position.set(Math.sin(az) * Math.cos(el) * D, Math.sin(el) * D, Math.cos(az) * Math.cos(el) * D); cam.lookAt(0, 0, 0);
+const scene = new THREE.Scene();
+scene.add(new THREE.AmbientLight(0xffffff, 1.55));
+const sun = new THREE.DirectionalLight(0xffffff, 1.9); sun.position.set(-6, 10, 8); scene.add(sun);
+const loader = new GLTFLoader();
+const cache = {};
+const load = url => cache[url] || (cache[url] = new Promise((res, rej) => loader.load(url, g => res(g), undefined, rej)));
+const readBox = () => {
+  const gl = renderer.getContext(), w = SIZE, h = SIZE, px = new Uint8Array(w * h * 4);
+  gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, px);
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (px[(y * w + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; const yy = h - 1 - y; if (yy < y0) y0 = yy; if (yy > y1) y1 = yy; }
+  return { x0, y0, x1, y1 };
+};
+/* opts: url，rot 0..3（朝向 +z, +x, -z, -x），scale，clip（动画名），t（动画时间秒），hide（要隐藏的网格名） */
+window.renderModel = async (opts) => {
+  const g = await load(opts.url);
+  const root = g.scene.clone(true);
+  root.scale.setScalar(opts.scale || 1);
+  root.rotation.y = (opts.rot || 0) * Math.PI / 2;
+  for (const h of opts.hide || []) { const o = root.getObjectByName(h); if (o) o.visible = false; }
+  const holder = new THREE.Group(); holder.add(root); scene.add(holder);
+  if (opts.clip) {
+    const clip = g.animations.find(a => a.name === opts.clip);
+    if (clip) { const mixer = new THREE.AnimationMixer(root); mixer.clipAction(clip).play(); mixer.setTime(opts.t || 0); }
+  }
+  holder.updateMatrixWorld(true);
+  renderer.render(scene, cam);
+  const b = readBox();
+  const bb = new THREE.Box3().setFromObject(holder), size = bb.getSize(new THREE.Vector3());
+  const crop = document.createElement('canvas'); crop.width = b.x1 - b.x0 + 1; crop.height = b.y1 - b.y0 + 1;
+  crop.getContext('2d').drawImage(document.getElementById('c'), b.x0, b.y0, crop.width, crop.height, 0, 0, crop.width, crop.height);
+  scene.remove(holder);
+  return { png: crop.toDataURL('image/png'), w: crop.width, h: crop.height, ax: SIZE / 2 - b.x0, ay: SIZE / 2 - b.y0, size: [size.x, size.y, size.z], box: [bb.min.x, bb.min.z, bb.max.x, bb.max.z], clips: g.animations.map(a => a.name) };
+};
+window.ready = true;
+</script>

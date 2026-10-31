@@ -25,10 +25,10 @@
   };
   /* 各房间里站人的位置，用房间宽高的比例表示。sleep 是床位，cradle 是婴儿床，player 是操纵对象的位置，书房和办公室里是坐在桌前椅子的位置 */
   const SLOTS = {
-    bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.8, .33]], player: [.18, .9] },
+    bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.88, .8]], player: [.18, .9] },
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
-    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .42], seat: [[.52, .42], [.76, .46]] },
+    study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .37], seat: [[.52, .37], [.78, .5]] },
     living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
@@ -39,7 +39,7 @@
   };
   /* 床位：每个住家的人有自己的床。老人睡老人房，其余睡卧室，各有床位上限；睡不下的先去另一间，还不够睡客厅沙发。
      婴儿睡婴儿床，不占床位。顺序按角色编号，位置固定，不会因为谁醒了而挪动 */
-  W.BED_CAP = { bedroom: 3, elder: 3 };
+  W.BED_CAP = { bedroom: 3, elder: 2 };
   W.BED_MIN = { bedroom: 2, elder: 2 };
   W.bedPlan = () => {
     const plan = { bedroom: [], elder: [], living: [] };
@@ -54,7 +54,7 @@
   W.bedKey = () => W.bedCount('bedroom') + ',' + W.bedCount('elder');
   W.bedOf = p => { const plan = W.bedPlan(); for (const r in plan) { const i = plan[r].indexOf(p.id); if (i >= 0) return { room: r, i }; } return null; };
   W.slotPoint = (place, room, kind, i) => {
-    if (kind === 'sleep' && W.BED_CAP[room]) { const r0 = W.PLACES[place].rooms[room], w = r0.w; return { gx: r0.gx + ((0.1 + i * 0.95 + 0.43) / w) * w, gy: r0.gy + 0.42 * r0.h }; }
+    if (kind === 'sleep' && W.BED_CAP[room]) { const r0 = W.PLACES[place].rooms[room], w = r0.w; return { gx: r0.gx + 0.15 + i * 1.1 + 0.55, gy: r0.gy + 1.3 }; }
     const r = W.PLACES[place].rooms[room], list = SLOTS[room][kind] || SLOTS[room].stand;
     const s = Array.isArray(list[0]) ? list[i % list.length] : list;
     const lap = Math.floor(i / list.length);
