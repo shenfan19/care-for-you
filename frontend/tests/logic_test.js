@@ -978,14 +978,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await G.load(); const ids = [dadId, momId, sisId, babId, husId]; for (const x of G.people) x.person.active = ids.includes(x.id);
     const W = CY.world;
     check('夫妻上班，姐姐不上班', W.worker(G.get(dadId)) && W.worker(G.get(momId)) && W.worker(G.get(husId)) && !W.worker(G.get(sisId)));
-    G.setProtagonist(dadId);
-    G.world.auto = false; G.world.focus = null; const bb = G.get(babId); bb.state.needs.hunger = 0.9; bb.state.needs.rest = 0; G.act[babId] = 'awake';
-    check('没开自动不会自己照顾', G.autoStep(Date.now() + 1e7) === false && bb.state.needs.hunger === 0.9);
-    G.setAuto(true); const before = bb.state.needs.hunger; const acted = G.autoStep(Date.now() + 2e7);
-    check('开自动后急需的人被自动照顾，效果打折', acted && bb.state.needs.hunger < before, before + '->' + bb.state.needs.hunger);
-    G.setAuto(false); bb.state.needs.hunger = 0.5; bb.state.needs.company = 0.5; G.setFocus({ kind: 'person', pid: babId });
-    check('专注某人，需求超过 0.35 就处理', G.autoStep(Date.now() + 3e7) === true);
-    G.setFocus(null);
     for (const x of G.people) x.person.active = true;
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');

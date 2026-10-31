@@ -60,13 +60,6 @@
     tm.onclick = async () => { await G.setSpeed(G.nextSpeed()); U.renderClock(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     mn.onclick = () => U.helpDialog();
-    const au = root.querySelector('#cornerAuto'), fc = root.querySelector('#cornerFocus');
-    if (au) { au.classList.toggle('on', !!G.world.auto); au.title = t(G.world.auto ? 'auto.tip_on' : 'auto.tip_off'); au.setAttribute('aria-pressed', !!G.world.auto); au.onclick = () => { G.setAuto(!G.world.auto); U.renderClock(); }; }
-    if (fc) {
-      const f = G.world.focus, fp = G.focusPerson();
-      fc.textContent = '🎯' + (f ? ' ' + (f.kind === 'work' ? t('focus.work') : fp ? fp.person.name : '') : ''); fc.classList.toggle('on', !!f); fc.title = t('focus.title');
-      fc.onclick = () => U.focusDialog();
-    }
     for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()], ['cornerShare', 'hdr.share', () => U.shareDialog()], ['cornerGear', 'hdr.settings', () => U.settingsDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }
     }
@@ -80,24 +73,6 @@
         await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderClock();
       };
     }
-  };
-
-  /* 专注：主角长期做一件事 */
-  U.focusDialog = function () {
-    const lead = G.protagonist(), f = G.world.focus;
-    const people = G.activePeople().filter(p => p !== lead && !(p.person.help && p.person.help.role === 'nanny'));
-    const btn = (id, label, on) => `<button class="${on ? 'primary' : ''}" data-f="${id}" style="display:block;width:100%;text-align:left;margin:4px 0">${esc(label)}</button>`;
-    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('focus.title'))}</h2><div class="mute" style="margin-bottom:8px">${esc(t('focus.note'))}</div>
-      ${btn('work', t('focus.work_long'), f && f.kind === 'work')}
-      ${people.map(p => btn('p:' + p.id, t('focus.person', { name: p.person.name }), f && f.kind === 'person' && f.pid === p.id)).join('')}
-      <button disabled style="display:block;width:100%;text-align:left;margin:4px 0;opacity:.55">${esc(t('focus.house'))}</button>
-      <div class="row" style="justify-content:space-between;margin-top:12px"><button data-f="none">${esc(t('focus.none'))}</button><button id="fcclose">${esc(t('btn.close'))}</button></div>`, true);
-    dlg.querySelectorAll('[data-f]').forEach(b => b.onclick = () => {
-      const v = b.dataset.f;
-      G.setFocus(v === 'none' ? null : v === 'work' ? { kind: 'work' } : { kind: 'person', pid: v.slice(2) });
-      U.closeDialog(); U.renderClock();
-    });
-    dlg.querySelector('#fcclose').onclick = U.closeDialog;
   };
 
   /* 房间下方的条不要了：添加，编辑，归档，删除，叫回离开的人，都在顶栏的角色里 */

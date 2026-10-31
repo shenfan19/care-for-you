@@ -870,7 +870,6 @@
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
     advance(gameMinutes(dt), false);
-    if (G.autoStep) G.autoStep(now);
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
     for (const id in G.toast) if (now > G.toast[id].until) delete G.toast[id];
     /* 婴幼儿需求严重时会一直哭闹，直到有人管 */

@@ -82,7 +82,7 @@
   };
   W.ROUTINE_W = 7;
   /* 主角空闲时回到的地方：照日程走，没有日程就是客厅 */
-  W.workRoom = () => { const f = G.focusPerson && G.focusPerson(); if (f) { const fl = W.locationOf(f); if (fl.place === 'home') return fl.room; } const l = G.protagonist(); return (l && W.routineRoom(l)) || 'living'; };
+  W.workRoom = () => { const l = G.protagonist(); return (l && W.routineRoom(l)) || 'living'; };
   /* 宝宝还不会走，只待在垫子和婴儿床上 */
   W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
   W.driven = p => !!p && p === G.protagonist();
