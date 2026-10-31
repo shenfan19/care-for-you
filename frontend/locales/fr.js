@@ -59,7 +59,7 @@ CY.i18n.register("fr", {
 "about.p1": "Care for You est un jeu de soin façon animal de bureau. Vous veillez sur des personnages comme un grand-parent, un petit ou un chat. Ils interrompent votre travail de temps en temps avec de petites demandes. Pas de score, pas de punition.",
 "about.p2": "C'est un projet personnel, d'une seule personne. Il n'est lié à aucune école, aucun employeur ni aucune organisation et ne représente pas leurs opinions.",
 "about.p3": "Tous les personnages sont fictifs. Le jeu ne propose ni n'encourage de recréer une personne disparue. Une phrase dont vous vous souvenez n'est que votre propre impression d'un type de personne.",
-"about.p4": "C'est un prototype précoce, encore rugueux par endroits. Vos retours sont bienvenus ; les coordonnées seront ajoutées à la version officielle.",
+"about.p4": "C'est une version précoce, encore rugueuse par endroits. Vos retours sont bienvenus : shenfan19@gmail.com, ou un ticket sur github.com/shenfan19/care-for-you.",
 "priv.h1": "Où se trouvent vos données", "priv.p1": "Toutes les données du jeu sont stockées uniquement sur votre appareil, sous forme de fichiers texte que vous pouvez ouvrir, modifier, copier et supprimer à tout moment.",
 "priv.p2": "Il n'y a actuellement ni compte, ni serveur, ni statistiques, ni publicité, ni cookies, ni suivi par des tiers.", "priv.p3": "La page est statique et n'envoie vos données de jeu nulle part pendant son fonctionnement.",
 "priv.h2": "Fonctions d'IA", "priv.p4": "L'IA est désactivée par défaut. Seulement si vous l'activez dans les réglages et saisissez une adresse de service, un peu de contexte, comme le nom, le rôle et l'humeur d'un personnage, sera envoyé au service d'IA choisi pour générer une réplique.",
