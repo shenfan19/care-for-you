@@ -711,6 +711,8 @@
 
   function expire(req) {
     const p = G.get(req.pid);
+    /* 问答，回想，提醒这类不急的弹窗，时间到了先收成一个小气泡挂在角色头上，还可以点开回答；再过两分钟才真的作废 */
+    if (['ask', 'pick', 'nudge'].includes(req.kind) && !req.folded) { req.folded = true; req.deadline = Date.now() + 120000; emit(); return; }
     delete G.req[req.pid];
     learn(p, req.kind, false);
     if (req.kind === 'pick' || req.kind === 'nudge') return;

@@ -956,6 +956,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('婴儿睡婴儿床，不占床位', W.locationOf(bb).mode === 'cradle');
     for (const x of G.people) x.person.active = true;
   }
+  {
+    const W = CY.world;
+    const lead = G.activePeople().find(p => W.worker(p)) || G.activePeople().find(p => G.isHuman(p) && G.stage(p) === 'adult');
+    if (lead) {
+      G.setProtagonist(lead.id); const wk = W.worker(lead);
+      check('上班的人白天去书房，中午去厨房，晚上去客厅，夜里去卧室', !wk || (W.routineRoom(lead, 10) === 'study' && W.routineRoom(lead, 12.5) === 'kitchen' && W.routineRoom(lead, 20) === 'living' && W.routineRoom(lead, 23) === 'bedroom'));
+      G.setClock(10 * 60); check('白天主角默认在书桌前工作的房间', !wk || W.workRoom() === 'study');
+      G.setClock(20 * 60); check('傍晚主角默认在客厅', W.workRoom() === 'living');
+    }
+    const pid0 = G.activePeople()[0].id; G.req[pid0] = { kind: 'ask', pid: pid0, text: 'q', answers: ['a'], since: Date.now(), deadline: Date.now() - 1 };
+    G.tick();
+    check('问答超时先折成小气泡，还在', !!G.req[pid0] && G.req[pid0].folded === true && G.req[pid0].deadline > Date.now());
+    G.req[pid0].deadline = Date.now() - 1; G.tick();
+    check('折起来再过时间才真的作废', !G.req[pid0]);
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

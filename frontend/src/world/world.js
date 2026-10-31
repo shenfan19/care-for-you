@@ -66,7 +66,22 @@
   const isParent = p => ['dad', 'mom'].includes(p.person.archetype || p.person.card);
   W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && (isParent(p) || !G.activePeople().some(q => G.isHuman(q) && isParent(q)));
   W.hasWorker = () => G.activePeople().some(W.worker);
-  W.workRoom = () => 'living';
+  /* 日程：一天的默认去处，只给一个倾向，需求会盖过它。上班的人白天在书房办公，中午和傍晚去厨房，晚上在客厅看电视，夜里回卧室。
+     老人早晚在院子，上午在客厅，中午和傍晚去厨房。其他人没有固定日程，按各自喜好和需求走 */
+  const inH = (hr, a, b) => hr >= a && hr < b;
+  W.routineRoom = (p, hr) => {
+    if (!p || !G.isHuman(p)) return null;
+    if (hr === undefined) hr = G.dayMinutes() / 60;
+    const st = G.stage(p);
+    if (hr >= 22 || hr < 7) return st === 'elder' ? 'elder' : 'bedroom';
+    if (inH(hr, 19, 22)) return W.immobile(p) ? null : 'living';
+    if (W.worker(p)) return inH(hr, 7, 8.5) || inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : inH(hr, 9, 12) || inH(hr, 13, 18) ? 'study' : null;
+    if (st === 'elder') return inH(hr, 8, 10) || inH(hr, 15, 17.5) ? 'yard' : inH(hr, 10, 12) ? 'living' : inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : null;
+    return null;
+  };
+  W.ROUTINE_W = 7;
+  /* 主角空闲时回到的地方：照日程走，没有日程就是客厅 */
+  W.workRoom = () => { const l = G.protagonist(); return (l && W.routineRoom(l)) || 'living'; };
   /* 宝宝还不会走，只待在垫子和婴儿床上 */
   W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
   W.driven = p => !!p && p === G.protagonist();
@@ -105,7 +120,7 @@
     if (room === 'living') w += hi('company') * 2 + hi('play') * 1.5;
     if (room === 'study') w += hi('company') * 2.5;
     /* 爸爸妈妈白天在书桌前办公，爷爷奶奶白天遛弯，下午晒晒太阳 */
-    if (W.worker(p) && room === 'study' && hr >= 9 && hr < 17) w += 7;
+    if (room === W.routineRoom(p, hr)) w += W.ROUTINE_W;
     if (human && st === 'elder' && room === 'yard' && ((hr >= 8 && hr < 10.5) || (hr >= 15 && hr < 17.5))) w += 2;
     if (room === 'yard') w += hi('play') * 2 + hi('mobility') * 2 + (hr >= 9 && hr < 17 ? 0.6 : -0.6);
     /* 心情低落的人想独处，躲回自己的房间；心情好的人愿意待在客厅 */

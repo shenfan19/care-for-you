@@ -239,14 +239,18 @@
       if (c.dataset.bd !== bs) { c.querySelector('.badges').innerHTML = bs; c.dataset.bd = bs; }
       /* 气泡 */
       const req = G.req[p.id], toast = G.toast[p.id];
-      c.classList.toggle('calling', !!req && (req.kind === 'need' || req.kind === 'ask'));
-      const sig = req ? 'r' + req.kind + req.text + (req.options ? req.options.map(o => o.id).join() : '') + CY.i18n.lang : toast ? 't' + toast.text : '';
+      c.classList.toggle('calling', !!req && !req.folded && (req.kind === 'need' || req.kind === 'ask'));
+      const sig = req ? 'r' + req.kind + (req.folded ? 'f' : '') + req.text + (req.options ? req.options.map(o => o.id).join() : '') + CY.i18n.lang : toast ? 't' + toast.text : '';
       c.classList.toggle('talk', !!sig);
       const slot = c.querySelector('.slot');
       if (c.dataset.sig !== sig) {
         c.dataset.sig = sig;
         if (!sig) slot.innerHTML = '';
-        else if (req) {
+        else if (req && req.folded) {
+          slot.innerHTML = '<div class="bubble chip" role="button" tabindex="0">💬</div>';
+          const open = e => { e.stopPropagation(); req.folded = false; req.deadline = 0; c.dataset.sig = ''; U.renderRoom(true); };
+          const ch = slot.querySelector('.chip'); ch.onclick = open; ch.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') open(e); };
+        } else if (req) {
           let btn = '';
           if (req.kind === 'ask') btn = req.answers.map((a, i) => `<button class="opt" data-a="an${i}">${esc(a)}</button>`).join('') +
             `<div class="own"><input maxlength="120" placeholder="${esc(t('ask.own'))}"><button data-a="send" class="primary">${esc(t('ask.send'))}</button></div>`;
