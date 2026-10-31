@@ -53,10 +53,8 @@ def main(kind):
         b.close()
     os.makedirs(OUT, exist_ok=True)
     json.dump(manifest, open(manifest_path, 'w', encoding='utf-8'), indent=1)
-    open(os.path.join(OUT, 'manifest.js'), 'w', encoding='utf-8', newline='
-').write('/* 斜视精灵的锚点表，由 tools_ai/render_iso/render_assets.py 生成。ax，ay 是模型原点在图里的像素位置，cx，cz 是模型包围盒中心相对原点的偏移，sx，sz 是占地。素材来自 Kenney 的 CC0 家具包 */
-(globalThis.CY = globalThis.CY || {}).isoSprites = ' + json.dumps(manifest, separators=(',', ':')) + ';
-')
+    head = '/* 斜视精灵的锚点表，由 tools_ai/render_iso/render_assets.py 生成。ax，ay 是模型原点在图里的像素位置，cx，cz 是模型包围盒中心相对原点的偏移，sx，sz 是占地。素材来自 Kenney 的 CC0 模型 */' + chr(10)
+    open(os.path.join(OUT, 'manifest.js'), 'w', encoding='utf-8', newline=chr(10)).write(head + '(globalThis.CY = globalThis.CY || {}).isoSprites = ' + json.dumps(manifest, separators=(',', ':')) + ';' + chr(10))
     srv.shutdown()
 
 if __name__ == '__main__':
