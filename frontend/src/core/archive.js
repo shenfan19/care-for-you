@@ -43,7 +43,7 @@
   /* ---------- 运行包 ---------- */
   A.exportApp = async function (opts = {}) {
     const files = [], dir = `careforyou-app-${meta.version}/`;
-    const sprites = Object.keys(((CY.isoSprites || {}).furn) || {}).flatMap(n => [0, 1, 2, 3].map(r => `assets/iso/furn/${n}_${r}.png`)).concat(Object.keys(((CY.isoSprites || {}).char) || {}).flatMap(k => ['stand', 'walk', 'sit', 'sleep'].flatMap(po => [0, 1, 2, 3].flatMap(r => [`assets/iso/char/${k}_${po}_${r}.png`, `assets/iso/char/${k}_${po}_${r}_m.png`]))));
+    const sprites = Object.keys(((CY.isoSprites || {}).furn) || {}).flatMap(n => [0, 1, 2, 3].map(r => `assets/iso/furn/${n}_${r}.png`)).concat(Object.keys(((CY.isoSprites || {}).char) || {}).flatMap(k => ['stand', 'walk', 'sit', 'sleep'].flatMap(po => [0, 1, 2, 3].flatMap(r => ['', '_m', '_h', '_c'].map(sf => `assets/iso/char/${k}_${po}_${r}${sf}.png`)))));
     for (const p of A.APP_FILES.concat(sprites)) {
       let r;
       try { r = await fetch(p); } catch (e) { throw new Error('fetch'); }

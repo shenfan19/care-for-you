@@ -384,10 +384,16 @@ function beanDraw(o, V) {
     const a = (p.person && p.person.appearance) || {}, G = CY.game, stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
     const sk = a.skin === undefined ? null : SKIN[a.skin], k = 1.43 * (STAGE_K[stage] || 1) * (pose === 'sleep' ? 0.85 : 1);
     const x = (50 - e.ax * k).toFixed(1), y = (124 - e.ay * k).toFixed(1), w = (e.w * k).toFixed(1), h = (e.h * k).toFixed(1);
+    const hueOf = ([r, g, b]) => { const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn; if (!d) return 0; const h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; return (h * 60 + 360) % 360; };
+    /* 三块可以换色的区域：皮肤和头发按通道比例放大，衣服按色相转过去；每块一张遮罩，滤镜只作用在遮罩里 */
+    const layers = [];
+    if (sk && m.skin) { const to = hexRgb(sk[1]), r = to.map((v, i) => +(v / m.skin[i]).toFixed(3)); layers.push(['m', `<feColorMatrix type="matrix" values="${r[0]} 0 0 0 0 0 ${r[1]} 0 0 0 0 0 ${r[2]} 0 0 0 0 0 1 0"/>`]); }
+    if (a.hair_color && HAIR[a.hair_color] && m.hair) { const to = hexRgb(HAIR[a.hair_color]), r = to.map((v, i) => +(Math.min(4, v / Math.max(20, m.hair[i]))).toFixed(3)); layers.push(['h', `<feColorMatrix type="matrix" values="${r[0]} 0 0 0 0 0 ${r[1]} 0 0 0 0 0 ${r[2]} 0 0 0 0 0 1 0"/>`]); }
+    if (/^#[0-9a-f]{6}$/i.test(a.cloth || '') && m.cloth) { const deg = Math.round(hueOf(hexRgb(a.cloth)) - hueOf(m.cloth)); layers.push(['c', `<feColorMatrix type="hueRotate" values="${deg}"/>`]); }
     let tint = '';
-    if (sk && m.skin) {
-      const id = 'sp' + (sprUid++), to = hexRgb(sk[1]), r = to.map((v, i) => +(v / m.skin[i]).toFixed(3));
-      tint = `<defs><filter id="${id}f" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${r[0]} 0 0 0 0 0 ${r[1]} 0 0 0 0 0 ${r[2]} 0 0 0 0 0 1 0"/></filter><mask id="${id}m" maskUnits="userSpaceOnUse" x="${x}" y="${y}" width="${w}" height="${h}"><image href="${base}_m.png" x="${x}" y="${y}" width="${w}" height="${h}"/></mask></defs><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}" filter="url(#${id}f)" mask="url(#${id}m)"/>`;
+    for (const [suf, fx] of layers) {
+      const id = 'sp' + (sprUid++);
+      tint += `<defs><filter id="${id}f" color-interpolation-filters="sRGB">${fx}</filter><mask id="${id}m" maskUnits="userSpaceOnUse" x="${x}" y="${y}" width="${w}" height="${h}"><image href="${base}_${suf}.png" x="${x}" y="${y}" width="${w}" height="${h}"/></mask></defs><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}" filter="url(#${id}f)" mask="url(#${id}m)"/>`;
     }
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}"/>${tint}</svg>`;
   };

@@ -64,8 +64,12 @@ def main(kind):
                         base = os.path.join(OUT, 'char', '%s_%s_%d' % (key, pose, rot))
                         open(base + '.png', 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
                         open(base + '_m.png', 'wb').write(base64.b64decode(r['maskPng'].split(',', 1)[1]))
+                        open(base + '_h.png', 'wb').write(base64.b64decode(r['maskHair'].split(',', 1)[1]))
+                        open(base + '_c.png', 'wb').write(base64.b64decode(r['maskCloth'].split(',', 1)[1]))
                         m.setdefault(pose, {})[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay']}
                         if r['skinAvg'] and 'skin' not in m: m['skin'] = r['skinAvg'][:3]
+                        if r['hairAvg'] and 'hair' not in m: m['hair'] = r['hairAvg'][:3]
+                        if r['clothAvg'] and 'cloth' not in m: m['cloth'] = r['clothAvg'][:3]
                 print(key, m.get('skin'), m['stand']['0'])
         b.close()
     os.makedirs(OUT, exist_ok=True)

@@ -27,6 +27,7 @@
           ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
           <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])}</div>
+          <div class="row">${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.model'))} ${sel('model', ['', ...CY.charKeys], [t('add.model_auto'), ...CY.charKeys.map((k, i) => (i + 1) + (k.startsWith('female') ? ' ♀' : ' ♂'))], look.model || '')}</div>
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
         : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}

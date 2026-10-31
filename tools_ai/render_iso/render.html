@@ -49,27 +49,41 @@ window.renderModel = async (opts) => {
   const bb = new THREE.Box3().setFromObject(holder), size = bb.getSize(new THREE.Vector3());
   const crop = document.createElement('canvas'); crop.width = b.x1 - b.x0 + 1; crop.height = b.y1 - b.y0 + 1;
   crop.getContext('2d').drawImage(document.getElementById('c'), b.x0, b.y0, crop.width, crop.height, 0, 0, crop.width, crop.height);
-  let maskPng = null, skinAvg = null;
+  let maskPng = null, skinAvg = null, maskHair = null, maskCloth = null, hairAvg = null, clothAvg = null;
   if (opts.mask) {
     const saved = [];
     root.traverse(o => { if (o.isMesh) { saved.push([o, o.material]); o.material = new THREE.MeshBasicMaterial({ map: o.material.map, side: THREE.DoubleSide, skinning: true }); } });
     renderer.render(scene, cam);
     const gl = renderer.getContext(), px = new Uint8Array(SIZE * SIZE * 4); gl.readPixels(0, 0, SIZE, SIZE, gl.RGBA, gl.UNSIGNED_BYTE, px);
-    const mc = document.createElement('canvas'); mc.width = crop.width; mc.height = crop.height; const mctx = mc.getContext('2d'), img = mctx.createImageData(crop.width, crop.height);
-    let n = 0, sr = 0, sg = 0, sb = 0;
-    for (let y = 0; y < crop.height; y++) for (let x = 0; x < crop.width; x++) {
-      const gx = b.x0 + x, gy = SIZE - 1 - (b.y0 + y), i = (gy * SIZE + gx) * 4, r = px[i] / 255, g = px[i + 1] / 255, bl = px[i + 2] / 255, a = px[i + 3];
+    const W = crop.width, H = crop.height, mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); return { c, x, img: x.createImageData(W, H) }; };
+    const sk = mk(), skinFlag = new Uint8Array(W * H), acc = { skin: [0, 0, 0, 0], hair: [0, 0, 0, 0], cloth: [0, 0, 0, 0] };
+    const idx = (x, y) => ((SIZE - 1 - (b.y0 + y)) * SIZE + (b.x0 + x)) * 4;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = idx(x, y), r = px[i] / 255, g = px[i + 1] / 255, bl = px[i + 2] / 255, a = px[i + 3];
       const mx = Math.max(r, g, bl), mn = Math.min(r, g, bl), d = mx - mn; let h = 0;
       if (d > 0) { h = mx === r ? ((g - bl) / d) % 6 : mx === g ? (bl - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
-      const sat = mx ? d / mx : 0, skin = a > 200 && h >= 12 && h <= 34 && sat >= 0.18 && sat <= 0.66 && mx > 0.66;
-      const j = (y * crop.width + x) * 4; img.data[j] = img.data[j + 1] = img.data[j + 2] = 255; img.data[j + 3] = skin ? 255 : 0;
-      if (skin) { n++; sr += px[i]; sg += px[i + 1]; sb += px[i + 2]; }
+      const sat = mx ? d / mx : 0, skin = a > 200 && h >= 12 && h <= 34 && sat >= 0.18 && sat <= 0.7 && mx > 0.5, j = (y * W + x) * 4;
+      sk.img.data[j] = sk.img.data[j + 1] = sk.img.data[j + 2] = 255; sk.img.data[j + 3] = skin ? 255 : 0; skinFlag[y * W + x] = skin ? 1 : 0;
+      if (skin) { const q = acc.skin; q[0] += px[i]; q[1] += px[i + 1]; q[2] += px[i + 2]; q[3]++; }
     }
-    mctx.putImageData(img, 0, 0); maskPng = mc.toDataURL('image/png'); skinAvg = n ? [Math.round(sr / n), Math.round(sg / n), Math.round(sb / n), n] : null;
+    /* 第二遍：头的网格涂红，身体的网格涂绿，不打光。头里不是皮肤的是头发，身体里不是皮肤的是衣服 */
+    root.traverse(o => { if (o.isMesh) o.material = new THREE.MeshBasicMaterial({ color: /head/i.test(o.name) ? 0xff0000 : 0x00ff00, side: THREE.DoubleSide }); });
+    renderer.render(scene, cam);
+    const px2 = new Uint8Array(SIZE * SIZE * 4); gl.readPixels(0, 0, SIZE, SIZE, gl.RGBA, gl.UNSIGNED_BYTE, px2);
+    const hm = mk(), cm = mk();
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const i = idx(x, y), j = (y * W + x) * 4; if (px2[i + 3] < 200 || skinFlag[y * W + x]) continue;
+      const head = px2[i] > 128, tgt = head ? hm : cm, q = head ? acc.hair : acc.cloth;
+      tgt.img.data[j] = tgt.img.data[j + 1] = tgt.img.data[j + 2] = 255; tgt.img.data[j + 3] = 255; q[0] += px[i]; q[1] += px[i + 1]; q[2] += px[i + 2]; q[3]++;
+    }
+    sk.x.putImageData(sk.img, 0, 0); hm.x.putImageData(hm.img, 0, 0); cm.x.putImageData(cm.img, 0, 0);
+    maskPng = sk.c.toDataURL('image/png'); maskHair = hm.c.toDataURL('image/png'); maskCloth = cm.c.toDataURL('image/png');
+    const av = q => (q[3] ? [Math.round(q[0] / q[3]), Math.round(q[1] / q[3]), Math.round(q[2] / q[3]), q[3]] : null);
+    skinAvg = av(acc.skin); hairAvg = av(acc.hair); clothAvg = av(acc.cloth);
     for (const [o, m] of saved) o.material = m;
   }
   scene.remove(holder);
-  return { maskPng, skinAvg, png: crop.toDataURL('image/png'), w: crop.width, h: crop.height, ax: SIZE / 2 - b.x0, ay: SIZE / 2 - b.y0, size: [size.x, size.y, size.z], box: [bb.min.x, bb.min.z, bb.max.x, bb.max.z], clips: g.animations.map(a => a.name) };
+  return { maskPng, skinAvg, maskHair, maskCloth, hairAvg, clothAvg, png: crop.toDataURL('image/png'), w: crop.width, h: crop.height, ax: SIZE / 2 - b.x0, ay: SIZE / 2 - b.y0, size: [size.x, size.y, size.z], box: [bb.min.x, bb.min.z, bb.max.x, bb.max.z], clips: g.animations.map(a => a.name) };
 };
 window.ready = true;
 </script>
