@@ -397,8 +397,16 @@ function beanDraw(o, V) {
     }
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}"/>${tint}</svg>`;
   };
+  /* 动物和花草的精灵：动物来自 Kenney 的 Cube Pets，花草用家具包里的植物放大；没有逐种对应的用最接近的，没有就退回矢量画法 */
+  const petSprite = (p, dir, asleep) => {
+    const M = (CY.isoSprites || {}).pet; if (!M || typeof document === 'undefined') return null;
+    const m = M[p.species.id]; if (!m) return null;
+    const pose = !asleep && dir && m.walk ? 'walk' : 'stand', rot = ROT[dir || ''] || 0, e = m[pose] && m[pose][rot]; if (!e) return null;
+    const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 1.65;
+    return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${Math.max(10, e.w * k * 0.4).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
+  };
   CY.avatar = (p, dir, pose) => {
-    if (DRAW[p.species.id]) return DRAW[p.species.id](p);
+    if (DRAW[p.species.id]) { const G0 = CY.game; return petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
     const G = CY.game, asleep = !!(G && G.isSleeping && p.id && G.isSleeping(p));
     const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
     return sprite(p, dir || '', asleep ? 'sleep' : wc ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand') || beanHuman(p, FIG_V[CY.figure] || 'C', dir);

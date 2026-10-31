@@ -12,12 +12,13 @@ OUT = os.path.join(ROOT, 'frontend', 'assets', 'iso')
 THREE_DIR = os.environ.get('THREE_DIR', os.path.join(os.environ.get('TEMP', '/tmp'), 'r3'))
 FURN = os.environ.get('KENNEY_FURNITURE', 'C:/fight/kenney_furniture-kit/Models/GLTF format')
 CHAR = os.environ.get('KENNEY_CHARS', 'C:/fight/kenney_mini-characters/Models/GLB format')
-MAP = {'/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/': HERE}
+PETS = os.environ.get('KENNEY_PETS', 'C:/fight/kenney_cube-pets/Models/GLB format')
+MAP = {'/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
 
 class H(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         path = path.split('?', 1)[0]
-        for pre in ('/three/', '/furn/', '/char/'):
+        for pre in ('/three/', '/furn/', '/char/', '/pets/'):
             if path.startswith(pre): return os.path.join(MAP[pre], *path[len(pre):].split('/')).replace('%20', ' ')
         return os.path.join(HERE, path.lstrip('/') or 'render.html')
     def log_message(self, *a): pass
@@ -61,6 +62,26 @@ def main(kind):
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                 m['size'] = [round(v, 3) for v in r['size']]
                 print(name, m['size'])
+        if kind == 'pets':
+            os.makedirs(os.path.join(OUT, 'pet'), exist_ok=True)
+            # 游戏里的物种 -> (模型地址, 渲染倍数)。动物来自 Kenney Cube Pets，没有一一对应的用最接近的；花草用家具包里的植物模型放大
+            PETMAP = {'cat': ('/pets/animal-cat.glb', 0.62), 'dog': ('/pets/animal-dog.glb', 0.78), 'rabbit': ('/pets/animal-bunny.glb', 0.55), 'hamster': ('/pets/animal-beaver.glb', 0.38),
+                      'guineapig': ('/pets/animal-beaver.glb', 0.5), 'bird': ('/pets/animal-parrot.glb', 0.5), 'chicken': ('/pets/animal-chick.glb', 0.5), 'fish': ('/pets/animal-fish.glb', 0.5),
+                      'duck': ('/pets/animal-penguin.glb', 0.55), 'hedgehog': ('/pets/animal-hog.glb', 0.5), 'ferret': ('/pets/animal-fox.glb', 0.55), 'turtle': ('/pets/animal-crab.glb', 0.45),
+                      'snake': ('/pets/animal-caterpillar.glb', 0.55), 'gecko': ('/pets/animal-caterpillar.glb', 0.4), 'axolotl': ('/pets/animal-pig.glb', 0.45),
+                      'succulent': ('/furn/plantSmall1.glb', 7.0), 'cactus': ('/furn/plantSmall3.glb', 7.0), 'flower': ('/furn/plantSmall2.glb', 7.0), 'orchid': ('/furn/plantSmall2.glb', 8.0),
+                      'tree': ('/furn/pottedPlant.glb', 2.2), 'bamboo': ('/furn/pottedPlant.glb', 2.7)}
+            for key, (url, sc) in PETMAP.items():
+                m = manifest.setdefault('pet', {}).setdefault(key, {})
+                plant = url.startswith('/furn/')
+                for pose, (clip, t) in ({'stand': (None, 0)} if plant else {'stand': ('idle', 0.0), 'walk': ('walk', 0.12)}).items():
+                    for rot in range(4):
+                        o = {'url': url, 'rot': rot, 'scale': sc}
+                        if clip: o.update({'clip': clip, 't': t})
+                        r = pg.evaluate('o => window.renderModel(o)', o)
+                        open(os.path.join(OUT, 'pet', '%s_%s_%d.png' % (key, pose, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
+                        m.setdefault(pose, {})[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay']}
+                print(key, m['stand']['0'])
         if kind == 'characters':
             os.makedirs(os.path.join(OUT, 'char'), exist_ok=True)
             names = ['character-female-' + c for c in 'abcdef'] + ['character-male-' + c for c in 'abcdef']
