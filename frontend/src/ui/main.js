@@ -31,6 +31,8 @@
     });
     G.backendError = () => U.flash(t('backend.error'));
     CY.world.enforce = true;
+    $('shareBtn').onclick = () => U.shareDialog();
+    $('gearBtn').onclick = () => U.settingsDialog();
     $('aboutBtn').onclick = () => U.aboutDialog();
     document.addEventListener('visibilitychange', () => { if (document.hidden) G.save(true); });
     window.addEventListener('pagehide', () => G.save(true));

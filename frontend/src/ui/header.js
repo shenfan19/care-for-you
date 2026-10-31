@@ -28,7 +28,7 @@
     I.applyDom(document);
     document.title = t('app.title');
     U.renderBrand();
-    for (const [id, k] of [['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
+    for (const [id, k] of [['shareBtn', 'hdr.share'], ['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
     for (const k of ['feed', 'said', 'roomBar']) delete $(k).dataset.sig;
     if (U.room) { U.renderRoom(true); }
     U.renderClock(); U.renderBar(); U.renderFeed(true); U.renderSaid(true);
@@ -60,7 +60,7 @@
     tm.onclick = async () => { await G.setSpeed(G.nextSpeed()); U.renderClock(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     mn.onclick = () => U.helpDialog();
-    for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()], ['cornerShare', 'hdr.share', () => U.shareDialog()], ['cornerGear', 'hdr.settings', () => U.settingsDialog()]]) {
+    for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }
     }
     const ms = root.querySelector('#cornerMusic');
