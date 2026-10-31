@@ -8,7 +8,7 @@
   G.SPEEDS = [1, 6, 24, 60];
   /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */
   G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
-  G.speed = () => { if (G.DEV) return G.DEV; const v = parseFloat(CY.ini.get(G.cfg, 'time', 'speed')); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; };
+  G.speed = () => { if (G.DEV) return G.DEV; const raw = (G.cfg.time || {}).speed; if (raw === undefined || raw === '') return 24; const v = parseFloat(raw); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; };
   /* 游戏日历：新存档从现实当天开始，每过一个游戏日加一天；第几天，星期，节日都按它算 */
   G.gameDate = () => {
     if (!G.world.start_date) { const d = new Date(); G.world.start_date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }

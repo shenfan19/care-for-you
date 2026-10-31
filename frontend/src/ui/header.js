@@ -65,11 +65,11 @@
     }
     const ms = root.querySelector('#cornerMusic');
     if (ms) {
-      const on = CY.ini.bool(G.cfg, 'audio', 'music');
+      const on = CY.sound ? CY.sound.musicVol() > 0 : true;
       ms.textContent = on ? '🎵' : '🔇'; ms.classList.toggle('off', !on);
       ms.title = t('corner.music_tip');
       ms.onclick = async () => {
-        G.cfg.audio = G.cfg.audio || {}; G.cfg.audio.music = on ? 'false' : 'true';
+        G.cfg.audio = G.cfg.audio || {}; if (on) { U.lastMusic = G.cfg.audio.music_volume; G.cfg.audio.music_volume = '0'; } else G.cfg.audio.music_volume = U.lastMusic && U.lastMusic !== '0' ? U.lastMusic : '50';
         await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderClock();
       };
     }

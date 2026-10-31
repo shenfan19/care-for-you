@@ -6,7 +6,7 @@ Pause for a moment and look after the people at home. They call for you now and 
 
 ## 当前状态
 
-原型 0.48，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
+原型 0.49，纯网页，默认不需要后端，没有构建步骤。动作动画预览在 media_ai 文件夹。
 
 ![猫](media_ai/cat_pet.gif) ![爷爷喝水](media_ai/grandpa_water.gif) ![幼儿玩球](media_ai/toddler_play.gif) ![兔子](media_ai/rabbit_play.gif) ![浇花](media_ai/flower_water.gif)
 

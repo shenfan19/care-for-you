@@ -175,12 +175,11 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('医院里没有人了，主角回家', W.player().place === 'home');
     G.cfg.time.mode = 'real';
     /* 动作停下几秒，勾了自动回岗位就回去 */
-    G.cfg.play.auto_return = 'true';
     W.moveTo('home', 'kitchen'); W.lastActive = Date.now() - 1000; W.tick();
     check('停得不够久不自动回去', W.player().room === 'kitchen');
     W.lastActive = Date.now() - W.IDLE_MS - 100; W.tick();
     check('停够几秒后回到客厅', W.player().room === W.workRoom());
-    G.cfg.play.auto_return = 'false'; W.enforce = false;
+    W.enforce = false;
 
     /* 起夜与跌倒：全是规则数据库里的规则，概率放大后一定出事 */
     setHour(2);
@@ -352,19 +351,19 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const sis = { person: { voice: 'sibling', age: 26, pronoun: '她', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
   const bro = { person: { voice: 'sibling', age: 28, pronoun: '他', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
   const kid = { person: { voice: 'child', age: 7, pronoun: '她', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
-  G.cfg.interaction.sensitive_topics = 'false';
+  G.showSensitive = false;
   check('姐妹可以被问到身体不适的话题，兄弟不会', G.askBank(sis).some(q => q.id === 'ask_s05') && !G.askBank(bro).some(q => q.id === 'ask_s05'));
   check('孩子只被问孩子的问题', G.askBank(kid).every(q => q.voice.includes('child')));
   check('敏感话题默认不出现', !G.askBank(sis).some(q => q.sensitive));
-  G.cfg.interaction.sensitive_topics = 'true';
+  G.showSensitive = true;
   check('打开后敏感话题才出现', G.askBank(sis).some(q => q.id === 'ask_s06') && !G.askBank(bro).some(q => q.id === 'ask_s06'));
-  G.cfg.interaction.sensitive_topics = 'false';
+  G.showSensitive = false;
   check('每个问题恰好三个预设回答', G.tpl.asks.every(q => q.answers.length === 3));
 
   /* 时间显示 */
   G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'auto';
   G.cfg.time.mode = 'real';
-  check('默认倍速是 24，昼夜用游戏时钟', CY.ini.get(CY.ini.parse(''), 'time', 'speed') === '24' && G.speed() === 24 && G.daySource() === 'game');
+  check('默认倍速是 24，昼夜用游戏时钟', G.speed() === 24 && G.daySource() === 'game');
   check('倍速写坏了按 1，旧设置 real 也按 1', (G.cfg.time.speed = 'abc', G.speed() === 1) && (G.cfg.time.speed = 'real', G.speed() === 1 && G.daySource() === 'game'));
   check('四档循环 1、6、24、60', (G.cfg.time.speed = '1', G.nextSpeed() === 6) && (G.cfg.time.speed = '6', G.nextSpeed() === 24) && (G.cfg.time.speed = '24', G.nextSpeed() === 60) && (G.cfg.time.speed = '60', G.nextSpeed() === 1));
   { /* 切倍速不动时钟；校准和自己设几点只改钟点，不动陪伴天数 */

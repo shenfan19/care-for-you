@@ -2,11 +2,8 @@
 (function (CY) {
   /* 节，键，默认值，说明 */
   const SCHEMA = [
-    ['interrupt', 'frequency', 'normal', 'test 试玩（现实秒）；often 经常；normal 适中；rare 很少。后三档按游戏时间算，所以加快时间时间隔按倍速缩短'],
     ['interrupt', 'countdown_seconds', '25', '提醒和问答的倒计时秒数，到时没赶上，能自理的自己处理，没有惩罚'],
-    ['time', 'speed', '24', '时间流速，游戏时钟的倍数：1 是现实速度，24 是现实一小时过游戏里一整天，60 是现实 24 分钟过一天。点房间右下角的时间可以在四档之间切换。游戏里几点在设置的游戏时钟里调。离开游戏期间世界暂停，回来接着走'],
     ['time', 'daynight', 'auto', 'auto 用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
-    ['play', 'auto_return', 'true', '为 true 时，照顾完没有别的事，主角会自己回到书桌前工作；false 时留在原地等你手动移动'],
     ['play', 'backend_provider', 'builtin', 'builtin 是内置后端，规则和台词都在数据文件夹的明文 YAML 里；http 是把状态发给一个远程地址，由它决定谁说话、发生什么事，失败时退回内置'],
     ['play', 'backend_url', '', '远程后端的地址，只在 backend_provider 为 http 时用。发出去的只有状态快照，不含名字'],
     ['play', 'backend_timeout', '4000', '远程后端的超时，毫秒'],
@@ -14,18 +11,13 @@
     ['play', 'needs_source', 'builtin', 'builtin 是游戏自己算需求的增长；backend 是需求完全由后端用 need_set 指令给，比如接入你自己的 ODE，游戏不再自己涨'],
     ['play', 'api_bridge', 'false', '为 true 时，页面响应 postMessage 的 care.getState 和 care.apply，让外部程序读取每个人的需求和状态，也能写入。默认关闭'],
     ['economy', 'work_hours', '09:00-18:00', '每天的工作时段，按昼夜时钟算'],
-    ['interaction', 'picks', 'true', '偶尔问你某个角色会说哪句话'],
-    ['interaction', 'sensitive_topics', 'false', '是否出现较私密或带文化压力的话题，例如身体不适、催婚，默认关闭'],
-    ['interaction', 'learn', 'true', '根据你的回应逐步适应每个角色的打扰频率和话题'],
     ['ui', 'scene', 'auto', '房间背景：auto 白天客厅夜里卧室；living 客厅；bedroom 卧室；kitchen 厨房；lawn 草坪；balcony 阳台；none 纯色'],
     ['ui', 'theme', 'auto', 'auto 跟随系统；light 浅色；dark 深色'],
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],
     ['ui', 'figure', 'dressed', '人物的造型：dressed 穿衣小豆，上半肤色下半衣服；plain 素色小豆，整只衣服色；dumpling 团子，没有手脚'],
-    ['ui', 'hide_when_fullscreen', 'true', '桌面版使用，全屏程序运行时隐藏'],
-    ['audio', 'sfx', 'true', '音效：点按、有人开口、完成打勾、发生了事情时的轻响，现场合成，没有音频文件'],
-    ['audio', 'music', 'true', '背景音乐：安静的现场合成音乐，夜里更低更慢。浏览器要求先点一下页面才会出声'],
-    ['audio', 'volume', '0.5', '音量，0 到 1'],
+    ['audio', 'music_volume', '50', '背景音乐音量，0 到 100，0 是关掉。现场合成的安静音乐，夜里更低更慢。浏览器要求先点一下页面才会出声'],
+    ['audio', 'sfx_volume', '50', '音效音量，0 到 100，0 是关掉。点按、有人开口、完成打勾、发生了事情时的轻响'],
     ['account', 'enabled', 'false', '账号功能，预留。目前没有服务器，保持关闭'],
     ['account', 'server_url', '', '预留，将来账号和云端存档服务的地址'],
     ['ai', 'enabled', 'false', '是否启用 AI 台词。默认关闭，关闭时一个字节也不会发出去'],
@@ -39,7 +31,7 @@
   ];
 
   /* 已经取消的设置，旧文件里留着的也丢掉 */
-  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale', 'nudges'], ui: ['avatar_style'], privacy: ['upload'] };
+  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy', 'auto_return'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale', 'nudges', 'picks', 'sensitive_topics', 'learn'], audio: ['sfx', 'music', 'volume'], ui: ['avatar_style', 'hide_when_fullscreen'], privacy: ['upload'] };
   const dropRemoved = out => { for (const s in REMOVED) if (out[s]) { for (const k of REMOVED[s]) delete out[s][k]; if (!Object.keys(out[s]).length && !SCHEMA.some(x => x[0] === s)) delete out[s]; } return out; };
 
   function parse(text) {

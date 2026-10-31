@@ -1,12 +1,13 @@
 /* 音效和音乐：全部用浏览器自带的 Web Audio 现场合成，没有音频文件，不增加体积。
    音效：点按、有人开口要求、完成打勾、发生了事情。音乐：安静的五声音阶和弦垫加零星的旋律，夜里更低更慢。
-   浏览器要求先有一次点击才能出声，所以第一次点按之后才开始。设置里 audio.sfx、audio.music、audio.volume 可以关或调。 */
+   浏览器要求先有一次点击才能出声，所以第一次点按之后才开始。设置里 audio.music_volume 和 audio.sfx_volume 调，0 是关。 */
 (function (CY) {
   const G = CY.game, ini = CY.ini;
   const S = CY.sound = CY.sound || {};
   let ctx = null, master = null, musicBus = null, sfxBus = null, timer = null, nextT = 0, bar = 0;
-  const flag = k => ini.bool(G.cfg, 'audio', k);
-  const volume = () => { const v = parseFloat(ini.get(G.cfg, 'audio', 'volume')); return isNaN(v) ? 0.5 : Math.max(0, Math.min(1, v)); };
+  /* 两个音量，0 到 100，存在设置里；0 就是关 */
+  const vol = k => { const v = parseFloat(ini.get(G.cfg, 'audio', k)); return isNaN(v) ? 0.5 : Math.max(0, Math.min(1, v / 100)); };
+  S.musicVol = () => vol('music_volume'); S.sfxVol = () => vol('sfx_volume');
 
   const ensure = () => {
     if (ctx) return ctx;
@@ -32,7 +33,7 @@
   };
   const lastAt = {};
   S.sfx = name => {
-    if (!flag('sfx') || !SFX[name] || !ensure() || ctx.state !== 'running') return;
+    if (!S.sfxVol() || !SFX[name] || !ensure() || ctx.state !== 'running') return;
     const now = ctx.currentTime;
     if (now - (lastAt[name] || -1) < 0.15) return;
     lastAt[name] = now;
@@ -63,10 +64,10 @@
   /* 按设置开关音乐、调音量 */
   S.apply = () => {
     if (!ctx) return;
-    const v = volume(), t = ctx.currentTime;
-    sfxBus.gain.setTargetAtTime(flag('sfx') ? v : 0, t, 0.05);
-    musicBus.gain.setTargetAtTime(flag('music') ? v * 0.6 : 0, t, 0.4);
-    if (flag('music') && v > 0) startMusic(); else stopMusic();
+    const mv = S.musicVol(), sv = S.sfxVol(), t = ctx.currentTime;
+    sfxBus.gain.setTargetAtTime(sv, t, 0.05);
+    musicBus.gain.setTargetAtTime(mv * 0.6, t, 0.4);
+    if (mv > 0) startMusic(); else stopMusic();
   };
   const wake = () => {
     if (!ensure()) return;
@@ -79,7 +80,7 @@
     wake();
     if (e.target.closest && e.target.closest('button, .tile, .chip, .sw')) S.sfx('tap');
   }, true);
-  document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (flag('music') || flag('sfx')) ctx.resume(); });
+  document.addEventListener('visibilitychange', () => { if (!ctx) return; if (document.hidden) ctx.suspend(); else if (S.musicVol() || S.sfxVol()) ctx.resume(); });
 
   /* 头上弹出的事件各有各的声音 */
   (G.popHooks = G.popHooks || []).push(e => S.sfx(e.kind === 'done' ? 'done' : e.kind === 'ask' ? 'ask' : 'event'));

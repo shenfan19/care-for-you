@@ -637,3 +637,4 @@ CY.i18n.register("zh-TW", {"nanny.st_here": "現在：保姆在家裡。", "nann
 CY.i18n.register("zh-TW", {"log.nanny_arrive": "保姆到了，朝家裡人點點頭，開始忙。", "log.nanny_tea": "保姆在你手邊放了一杯茶，沒說話，轉身去忙了。", "log.nanny_leave": "保姆下班了，留了張條：今天都照看過了。"});
 CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "share.note": "只在你的裝置上產生一張圖，放什麼內容由你勾選，名字也由你決定。遊戲不會上傳，也不推薦你分享。", "brand.name": "照顧你", "wd.0": "週日", "wd.1": "週一", "wd.2": "週二", "wd.3": "週三", "wd.4": "週四", "wd.5": "週五", "wd.6": "週六", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
 CY.i18n.register("zh-TW", {"corner.day": "第 {m} 個月 第 {d} 天"});
+CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到 100，0 是關掉。現場合成的安靜音樂，夜裡更低更慢。瀏覽器要求先點一下頁面才會出聲", "ini.audio.sfx_volume": "音效音量，0 到 100，0 是關掉。點按、有人開口、完成打勾、發生了事情時的輕響"});

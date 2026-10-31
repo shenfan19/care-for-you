@@ -276,7 +276,7 @@
     const pl = W.player();
     if (W.holding) { W.lastActive = Date.now(); return; }
     if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.moveTo(W.WORK.place, W.workRoom()); return; }
-    if (!ini.bool(G.cfg, 'play', 'auto_return') || Date.now() - W.lastActive < W.IDLE_MS) return;
+    if (Date.now() - W.lastActive < W.IDLE_MS) return;
     if (pl.place !== W.WORK.place || pl.room !== W.workRoom()) { W.moveTo(W.WORK.place, W.workRoom()); }
   };
 

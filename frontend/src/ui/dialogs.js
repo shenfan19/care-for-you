@@ -7,7 +7,7 @@
   const $ = id => document.getElementById(id);
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
-  const OPT = { 'time.speed': ['1', '6', '24', '60'], 'audio.volume': ['0', '0.25', '0.5', '0.75', '1'], 'interrupt.frequency': ['test', 'often', 'normal', 'rare'], 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
+  const OPT = { 'play.backend_provider': ['builtin', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   const SKIP = new Set(['time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'ui.figure', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
@@ -17,7 +17,7 @@
       const v = ini.get(G.cfg, s, k), key = s + '.' + k;
       const head = s !== sec ? `<h3>${esc(t('sec.' + s))}</h3>` : ''; sec = s;
       const opts = OPT[key] || (d === 'true' || d === 'false' ? ['true', 'false'] : null);
-      const input = opts ? `<select data-k="${key}">${opts.map(o => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input data-k="${key}" ${k === 'api_key' ? 'type="password"' : ''} value="${esc(v)}">`;
+      const input = /_volume$/.test(k) ? `<input type="range" min="0" max="100" step="5" data-k="${key}" value="${esc(v)}" style="flex:1"><span class="vv" style="width:2.5em;text-align:right">${esc(v)}</span>` : opts ? `<select data-k="${key}">${opts.map(o => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input data-k="${key}" ${k === 'api_key' ? 'type="password"' : ''} value="${esc(v)}">`;
       return head + `<div class="srow"><span class="k">${k}</span>${input}<span class="mute n">${esc(CY.tOr('ini.' + key, note))}</span></div>`;
     }).join(''); };
     const shown = ini.SCHEMA.filter(([s, k]) => !SKIP.has(s + '.' + k));
@@ -47,6 +47,7 @@
     });
     dlg.querySelector('#scancel').onclick = U.closeDialog;
     /* 改了就生效，不用另外保存 */
+    dlg.querySelectorAll('input[type=range]').forEach(el => el.oninput = () => { const vv = el.parentNode.querySelector('.vv'); if (vv) vv.textContent = el.value; });
     dlg.querySelectorAll('[data-k]').forEach(el => el.onchange = async () => {
       const [sc, k] = el.dataset.k.split('.'); G.cfg[sc] = G.cfg[sc] || {}; G.cfg[sc][k] = el.value.trim();
       await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderRoom(true); U.renderClock();

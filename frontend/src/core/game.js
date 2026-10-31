@@ -460,7 +460,7 @@
   G.playFx = (pid, act) => { G.fx[pid] = { act, t: Date.now() }; G.pop(pid, 'done', '✓'); };
 
   /* ---------- 学习每个角色的节奏 ---------- */
-  const learnOn = () => ini.bool(G.cfg, 'interaction', 'learn');
+  const learnOn = () => true;
   function learn(p, kind, responded, latency) {
     if (!learnOn()) return;
     const L = p.state.learn, K = (L.kinds[kind] = L.kinds[kind] || { y: 0, n: 0 });
@@ -528,7 +528,7 @@
   function advance(gmin, offline) {
     if (gmin <= 0) return;
     const hours = gmin / 60;
-    const boost = ini.get(G.cfg, 'interrupt', 'frequency') === 'test' && !offline ? 30 : 1;
+    const boost = G.freq() === 'test' && !offline ? 30 : 1;
     G.world.game_minutes += gmin;
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
     const driven = (p, k) => external || (CY.backend && CY.backend.isDriven(p.id, k));
@@ -569,8 +569,10 @@
   }
 
   /* ---------- 打断 ---------- */
+  /* 打扰频率是内部设计，不在设置里；测试或仿真可以直接改 G.cfg.interrupt.frequency */
+  G.freq = () => (G.cfg.interrupt || {}).frequency || 'normal';
   G.nextGapSeconds = () => {
-    const f = ini.get(G.cfg, 'interrupt', 'frequency');
+    const f = G.freq();
     if (f === 'test') return GAP_TEST[0] + Math.random() * (GAP_TEST[1] - GAP_TEST[0]);
     const [lo, hi] = GAP[f] || GAP.normal;
     return Math.max(20, (lo + Math.random() * (hi - lo)) * 60 / G.speed());
@@ -613,7 +615,7 @@
   G.askBank = p => {
     const v = p.person.voice || DEFAULT_VOICE[p.person.species] || 'sibling', st = G.stage(p), pr = G.pronoun(p);
     if (p.person.kind !== 'human' || st === 'infant') return [];
-    const sens = ini.bool(G.cfg, 'interaction', 'sensitive_topics');
+    const sens = !!G.showSensitive;   /* 较私密或带文化压力的问题默认不出现，不放进设置，只有测试会打开 */
     const recent = new Set(p.state.asked || []);
     const fits = (arr, val) => !arr || arr.includes(val);
     let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
@@ -624,7 +626,7 @@
   };
   const GENERIC_ANSWERS = ['ans.generic1', 'ans.generic2', 'ans.generic3'];
 
-  const eveningOk = () => ini.get(G.cfg, 'interrupt', 'frequency') === 'test' || (G.dayMinutes() >= 16 * 60 && G.dayMinutes() < 21 * 60);
+  const eveningOk = () => G.freq() === 'test' || (G.dayMinutes() >= 16 * 60 && G.dayMinutes() < 21 * 60);
   /* 当前能触发的疾病事件，例如糖尿病的晚饭选择 */
   const eventsOf = p => {
     const out = [];
@@ -668,7 +670,7 @@
     const asks = G.askBank(p);
     /* 还不会说话的孩子没有“平时会说哪句”可回想 */
     const speaks = p.person.kind !== 'human' || G.age(p) >= 2;
-    const picks = ini.bool(G.cfg, 'interaction', 'picks') && p.person.kind !== 'plant' && speaks ? G.pickOptions(p) : [];
+    const picks = p.person.kind !== 'plant' && speaks ? G.pickOptions(p) : [];
     const nudgeOk = p.person.kind === 'human' && G.stage(p) !== 'infant' && G.tpl.nudges.length;
     const kinds = [
       ['choice', evs.length ? 0.15 : 0], ['ask', asks.length ? 0.3 : 0], ['pick', picks.length ? 0.2 : 0], ['nudge', nudgeOk ? 0.07 : 0],
