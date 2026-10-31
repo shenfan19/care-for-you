@@ -13,12 +13,13 @@ THREE_DIR = os.environ.get('THREE_DIR', os.path.join(os.environ.get('TEMP', '/tm
 FURN = os.environ.get('KENNEY_FURNITURE', 'C:/fight/kenney_furniture-kit/Models/GLTF format')
 CHAR = os.environ.get('KENNEY_CHARS', 'C:/fight/kenney_mini-characters/Models/GLB format')
 PETS = os.environ.get('KENNEY_PETS', 'C:/fight/kenney_cube-pets/Models/GLB format')
-MAP = {'/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
+CARS = os.environ.get('KENNEY_CARS', 'C:/fight/kenney_car-kit/Models/GLB format')
+MAP = {'/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
 
 class H(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         path = path.split('?', 1)[0]
-        for pre in ('/three/', '/furn/', '/char/', '/pets/'):
+        for pre in ('/three/', '/furn/', '/char/', '/pets/', '/cars/'):
             if path.startswith(pre): return os.path.join(MAP[pre], *path[len(pre):].split('/')).replace('%20', ' ')
         return os.path.join(HERE, path.lstrip('/') or 'render.html')
     def log_message(self, *a): pass
@@ -30,6 +31,7 @@ def serve():
     return srv, srv.server_address[1]
 
 FURN_SCALE = 1.9   # Kenney 家具的一个单位约 1.8 米，乘 1.9 后一格地砖约 1 米，单人床约 1.1 格宽 2.1 格长
+CAR_SCALE = 0.8   # 小汽车约 2.2 格长，和人物的比例合适
 CHAR_SCALE = 1.6   # Mini Characters 乘 1.6 后成人约 76 像素高，和现在的人物大小相当
 FURNITURE = json.load(open(os.path.join(HERE, 'furniture_list.json'), encoding='utf-8'))
 
@@ -59,6 +61,16 @@ def main(kind):
                 for rot in range(4):
                     r = pg.evaluate('o => window.renderModel(o)', {'url': '/char/%s.glb' % name, 'rot': rot, 'scale': CHAR_SCALE})
                     open(os.path.join(OUT, 'furn', '%s_%d.png' % (name, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
+                    bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
+                m['size'] = [round(v, 3) for v in r['size']]
+                print(name, m['size'])
+        if kind == 'cars':
+            os.makedirs(os.path.join(OUT, 'furn'), exist_ok=True)
+            for name in ['taxi', 'ambulance', 'sedan', 'van', 'delivery', 'suv', 'police', 'firetruck', 'cone', 'garbage-truck']:
+                m = manifest.setdefault('furn', {}).setdefault('car-' + name, {})
+                for rot in range(4):
+                    r = pg.evaluate('o => window.renderModel(o)', {'url': '/cars/%s.glb' % name, 'rot': rot, 'scale': CAR_SCALE})
+                    open(os.path.join(OUT, 'furn', 'car-%s_%d.png' % (name, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                 m['size'] = [round(v, 3) for v in r['size']]
                 print(name, m['size'])
