@@ -73,7 +73,7 @@ python frontend/tests/backend_compare.py 1 3
 
 ## Status
 
-Early version, currently 0.49. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
+Early version, currently 0.50. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
 
 ## Not a health product
 
@@ -86,8 +86,9 @@ Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen.
 | What | Source | License | Use |
 | --- | --- | --- | --- |
 | Furniture art | [Kenney, Furniture Kit](https://kenney.nl/assets/furniture-kit) | CC0 1.0 | The 3D models are rendered into isometric images by `tools_ai/render_iso`. The license text is kept in `frontend/assets/iso`. |
+| Characters | [Kenney, Mini Characters 1](https://kenney.nl) | CC0 1.0 | Rendered the same way in four directions and four poses. Skin tones are recolored in the game with an SVG filter and a mask. |
 | YAML parsing | [js-yaml](https://github.com/nodeca/js-yaml) | MIT | Shipped in `frontend/vendor`. |
 | Rendering tool | [three.js](https://threejs.org) | MIT | Used only by the rendering tool, not shipped with the game. |
-| Characters, animations, text | This project | MIT | Original. |
+| Animals, plants, animations, text | This project | MIT | Original. |
 
 CC0 does not require attribution, and the sources are listed anyway. AI-assisted tools were used during development.

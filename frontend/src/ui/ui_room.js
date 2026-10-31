@@ -196,7 +196,7 @@
       const dir = fam ? '' : c._dir || (working ? 'ne' : '');
       c.classList.toggle('working', working && !c._dir);
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir); c.dataset.av = look; }
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, working && !c._dir ? 'sit' : ''); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p));
@@ -333,7 +333,7 @@
     if (show) U.moveFig(c, v.place, v.gx, v.gy);
     const working = show && W.atWork(), dir = c._dir || (working ? 'ne' : '');
     c.classList.toggle('working', working && !c._dir);
-    if (c.dataset.dir !== dir) { c.dataset.dir = dir; c.querySelector('.body').innerHTML = CY.avatar(PLAYER, dir); }
+    if (c.dataset.dir !== dir) { c.dataset.dir = dir; c.querySelector('.body').innerHTML = CY.avatar(PLAYER, dir, working && !c._dir ? 'sit' : ''); }
   };
   U.renderNav = function () {
     const nav = $r('#placeNav'); if (!nav) return;

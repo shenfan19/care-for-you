@@ -179,3 +179,5 @@ CY.i18n.register("ja", {"about.tab_data": "データとプライバシー", "abo
 CY.i18n.register("ja", {"cred.p3": "家具の絵は Kenney の Furniture Kit（CC0）の 3D モデルを斜めから描画したものです。それ以外の絵、アニメーション、文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。"});
 CY.i18n.register("ja", {"data.h2": "二、数値積分、実験段階", "data.p2": "必要、気分、体を連続して変わる数値として、方程式で一歩ずつ積分します。計算はブラウザの中で行い、モデルはデータフォルダにあるテキストの YAML です。詳細設定でバックエンドを lm にすると使えます。扱うのは必要、気分、虚弱度だけで、イベントとセリフは今も表引きです。数値は検証していないので、本気にしないでください。"});
 CY.i18n.register("ja", {"cred.p3": "家具の絵：Kenney の Furniture Kit（CC0 1.0、kenney.nl/assets/furniture-kit）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが three.js（MIT ライセンス、ゲームには同梱しません）で斜めから描画しました。それ以外の絵、アニメーション、文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。"});
+CY.i18n.register("ja", {"add.model": "見た目", "add.model_auto": "自動"});
+CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit と Mini Characters（どちらも CC0 1.0、kenney.nl）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが斜めから描画し、キャラクターの肌の色はゲーム内で選んだ色に塗り替えます。描画には three.js（MIT ライセンス、ゲームには同梱しません）を使いました。動物、植物、アニメーション、文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。"});

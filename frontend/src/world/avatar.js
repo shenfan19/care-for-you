@@ -360,11 +360,46 @@ function beanDraw(o, V) {
   CY.figureOf = v => ({ classic: 'dressed', bean_c: 'dressed', bean_b: 'plain', bean_a: 'dumpling' }[v]) || (CY.FIGURES.includes(v) ? v : 'dressed');
   CY.figure = 'dressed';
   CY.DIRS = ['se', 'sw', 'ne', 'nw'];
-  CY.avatar = (p, dir) => DRAW[p.species.id] ? DRAW[p.species.id](p) : beanHuman(p, FIG_V[CY.figure] || 'C', dir);
+  /* ---------- 人物精灵：Kenney 的 CC0 小人渲染成四个朝向，站，走，坐，睡四种姿势。肤色在浏览器里按玩家的选择重着色 ----------
+     图没加载完，或者没有图像环境（测试），就先画原来的矢量豆子。 */
+    const CHAR_KEYS = ['female-a', 'female-b', 'female-c', 'female-d', 'female-e', 'female-f', 'male-a', 'male-b', 'male-c', 'male-d', 'male-e', 'male-f'];
+  const STAGE_K = { infant: 0.5, toddler: 0.62, child: 0.76, teen: 0.9, adult: 1, elder: 0.95 };
+  const ROT = { '': 0, sw: 0, se: 1, ne: 2, nw: 3 };
+  const hashOf = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+  const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  CY.charKeys = CHAR_KEYS;
+  /* 这个人用哪个形象：看外观里选的，没选就按性别和编号定一个，不会变 */
+  CY.charKeyOf = (p) => {
+    const a = (p.person && p.person.appearance) || {};
+    if (CHAR_KEYS.includes(a.model)) return a.model;
+    const she = ((p.person && p.person.pronoun) || '') === '她', pool = CHAR_KEYS.filter(k => k.startsWith(she ? 'female' : 'male'));
+    return pool[hashOf((p.person && p.person.id) || (p.id) || (a.hair_style || '') + (a.cloth || '')) % pool.length];
+  };
+  let sprUid = 0;
+  /* 肤色重着色不读像素（直接打开 index.html 时图片算跨域，读不了）：同一张图盖两层，上面一层用滤镜按比例放大每个通道，再用皮肤遮罩只留下皮肤的部分 */
+  const sprite = (p, dir, pose) => {
+    const M = (CY.isoSprites || {}).char; if (!M || typeof document === 'undefined') return null;
+    const key = CY.charKeyOf(p), m = M[key]; if (!m) return null;
+    const rot = pose === 'sleep' ? 2 : ROT[dir] || 0, base = `assets/iso/char/${key}_${pose}_${rot}`, e = m[pose] && m[pose][rot]; if (!e) return null;
+    const a = (p.person && p.person.appearance) || {}, G = CY.game, stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
+    const sk = a.skin === undefined ? null : SKIN[a.skin], k = 1.43 * (STAGE_K[stage] || 1) * (pose === 'sleep' ? 0.85 : 1);
+    const x = (50 - e.ax * k).toFixed(1), y = (124 - e.ay * k).toFixed(1), w = (e.w * k).toFixed(1), h = (e.h * k).toFixed(1);
+    let tint = '';
+    if (sk && m.skin) {
+      const id = 'sp' + (sprUid++), to = hexRgb(sk[1]), r = to.map((v, i) => +(v / m.skin[i]).toFixed(3));
+      tint = `<defs><filter id="${id}f" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${r[0]} 0 0 0 0 0 ${r[1]} 0 0 0 0 0 ${r[2]} 0 0 0 0 0 1 0"/></filter><mask id="${id}m" maskUnits="userSpaceOnUse" x="${x}" y="${y}" width="${w}" height="${h}"><image href="${base}_m.png" x="${x}" y="${y}" width="${w}" height="${h}"/></mask></defs><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}" filter="url(#${id}f)" mask="url(#${id}m)"/>`;
+    }
+    return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}"/>${tint}</svg>`;
+  };
+  CY.avatar = (p, dir, pose) => {
+    if (DRAW[p.species.id]) return DRAW[p.species.id](p);
+    const G = CY.game, asleep = !!(G && G.isSleeping && p.id && G.isSleeping(p));
+    return sprite(p, dir || '', asleep ? 'sleep' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand') || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
+  };
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {
     const years = typeof age === 'number' ? age : arch.age;
-    return CY.avatar({ species: { id: arch.species }, state: { mood: 0.7 }, person: { age: years, appearance: look } });
+    return CY.avatar({ species: { id: arch.species }, state: { mood: 0.7 }, person: { age: years, appearance: look, pronoun: arch.pronoun || '他' } });
   };
   CY.avatarOptions = {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],

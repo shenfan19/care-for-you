@@ -29,6 +29,7 @@ def serve():
     return srv, srv.server_address[1]
 
 FURN_SCALE = 1.9   # Kenney 家具的一个单位约 1.8 米，乘 1.9 后一格地砖约 1 米，单人床约 1.1 格宽 2.1 格长
+CHAR_SCALE = 1.6   # Mini Characters 乘 1.6 后成人约 76 像素高，和现在的人物大小相当
 FURNITURE = json.load(open(os.path.join(HERE, 'furniture_list.json'), encoding='utf-8'))
 
 def main(kind):
@@ -50,6 +51,22 @@ def main(kind):
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                     m['size'] = [round(v, 3) for v in r['size']] if rot == 0 else m.get('size')
                 print(name, m['size'])
+        if kind == 'characters':
+            os.makedirs(os.path.join(OUT, 'char'), exist_ok=True)
+            names = ['character-female-' + c for c in 'abcdef'] + ['character-male-' + c for c in 'abcdef']
+            POSES = {'stand': ('idle', 0.0), 'walk': ('walk', 0.12), 'sit': ('sit', 5.0), 'sleep': ('die', 5.0)}
+            for name in names:
+                key = name.replace('character-', '')
+                m = manifest.setdefault('char', {}).setdefault(key, {})
+                for pose, (clip, t) in POSES.items():
+                    for rot in range(4):
+                        r = pg.evaluate('o => window.renderModel(o)', {'url': '/char/%s.glb' % name, 'rot': rot, 'scale': CHAR_SCALE, 'clip': clip, 't': t, 'mask': True})
+                        base = os.path.join(OUT, 'char', '%s_%s_%d' % (key, pose, rot))
+                        open(base + '.png', 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
+                        open(base + '_m.png', 'wb').write(base64.b64decode(r['maskPng'].split(',', 1)[1]))
+                        m.setdefault(pose, {})[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay']}
+                        if r['skinAvg'] and 'skin' not in m: m['skin'] = r['skinAvg'][:3]
+                print(key, m.get('skin'), m['stand']['0'])
         b.close()
     os.makedirs(OUT, exist_ok=True)
     json.dump(manifest, open(manifest_path, 'w', encoding='utf-8'), indent=1)

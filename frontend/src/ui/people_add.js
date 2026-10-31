@@ -26,10 +26,8 @@
         ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="1" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
           ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
-          <div class="row">${esc(t('add.glasses'))} ${sel('glasses', O.glasses, O.glasses.map(g => t('glasses.' + g)), look.glasses === true ? 'round' : look.glasses || 'none')}
-          <label><input type="checkbox" id="abeard" ${look.beard ? 'checked' : ''}> ${esc(t('add.beard'))}</label></div>
-          <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])} ${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])}</div>
-          <div class="row">${esc(t('add.hair'))} ${sel('hair_style', O.hairStyle, O.hairStyle.map(h => t('hair.' + h)), look.hair_style)} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
+          <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])}</div>
+          <div class="row">${esc(t('add.model'))} ${sel('model', ['', ...CY.charKeys], [t('add.model_auto'), ...CY.charKeys.map((k, i) => (i + 1) + (k.startsWith('female') ? ' ♀' : ' ♂'))], look.model || '')}</div>
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
         : `<div class="row">${esc(t('add.coat'))} ${sw('coat', O.coatBySpecies[arch.species] || O.coat, look.coat, v => O.coatHex[v])}</div><div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
         ${human && !['infant', 'toddler'].includes(stage) ? `<label class="row"><input type="checkbox" id="ahelper" ${st.helper ? 'checked' : ''}> ${esc(t('add.helper'))}</label>` : ''}
