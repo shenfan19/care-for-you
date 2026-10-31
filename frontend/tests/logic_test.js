@@ -351,13 +351,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const sis = { person: { voice: 'sibling', age: 26, pronoun: '她', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
   const bro = { person: { voice: 'sibling', age: 28, pronoun: '他', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
   const kid = { person: { voice: 'child', age: 7, pronoun: '她', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
-  G.showSensitive = false;
+  G.cfg.interaction.sensitive_topics = 'false';
   check('姐妹可以被问到身体不适的话题，兄弟不会', G.askBank(sis).some(q => q.id === 'ask_s05') && !G.askBank(bro).some(q => q.id === 'ask_s05'));
   check('孩子只被问孩子的问题', G.askBank(kid).every(q => q.voice.includes('child')));
   check('敏感话题默认不出现', !G.askBank(sis).some(q => q.sensitive));
-  G.showSensitive = true;
+  G.cfg.interaction.sensitive_topics = 'true';
   check('打开后敏感话题才出现', G.askBank(sis).some(q => q.id === 'ask_s06') && !G.askBank(bro).some(q => q.id === 'ask_s06'));
-  G.showSensitive = false;
+  G.cfg.interaction.sensitive_topics = 'false';
   check('每个问题恰好三个预设回答', G.tpl.asks.every(q => q.answers.length === 3));
 
   /* 时间显示 */

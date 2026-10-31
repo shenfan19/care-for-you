@@ -12,16 +12,16 @@
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
     /* AI、账号、后端、对外接口都在底部的高级设置里，默认折叠 */
-    const ADV = k => /^(ai|account)\./.test(k) || /^play\.(backend_|needs_source|api_bridge)/.test(k);
-    const rows = list => { let sec = ''; return list.map(([s, k, d, note]) => {
+    const ADV = k => /^(ai|account|interaction)\./.test(k) || /^play\.(backend_|needs_source|api_bridge)/.test(k);
+    const rows = (list, basic) => { let sec = ''; return list.map(([s, k, d, note]) => {
       const v = ini.get(G.cfg, s, k), key = s + '.' + k;
       const head = s !== sec ? `<h3>${esc(t('sec.' + s))}</h3>` : ''; sec = s;
       const opts = OPT[key] || (d === 'true' || d === 'false' ? ['true', 'false'] : null);
       const input = /_volume$/.test(k) ? `<input type="range" min="0" max="100" step="5" data-k="${key}" value="${esc(v)}" style="flex:1"><span class="vv" style="width:2.5em;text-align:right">${esc(v)}</span>` : opts ? `<select data-k="${key}">${opts.map(o => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input data-k="${key}" ${k === 'api_key' ? 'type="password"' : ''} value="${esc(v)}">`;
-      return head + `<div class="srow"><span class="k">${k}</span>${input}<span class="mute n">${esc(CY.tOr('ini.' + key, note))}</span></div>`;
+      return head + `<div class="srow"><span class="k">${esc(basic ? CY.tOr('lbl.' + key, k) : k)}</span>${input}${basic ? '' : `<span class="mute n">${esc(CY.tOr('ini.' + key, note))}</span>`}</div>`;
     }).join(''); };
     const shown = ini.SCHEMA.filter(([s, k]) => !SKIP.has(s + '.' + k));
-    const form = rows(shown.filter(([s, k]) => !ADV(s + '.' + k)));
+    const form = rows(shown.filter(([s, k]) => !ADV(s + '.' + k)), true);
     const advForm = rows(shown.filter(([s, k]) => ADV(s + '.' + k)));
     const th = ini.get(G.cfg, 'ui', 'theme'), bg = ini.get(G.cfg, 'ui', 'background'), lg = ini.get(G.cfg, 'ui', 'language');
     const sel = (name, vals, labels, cur) => `<select data-ap="${name}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;

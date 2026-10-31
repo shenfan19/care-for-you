@@ -460,7 +460,7 @@
   G.playFx = (pid, act) => { G.fx[pid] = { act, t: Date.now() }; G.pop(pid, 'done', '✓'); };
 
   /* ---------- 学习每个角色的节奏 ---------- */
-  const learnOn = () => true;
+  const learnOn = () => ini.bool(G.cfg, 'interaction', 'learn');
   function learn(p, kind, responded, latency) {
     if (!learnOn()) return;
     const L = p.state.learn, K = (L.kinds[kind] = L.kinds[kind] || { y: 0, n: 0 });
@@ -615,7 +615,7 @@
   G.askBank = p => {
     const v = p.person.voice || DEFAULT_VOICE[p.person.species] || 'sibling', st = G.stage(p), pr = G.pronoun(p);
     if (p.person.kind !== 'human' || st === 'infant') return [];
-    const sens = !!G.showSensitive;   /* 较私密或带文化压力的问题默认不出现，不放进设置，只有测试会打开 */
+    const sens = ini.bool(G.cfg, 'interaction', 'sensitive_topics');
     const recent = new Set(p.state.asked || []);
     const fits = (arr, val) => !arr || arr.includes(val);
     let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
@@ -670,7 +670,7 @@
     const asks = G.askBank(p);
     /* 还不会说话的孩子没有“平时会说哪句”可回想 */
     const speaks = p.person.kind !== 'human' || G.age(p) >= 2;
-    const picks = p.person.kind !== 'plant' && speaks ? G.pickOptions(p) : [];
+    const picks = ini.bool(G.cfg, 'interaction', 'picks') && p.person.kind !== 'plant' && speaks ? G.pickOptions(p) : [];
     const nudgeOk = p.person.kind === 'human' && G.stage(p) !== 'infant' && G.tpl.nudges.length;
     const kinds = [
       ['choice', evs.length ? 0.15 : 0], ['ask', asks.length ? 0.3 : 0], ['pick', picks.length ? 0.2 : 0], ['nudge', nudgeOk ? 0.07 : 0],

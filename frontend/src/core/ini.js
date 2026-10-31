@@ -16,6 +16,9 @@
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],
     ['ui', 'figure', 'dressed', '人物的造型：dressed 穿衣小豆，上半肤色下半衣服；plain 素色小豆，整只衣服色；dumpling 团子，没有手脚'],
+    ['interaction', 'picks', 'true', '偶尔问你某个角色会说哪句话'],
+    ['interaction', 'sensitive_topics', 'false', '是否出现较私密或带文化压力的话题，例如身体不适、催婚，默认关闭'],
+    ['interaction', 'learn', 'true', '根据你的回应逐步适应每个角色的打扰频率和话题'],
     ['audio', 'music_volume', '50', '背景音乐音量，0 到 100，0 是关掉。现场合成的安静音乐，夜里更低更慢。浏览器要求先点一下页面才会出声'],
     ['audio', 'sfx_volume', '50', '音效音量，0 到 100，0 是关掉。点按、有人开口、完成打勾、发生了事情时的轻响'],
     ['account', 'enabled', 'false', '账号功能，预留。目前没有服务器，保持关闭'],
@@ -31,7 +34,7 @@
   ];
 
   /* 已经取消的设置，旧文件里留着的也丢掉 */
-  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy', 'auto_return'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale', 'nudges', 'picks', 'sensitive_topics', 'learn'], audio: ['sfx', 'music', 'volume'], ui: ['avatar_style', 'hide_when_fullscreen'], privacy: ['upload'] };
+  const REMOVED = { interrupt: ['mode', 'answer_seconds', 'quiet_hours'], time: ['offline_cap_hours'], player: ['name', 'title'], play: ['fall_scale', 'economy', 'auto_return'], economy: ['wage', 'nanny_daily'], interaction: ['click_instead_of_hold', 'hold_scale', 'nudges'], audio: ['sfx', 'music', 'volume'], ui: ['avatar_style', 'hide_when_fullscreen'], privacy: ['upload'] };
   const dropRemoved = out => { for (const s in REMOVED) if (out[s]) { for (const k of REMOVED[s]) delete out[s][k]; if (!Object.keys(out[s]).length && !SCHEMA.some(x => x[0] === s)) delete out[s]; } return out; };
 
   function parse(text) {
