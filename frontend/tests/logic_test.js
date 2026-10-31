@@ -1022,6 +1022,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('保姆在岗心情慢慢降，效果不低于八成', nn.state.mood < m1 && G.nannyEfficiency() >= 0.8 - 1e-9);
     G.world.nanny_on = false;
   }
+  {
+    G.world.owned = {}; G.world.money = 100;
+    check('钱不够不能买，够了能买，买了扣钱，不能重复买', !G.canBuy('bed') && G.canBuy('toy') && G.buy('toy') && G.world.money === 40 && !G.buy('toy'));
+    G.world.money = 1000;
+    check('装饰要一档一档买', !G.canBuy('decor2') && G.buy('decor1') && G.decorLevel() === 1 && G.buy('decor2') && G.decorLevel() === 2);
+    G.world.owned = {}; G.world.money = 200;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

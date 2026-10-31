@@ -52,6 +52,21 @@
     if (!work && G.world.nanny_paid_day === d && G.world.nanny_bye_day !== d) { G.world.nanny_bye_day = d; G.logK('you', 'event', 'log.nanny_leave', {}); }
   };
   /* 保姆现在的状态：here 在岗，wait 还没到上班时间或已下班，rest 今天钱不够休息，off 没请 */
+  /* 商店：买了就一直有，没有损耗，没有订阅。价格按每游戏小时 40 的收入和一天约 150 到 200 的实际收入定，
+     玩具半天，好床两天，婴儿车两天，轮椅三天，装饰按档位一天一档。decor 是装饰的档位，买一档加一档 */
+  G.SHOP = [
+    { id: 'toy', price: 60, icon: '🧸' }, { id: 'bed', price: 250, icon: '🛏' }, { id: 'stroller', price: 300, icon: '👶' }, { id: 'wheelchair', price: 450, icon: '♿' },
+    { id: 'decor1', price: 120, icon: '🪴' }, { id: 'decor2', price: 250, icon: '🪴', needs: 'decor1' }, { id: 'decor3', price: 400, icon: '🪴', needs: 'decor2' },
+  ];
+  G.owned = id => !!(G.world.owned && G.world.owned[id]);
+  G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };
+  G.buy = id => {
+    if (!G.canBuy(id)) return false;
+    const it = G.SHOP.find(x => x.id === id);
+    G.world.money -= it.price; G.world.owned = Object.assign({}, G.world.owned, { [id]: true });
+    G.logK('you', 'event', 'log.bought', { item: G.ref('shop.' + id, id) }); G.save(true); emit(); return true;
+  };
+  G.decorLevel = () => (G.owned('decor1') ? 1 : 0) + (G.owned('decor2') ? 1 : 0) + (G.owned('decor3') ? 1 : 0);
   G.NANNY_MOOD = { drain: 0.003, recover: 0.02, tip_cost: 40, tip_gain: 0.15, eff_floor: 0.8 };
   G.nannyEfficiency = () => { const n = G.nanny(); return n ? G.NANNY_MOOD.eff_floor + (1 - G.NANNY_MOOD.eff_floor) * n.state.mood : 1; };
   /* 奖金：每天一次，她在岗时才能给，只有加分，没有批评，克扣，加班这类操作 */

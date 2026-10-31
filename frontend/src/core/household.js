@@ -46,7 +46,7 @@
     for (const m of group) {
       G.setFlag(m, 'outing', { minutes: o.minutes, place: o.place, room: o.room, mode: 'stand' });
       G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place: G.ref('loc.' + o.place, o.place) });
-      if (m !== p) m.state.mood = clamp(m.state.mood + 0.05);
+      if (m !== p) m.state.mood = clamp(m.state.mood + 0.05 + (G.owned('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? 0.04 : 0));
     }
   };
 

@@ -51,6 +51,16 @@ def main(kind):
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                     m['size'] = [round(v, 3) for v in r['size']] if rot == 0 else m.get('size')
                 print(name, m['size'])
+        if kind == 'props':
+            os.makedirs(os.path.join(OUT, 'furn'), exist_ok=True)
+            for name in ['wheelchair']:
+                m = manifest.setdefault('furn', {}).setdefault(name, {})
+                for rot in range(4):
+                    r = pg.evaluate('o => window.renderModel(o)', {'url': '/char/%s.glb' % name, 'rot': rot, 'scale': CHAR_SCALE})
+                    open(os.path.join(OUT, 'furn', '%s_%d.png' % (name, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
+                    bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
+                m['size'] = [round(v, 3) for v in r['size']]
+                print(name, m['size'])
         if kind == 'characters':
             os.makedirs(os.path.join(OUT, 'char'), exist_ok=True)
             names = ['character-female-' + c for c in 'abcdef'] + ['character-male-' + c for c in 'abcdef']

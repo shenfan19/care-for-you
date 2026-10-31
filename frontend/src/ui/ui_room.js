@@ -113,7 +113,7 @@
       const id = CY.scenes.resolve(ini.get(G.cfg, 'ui', 'scene'), h);
       sig = 'f|' + (id || 'none') + '|' + CY.scenes.phase(h); html = () => (id ? CY.scenes.svg(id, h) : '');
       U.room.classList.toggle('hasscene', !!id);
-    } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey(); html = () => CY.iso.svg(U.viewPlace, h); U.room.classList.add('hasscene'); }
+    } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey() + '|' + (CY.game.world.owned ? Object.keys(CY.game.world.owned).join() : ''); html = () => CY.iso.svg(U.viewPlace, h); U.room.classList.add('hasscene'); }
     if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html(); }
   };
 

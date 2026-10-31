@@ -13,6 +13,7 @@
   const WALL = { bedroom: '#f3e6d0', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
   const SPR = () => (CY.isoSprites || {}).furn || {};
+  const G0 = () => CY.game;
 
   function sky(hour) {
     if (hour >= 7 && hour < 17) return { c: '#bfe3f5', sun: true };
@@ -109,6 +110,7 @@
         } else if (name === 'elder') {
           const ne = W.bedCount('elder');
           for (let i = 0; i < ne; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
+          if (G0().owned('wheelchair')) spr('wheelchair', 0, 2.4, 3.2);
           spr('sideTableDrawers', 0, 2.5, 0.35); spr('lampRoundTable', 0, 2.5, 0.35, 22, 2.86);
           spr('rugRound', 0, 1.5, 3.1, 0, -9);
         } else if (name === 'toilet') {
@@ -124,6 +126,10 @@
           spr('cabinetTelevision', 1, 0.3, 2.0); spr('televisionModern', 1, 0.3, 2.0, 22, 2.31);
           spr('loungeSofaLong', 3, 3.35, 2.0); spr('tableCoffee', 1, 1.9, 2.0);
           spr('pottedPlant', 0, 0.35, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);
+          if (G0().owned('toy')) spr('bear', 0, 2.9, 3.3);
+          if (G0().decorLevel() >= 1) spr('plantSmall2', 0, 3.6, 3.5);
+          if (G0().decorLevel() >= 2) { spr('rugRectangle', 1, 1.9, 2.0, 0, -8); spr('lampSquareFloor', 0, 0.3, 0.45); }
+          if (G0().decorLevel() >= 3) { spr('radio', 0, 0.3, 3.0, 22, 3.31); spr('plantSmall3', 0, 3.6, 2.9); }
         } else if (name === 'kitchen') {
           spr('kitchenFridge', 0, 0.5, 0.45); spr('kitchenCabinet', 0, 1.35, 0.45); spr('kitchenSink', 0, 2.2, 0.45); spr('kitchenStove', 0, 3.05, 0.45);
           spr('table', 0, 2.0, 2.4); spr('chair', 0, 1.5, 1.75); spr('chair', 0, 2.5, 1.75); spr('chair', 2, 1.5, 3.05); spr('chair', 2, 2.5, 3.05);

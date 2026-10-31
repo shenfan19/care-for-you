@@ -540,12 +540,12 @@
       const night = G.isNight();
       for (const k in defs) {
         if (driven(p, k)) continue;
-        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1);
+        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours * (G.owned('bed') ? 1.3 : 1)); continue; }
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (k === 'play' && G.owned('toy') && ['infant', 'toddler'].includes(G.stage(p)) ? 0.75 : 1) * (k === 'mobility' && G.owned('wheelchair') && G.stage(p) === 'elder' ? 0.7 : 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       if (!driven(p, 'mood') && !(p.person.help && p.person.help.role === 'nanny')) {
-        let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset;
+        let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset + 0.02 * G.decorLevel();
         if (p === G.protagonist() && !offline) {
           const M = G.MOOD, W = CY.world;
           if (G.isWorkTime() && W && W.worker(p) && W.atWork()) target -= M.work_drag;
