@@ -355,10 +355,10 @@ function beanDraw(o, V) {
   const DRAW = { hedgehog, duck, ferret, axolotl, chicken, orchid, bamboo, cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
   /* CY.figure：人的造型，设置里选。dressed 上半肤色下半衣服，默认；plain 整只衣服色加肤色脸盘，有手脚；dumpling 同 plain 但没有手脚。
      只换人，动物和花草不变。旧设置文件里的 classic 和 bean_a、bean_b、bean_c 按对应关系转过来 */
-  const FIG_V = { dressed: 'C', plain: 'B', dumpling: 'A' };
-  CY.FIGURES = ['dressed', 'plain', 'dumpling'];
-  CY.figureOf = v => ({ classic: 'dressed', bean_c: 'dressed', bean_b: 'plain', bean_a: 'dumpling' }[v]) || (CY.FIGURES.includes(v) ? v : 'dressed');
-  CY.figure = 'dressed';
+  const FIG_V = { sprite: 'C', dressed: 'C', plain: 'B', dumpling: 'A' };
+  CY.FIGURES = ['sprite', 'dressed', 'plain', 'dumpling'];
+  CY.figureOf = v => ({ classic: 'dressed', bean_c: 'dressed', bean_b: 'plain', bean_a: 'dumpling' }[v]) || (CY.FIGURES.includes(v) ? v : 'sprite');
+  CY.figure = 'sprite';
   CY.DIRS = ['se', 'sw', 'ne', 'nw'];
   /* ---------- 人物精灵：Kenney 的 CC0 小人渲染成四个朝向，站，走，坐，睡四种姿势。肤色在浏览器里按玩家的选择重着色 ----------
      图没加载完，或者没有图像环境（测试），就先画原来的矢量豆子。 */
@@ -406,10 +406,10 @@ function beanDraw(o, V) {
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${Math.max(10, e.w * k * 0.4).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
   };
   CY.avatar = (p, dir, pose) => {
-    if (DRAW[p.species.id]) { const G0 = CY.game; return petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
+    if (DRAW[p.species.id]) { const G0 = CY.game; return CY.figure !== 'sprite' ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
     const G = CY.game, asleep = !!(G && G.isSleeping && p.id && G.isSleeping(p));
     const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
-    return sprite(p, dir || '', asleep ? 'sleep' : wc ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand') || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
+    return (CY.figure === 'sprite' ? sprite : () => null)(p, dir || '', asleep ? 'sleep' : wc ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand') || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
   };
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {

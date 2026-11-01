@@ -759,7 +759,12 @@
     const s = p.state;
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
-    if (a.outing && G.startOuting) G.startOuting(p, a);
+    if (a.outing && G.startOuting) {
+      G.startOuting(p, a);
+      /* 带人出门，主角自己也一起去：去的是同一个地点，人回来了主角也回家 */
+      const lead = G.protagonist(), W = CY.world;
+      if (lead && lead !== p && W && W.moveTo && W.PLACES[a.outing.place]) { W.moveTo(a.outing.place, a.outing.room); W.escort = true; G.logK('you', 'event', 'me.go', { place: G.ref('loc.' + a.outing.place, a.outing.place) }); }
+    }
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
     p.story.care_total++;

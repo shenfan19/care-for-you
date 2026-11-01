@@ -15,7 +15,7 @@
     ['ui', 'theme', 'auto', 'auto 跟随系统；light 浅色；dark 深色'],
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],
-    ['ui', 'figure', 'dressed', '人物的造型：dressed 穿衣小豆，上半肤色下半衣服；plain 素色小豆，整只衣服色；dumpling 团子，没有手脚'],
+    ['ui', 'figure', 'sprite', '人物的造型：sprite 方块小人，Kenney 素材渲染的斜视图；dressed 穿衣小豆，上半肤色下半衣服；plain 素色小豆，整只衣服色；dumpling 团子，没有手脚'],
     ['interaction', 'picks', 'true', '偶尔问你某个角色会说哪句话'],
     ['interaction', 'sensitive_topics', 'false', '是否出现较私密或带文化压力的话题，例如身体不适、催婚，默认关闭'],
     ['interaction', 'learn', 'true', '根据你的回应逐步适应每个角色的打扰频率和话题'],

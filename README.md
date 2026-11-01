@@ -38,6 +38,10 @@ Python 3 is only needed if you want to run one of the optional backends below.
 - The people button opens the household: add, edit, archive or remove characters.
 - You play one adult in the household, and you can switch to anyone grown-up from the people menu. Couples earn money at the desk during work hours, or you do if there is no couple.
 
+## Documentation
+
+Mechanics that matter to players and people writing backends are described in `docs_ai`. Outings: [docs_ai/outings_ai.md](docs_ai/outings_ai.md). The backend interface: [README_backend_protocol_ai.md](README_backend_protocol_ai.md).
+
 ## Data and privacy
 
 Everything is stored on your own device as plain files. There is no account, no server, no analytics and no cookies. By default the page sends your game data nowhere. Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Saves can be downloaded, imported and deleted from the settings.
