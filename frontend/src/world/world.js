@@ -8,19 +8,24 @@
 
   /* ---------- 格子布局：一格是一块斜视的菱形地砖 ---------- */
   W.TW = 72; W.TH = 36; W.VW = 800; W.VH = 520;
-  W.PLACES = {
-    home: { w: 12, h: 8, rooms: {
+  const BASE_HOME = { w: 12, h: 8, rooms: {
       bedroom: { gx: 0, gy: 0, w: 4, h: 4 }, elder: { gx: 4, gy: 0, w: 3, h: 4 }, toilet: { gx: 7, gy: 0, w: 2, h: 4 }, study: { gx: 9, gy: 0, w: 3, h: 4 },
       living: { gx: 0, gy: 4, w: 4, h: 4 }, kitchen: { gx: 4, gy: 4, w: 4, h: 4 }, yard: { gx: 8, gy: 4, w: 4, h: 4 },
-    } },
+  } };
+  W.PLACES = {
     hospital: { w: 10, h: 6, rooms: { ward: { gx: 0, gy: 0, w: 10, h: 6 } } },
     office: { w: 8, h: 6, rooms: { desk: { gx: 0, gy: 0, w: 8, h: 6 } } },
     park: { w: 10, h: 6, rooms: { lawn: { gx: 0, gy: 0, w: 10, h: 6 } } },
     street: { w: 10, h: 6, rooms: { road: { gx: 0, gy: 0, w: 10, h: 6 } } },
   };
+  /* 家随房子变：基础户型加上房子表里多出的房间 */
+  const homeCache = {};
+  Object.defineProperty(W.PLACES, 'home', { enumerable: true, get: () => { const id = CY.houseId(), H = CY.house(); return homeCache[id] || (homeCache[id] = { w: H.w, h: BASE_HOME.h, rooms: Object.assign({}, BASE_HOME.rooms, H.rooms) }); } });
+  W.vw = place => (place === 'home' ? CY.house().vw : 800);
+  W.vh = place => (place === 'home' ? CY.house().vh : 520);
   W.PLACE_LIST = ['home', 'park', 'street', 'hospital', 'office'];
   W.project = (place, gx, gy) => {
-    const P = W.PLACES[place], ox = W.VW / 2 + (P.h - P.w) * W.TW / 4;
+    const P = W.PLACES[place], ox = W.vw(place) / 2 + (P.h - P.w) * W.TW / 4;
     return { x: ox + (gx - gy) * W.TW / 2, y: 120 + (gx + gy) * W.TH / 2 };
   };
   /* 各房间里站人的位置，用房间宽高的比例表示。sleep 是床位，cradle 是婴儿床，player 是操纵对象的位置，书房和办公室里是坐在桌前椅子的位置 */
@@ -29,6 +34,7 @@
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
     study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .37], seat: [[.52, .37], [.78, .5]] },
+    guest: { stand: [[.5, .7], [.25, .8], [.75, .8], [.5, .9]], sleep: [[.3, .2], [.5, .2], [.7, .2]], cradle: [[.5, .5]], player: [.5, .92] },
     living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
@@ -39,19 +45,19 @@
   };
   /* 床位：每个住家的人有自己的床。老人睡老人房，其余睡卧室，各有床位上限；睡不下的先去另一间，还不够睡客厅沙发。
      婴儿睡婴儿床，不占床位。顺序按角色编号，位置固定，不会因为谁醒了而挪动 */
-  W.BED_CAP = { bedroom: 3, elder: 2 };
-  W.BED_MIN = { bedroom: 2, elder: 2 };
+  Object.defineProperty(W, 'BED_CAP', { get: () => CY.house().bedCap });
+  W.BED_MIN = { bedroom: 2, elder: 2, guest: 3 };
   W.bedPlan = () => {
-    const plan = { bedroom: [], elder: [], living: [] };
+    const plan = { bedroom: [], elder: [], guest: [], living: [] };
     const sleepers = G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant').sort((a, b) => (a.id < b.id ? -1 : 1));
-    const put = (p, order) => { for (const r of order) if (r === 'living' || plan[r].length < W.BED_CAP[r]) { plan[r].push(p.id); return; } };
-    for (const p of sleepers) if (G.stage(p) === 'elder') put(p, ['elder', 'bedroom', 'living']);
-    for (const p of sleepers) if (G.stage(p) !== 'elder') put(p, ['bedroom', 'elder', 'living']);
+    const put = (p, order) => { for (const r of order) if (r === 'living' || plan[r].length < (W.BED_CAP[r] || 0)) { plan[r].push(p.id); return; } };
+    for (const p of sleepers) if (G.stage(p) === 'elder') put(p, ['elder', 'bedroom', 'guest', 'living']);
+    for (const p of sleepers) if (G.stage(p) !== 'elder') put(p, ['bedroom', 'elder', 'guest', 'living']);
     return plan;
   };
   /* 画床用：这个房间要几张床 */
   W.bedCount = room => Math.max(W.BED_MIN[room] || 0, (W.bedPlan()[room] || []).length);
-  W.bedKey = () => W.bedCount('bedroom') + ',' + W.bedCount('elder');
+  W.bedKey = () => W.bedCount('bedroom') + ',' + W.bedCount('elder') + ',' + W.bedCount('guest') + ',' + CY.houseId();
   W.bedOf = p => { const plan = W.bedPlan(); for (const r in plan) { const i = plan[r].indexOf(p.id); if (i >= 0) return { room: r, i }; } return null; };
   W.slotPoint = (place, room, kind, i) => {
     if (kind === 'sleep' && W.BED_CAP[room]) { const r0 = W.PLACES[place].rooms[room], w = r0.w; return { gx: r0.gx + 0.15 + i * 1.1 + 0.55, gy: r0.gy + 1.3 }; }

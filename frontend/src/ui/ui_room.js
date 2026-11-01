@@ -120,7 +120,7 @@
   /* 摆放：按格子位置直接站过去 */
   const paint = (el, place, gx, gy) => {
     const q = CY.world.project(place, gx, gy);
-    el.style.left = (q.x / CY.world.VW * 100) + '%'; el.style.top = (q.y / CY.world.VH * 100) + '%'; el.style.setProperty('--z', Math.round(q.y));
+    el.style.left = (q.x / CY.world.vw(place) * 100) + '%'; el.style.top = (q.y / CY.world.vh(place) * 100) + '%'; el.style.setProperty('--z', Math.round(q.y));
   };
   /* 斜视里走的方向对应四个朝向：格子 x 增大朝右下 se，y 增大朝左下 sw，x 减小朝左上 nw，y 减小朝右上 ne */
   const dirOf = (dx, dy) => (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'se' : 'nw') : (dy > 0 ? 'sw' : 'ne'));

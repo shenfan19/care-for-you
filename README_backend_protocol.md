@@ -44,7 +44,7 @@ Switching takes effect immediately: after a settings change, the next request go
 Request:
 
 ```json
-{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.58.1" } }
+{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.59.0" } }
 ```
 
 Response:

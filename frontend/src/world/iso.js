@@ -9,8 +9,8 @@
     const to = v => clampHex(f < 1 ? v * f : v + (255 - v) * (f - 1));
     return '#' + [to(r), to(g), to(b)].map(v => v.toString(16).padStart(2, '0')).join('');
   };
-  const FLOOR = { bedroom: '#e8d2ae', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', desk: '#dbd7c9' };
-  const WALL = { bedroom: '#f3e6d0', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', desk: '#ece8dc' };
+  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', desk: '#dbd7c9' };
+  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
   const SPR = () => (CY.isoSprites || {}).furn || {};
   const G0 = () => CY.game;
@@ -109,6 +109,11 @@
           spr('bookcaseClosedWide', 1, 0.3, 3.2);
           spr('cardboardBoxOpen', 0, 3.55, 3.2); spr('pillow', 0, 3.55, 3.2, 14, 3.21 + 3.55);
           spr('lampRoundFloor', 0, 3.7, 0.4);
+        } else if (name === 'guest') {
+          const ng = W.bedCount('guest');
+          for (let i = 0; i < ng; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
+          spr('rugRound', 0, 2.0, 4.6, 0, -9); spr('sideTableDrawers', 0, 3.6, 0.35); spr('lampRoundTable', 0, 3.6, 0.35, 22, 3.96);
+          spr('bookcaseClosedWide', 1, 0.3, 5.8); spr('pottedPlant', 0, 3.6, 7.4);
         } else if (name === 'elder') {
           const ne = W.bedCount('elder');
           for (let i = 0; i < ne; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
@@ -152,7 +157,7 @@
         box(r.gx + 3.15, r.gy + 0.55, 0.3, 0.3, 30, '#8a5a3a'); ball(r.gx + 3.3, r.gy + 0.7, 52, 34, 26, '#5f9a58'); ball(r.gx + 3.0, r.gy + 0.7, 60, 22, 18, '#74ad68');
         box(r.gx + 0.1, r.gy + 3.7, 3.8, 0.12, 14, '#d9c9a8');
       }
-      return `<svg viewBox="0 0 ${W.VW} ${W.VH}" preserveAspectRatio="xMidYMid meet">${out.join('')}</svg>`;
+      return `<svg viewBox="0 0 ${W.vw(place)} ${W.vh(place)}" preserveAspectRatio="xMidYMid meet">${out.join('')}</svg>`;
     },
   };
 

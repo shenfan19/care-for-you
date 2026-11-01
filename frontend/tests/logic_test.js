@@ -1055,6 +1055,18 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {}; G.world.money = 200;
   }
   {
+    /* 中等屋子：多一间客房，三张床位，睡不下卧室和老人房的人睡客房 */
+    const W = CY.world;
+    G.world.owned = {};
+    check('小户型没有客房，床位上限卧室三老人房二', !W.PLACES.home.rooms.guest && W.BED_CAP.bedroom === 3 && !W.BED_CAP.guest && W.PLACES.home.w === 12);
+    G.world.money = 1500; check('钱够了能买中等屋子', G.canBuy('house2') && G.buy('house2') && G.owned('house2'));
+    check('买了以后多一间客房，床位三，家更宽，画面更大', !!W.PLACES.home.rooms.guest && W.BED_CAP.guest === 3 && W.PLACES.home.w === 16 && W.vw('home') === 900 && W.vw('park') === 800);
+    const pj = W.project('home', 15, 7);
+    check('最远的格子仍在画面里', pj.x > 0 && pj.x < 900 && pj.y > 0 && pj.y < 600, JSON.stringify(pj));
+    check('床位计划里有客房', Array.isArray(W.bedPlan().guest));
+    G.world.owned = {}; G.world.money = 200;
+  }
+  {
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
     const dadId = await G.createPerson({ arch: 'dad', name: 'd' }), gpId = await G.createPerson({ arch: 'grandpa', name: 'g' }), kidId = await G.createPerson({ arch: 'daughter', name: 'k' });

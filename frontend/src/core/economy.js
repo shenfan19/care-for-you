@@ -59,6 +59,7 @@
   G.SHOP = [
     { id: 'toy', price: 60, icon: '🧸' }, { id: 'bed', price: 250, icon: '🛏' }, { id: 'stroller', price: 300, icon: '👶' }, { id: 'wheelchair', price: 450, icon: '♿' },
     { id: 'decor1', price: 120, icon: '🪴' }, { id: 'decor2', price: 250, icon: '🪴', needs: 'decor1' }, { id: 'decor3', price: 400, icon: '🪴', needs: 'decor2' },
+    { id: 'house2', price: 1500, icon: '🏠' },
   ];
   G.owned = id => !!(G.world.owned && G.world.owned[id]);
   G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };
