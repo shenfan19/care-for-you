@@ -36,7 +36,7 @@
       };
       const flat = (x, y, w, d, col) => poly([pt(x, y), pt(x + w, y), pt(x + w, y + d), pt(x, y + d)], col, 'opacity=".9"');
       const ball = (x, y, z, rx, ry, col) => { const [px, py] = pt(x, y, z).split(','); out.push(`<ellipse class="leaf" style="animation-delay:${((px * 7 + py * 3) % 20 / -10).toFixed(1)}s" cx="${px}" cy="${py}" rx="${rx}" ry="${ry}" fill="${col}"/>`); };
-      const sk = sky(hour);
+      const sk = sky(hour); let winN = 0;
 
       /* 地基的厚度 */
       poly([pt(0, P.h, 0), pt(P.w, P.h, 0), pt(P.w, P.h, -16), pt(0, P.h, -16)], '#b79f82');
@@ -83,6 +83,11 @@
           poly([pt(ax, ay, 30), pt(bx, by, 30), pt(bx, by, 58), pt(ax, ay, 58)], sk.c, 'stroke="#8a7a66" stroke-width="2"');
           const mx = (ax + bx) / 2, my = (ay + by) / 2;
           out.push(`<path d="M${pt(mx, my, 30)}L${pt(mx, my, 58)}M${pt(ax, ay, 44)}L${pt(bx, by, 44)}" stroke="#8a7a66" stroke-width="1.4"/>`);
+          /* 窗外的风：几道风丝和一片叶子在窗格里从一边飘到另一边，用窗格裁剪，方向顺着窗子 */
+          const cid = 'wc' + (winN++), [x0, y0] = pt(ax, ay, 44).split(',').map(Number), [x1, y1] = pt(bx, by, 44).split(',').map(Number), dx = (x1 - x0) * 0.8, dy = (y1 - y0) * 0.8;
+          out.push(`<clipPath id="${cid}"><polygon points="${[pt(ax, ay, 30), pt(bx, by, 30), pt(bx, by, 58), pt(ax, ay, 58)].join(' ')}"/></clipPath><g clip-path="url(#${cid})" style="--dx:${dx.toFixed(1)}px;--dy:${dy.toFixed(1)}px">`);
+          [[36, 0], [43, -1.2], [51, -2.4]].forEach(([z, d], i) => { const [gx, gy] = pt(ax + (bx - ax) * 0.05, ay + (by - ay) * 0.05, z).split(',').map(Number), [ex, ey] = pt(ax + (bx - ax) * 0.3, ay + (by - ay) * 0.3, z).split(',').map(Number); out.push(`<path class="wgust" style="animation-delay:${d}s" d="M${gx},${gy}L${ex},${ey}" stroke="#ffffffcc" stroke-width="1.6" stroke-linecap="round"/>`); });
+          const [lx0, ly0] = pt(ax + (bx - ax) * 0.1, ay + (by - ay) * 0.1, 48).split(',').map(Number); out.push(`<ellipse class="wleaf" style="animation-delay:-1.5s" cx="${lx0}" cy="${ly0}" rx="2.6" ry="1.4" fill="#6fae5c"/></g>`);
           if (sk.night) { const [sx, sy] = pt((ax * 3 + bx) / 4, (ay * 3 + by) / 4, 50).split(','); out.push(`<circle cx="${sx}" cy="${sy}" r="3" fill="#f6f1c8"/>`); }
           else if (sk.sun) { const [sx, sy] = pt((ax + bx * 3) / 4, (ay + by * 3) / 4, 50).split(','); out.push(`<circle cx="${sx}" cy="${sy}" r="3.2" fill="#ffe08a"/>`); }
         };
