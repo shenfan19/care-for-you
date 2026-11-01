@@ -23,7 +23,7 @@ actions:
   hug: { label: { infant: 抱着, default: 抱一抱 }, hold: 4, min: 8, effect: { company: -0.5, rest: -0.15 }, mood: 0.1, stages: [infant, toddler, child] }
   water: { label: 倒水, hold: 3, min: 3, effect: { thirst: -0.9 }, stages: [toddler, child, teen, adult, elder] }
   feed: { label: { infant: 喂奶, default: 喂饭 }, hold: 5, min: 25, effect: { hunger: -0.9, thirst: -0.4 }, stages: [infant, toddler] }
-  meal: { label: { default: 做一顿饭, elder: 做饭给ta吃 }, hold: 6, min: 60, effect: { hunger: -0.9, thirst: -0.2 }, stages: [child, teen, adult, elder] }
+  meal: { label: 做饭给ta吃, hold: 6, min: 60, effect: { hunger: -0.9, thirst: -0.2 }, stages: [child, teen, adult, elder] }
   diaper: { label: 换尿布, hold: 4, min: 8, effect: { diaper: -1 }, stages: [infant, toddler] }
   bath: { label: { elder: 帮忙洗澡, default: 洗澡 }, hold: 6, min: 25, effect: { hygiene: -1, company: -0.1 }, stages: [infant, toddler, child, elder] }
   play: { label: { infant: 逗逗ta, default: 陪玩 }, hold: 8, min: 40, effect: { play: -0.9, company: -0.4 }, stages: [infant, toddler, child] }
@@ -39,7 +39,7 @@ actions:
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
   doctor: { label: 带去看医生, hold: 8, min: 120, away: true, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
-  cook: { label: 做饭, selfonly: true, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
+  cook: { label: 做饭自己吃, selfonly: true, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
   snack: { label: 找点吃的, selfonly: true, self: [child], hold: 1, min: 10, effect: { hunger: -0.6 }, stages: [child] }
   nap: { label: 小睡一会儿, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { rest: -0.6 }, stages: [child, teen, adult, elder] }
   wash: { label: 洗个澡, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 25, effect: { hygiene: -0.9 }, stages: [child, teen, adult, elder] }

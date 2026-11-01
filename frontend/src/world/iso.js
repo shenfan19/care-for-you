@@ -63,7 +63,7 @@
             fl(0, 0, 10, 1.2, '#c8c4bb'); fl(0, 1.2, 10, 3.2, '#6d6d75'); fl(0, 4.4, 10, 1.6, '#c8c4bb');
             for (let i = 0; i < 6; i++) fl(5.4, 1.3 + i * 0.5, 2.2, 0.28, '#f2f2f2');
             /* 街上的车：Kenney Car Kit 的 CC0 模型，两辆停在人行道边，两辆在车道上 */
-            const cars = [['car-sedan', 1, 1.9, 0.62], ['car-van', 1, 6.3, 0.62], ['car-taxi', 1, 2.4, 2.05], ['car-ambulance', 3, 7.4, 3.0], ['car-cone', 0, 4.6, 3.9]], cq = [];
+            const cars = [['city-building-b', 0, 1.0, -0.6], ['city-building-g', 0, 3.2, -0.6], ['city-building-e', 0, 5.4, -0.6], ['city-building-k', 0, 7.8, -0.6], ['car-sedan', 1, 1.9, 0.62], ['car-van', 1, 6.3, 0.62], ['car-taxi', 1, 2.4, 2.05], ['car-ambulance', 3, 7.4, 3.0], ['car-cone', 0, 4.6, 3.9]], cq = [];
             for (const [nm, rot, a2, b2] of cars) { const m = SPR()[nm], e = m && m[rot]; if (!e) continue; const [px, py] = pt(x + a2 - e.cx, y + b2 - e.cz, 0).split(',').map(Number); cq.push({ k: a2 + b2, s: `<image href="assets/iso/furn/${nm}_${rot}.png" x="${(px - e.ax).toFixed(1)}" y="${(py - e.ay).toFixed(1)}" width="${e.w}" height="${e.h}"/>` }); }
             cq.sort((u, v) => u.k - v.k).forEach(it => out.push(it.s));
             f(1.2, 4.9, 0.12, 0.12, 50, '#555'); f(8.6, 4.9, 0.12, 0.12, 50, '#555'); tree(9.2, 5.0);

@@ -653,3 +653,6 @@ CY.i18n.register("zh-TW", {"shop.open": "商店", "shop.title": "商店", "shop.
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters 和 Cube Pets（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"figure.sprite": "方塊小人"});
+CY.i18n.register("zh-TW", {"act.meal": "做飯給ta吃", "act.cook": "做飯自己吃"});
+CY.i18n.register("zh-TW", {"figure.sprite": "迷你小人", "figure.blocky": "方塊角色"});
+CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。 可選的方塊角色來自 Kenney 的 Blocky Characters，街道背景的樓來自 City Kit Commercial，同為 CC0 1.0。"});

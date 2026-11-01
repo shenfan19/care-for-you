@@ -728,6 +728,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await CY.store.write('templates/cards/mom.yaml', ctx.jsyaml.dump(cardY)); await G.load();
     const m3id = await G.createPerson({ arch: 'mom', name: '爱院子' }); await G.load();
     const M3 = G.get(m3id); for (const x of G.people) x.person.active = x === M3; for (const k in M3.state.needs) M3.state.needs[k] = 0.1;
+    G.setClock(8 * 60 + 45);   /* 八点四十五，上班的人的日程里这个时刻没有去处，喜好才起作用；不固定时钟的话，测试会随真实时间偶尔失败 */
     const r3 = new Set(); for (let i = 0; i < 40; i++) { for (const k in W.agents) W.agents[k].next = 0; r3.add(W.locationOf(M3).room); }
     check('卡里的 prefs 决定爱去哪', r3.has('yard') && M3.person.prefs.restless === 1, [...r3].join());
     for (const x of G.people) x.person.active = true;
@@ -1045,6 +1046,19 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     W.tick();
     check('人都回来了主角也回家', W.player().place === 'home');
     W.enforce = false; for (const x of G.people) x.person.active = true;
+  }
+  {
+    for (const x of G.people) x.person.active = false;
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g', conditions: ['diabetes'] });
+    await G.load(); for (const x of G.people) x.person.active = [dId, gId].includes(x.id);
+    G.setProtagonist(dId);
+    const mine = Object.values(G.actionsOf(G.get(dId))).map(a => a.id), theirs = Object.values(G.actionsOf(G.get(gId))).map(a => a.id);
+    check('点自己只有自己做的动作，没有又倒水又倒水喝', mine.includes('drink') && !mine.includes('water') && mine.includes('cook') && !mine.includes('meal') && !mine.includes('medicine') && !mine.includes('bath'), mine.join());
+    check('点别人只有照顾他的动作，没有自己做的', theirs.includes('water') && theirs.includes('meal') && !theirs.includes('drink') && !theirs.includes('cook') && !theirs.includes('selfmed'), theirs.join());
+    G.setProtagonist(gId);
+    const mine2 = Object.values(G.actionsOf(G.get(gId))).map(a => a.id);
+    check('老人做主角，吃药只有自己吃药一个', mine2.includes('selfmed') && !mine2.includes('medicine'), mine2.join());
+    G.setProtagonist(dId); for (const x of G.people) x.person.active = true;
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);

@@ -304,7 +304,15 @@
     return out;
   };
   /* 玩家能对这个人做的动作。主角自己的圈里多出只有自己能做的，少了要出门的 */
-  G.actionsOf = p => { const all = G.allActionsOf(p), out = {}, me = p === G.protagonist(); for (const k in all) if (me ? !all[k].away && !all[k].outing : !all[k].selfonly) out[k] = all[k]; return out; };
+  /* 点别人：只有照顾他的动作。点自己：自己做的动作，加上自己做不了替代的照顾动作（比如测血糖）。
+     自己的需求只要有自己做的版本，就不再出现"帮别人做"的同名动作，所以不会又有倒水又有倒水喝，又有陪吃药又有自己吃药 */
+  G.actionsOf = p => {
+    const all = G.allActionsOf(p), out = {}, me = p === G.protagonist();
+    if (!me) { for (const k in all) if (!all[k].selfonly) out[k] = all[k]; return out; }
+    const covered = new Set(); for (const k in all) if (all[k].selfonly) for (const n in all[k].effect || {}) covered.add(n);
+    for (const k in all) { const a = all[k]; if (a.away || a.outing) continue; if (a.selfonly || Object.keys(a.effect || {}).some(n => !covered.has(n))) out[k] = a; }
+    return out;
+  };
   G.maxNeed = p => Math.max(0, ...Object.values(p.state.needs));
   G.topNeed = p => { const d = G.needsOf(p); return Object.keys(d).sort((a, b) => p.state.needs[b] - p.state.needs[a])[0]; };
   /* 紧迫程度：最急的需求乘以类别的紧迫系数。不让玩家手动排优先级，由类别和当下的需求自然决定谁最急 */
