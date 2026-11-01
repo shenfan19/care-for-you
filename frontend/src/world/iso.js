@@ -35,7 +35,7 @@
         poly([pt(x, y, z0 + h), pt(x + w, y, z0 + h), pt(x + w, y + d, z0 + h), pt(x, y + d, z0 + h)], top);
       };
       const flat = (x, y, w, d, col) => poly([pt(x, y), pt(x + w, y), pt(x + w, y + d), pt(x, y + d)], col, 'opacity=".9"');
-      const ball = (x, y, z, rx, ry, col) => { const [px, py] = pt(x, y, z).split(','); out.push(`<ellipse cx="${px}" cy="${py}" rx="${rx}" ry="${ry}" fill="${col}"/>`); };
+      const ball = (x, y, z, rx, ry, col) => { const [px, py] = pt(x, y, z).split(','); out.push(`<ellipse class="leaf" style="animation-delay:${((px * 7 + py * 3) % 20 / -10).toFixed(1)}s" cx="${px}" cy="${py}" rx="${rx}" ry="${ry}" fill="${col}"/>`); };
       const sk = sky(hour);
 
       /* 地基的厚度 */

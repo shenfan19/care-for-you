@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="ambient" id="ambient" aria-hidden="true"><i class="bf b1">🦋</i><i class="bf b2">🦋</i><b class="wind w1"></b><b class="wind w2"></b><b class="wind w3"></b></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -154,8 +154,11 @@
   };
 
   /* 昼夜色调：夜里偏蓝，黄昏偏橙，清晨淡淡的暖色 */
+  /* 动态的快慢跟着时间倍率走：倍率越高，叶子摇得越快，蝴蝶飞得越快，人走得也越快；--tempo 是 1 对应默认倍率 24 */
+  U.tempo = () => Math.min(2.2, Math.max(0.4, Math.pow(G.speed() / 24, 0.35)));
   U.renderTint = function () {
     const h = G.dayMinutes() / 60;
+    U.room.style.setProperty('--tempo', U.tempo().toFixed(2)); U.room.classList.toggle('daytime', h >= 7 && h < 18);
     let tint = 'transparent';
     if (h >= 22 || h < 5) tint = 'rgba(30,40,90,.38)';
     else if (h < 7) tint = 'rgba(255,190,120,.14)';
