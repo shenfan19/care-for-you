@@ -147,7 +147,7 @@ CY.i18n.register("fr", {"about.p5": "Laissez la main sur la souris, et laissez l
 
 CY.i18n.register("fr", {"me.work_start": "Les heures de travail ont commencé, vous vous êtes installé au bureau.", "me.work_end": "Le travail est terminé, vous avez quitté le bureau.", "me.go": "Vous êtes allé à {place}.", "me.back": "Vous êtes rentré à la maison."});
 
-CY.i18n.register("fr", {"loc.park": "Parc", "loc.street": "Rue", "loc.lawn": "Pelouse", "loc.road": "Route", "act.park": "Emmener au parc", "act.street": "Faire un tour en ville", "toast.outing": "{name} est sorti(e) à {place} et revient bientôt.", "log.outing_start": "{name} est sorti(e) à {place}.", "log.outing_back": "{name} est de retour.", "log.assist": "{who} s’est occupé(e) de {name} pour vous : {label}", });
+CY.i18n.register("fr", {"loc.park": "Parc", "loc.street": "Rue", "loc.lawn": "Pelouse", "loc.road": "Route", "act.park": "Emmener au parc", "act.street": "Faire un tour en ville", "toast.outing": "{name} est sorti(e) à {place} et revient bientôt.", "log.outing_start": "{name} est sorti(e) à {place}.", "list.sep": ", ", "log.outing_lead": "{name} est sorti avec {others} vers {place}.", "log.outing_follow": "{name} est sorti avec {lead} vers {place}.", "log.outing_back": "{name} est de retour.", "log.assist": "{who} s’est occupé(e) de {name} pour vous : {label}", });
 
 CY.i18n.register("fr", {"add.helper": "Travaille à la maison, gagne de l’argent et partage les soins"});
 

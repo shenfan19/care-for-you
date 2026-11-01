@@ -35,19 +35,31 @@
   };
 
   /* ---------- 外出：带着人出门 ---------- */
-  const GROUP_STAGES = ['infant', 'toddler', 'child', 'elder'];
+  /* 看护：类别表里 needs_caregiver 为真的人（婴儿，幼儿，小孩）不能单独留在家里。
+     成人或老人醒着或睡着都算在家看护，前提是在家，没住院，没外出，不卧床，也不是主角（主角会陪着出门）。
+     一次带人出门时，家里还有别人看护，需要看护的人就留下；没有人看护了，他们就跟着一起出门，这是规则推出来的，不是特例 */
+  const dependent = q => G.isHuman(q) && !!G.classOf(q).needs_caregiver;
+  const homeAndFree = q => !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (!CY.world || CY.world.locationOf(q).place === 'home');
+  G.caregiversAt = except => G.activePeople().filter(q => G.isHuman(q) && !dependent(q) && ['adult', 'elder'].includes(G.stage(q)) && q !== G.protagonist() && !except.includes(q) && !G.bedridden(q) && homeAndFree(q));
+  G.canJoinOuting = q => !G.isSleeping(q) && !(G.stage(q) === 'infant' && !G.owned('stroller')) && !(G.bedridden(q) && !G.owned('wheelchair'));
+  /* 出门后被留在家里无人看护的人：没人看护了，又带不走的（睡着，没有婴儿车），出门就被拦下 */
+  G.outingBlocked = p => {
+    if (G.caregiversAt([p]).length) return false;
+    return G.activePeople().some(q => q !== p && dependent(q) && homeAndFree(q) && !G.canJoinOuting(q));
+  };
   G.startOuting = (p, a) => {
-    const o = a.outing, W = CY.world, group = [p];
-    if (o.group) for (const q of G.activePeople()) {
-      if (q.id === p.id || q === G.protagonist() || !G.isHuman(q) || !GROUP_STAGES.includes(G.stage(q))) continue;
-      if (G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || W.locationOf(q).place !== 'home') continue;
-      if (G.stage(q) === 'infant' && !G.owned('stroller')) continue;   /* 没有婴儿车，婴儿留在家里 */
-      if (G.bedridden(q) && !G.owned('wheelchair')) continue;   /* 卧床的人没有轮椅出不了门 */
+    const o = a.outing, group = [p];
+    if (o.group && !G.caregiversAt([p]).length) for (const q of G.activePeople()) {
+      if (q.id === p.id || q === G.protagonist() || !dependent(q) || !homeAndFree(q) || !G.canJoinOuting(q)) continue;
       group.push(q);
     }
+    const place = G.ref('loc.' + o.place, o.place), names = group.slice(1).map(m => m.person.name).join(t('list.sep'));
     for (const m of group) {
       G.setFlag(m, 'outing', { minutes: o.minutes, place: o.place, room: o.room, mode: 'stand' });
-      G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place: G.ref('loc.' + o.place, o.place) });
+      /* 事件按谁带谁写：带人的是"A 带 B 去哪"，被带的是"B 跟 A 去哪" */
+      if (group.length === 1) G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place });
+      else if (m === p) G.logK(m.id, 'event', 'log.outing_lead', { name: m.person.name, others: names, place });
+      else G.logK(m.id, 'event', 'log.outing_follow', { name: m.person.name, lead: p.person.name, place });
       if (m !== p) m.state.mood = clamp(m.state.mood + 0.05 + (G.owned('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? 0.04 : 0));
     }
   };

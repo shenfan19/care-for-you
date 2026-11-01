@@ -143,7 +143,7 @@ CY.i18n.register("ja", {"about.p5": "手をマウスに置いたまま、頭を�
 
 CY.i18n.register("ja", {"me.work_start": "仕事の時間になり、あなたは書斎で作業を始めた。", "me.work_end": "仕事が終わり、あなたは書斎を出た。", "me.go": "あなたは{place}へ行った。", "me.back": "あなたは家に戻った。"});
 
-CY.i18n.register("ja", {"loc.park": "公園", "loc.street": "商店街", "loc.lawn": "芝生", "loc.road": "通り", "act.park": "公園へ連れて行く", "act.street": "街へ出かける", "toast.outing": "{name}は{place}に出かけています。もうすぐ戻ります。", "log.outing_start": "{name}は{place}へ出かけた。", "log.outing_back": "{name}が戻ってきた。", "log.assist": "{who}があなたの代わりに{name}を世話した：{label}", });
+CY.i18n.register("ja", {"loc.park": "公園", "loc.street": "商店街", "loc.lawn": "芝生", "loc.road": "通り", "act.park": "公園へ連れて行く", "act.street": "街へ出かける", "toast.outing": "{name}は{place}に出かけています。もうすぐ戻ります。", "log.outing_start": "{name}は{place}へ出かけた。", "list.sep": "、", "log.outing_lead": "{name}は{others}を連れて{place}へ出かけた。", "log.outing_follow": "{name}は{lead}と一緒に{place}へ出かけた。", "log.outing_back": "{name}が戻ってきた。", "log.assist": "{who}があなたの代わりに{name}を世話した：{label}", });
 
 CY.i18n.register("ja", {"add.helper": "在宅で働き、自動で稼ぎ、世話も分担する"});
 

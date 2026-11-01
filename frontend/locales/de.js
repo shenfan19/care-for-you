@@ -143,7 +143,7 @@ CY.i18n.register("de", {"about.p5": "Lass die Hand auf der Maus ruhen und den Ko
 
 CY.i18n.register("de", {"me.work_start": "Die Arbeitszeit begann, und du hast dich an den Schreibtisch gesetzt.", "me.work_end": "Feierabend, du bist vom Schreibtisch aufgestanden.", "me.go": "Du bist nach {place} gegangen.", "me.back": "Du bist nach Hause zurückgekehrt."});
 
-CY.i18n.register("de", {"loc.park": "Park", "loc.street": "Straße", "loc.lawn": "Wiese", "loc.road": "Fahrbahn", "act.park": "In den Park mitnehmen", "act.street": "Einen Stadtbummel machen", "toast.outing": "{name} ist in {place} und kommt bald zurück.", "log.outing_start": "{name} ist nach {place} gegangen.", "log.outing_back": "{name} ist zurück.", "log.assist": "{who} hat sich für dich um {name} gekümmert: {label}", });
+CY.i18n.register("de", {"loc.park": "Park", "loc.street": "Straße", "loc.lawn": "Wiese", "loc.road": "Fahrbahn", "act.park": "In den Park mitnehmen", "act.street": "Einen Stadtbummel machen", "toast.outing": "{name} ist in {place} und kommt bald zurück.", "log.outing_start": "{name} ist nach {place} gegangen.", "list.sep": ", ", "log.outing_lead": "{name} ist mit {others} nach {place} gegangen.", "log.outing_follow": "{name} ist mit {lead} nach {place} gegangen.", "log.outing_back": "{name} ist zurück.", "log.assist": "{who} hat sich für dich um {name} gekümmert: {label}", });
 
 CY.i18n.register("de", {"add.helper": "Arbeitet von zu Hause, verdient selbst und teilt die Pflege"});
 

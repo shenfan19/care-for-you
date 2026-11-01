@@ -280,7 +280,7 @@
   G.needsOf = p => {
     const out = {};
     if (p.person.help && p.person.help.role === 'nanny') return out;   /* 保姆来上班，自己没有需求 */
-    const add = (defs) => { for (const k in defs || {}) { const d = defs[k]; if (!d.stages || d.stages.includes(G.stage(p))) out[k] = Object.assign({}, d, { rateNow: rateOf(d, G.stage(p)) }); } };
+    const add = (defs) => { for (const k in defs || {}) { const d = defs[k]; if ((!d.stages || d.stages.includes(G.stage(p))) && !(d.min_age && G.age(p) < d.min_age)) out[k] = Object.assign({}, d, { rateNow: rateOf(d, G.stage(p)) }); } };
     add(p.species.needs);
     for (const c of p.person.conditions || []) add((G.tpl.conditions[c] || {}).needs);
     return out;
@@ -531,6 +531,7 @@
   /* 卧床：老人虚弱度到 0.8 躺下，降到 0.55 以下才起来。坐轮椅的家人本来就坐着，不算。躺着的人不能散步，去不了公园和街上，有轮椅才能被推出去 */
   G.bedridden = p => !!(p && p.state && p.state.bedrest);
   G.usable = (p, d) => {
+    if (d.outing && d.outing.group && G.outingBlocked && G.outingBlocked(p)) return false;   /* 家里不能单独留下需要看护的人 */
     if (d.trip && (G.world.trip || (G.world.money || 0) < d.trip.cost)) return false;   /* 已经在路上，或钱不够 */
     if (d.walks && G.bedridden(p)) return false;
     if (d.only_bedridden && !G.bedridden(p)) return false;

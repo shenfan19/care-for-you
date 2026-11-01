@@ -403,7 +403,8 @@
   U.NEED_LIT = 0.5;
   U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > U.NEED_LIT);
   const ringOff = () => { if (U.room) U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); };
-  U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; ringOff(); };
+  /* 操作结束，选中的状态跟着清掉：画面上的名字和左下的卡片都回到默认，选中只存在于操作圈开着的时候 */
+  U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; U.sel = null; ringOff(); U.room.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); };
   U.openRing = function (pid, anchor) {
     U.closeRing();
     const p = G.get(pid), acts = Object.values(G.actionsOf(p));

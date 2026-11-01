@@ -4,7 +4,7 @@
 (function (CY) {
   const F = {};
 
-  F['templates/species/human.yaml'] = `version: 4
+  F['templates/species/human.yaml'] = `version: 5
 id: human
 label: 人
 food: food
@@ -16,7 +16,7 @@ needs:
   play: { label: 想玩, icon: "🧸", rate: { infant: 0.08, toddler: 0.12, default: 0.1 }, stages: [infant, toddler, child] }
   diaper: { label: 尿布湿了, icon: "🚼", rate: { infant: 0.14, default: 0.06 }, stages: [infant, toddler] }
   hygiene: { label: 想洗澡, icon: "🛁", rate: { infant: 0.04, toddler: 0.04, child: 0.035, default: 0.025 } }
-  homework: { label: 作业没写完, icon: "📚", rate: 0.05, stages: [child, teen] }
+  homework: { label: 作业没写完, icon: "📚", rate: 0.05, stages: [child, teen], min_age: 5 }
   mobility: { label: 想活动活动, icon: "🚶", rate: 0.03, stages: [elder] }
 actions:
   pet: { label: { default: 拍拍肩, infant: 摸摸脸, toddler: 摸摸头, child: 摸摸头, teen: 拍拍肩 }, hold: 1, min: 2, effect: { company: -0.25 }, mood: 0.05 }
@@ -342,12 +342,12 @@ agents:
 `;
 
   /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */
-  F['templates/classes.yaml'] = `version: 6
+  F['templates/classes.yaml'] = `version: 7
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
 classes:
-  infant: { urgency: 3.0, self_care: 0, cries: true, nag: 15 }
-  toddler: { urgency: 2.4, self_care: 0.05, cries: true, nag: 20 }
-  child: { urgency: 1.5, self_care: 0.35 }
+  infant: { urgency: 3.0, self_care: 0, cries: true, nag: 15, needs_caregiver: true }
+  toddler: { urgency: 2.4, self_care: 0.05, cries: true, nag: 20, needs_caregiver: true }
+  child: { urgency: 1.5, self_care: 0.35, needs_caregiver: true }
   teen: { urgency: 1.0, self_care: 0.7 }
   adult: { urgency: 0.8, self_care: 0.9 }
   elder: { urgency: 1.6, self_care: 0.6 }

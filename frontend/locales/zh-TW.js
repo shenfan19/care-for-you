@@ -608,7 +608,7 @@ CY.i18n.register("zh-TW", {"about.p5": "讓手停在滑鼠上，讓腦子歇一�
 
 CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
-CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
+CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "list.sep": "、", "log.outing_lead": "{name}帶著{others}出門去{place}了。", "log.outing_follow": "{name}跟著{lead}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
 
 CY.i18n.register("zh-TW", {"add.helper": "在家辦公，自動賺錢，也分擔照顧"});
 

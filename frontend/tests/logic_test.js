@@ -507,7 +507,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
-  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 4 && Object.keys(G.tpl.species.human.needs).length > 5);
+  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 5 && Object.keys(G.tpl.species.human.needs).length > 5);
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */
@@ -1053,6 +1053,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = { stroller: true };
     check('有婴儿车，婴儿能被带去公园', !!G.actionsOf(bb).park);
     G.world.owned = {}; G.world.money = 200;
+  }
+  {
+    /* 看护：需要看护的人不能单独留在家里；家里还有别的大人，他就留下；作业只有五岁以后才有 */
+    const W = CY.world;
+    for (const x of G.people) x.person.active = false;
+    const dId = await G.createPerson({ arch: 'dad', name: '领队爸' }), gId = await G.createPerson({ arch: 'grandpa', name: '带队爷' }), kId = await G.createPerson({ arch: 'daughter', name: '跟着的女儿' }), mId = await G.createPerson({ arch: 'mom', name: '留守妈' });
+    await G.load(); const set = ids => { for (const x of G.people) { x.person.active = ids.includes(x.id); G.clearFlag(x, 'outing'); G.act[x.id] = 'awake'; } };
+    set([dId, gId, kId]); G.setProtagonist(dId); W.enforce = false;
+    const gp = G.get(gId), kid = G.get(kId);
+    G.applyAction(gId, 'park');
+    check('没有别的大人看家，女儿跟着爷爷出门', !!G.flag(kid, 'outing') && G.classOf(kid).needs_caregiver === true);
+    const lines = (G.journal[kId] ? Object.values(G.journal[kId]).flat() : []).map(e => e.text).join('|') + (G.journal[gId] ? Object.values(G.journal[gId]).flat() : []).map(e => e.text).join('|');
+    check('事件按谁带谁写：爷爷带着女儿，女儿跟着爷爷', /带着跟着的女儿/.test(lines) && /跟着带队爷/.test(lines), lines.slice(-120));
+    set([dId, gId, kId, mId]); G.applyAction(gId, 'park');
+    check('家里还有妈妈看家，女儿留下', !G.flag(kid, 'outing') && !!G.flag(gp, 'outing'));
+    const small = G.get(kId); small.person.age = 4;
+    check('四岁没有作业，六岁才有', !('homework' in G.needsOf(small)) && (small.person.age = 6, 'homework' in G.needsOf(small)));
   }
   {
     /* 中等屋子：多一间客房，三张床位，睡不下卧室和老人房的人睡客房 */
