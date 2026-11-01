@@ -422,7 +422,7 @@ function beanDraw(o, V) {
     if (DRAW[p.species.id]) { const G0 = CY.game; return !['sprite', 'blocky'].includes(CY.figure) ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
     const G = CY.game, asleep = !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p) && !G.flag(p, 'outing'))));
     const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
-    const pz = asleep ? 'sleep' : (wc || (G && G.usingWheelchair && G.usingWheelchair(p) && pose !== 'sit')) ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand';
+    const pz = asleep ? 'sleep' : (wc || (G && G.usingWheelchair && G.usingWheelchair(p) && pose !== 'sit')) ? 'chair' : pose === 'sit' ? 'sit' : dir && pose !== 'stand' ? 'walk' : 'stand';
     return (CY.figure === 'sprite' ? sprite : CY.figure === 'blocky' ? (a, b, c) => blockySprite(a, b, c === 'chair' ? 'sit' : c) : () => null)(p, dir || '', pz) || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
   };
   /* 为添加角色对话框的预览用，不需要完整的 p */

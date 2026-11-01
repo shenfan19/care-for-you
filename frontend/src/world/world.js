@@ -68,6 +68,28 @@
     const lap = Math.floor(i / list.length);
     return { gx: r.gx + (s[0] + lap * 0.06) * r.w, gy: r.gy + (s[1] - lap * 0.06) * r.h };
   };
+  /* 朝向：站着的人不是一直正对屏幕。斜视里格子 x 增大朝右下 se，y 增大朝左下 sw，x 减小朝左上 nw，y 减小朝右上 ne。
+     每个房间有一件视线焦点的家具，书房是书桌，客厅是电视，厨房是餐桌，卧室是床。每个人隔两个游戏小时换一次看的方向：
+     多半看向房间的焦点，有时看向同屋最近的人，有时随意看一眼，换的结果由人的编号和时段定，同一段时间里不会来回变。
+     坐在书桌前办公的人始终看向书桌 */
+  W.dirOf = (dx, dy) => (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'se' : 'nw') : (dy > 0 ? 'sw' : 'ne'));
+  const FOCUS = { study: [1.5, 0.45], living: [0.3, 2.0], kitchen: [2.0, 2.4], bedroom: [1.2, 0.6], elder: [1.2, 0.6], guest: [1.2, 0.6], toilet: [0.6, 0.5], desk: [1.9, 1.3], aisle: [2.5, 1.2] };
+  const hash = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+  W.facing = (p, lay) => {
+    if (!p || !G.isHuman(p)) return '';
+    const me = lay.find(l => l.id === p.id); if (!me) return '';
+    const pl = W.PLACES[me.place], r = pl && pl.rooms[me.room], f = FOCUS[me.room];
+    const focus = r && f ? W.dirOf(r.gx + f[0] - me.gx, r.gy + f[1] - me.gy) : null;
+    if (W.driven(p) && me.room === 'study' && W.atWork()) return 'ne';
+    const h = hash(p.id + ':' + Math.floor(G.world.game_minutes / 120)), pick = h % 4;
+    if (pick <= 1 && focus) return focus;
+    if (pick === 2) {
+      let best = null, bd = 1e9;
+      for (const o of lay) if (o.id !== p.id && o.room === me.room && o.place === me.place) { const d = Math.hypot(o.gx - me.gx, o.gy - me.gy); if (d < bd) { bd = d; best = o; } }
+      if (best) return W.dirOf(best.gx - me.gx, best.gy - me.gy);
+    }
+    return ['sw', 'se', 'ne', 'nw'][(h >>> 3) % 4];
+  };
   W.playerAnchor = (place, room) => W.slotPoint(place, room, 'player', 0);
   W.WORK = { place: 'home', room: 'study' };
   /* 谁办公：默认只有爸爸妈妈在家办公，家里没有爸爸妈妈时才轮到别的成年人。操纵对象不特别：选了谁，谁也只是照常过日子 */
@@ -104,7 +126,13 @@
   const PET_ROOM = { cat: 'living', dog: 'living', rabbit: 'living', hamster: 'bedroom', guineapig: 'living', bird: 'living', fish: 'living', turtle: 'kitchen', snake: 'study', gecko: 'study', succulent: 'living', cactus: 'study', flower: 'yard', tree: 'yard' };
   const hashOf = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
   /* 带地点的标记优先：后端说他在医院，他就在医院 */
-  const flagPlace = p => { for (const n in p.state.flags || {}) { const f = G.flag(p, n); if (f && f.place) return f; } return null; };
+  /* 带位置的标记同时有几个时，按优先级取：住院最高，然后外出，然后上厕所，其余按写入顺序。不能靠写入先后，随机的小事不该盖过住院 */
+  const FLAG_PRIORITY = ['hospital', 'outing', 'wc'];
+  const flagPlace = p => {
+    const names = Object.keys(p.state.flags || {}).sort((x, y) => { const i = FLAG_PRIORITY.indexOf(x), j = FLAG_PRIORITY.indexOf(y); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); });
+    for (const n of names) { const f = G.flag(p, n); if (f && f.place) return f; }
+    return null;
+  };
   const block = () => Math.floor(G.dayMinutes() / 20);
   const pickBy = (id, list) => list[hashOf(id + ':' + block()) % list.length];
   const onMat = q => G.isHuman(q) && ['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (q.state.needs.rest || 0) <= 0.55;

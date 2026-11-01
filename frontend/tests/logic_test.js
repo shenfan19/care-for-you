@@ -1089,6 +1089,17 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {}; G.world.money = 200;
   }
   {
+    /* 朝向：站着的人按房间焦点和同屋的人看向某处，同一时段里不变；主角在书房办公始终看向书桌 */
+    {
+      const W = CY.world, ppl = G.activePeople().filter(p => G.isHuman(p));
+      const lay = W.layout('home');
+      const f1 = ppl.map(p => W.facing(p, lay)), f2 = ppl.map(p => W.facing(p, lay));
+      check('同一时段里朝向不来回变', JSON.stringify(f1) === JSON.stringify(f2));
+      check('在家的人朝向只会是四个斜向之一，不在布局里的是空', ppl.every((p, i) => (lay.some(l => l.id === p.id) ? ['sw', 'se', 'ne', 'nw'].includes(f1[i]) : f1[i] === '')));
+      check('格子方向换算', W.dirOf(1, 0) === 'se' && W.dirOf(-1, 0) === 'nw' && W.dirOf(0, 1) === 'sw' && W.dirOf(0, -1) === 'ne');
+      const pet = G.activePeople().find(p => !G.isHuman(p));
+      if (pet) check('宠物不走朝向规则', W.facing(pet, lay) === '');
+    }
     /* 舒适度修正：商品的 fx 由 G.shopFx 按人汇总，后台计算只读这一处 */
     const kid = G.activePeople().find(p => G.stage(p) === 'infant' || G.stage(p) === 'toddler'), ad = G.activePeople().find(p => G.stage(p) === 'adult');
     G.world.owned = {};

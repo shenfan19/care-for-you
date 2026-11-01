@@ -123,7 +123,7 @@
     el.style.left = (q.x / CY.world.vw(place) * 100) + '%'; el.style.top = (q.y / CY.world.vh(place) * 100) + '%'; el.style.setProperty('--z', Math.round(q.y));
   };
   /* 斜视里走的方向对应四个朝向：格子 x 增大朝右下 se，y 增大朝左下 sw，x 减小朝左上 nw，y 减小朝右上 ne */
-  const dirOf = (dx, dy) => (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'se' : 'nw') : (dy > 0 ? 'sw' : 'ne'));
+  const dirOf = (dx, dy) => CY.world.dirOf(dx, dy);
   U.moveFig = function (el, place, gx, gy) {
     if (el._frozen) return;
     const cur = el._pos;
@@ -195,11 +195,13 @@
         const lp = laid.get(p.id);
         U.moveFig(c, U.viewPlace, lp.gx, lp.gy);
       }
-      const working = !fam && CY.world.isWorking(p);
-      const dir = fam ? '' : c._dir || (working ? 'ne' : '');
+      const W0 = CY.world, working = !fam && (W0.isWorking(p) || (W0.driven(p) && W0.atWork() && laid.get(p.id).room === 'study'));
+      /* 站着不动的人按朝向规则看向某处，走的时候朝着走的方向 */
+      const face = fam || c._dir || working || G.isSleeping(p) ? '' : W0.facing(p, [...laid.values()]);
+      const dir = fam ? '' : c._dir || (working ? 'ne' : face);
       c.classList.toggle('working', working && !c._dir);
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, working && !c._dir ? 'sit' : ''); c.dataset.av = look; }
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p));
