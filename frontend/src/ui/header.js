@@ -57,7 +57,7 @@
     tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + c.hh + ':' + c.mm + ' · ' + G.speedLabel();
     tm.title = t('corner.speed_tip', { speed: G.speedLabel() });
     tm.style.cursor = 'pointer';
-    tm.onclick = async () => { await G.setSpeed(G.nextSpeed()); U.renderClock(); };
+    tm.onclick = e => { e.stopPropagation(); U.timePopover(tm); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
     if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
@@ -70,11 +70,44 @@
       const on = CY.sound ? CY.sound.musicVol() > 0 : true;
       ms.textContent = on ? '🎵' : '🔇'; ms.classList.toggle('off', !on);
       ms.title = t('corner.music_tip');
-      ms.onclick = async () => {
-        G.cfg.audio = G.cfg.audio || {}; if (on) { U.lastMusic = G.cfg.audio.music_volume; G.cfg.audio.music_volume = '0'; } else G.cfg.audio.music_volume = U.lastMusic && U.lastMusic !== '0' ? U.lastMusic : '50';
-        await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderClock();
-      };
+      ms.onclick = e => { e.stopPropagation(); U.soundPopover(ms); };
     }
+  };
+
+  /* ---------- 角落按钮的小下拉：点一下弹出，点别处收起。不是点击就切换，免得不小心改了看不到 ---------- */
+  U.closePopover = function () { const p = document.getElementById('cornerPop'); if (p) p.remove(); document.removeEventListener('click', U.popOutside, true); };
+  U.popOutside = e => { const p = document.getElementById('cornerPop'); if (p && !p.contains(e.target)) U.closePopover(); };
+  U.popover = function (anchor, html, wire) {
+    const open = document.getElementById('cornerPop'), same = open && open.dataset.for === anchor.id;
+    U.closePopover(); if (same) return;
+    const box = document.createElement('div'); box.id = 'cornerPop'; box.className = 'cpop'; box.dataset.for = anchor.id; box.innerHTML = html;
+    const host = anchor.closest('.cornerbox') || document.body; host.appendChild(box);
+    const hb = host.getBoundingClientRect(), ab = anchor.getBoundingClientRect();
+    box.style.right = Math.max(0, hb.right - ab.right) + 'px'; box.style.top = (ab.bottom - hb.top + 6) + 'px';
+    if (window.innerWidth <= 640) { box.style.top = 'auto'; box.style.bottom = (hb.bottom - ab.top + 6) + 'px'; }
+    wire(box); setTimeout(() => document.addEventListener('click', U.popOutside, true), 0);
+  };
+  /* 声音：总静音，音乐，音效 */
+  U.soundPopover = function (anchor) {
+    const mute = ini.bool(G.cfg, 'audio', 'mute'), val = k => { const v = parseFloat(ini.get(G.cfg, 'audio', k)); return isNaN(v) ? 50 : v; };
+    U.popover(anchor, `<label class="prow2"><input type="checkbox" id="pmute" ${mute ? 'checked' : ''}> ${esc(t('pop.mute'))}</label>
+      <label class="prow2">${esc(t('pop.music'))}<input type="range" id="pmusic" min="0" max="100" value="${val('music_volume')}"></label>
+      <label class="prow2">${esc(t('pop.sfx'))}<input type="range" id="psfx" min="0" max="100" value="${val('sfx_volume')}"></label>`, box => {
+      const save = async () => { G.cfg.audio = G.cfg.audio || {}; G.cfg.audio.mute = box.querySelector('#pmute').checked ? 'true' : 'false'; G.cfg.audio.music_volume = box.querySelector('#pmusic').value; G.cfg.audio.sfx_volume = box.querySelector('#psfx').value; await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderClock(); };
+      box.querySelectorAll('input').forEach(i => { i.oninput = save; i.onchange = save; });
+    });
+  };
+  /* 时间：现在几点，时间倍率，工作起止 */
+  U.timePopover = function (anchor) {
+    const c = G.clock(), wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-'), cur = G.speed();
+    U.popover(anchor, `<label class="prow2">${esc(t('pop.clock'))}<input type="time" id="pclock" value="${c.hh}:${c.mm}"></label>
+      <div class="prow2">${esc(t('pop.speed'))}<span class="seg">${G.SPEEDS.map(s => `<button data-s="${s}" class="${s === cur ? 'on' : ''}">×${s}</button>`).join('')}</span></div>
+      <label class="prow2">${esc(t('pop.work'))}<span><input type="time" id="pwf" value="${wh[0]}"> – <input type="time" id="pwt" value="${wh[1]}"></span></label>`, box => {
+      box.querySelector('#pclock').onchange = e => { const m = /^(dd):(dd)$/.exec(e.target.value); if (m) { G.setClock(+m[1] * 60 + +m[2]); G.save(true); U.renderClock(); } };
+      box.querySelectorAll('[data-s]').forEach(b => b.onclick = async () => { await G.setSpeed(+b.dataset.s); box.querySelectorAll('[data-s]').forEach(x => x.classList.toggle('on', x === b)); U.renderClock(); });
+      const wsave = async () => { const f = box.querySelector('#pwf').value, to = box.querySelector('#pwt').value; if (f && to && f < to) { G.cfg.economy = G.cfg.economy || {}; G.cfg.economy.work_hours = f + '-' + to; await G.saveCfg(); } };
+      box.querySelector('#pwf').onchange = wsave; box.querySelector('#pwt').onchange = wsave;
+    });
   };
 
   /* 房间下方的条不要了：添加，编辑，归档，删除，叫回离开的人，都在顶栏的角色里 */

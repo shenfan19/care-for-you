@@ -297,6 +297,9 @@ header { align-items:center; }
 @media (max-width:640px) { .cornerbox { top:auto; bottom:10px; } }
 header .tagline { flex:1; margin:0 0 0 18px; color:var(--mute); font-size:14px; font-style:italic; align-self:center; min-width:0; }
 @media (max-width:760px) { header .tagline { display:none; } }
+.cpop { position:absolute; z-index:40; width:320px; max-width:calc(100vw - 24px); padding:10px 12px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 6px 18px #0003; font-size:13px; display:grid; gap:8px; }
+.cpop .prow2 { white-space:nowrap; display:flex; align-items:center; justify-content:space-between; gap:10px; } .cpop input[type=range] { width:110px; } .cpop input[type=time] { font:inherit; width:104px; } .cpop .prow2 > span:last-child { white-space:nowrap; } .cpop .seg button { white-space:nowrap; }
+.cpop .seg { display:flex; gap:4px; } .cpop .seg button { padding:1px 7px; } .cpop .seg button.on { background:var(--accent); color:#fff; }
 .cornerbox .corner { position:static; cursor:pointer; } #cornerMusic.off { opacity:.55; }
 .money.big { font-size:22px; font-weight:600; }
 /* 豆子造型：整张图的呼吸换成豆子本身，走路时脚和手交替，照顾时手抬起 */

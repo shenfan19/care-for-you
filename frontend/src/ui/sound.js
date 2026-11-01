@@ -6,7 +6,7 @@
   const S = CY.sound = CY.sound || {};
   let ctx = null, master = null, musicBus = null, sfxBus = null, timer = null, nextT = 0, bar = 0;
   /* 两个音量，0 到 100，存在设置里；0 就是关 */
-  const vol = k => { const v = parseFloat(ini.get(G.cfg, 'audio', k)); return isNaN(v) ? 0.5 : Math.max(0, Math.min(1, v / 100)); };
+  const vol = k => { if (ini.bool(G.cfg, 'audio', 'mute')) return 0; const v = parseFloat(ini.get(G.cfg, 'audio', k)); return isNaN(v) ? 0.5 : Math.max(0, Math.min(1, v / 100)); };
   S.musicVol = () => vol('music_volume'); S.sfxVol = () => vol('sfx_volume');
 
   const ensure = () => {
