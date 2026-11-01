@@ -554,12 +554,6 @@
       }
       if (!driven(p, 'mood') && !(p.person.help && p.person.help.role === 'nanny')) {
         let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset + 0.02 * G.decorLevel();
-        if (p === G.protagonist() && !offline) {
-          const M = G.MOOD, W = CY.world;
-          if (G.isWorkTime() && W && W.worker(p) && W.atWork()) target -= M.work_drag;
-          const stressed = G.activePeople().filter(q => q !== p && !G.isSleeping(q) && G.maxNeed(q) > M.stress_need && !(q.person.help && q.person.help.role === 'nanny')).length;
-          target -= Math.min(M.stress_cap, M.stress_each * stressed);
-        }
         s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
       }
       if (offline) continue;
@@ -678,7 +672,6 @@
     if (Math.random() < pCB) {
       const tx = line(p, 'cares_back', null, t('line.glance_fallback', { name: p.person.name }));
       s.cares_back_total++;
-      { const lead = G.protagonist(); if (lead) lead.state.mood = clamp(lead.state.mood + G.MOOD.cares_back_gain); }
       G.toastFor(p, tx, 'gift'); G.log(p.id, 'cares_back', tx);
       return;
     }
@@ -767,6 +760,15 @@
     const s = p.state;
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
+    if (actionId === 'meal') {
+      /* 做一顿饭是全家的饭：在家的，醒着的，吃得了饭的人，饿和渴都降下来 */
+      const W0 = CY.world;
+      for (const q of G.activePeople()) {
+        if (q === p || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;
+        for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v);
+      }
+      G.logK(p.id, 'event', 'log.meal_all', {});
+    }
     if (a.outing && G.startOuting) {
       G.startOuting(p, a);
       /* 带人出门，主角自己也一起去：去的是同一个地点，人回来了主角也回家 */
@@ -803,7 +805,6 @@
     G.toastFor(p, tx, 'speech'); G.say(pid, 'char', tx);
     G.logK(pid, 'care', 'log.care', { label: G.refAct(a, p), line: tx });
     G.playFx(pid, actionId);
-    { const lead = G.protagonist(); if (lead) lead.state.mood = clamp(lead.state.mood + G.MOOD.act_gain); }
     G.save(); emit();
     return true;
   }

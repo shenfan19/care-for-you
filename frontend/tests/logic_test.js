@@ -1060,6 +1060,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('老人做主角，吃药只有自己吃药一个', mine2.includes('selfmed') && !mine2.includes('medicine'), mine2.join());
     G.setProtagonist(dId); for (const x of G.people) x.person.active = true;
   }
+  {
+    for (const x of G.people) x.person.active = false;
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' }), bId = await G.createPerson({ arch: 'baby', name: 'b' });
+    await G.load(); const ids = [dId, mId, gId, bId]; for (const x of G.people) x.person.active = ids.includes(x.id);
+    G.setProtagonist(dId); for (const id of ids) { G.act[id] = 'awake'; for (const k in G.get(id).state.needs) G.get(id).state.needs[k] = 0.2; }
+    const mom = G.get(mId), gp = G.get(gId), baby = G.get(bId);
+    mom.state.needs.hunger = 0.9; gp.state.needs.hunger = 0.9; baby.state.needs.hunger = 0.9;
+    G.applyAction(mId, 'meal');
+    check('做饭给人吃，在家吃得了饭的人都吃上，婴儿不算', gp.state.needs.hunger < 0.5 && mom.state.needs.hunger < 0.5 && baby.state.needs.hunger === 0.9, gp.state.needs.hunger + ' ' + baby.state.needs.hunger);
+    for (const id of ids) G.get(id).state.mood = 0.8;
+    check('效率就是全家状态的平均', Math.abs(G.efficiency() - 0.8) < 1e-9);
+    for (const id of ids) G.get(id).state.mood = 0.1;
+    check('平均太低按四成算', Math.abs(G.efficiency() - 0.4) < 1e-9);
+    for (const x of G.people) x.person.active = true;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

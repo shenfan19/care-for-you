@@ -58,8 +58,9 @@
     tm.title = t('corner.speed_tip', { speed: G.speedLabel() });
     tm.style.cursor = 'pointer';
     tm.onclick = async () => { await G.setSpeed(G.nextSpeed()); U.renderClock(); };
-    const lead = G.protagonist(), eff = G.efficiency(), face = lead ? (lead.state.mood > 0.7 ? '😊' : lead.state.mood > 0.4 ? '😐' : '😟') : '';
-    mn.textContent = '💰 ' + Math.floor(G.world.money || 0) + (lead && CY.world && CY.world.worker(lead) ? ' · ' + face + Math.round(eff * 100) + '%' : ''); mn.title = t('corner.money_tip') + (lead && CY.world && CY.world.worker(lead) ? ' ' + t('corner.eff_tip', { n: Math.round(eff * 100) }) : '');
+    mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
+    const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
+    if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
     mn.onclick = () => U.helpDialog();
     for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }

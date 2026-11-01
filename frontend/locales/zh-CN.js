@@ -373,3 +373,4 @@ CY.i18n.register("zh-CN", {"figure.sprite": "方块小人"});
 CY.i18n.register("zh-CN", {"act.meal": "做饭给ta吃", "act.cook": "做饭自己吃"});
 CY.i18n.register("zh-CN", {"figure.sprite": "迷你小人", "figure.blocky": "方块角色"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit，Mini Characters，Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。 可选的方块角色来自 Kenney 的 Blocky Characters，街道背景的楼来自 City Kit Commercial，同为 CC0 1.0。"});
+CY.i18n.register("zh-CN", {"corner.eff_tip": "全家的平均状态是 {n}%，这也是上班的人现在的工作效率。每个人都照顾到，包括你自己，收入才高，最低按四成算。", "log.meal_all": "一顿饭做好了，在家的人都吃上了。"});
