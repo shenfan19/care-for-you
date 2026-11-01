@@ -1067,6 +1067,28 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {}; G.world.money = 200;
   }
   {
+    /* 买菜：花 40 去超市，二十五分钟后回来，带回八份食材；做饭用掉一份，桌上摆出饭菜，全家更饱 */
+    const W = CY.world;
+    for (const x of G.people) x.person.active = false;
+    const dId = await G.createPerson({ arch: 'dad', name: '买菜爸' }), mId = await G.createPerson({ arch: 'mom', name: '吃饭妈' });
+    await G.load(); for (const x of G.people) x.person.active = [dId, mId].includes(x.id);
+    G.setProtagonist(dId); G.world.money = 100; G.world.groceries = 0; delete G.world.trip;
+    const dad = G.get(dId), mom = G.get(mId);
+    check('钱够就有去买菜', !!G.actionsOf(dad).groceries);
+    G.world.money = 10; check('钱不够没有去买菜', !G.actionsOf(dad).groceries); G.world.money = 100;
+    G.applyAction(dId, 'groceries');
+    check('去买菜花四十，人在超市路上', G.world.money === 60 && !!G.world.trip && !G.actionsOf(dad).groceries && W.PLACES.market.rooms.aisle);
+    G.world.game_minutes += 10; G.tripTick(); check('没到时间还在路上', !!G.world.trip && G.groceries() === 0);
+    G.world.game_minutes += 20; G.tripTick(); check('到时间回来，带回八份食材', !G.world.trip && G.groceries() === 8);
+    mom.state.needs.hunger = 0.8; dad.state.needs.hunger = 0.8; G.world.fed_until = 0;
+    G.applyAction(dId, 'cook');
+    check('做饭用掉一份食材，桌上摆出饭菜', G.groceries() === 7 && G.tableFood());
+    check('有食材时家人吃得更饱', mom.state.needs.hunger < 0.8 - 0.8 * 0 - 0.1, String(mom.state.needs.hunger));
+    G.world.groceries = 0; G.world.fed_until = 0; mom.state.needs.hunger = 0.8; G.applyAction(dId, 'cook');
+    check('没有食材照样能做饭，只是没有加成', G.groceries() === 0 && !G.tableFood());
+    G.world.money = 200;
+  }
+  {
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
     const dadId = await G.createPerson({ arch: 'dad', name: 'd' }), gpId = await G.createPerson({ arch: 'grandpa', name: 'g' }), kidId = await G.createPerson({ arch: 'daughter', name: 'k' });

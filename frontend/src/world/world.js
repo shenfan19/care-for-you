@@ -15,6 +15,7 @@
   W.PLACES = {
     hospital: { w: 10, h: 6, rooms: { ward: { gx: 0, gy: 0, w: 10, h: 6 } } },
     office: { w: 8, h: 6, rooms: { desk: { gx: 0, gy: 0, w: 8, h: 6 } } },
+    market: { w: 10, h: 6, rooms: { aisle: { gx: 0, gy: 0, w: 10, h: 6 } } },
     park: { w: 10, h: 6, rooms: { lawn: { gx: 0, gy: 0, w: 10, h: 6 } } },
     street: { w: 10, h: 6, rooms: { road: { gx: 0, gy: 0, w: 10, h: 6 } } },
   };
@@ -23,7 +24,7 @@
   Object.defineProperty(W.PLACES, 'home', { enumerable: true, get: () => { const id = CY.houseId(), H = CY.house(); return homeCache[id] || (homeCache[id] = { w: H.w, h: BASE_HOME.h, rooms: Object.assign({}, BASE_HOME.rooms, H.rooms) }); } });
   W.vw = place => (place === 'home' ? CY.house().vw : 800);
   W.vh = place => (place === 'home' ? CY.house().vh : 520);
-  W.PLACE_LIST = ['home', 'park', 'street', 'hospital', 'office'];
+  W.PLACE_LIST = ['home', 'market', 'park', 'street', 'hospital', 'office'];
   W.project = (place, gx, gy) => {
     const P = W.PLACES[place], ox = W.vw(place) / 2 + (P.h - P.w) * W.TW / 4;
     return { x: ox + (gx - gy) * W.TW / 2, y: 120 + (gx + gy) * W.TH / 2 };
@@ -40,6 +41,7 @@
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
     desk: { stand: [[.5, .7], [.3, .8], [.7, .8]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.28, .45] },
+    aisle: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.5, .86] },
     lawn: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5], [.2, .55], [.8, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     road: { stand: [[.5, .56], [.3, .6], [.7, .6], [.4, .4], [.6, .4], [.2, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
   };
@@ -304,6 +306,7 @@
     if (!W.enforce) return;
     const pl = W.player();
     if (W.holding) { W.lastActive = Date.now(); return; }
+    if (G.world.trip) return;   /* 主角在买菜的路上，到时间由 G.tripTick 送回家 */
     if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.escort = false; W.moveTo(W.WORK.place, W.workRoom()); return; }
     if (W.escort && pl.place !== W.WORK.place) return;   /* 陪着出门的人还在外面，主角不先回去 */
     if (W.leadSleeping() && !W.player().bed) { W.toBed(); return; }

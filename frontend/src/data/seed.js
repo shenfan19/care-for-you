@@ -40,6 +40,7 @@ actions:
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
   doctor: { label: 带去看医生, hold: 8, min: 120, away: true, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, at: kitchen, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
+  groceries: { label: 去买菜, selfonly: true, trip: { place: market, room: aisle, minutes: 25, cost: 40, meals: 8 }, hold: 3, min: 5, effect: {}, mood: 0.05, stages: [teen, adult, elder] }
   cook: { label: 做饭自己吃, household: true, selfonly: true, at: kitchen, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
   snack: { label: 找点吃的, selfonly: true, at: kitchen, self: [child], hold: 1, min: 10, effect: { hunger: -0.6 }, stages: [child] }
   sleep: { label: 去睡觉, selfonly: true, at: bedroom, pose: sleep, self: [child, teen, adult, elder], hold: 1, mood: 0, effect: {}, stages: [child, teen, adult, elder] }
@@ -951,7 +952,14 @@ rules:
     toddler4: { lines: { request: { hunger: ['{title}，我要吃饭，我自己吃。'] } } },
     woman25: { lines: { thanks: { default: ['谢啦。'] } } },
     popo: { health: { score: 0.6 } },
-    nanny: { health: { score: 0.95 }, help: { proactive: true, role: 'nanny', efficiency: 0.6, interval: [60, 120], threshold: 0.5 } },
+    nanny: { health: { score: 0.95 }, help: { proactive: true, role: 'nanny', efficiency: 0.6, interval: [60, 120], threshold: 0.5 },
+      /* 保姆专属台词：专业，克制，话少，不拿自己的事打扰人 */
+      lines: {
+        glance: ['{ta}在一旁收拾着，见你看过来，点了点头。', '{ta}抱着一摞叠好的衣服从走廊经过。', '{ta}看了看大家，又低头去擦桌子。', '{ta}在厨房里忙着，锅里传来轻轻的响声。', '{ta}看了一眼钟，把水壶放上了炉子。', '{ta}蹲下身，帮孩子系好了鞋带。', '{ta}把窗帘拉开一点，让屋里透透气。'],
+        cares_back: ['{ta}把一杯温水放在你手边，轻声说：别忘了喝。', '{ta}把你的外套挂好，没多说什么。', '{ta}说：今天的菜多放了点汤，你尝尝。', '{ta}悄悄把窗户关小了一点，怕你着凉。', '{ta}把你桌上的杯子洗干净，放回原处。'],
+        reveal: '{ta}说：孩子和老人我都看着，您忙您的，放心。',
+        thanks: { default: ['这是我该做的。', '不客气。', '应该的。'] },
+      } },
   };
   let cardCache = null;
   const cardFiles = () => {

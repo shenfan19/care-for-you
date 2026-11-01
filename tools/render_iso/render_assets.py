@@ -17,12 +17,13 @@ CARS = os.environ.get('KENNEY_CARS', 'C:/fight/kenney_car-kit/Models/GLB format'
 BLOCKY = os.environ.get('KENNEY_BLOCKY', 'C:/fight/kenney_blocky-characters_20/Models/GLB format')
 CITY = os.environ.get('KENNEY_CITY', 'C:/fight/kenney_city-kit-commercial_2.1/Models/GLB format')
 MARKET = os.environ.get('KENNEY_MARKET', 'C:/fight/kenney_mini-market/Models/GLB format')
-MAP = {'/market/': MARKET, '/blocky/': BLOCKY, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
+FOOD = os.environ.get('KENNEY_FOOD', 'C:/fight/kenney_food-kit/Models/GLB format')
+MAP = {'/food/': FOOD, '/market/': MARKET, '/blocky/': BLOCKY, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
 
 class H(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         path = path.split('?', 1)[0]
-        for pre in ('/three/', '/furn/', '/char/', '/pets/', '/cars/', '/blocky/', '/city/', '/market/'):
+        for pre in ('/food/', '/three/', '/furn/', '/char/', '/pets/', '/cars/', '/blocky/', '/city/', '/market/'):
             if path.startswith(pre): return os.path.join(MAP[pre], *path[len(pre):].split('/')).replace('%20', ' ')
         return os.path.join(HERE, path.lstrip('/') or 'render.html')
     def log_message(self, *a): pass
@@ -79,6 +80,19 @@ def main(kind):
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                 m['size'] = [round(v, 3) for v in r['size']]
                 print(name, m['size'])
+        if kind == 'market2':
+            os.makedirs(os.path.join(OUT, 'furn'), exist_ok=True)
+            for src, names, sc in (('market', ['shelf-bags', 'shelf-boxes', 'shelf-end', 'display-bread', 'display-fruit', 'freezers-standing', 'cash-register', 'shopping-basket', 'column'], FURN_SCALE),
+                                   ('food', ['bowl-soup', 'bread', 'apple', 'chinese', 'fish', 'cup-tea', 'carrot', 'cabbage'], FURN_SCALE * 0.95)):
+                for name in names:
+                    key = src + '-' + name
+                    m = manifest.setdefault('furn', {}).setdefault(key, {})
+                    for rot in range(4):
+                        r = pg.evaluate('o => window.renderModel(o)', {'url': '/%s/%s.glb' % (src, name), 'rot': rot, 'scale': sc})
+                        open(os.path.join(OUT, 'furn', '%s_%d.png' % (key, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
+                        bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
+                    m['size'] = [round(v, 3) for v in r['size']]
+                    print(key, m['size'])
         if kind == 'city':
             os.makedirs(os.path.join(OUT, 'furn'), exist_ok=True)
             for name in ['building-b', 'building-e', 'building-g', 'building-k', 'building-skyscraper-b', 'building-skyscraper-d']:

@@ -35,6 +35,7 @@
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
     else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency();
+    if (G.tripTick) G.tripTick();
     const n = G.nanny();
     if (!n) return;
     if (!G.nannyOn()) { return; }
@@ -69,6 +70,37 @@
     G.world.money -= it.price; G.world.owned = Object.assign({}, G.world.owned, { [id]: true });
     G.logK('you', 'event', 'log.bought', { item: G.ref('shop.' + id, id) }); G.save(true); emit(); return true;
   };
+  /* 买菜：主角去超市，一趟花 cost，带回 meals 份食材，路上 minutes 游戏分钟。做饭时用掉一份，吃得更饱，桌上摆出饭菜 */
+  G.groceries = () => G.world.groceries || 0;
+  G.startTrip = a => {
+    const tr = a.trip, W = CY.world;
+    if (G.world.trip || (G.world.money || 0) < tr.cost) return false;
+    G.world.money -= tr.cost;
+    G.world.trip = { place: tr.place, until: G.world.game_minutes + tr.minutes, meals: tr.meals };
+    if (W && W.moveTo && W.PLACES[tr.place]) W.moveTo(tr.place, tr.room);
+    G.logK('you', 'event', 'me.go', { place: G.ref('loc.' + tr.place, tr.place) });
+    return true;
+  };
+  G.tripTick = () => {
+    const tr = G.world.trip; if (!tr || G.world.game_minutes < tr.until) return;
+    const W = CY.world;
+    G.world.groceries = (G.world.groceries || 0) + tr.meals; delete G.world.trip;
+    if (W && W.moveTo) W.moveTo(W.WORK.place, W.workRoom());
+    G.logK('you', 'event', 'log.groceries', { n: tr.meals });
+  };
+  G.GROCERY_BONUS = { hunger: -0.15, mood: 0.02, table_minutes: 90 };
+  G.useGroceries = (p, a) => {
+    if (!G.groceries()) return false;
+    G.world.groceries--; G.world.fed_until = G.world.game_minutes + G.GROCERY_BONUS.table_minutes;
+    for (const q of G.activePeople()) {
+      if (!G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (CY.world && CY.world.locationOf(q).place !== 'home')) continue;
+      if (q !== p && 'hunger' in q.state.needs) q.state.needs.hunger = Math.max(0, q.state.needs.hunger + G.GROCERY_BONUS.hunger);
+      if (q === p && 'hunger' in q.state.needs) q.state.needs.hunger = Math.max(0, q.state.needs.hunger + G.GROCERY_BONUS.hunger);
+      q.state.mood = Math.min(1, q.state.mood + G.GROCERY_BONUS.mood);
+    }
+    return true;
+  };
+  G.tableFood = () => (G.world.fed_until || 0) > G.world.game_minutes;
   G.decorLevel = () => (G.owned('decor1') ? 1 : 0) + (G.owned('decor2') ? 1 : 0) + (G.owned('decor3') ? 1 : 0);
   G.NANNY_MOOD = { drain: 0.003, recover: 0.02, tip_cost: 40, tip_gain: 0.15, eff_floor: 0.8 };
   G.nannyEfficiency = () => { const n = G.nanny(); return n ? G.NANNY_MOOD.eff_floor + (1 - G.NANNY_MOOD.eff_floor) * n.state.mood : 1; };

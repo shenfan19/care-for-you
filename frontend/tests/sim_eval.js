@@ -115,6 +115,11 @@ const FAMILIES = {
   const pct = x => (100 * x).toFixed(1) + '%';
   console.log(`家庭 ${kind}，${days} 天，玩家每 ${look} 秒看一眼`);
   console.log(`- 急需占比：${pct(stat.urgentTicks / Math.max(1, stat.awakePersonTicks))}，需要被叫人的占比（会叫的角色需求超过一半）：${pct((stat.needyTicks || 0) / Math.max(1, stat.awakePersonTicks))}`);
+  /* 十分钟重复率：同一个人，同一句话，十分钟内再次出现的比例（只看角色自己说出口的几类） */
+  let said = 0, rep = 0; const repBy = {};
+  for (const p of G.people) { const all = [].concat(...Object.values(G.journal[p.id] || {})).filter(e => ['glance', 'cares_back', 'talk', 'reveal'].includes(e.type)).sort((a, b) => (a.t < b.t ? -1 : 1)), last = {}; for (const e of all) { const ts = Date.parse(e.t); said++; if (last[e.text] !== undefined && ts - last[e.text] < 600000) { rep++; repBy[e.type + ' ' + e.text.replace(/^[^s，：]+/, '…').slice(0, 24)] = (repBy[e.type + ' ' + e.text.replace(/^[^s，：]+/, '…').slice(0, 24)] || 0) + 1; } last[e.text] = ts; } }
+  console.log(`- 十分钟内重复的话：${rep} 句，占说出口的 ${said ? (100 * rep / said).toFixed(1) : 0}%（共 ${said} 句）`);
+  if (process.env.CARE_REP) console.log(Object.entries(repBy).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[1] + ' ' + x[0]).join(String.fromCharCode(10)));
   console.log(`- 宝宝哭闹：${(stat.cryTicks * 5 / 3600).toFixed(1)} 小时`);
   console.log(`- 每小时被打扰：${(stat.reqs / hours).toFixed(1)} 次，其中问答 ${(stat.asks / hours).toFixed(1)} 次`);
   console.log(`- 玩家动作：每小时 ${(stat.acts / hours).toFixed(1)} 次`);

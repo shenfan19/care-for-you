@@ -9,8 +9,8 @@
     const to = v => clampHex(f < 1 ? v * f : v + (255 - v) * (f - 1));
     return '#' + [to(r), to(g), to(b)].map(v => v.toString(16).padStart(2, '0')).join('');
   };
-  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', desk: '#dbd7c9' };
-  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', desk: '#ece8dc' };
+  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', aisle: '#ece6d6', desk: '#dbd7c9' };
+  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', aisle: '#f1ede2', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
   const SPR = () => (CY.isoSprites || {}).furn || {};
   const G0 = () => CY.game;
@@ -136,9 +136,15 @@
           spr('kitchenFridge', 0, 0.5, 0.45); spr('kitchenCabinet', 0, 1.35, 0.45); spr('kitchenSink', 0, 2.2, 0.45); spr('kitchenStove', 0, 3.05, 0.45);
           spr('table', 0, 2.0, 2.4); spr('chair', 0, 1.5, 1.75); spr('chair', 0, 2.5, 1.75); spr('chair', 2, 1.5, 3.05); spr('chair', 2, 2.5, 3.05);
           spr('trashcan', 0, 3.7, 3.5);
+          if (G0().tableFood()) { spr('food-bowl-soup', 0, 2.0, 2.4, L, 4.5); spr('food-bread', 0, 1.65, 2.3, L, 4.6); spr('food-apple', 0, 2.4, 2.55, L, 4.7); }
         } else if (name === 'ward') {
           [0.8, 2.8, 4.8, 6.8].forEach((bx, i) => { spr('bedSingle', 0, bx + 0.55, 1.4); if (i < 3) f(bx + 1.5, 0.3, 0.06, 2.4, 44, '#aed0e0'); });
           spr('sideTable', 0, 8.9, 1.0); spr('kitchenFridge', 0, 8.9, 3.8);
+        } else if (name === 'aisle') {
+          [0.9, 3.0].forEach(bx => { spr('market-shelf-bags', 0, bx + 0.7, 1.2); spr('market-shelf-boxes', 0, bx + 1.9, 1.2); });
+          spr('market-shelf-end', 1, 0.5, 3.4); spr('market-freezers-standing', 0, 6.4, 0.8); spr('market-freezers-standing', 0, 7.6, 0.8);
+          spr('market-display-fruit', 0, 3.2, 3.4); spr('market-display-bread', 0, 4.6, 3.4);
+          spr('market-cash-register', 0, 8.3, 3.8); spr('market-shopping-basket', 0, 6.4, 3.9); spr('market-column', 0, 9.4, 2.4);
         } else if (name === 'desk') {
           [1.7, 5.4].forEach(cx => { spr('desk', 0, cx + 0.2, 1.3); spr('computerScreen', 0, cx + 0.2, 1.2, L, cx + 1.6); spr('chairDesk', 2, cx + 0.2, 2.3); });
           spr('pottedPlant', 0, 7.4, 0.8);

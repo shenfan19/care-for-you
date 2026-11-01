@@ -531,6 +531,7 @@
   /* 卧床：老人虚弱度到 0.8 躺下，降到 0.55 以下才起来。坐轮椅的家人本来就坐着，不算。躺着的人不能散步，去不了公园和街上，有轮椅才能被推出去 */
   G.bedridden = p => !!(p && p.state && p.state.bedrest);
   G.usable = (p, d) => {
+    if (d.trip && (G.world.trip || (G.world.money || 0) < d.trip.cost)) return false;   /* 已经在路上，或钱不够 */
     if (d.walks && G.bedridden(p)) return false;
     if (d.only_bedridden && !G.bedridden(p)) return false;
     if (d.item && !G.owned(d.item)) return false;
@@ -785,7 +786,9 @@
         for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v);
       }
       G.logK(p.id, 'event', 'log.meal_all', {});
+      if (G.useGroceries) G.useGroceries(p, a);
     }
+    if (a.trip && G.startTrip) G.startTrip(a);
     if (a.at && p === G.protagonist() && CY.world && CY.world.doAt) CY.world.doAt(a);   /* 自己做的动作：去那个房间做，摆那个姿势 */
     if (a.outing && G.startOuting) {
       G.startOuting(p, a);
