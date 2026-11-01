@@ -1,105 +1,105 @@
-# Care for You：后端接口
+# Care for You: backend protocol
 
-这份文档是后端接口的权威说明，面向想写自己后端的人。游戏本体只做两件事：把每个角色此刻的状态打包发出去，把回来的指令执行掉。谁说话、发生什么、需求怎么涨，都可以由后端决定。
+This document is the authoritative description of the backend protocol, for people who want to write their own backend. The game itself does only two things: it packs up each character's current state and sends it out, and it executes the directives that come back. Who speaks, what happens and how needs grow can all be decided by the backend.
 
-仓库里有三个后端，用同一份接口：
+The repository has three backends, all using the same protocol:
 
-- 内置后端：在浏览器里用 JS 跑，随游戏一起，规则在数据文件夹的明文 YAML 里，默认使用。代码在 frontend/src/backend 的 local.js 和 local_plan.js。
-- 基础后端：backend_basic/server.py，标准库，一阶线性的需求模型，用来演示接口最小要写什么。
-- 积分后端：在浏览器里用 JS 跑，frontend/src/backend/lm.js，把需求、心情、虚弱度当作模型状态来积分，模型是 frontend/src/data/lm 里的 YAML，设置里 backend_provider 选 lm。它不走网络接口，直接产出同样格式的指令。Python 版曾经放在这个仓库，现在挪出去了。
+- Built-in backend: runs as JS in the browser together with the game. Its rules are plain YAML in the data folder. It is the default. The code is local.js and local_plan.js in frontend/src/backend.
+- Basic backend: backend_basic/server.py, standard library only, a first-order linear need model. It shows the minimum a backend has to implement.
+- Integrator backend: runs as JS in the browser, frontend/src/backend/lm.js. It integrates needs, mood and frailty as model state. The models are YAML files in frontend/src/data/lm. Choose it with backend_provider set to lm in the settings. It does not use the network interface and produces directives in the same format directly. A Python version used to live in this repository and has been moved out.
 
-## 切换
+## Switching
 
-设置的高级设置折叠区里：
+In the advanced section of the settings:
 
-- backend_provider：builtin 或 http。改成 http 以后游戏向 backend_url 发请求，出错自动退回内置，只提示一次。
-- backend_url：远程后端的地址，例如 http://127.0.0.1:8787/ 是基础后端，http://127.0.0.1:8788/ 是 LM 后端。
-- backend_timeout：单次请求的超时，毫秒，默认 4000。
-- backend_send_names：为 true 时快照里带角色的名字，默认不带。
-- needs_source：builtin 或 backend。backend 表示全部需求都由后端给，游戏不再自己涨。有 drives 声明时（见下文）不需要设这一项。
+- backend_provider: builtin or http. After switching to http the game sends requests to backend_url. On errors it falls back to the built-in backend automatically and says so only once.
+- backend_url: address of the remote backend, for example http://127.0.0.1:8787/ for the basic backend and http://127.0.0.1:8788/ for an integrator backend.
+- backend_timeout: timeout of a single request in milliseconds, default 4000.
+- backend_send_names: when true, snapshots carry the characters' names. Default is off.
+- needs_source: builtin or backend. backend means the backend supplies all needs and the game no longer grows them itself. When a drives declaration is present (see below) this does not need to be set.
 
-切换是即时的：改了设置，下一次请求就走新的后端。远程后端中途掉线，被它驱动的变量立即还给游戏自己算，不会卡住。
+Switching takes effect immediately: after a settings change, the next request goes to the new backend. If a remote backend drops out midway, the variables it was driving are handed back to the game at once, so nothing gets stuck.
 
-## 传输
+## Transport
 
-- 方法与地址：POST 到 backend_url，请求体和回应都是 UTF-8 的 JSON。GET 同一个地址可以返回握手信息，方便手动检查。
-- 版本：所有请求和回应都带 "v": 1。回应的 v 不是 1，游戏当作出错处理。
-- 跨域：游戏页面从 localhost 或 file:// 打开时是跨域请求，后端要回 Access-Control-Allow-Origin，并响应 OPTIONS 预检。
-- 出错：HTTP 状态不是 2xx、超时、不是合法 JSON、v 不对，都算失败，本次退回内置后端的结果。
-- 请求频率：游戏每秒推进一次，向远程后端的 drive tick 请求最多每 5 秒一次，攒下的游戏分钟数一并发过去；plan 请求每 20 秒一次（system.yaml 的 plan.interval_seconds）；line 请求在需要台词时发。
-- 检查：回来的所有东西都经过游戏的检查，不认识的丢掉，数值压回范围，不存在的角色丢掉，文字限长。后端写错了不会弄坏存档。
+- Method and address: POST to backend_url. Request body and response are UTF-8 JSON. A GET to the same address may return handshake information, which is handy for manual checks.
+- Version: every request and response carries "v": 1. A response whose v is not 1 is treated as an error.
+- Cross-origin: when the game page is opened from localhost or file://, requests are cross-origin. The backend must send Access-Control-Allow-Origin and answer the OPTIONS preflight.
+- Errors: a non-2xx HTTP status, a timeout, invalid JSON or a wrong v counts as a failure, and the built-in backend's result is used for that call.
+- Request rate: the game advances once per second. Drive tick requests to a remote backend are sent at most once every 5 seconds, with the accumulated game minutes sent together. Plan requests go out every 20 seconds (plan.interval_seconds in system.yaml). Line requests are sent when a line is needed.
+- Validation: everything that comes back is checked by the game. Unknown things are dropped, values are clamped into range, characters that do not exist are dropped, and text is length limited. A mistake in a backend cannot corrupt the save.
 
-## 请求一览
+## Requests at a glance
 
-| kind | 什么时候发 | 回应 |
+| kind | When sent | Response |
 | --- | --- | --- |
-| hello | 切到 http 后第一次、换了 backend_url 后、握手失败 30 秒后重试 | 后端是谁，管哪几样 |
-| drive，trigger 为 tick | 时间推进，最多每 5 秒一次 | 指令列表，可带 drives |
-| drive，trigger 为 action | 玩家刚做了一个动作 | 指令列表 |
-| plan | 每 20 秒 | 状态表和策略 |
-| line | 需要一句台词 | 一句话，或 null |
+| hello | The first time after switching to http, after backend_url changes, and 30 seconds after a failed handshake | Who the backend is and what it handles |
+| drive, trigger tick | Time advances, at most once every 5 seconds | Directive list, may carry drives |
+| drive, trigger action | The player has just done an action | Directive list |
+| plan | Every 20 seconds | State table and strategies |
+| line | A line of dialogue is needed | One sentence, or null |
 
 ### hello
 
-请求：
+Request:
 
 ```json
-{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.58.0" } }
+{ "v": 1, "kind": "hello", "client": { "name": "care-for-you", "version": "0.58.1" } }
 ```
 
-回应：
+Response:
 
 ```json
 { "v": 1, "name": "care-lm-backend", "version": "0.1.0",
   "handles": { "events": false, "strategies": false, "lines": false } }
 ```
 
-- handles 声明后端管哪几样，没写的键当作 true，整个 handles 不写（老后端）当作全都管：
-  - events：随机事件，比如夜尿起夜、跌倒、住院、出院，对应 drive 请求里除积分以外的指令。为 false 时游戏仍运行内置后端的事件规则，把两边的指令合在一起执行，内置的排前面，远程的排后面。
-  - strategies：谁向谁求助、位置愿望，对应 plan 请求。为 false 时游戏不再发 plan 给它，直接用内置后端的。
-  - lines：台词，对应 line 请求。为 false 时游戏不发 line 给它。
-- 其余字段随意，name 和 version 会被截断到 48 和 24 个字符，仅用于显示。
-- 不认识 hello 的老后端按普通请求回一个 {"v":1,"directives":[]} 就行，游戏按“全都管”处理，行为和以前完全一样。
-- 握手失败（连不上、回应不合格）时本次用内置，30 秒后再试。
+- handles declares what the backend takes care of. A key that is missing counts as true, and a missing handles object altogether (an old backend) counts as handling everything:
+  - events: random events such as getting up at night, falling, going to hospital and coming back, which correspond to the directives in a drive request other than integration. When false, the game still runs the built-in backend's event rules and merges both sets of directives, the built-in ones first and the remote ones after.
+  - strategies: who asks whom for help, and location wishes, which correspond to the plan request. When false, the game no longer sends plan to it and uses the built-in one directly.
+  - lines: dialogue, which corresponds to the line request. When false, the game does not send line to it.
+- Other fields are free. name and version are truncated to 48 and 24 characters and are used only for display.
+- An old backend that does not know hello can answer it like an ordinary request with {"v":1,"directives":[]}. The game then treats it as handling everything, and behaviour is exactly as before.
+- When the handshake fails (cannot connect or the response is invalid) the built-in backend is used this time and the game retries after 30 seconds.
 
-### drive，tick
+### drive, tick
 
-请求：
+Request:
 
 ```json
 { "v": 1, "kind": "drive", "trigger": "tick", "minutes": 0.0833,
   "world": { }, "people": [ { } ], "expired": [ { "person": "p1", "name": "wc" } ] }
 ```
 
-- minutes：距离上次 drive tick 过去的游戏分钟数，可以是小数。积分类的后端用它做步长。游戏时间有倍速设置 time.speed，默认 24，所以每 5 秒一次的 tick 大约带 2 分钟，60 倍时约 5 分钟，不要假定它很小。
-- world：世界快照，见下。
-- people：全体在场角色的快照，见下，不含已归档的。
-- expired：刚到期的带时限标记，比如夜里起夜结束了，规则可以据此决定跌倒还是回床。
+- minutes: game minutes since the last drive tick, possibly fractional. Integrator backends use it as the step size. Game time has a speed setting time.speed, default 24, so a tick every 5 seconds carries about 2 minutes, about 5 minutes at 60 times. Do not assume it is small.
+- world: world snapshot, see below.
+- people: snapshots of all characters present, see below, not including archived ones.
+- expired: timed flags that have just run out, for example the night trip ended, so a rule can decide between a fall and going back to bed.
 
-回应：
+Response:
 
 ```json
 { "v": 1, "directives": [ { "op": "need", "person": "p1", "need": "thirst", "delta": 0.0007 } ],
   "drives": { "p1": ["thirst", "hunger", "rest", "mood", "frailty"] } }
 ```
 
-- directives：指令列表，见下。
-- drives：可选。这次后端替哪些角色算了哪些变量，键是角色编号，值是变量名数组，变量名是需求名，或者 mood，或者 frailty。游戏对声明过的变量不再自己推进（不涨需求，不算心情，不算虚弱度），只执行后端的指令。没声明的变量游戏照旧自己算。每次回应整体替换上一次的声明，所以后端哪次不声明了，变量立刻还给游戏。远程失败时全部还给游戏。
+- directives: the directive list, see below.
+- drives: optional. Which variables the backend computed for which characters this time. Keys are character ids and values are arrays of variable names, where a variable name is a need name, or mood, or frailty. For declared variables the game no longer advances them itself (no need growth, no mood calculation, no frailty calculation) and only executes the backend's directives. Variables that are not declared are still computed by the game. Each response replaces the previous declaration as a whole, so if the backend stops declaring a variable, it goes back to the game immediately. When the remote fails, everything goes back to the game.
 
-### drive，action
+### drive, action
 
-请求：
+Request:
 
 ```json
 { "v": 1, "kind": "drive", "trigger": "action", "world": { }, "minutes": 0,
-  "person": { }, "action": { "id": "feed", "label": "喂饭", "min": 25, "effect": { "hunger": -0.9 } } }
+  "person": { }, "action": { "id": "feed", "label": "Feed", "min": 25, "effect": { "hunger": -0.9 } } }
 ```
 
-玩家做了一个动作。回应同 tick，其中的 say 指令如果 kind 为 speech，游戏用作被照顾的人对这次动作的回话。action 触发的回应应当很快，游戏等着它。后端 handles.events 为 false 时，游戏不把 action 发给它，直接用内置的结果。
+The player did an action. The response is the same as for tick. If a say directive in it has kind speech, the game uses it as the cared-for person's reply to this action. A response to an action trigger should be fast, because the game waits for it. When the backend's handles.events is false, the game does not send action to it and uses the built-in result directly.
 
 ### plan
 
-请求：
+Request:
 
 ```json
 { "v": 1, "kind": "plan", "world": { }, "minutes": 20, "people": [ { } ],
@@ -107,9 +107,9 @@
   "declined": [ { "from": "p1", "to": "p3", "key": "hunger" } ] }
 ```
 
-- pending：还在路上的请求，declined：刚被拒绝的请求，后端据此不重复发。key 是需求名或外出动作名。
+- pending: requests still on their way. declined: requests just turned down. The backend uses them to avoid repeating itself. key is a need name or an outing action name.
 
-回应：
+Response:
 
 ```json
 { "v": 1,
@@ -117,125 +117,125 @@
   "strategies": [ { "from": "p1", "to": "p2", "kind": "care", "need": "hunger" } ] }
 ```
 
-- states 每行一个人，needs、mood、frailty 都可省，给了就是新的绝对值；want 是位置愿望，id 是愿望编号，action 是外出动作名。
-- strategies 每条是 from 向 to 发的请求，kind 为 care（别人替他做）、self（自己做）、go（去某个地方）；care 和 self 要写 need，go 要写 action。
-- 游戏收到后再核一遍：接收者不在、睡着、住院、外出、没有这项能力的，丢掉。
-- 需求不是 plan 的主要用途，积分请在 drive tick 里做。
+- states has one row per person. needs, mood and frailty can all be omitted, and when given they are the new absolute values. want is a location wish: id is the wish id and action is the outing action name.
+- Each entry of strategies is a request from from to to. kind is care (someone else does it for them), self (they do it themselves) or go (go somewhere). care and self need a need, go needs an action.
+- The game checks again on receipt: if the receiver is absent, asleep, in hospital, out, or lacks the ability, the entry is dropped.
+- Needs are not the main purpose of plan. Do integration in the drive tick.
 
 ### line
 
-请求：`{ "v": 1, "kind": "line", "person": { }, "group": "events", "key": "discharge", "situation": { }, "world": { } }`
+Request: `{ "v": 1, "kind": "line", "person": { }, "group": "events", "key": "discharge", "situation": { }, "world": { } }`
 
-回应：`{ "v": 1, "text": "一句话" }`，没有就回 `"text": null`。游戏先用内置的一句，远程的回来了再换上。
+Response: `{ "v": 1, "text": "One sentence" }`, or `"text": null` if there is none. The game first uses the built-in line and swaps in the remote one when it arrives.
 
-## 指令
+## Directives
 
-drive 回应里的 directives，每条都有 op 和 person，op 只能是下面这些，别的一律丢弃：
+Each directive in the directives of a drive response has an op and a person. op can only be one of the following, and anything else is dropped:
 
-| op | 字段 | 作用 | 范围 |
+| op | Fields | Effect | Range |
 | --- | --- | --- | --- |
-| need | need, delta | 需求加一个增量 | delta 在负一到一之间，结果压到零到一 |
-| need_set | need, value | 把需求设成一个值 | 零到一 |
-| mood | delta | 心情加增量 | 同上 |
-| mood_set | value | 设心情 | 零到一 |
-| frailty | delta | 虚弱度加增量 | 同上 |
-| frailty_set | value | 设虚弱度 | 零到一 |
-| flag_set | name, minutes, value?, place?, room?, mode? | 打一个带时限的标记，比如在医院、起夜中、受伤 | minutes 零到 43200；place 是地点编号，带 place 的标记会让这个人出现在那里；mode 为 stand、sleep、cradle |
-| flag_clear | name | 去掉标记 | |
-| move | room, minutes? | 让这个人走到家里某个房间停一阵 | minutes 零点二到三十 |
-| condition_add | id | 给这个人加一种病 | id 必须是已有的病 |
-| condition_remove | id | 去掉一种病 | |
-| counter | name, delta | 计数加减 | 负一百到一百的整数 |
-| seen | name | 记下今天已经触发过，每天只触发一次的规则用 | |
-| log | type, text 或 key+args | 往发生的事里记一条 | type 是 care、talk、missed、cares_back、glance、event、frail、recovered、reveal、picked、nudge、cry、self 之一 |
-| say | text 或 tkey 或 group+key, kind? | 角色说一句话 | kind 为 soft、speech、cry、reveal、self |
+| need | need, delta | Add an increment to a need | delta between -1 and 1, the result is clamped to 0 to 1 |
+| need_set | need, value | Set a need to a value | 0 to 1 |
+| mood | delta | Add an increment to mood | same as above |
+| mood_set | value | Set mood | 0 to 1 |
+| frailty | delta | Add an increment to frailty | same as above |
+| frailty_set | value | Set frailty | 0 to 1 |
+| flag_set | name, minutes, value?, place?, room?, mode? | Set a timed flag, for example in hospital, up at night, hurt | minutes 0 to 43200; place is a place id, and a flag with place makes the person appear there; mode is stand, sleep or cradle |
+| flag_clear | name | Remove a flag | |
+| move | room, minutes? | Make the person walk to a room in the house and stay a while | minutes 0.2 to 30 |
+| condition_add | id | Give the person a condition | id must be an existing condition |
+| condition_remove | id | Remove a condition | |
+| counter | name, delta | Add to or subtract from a counter | integer from -100 to 100 |
+| seen | name | Record that something has fired today, used by once-a-day rules | |
+| log | type, text or key+args | Add an entry to the happenings | type is one of care, talk, missed, cares_back, glance, event, frail, recovered, reveal, picked, nudge, cry, self |
+| say | text or tkey or group+key, kind? | The character says a line | kind is soft, speech, cry, reveal or self |
 
-- 积分类的后端请用增量（need，mood，frailty），不要用 need_set 一类的绝对值：请求飞行期间玩家可能刚做了动作，绝对值会把它盖掉，增量不会。
-- 快照里的数保留四位小数，游戏内部的值不取整。积分类后端每次推进只有几秒时，单步增量可能比取整误差大不了多少，所以后端应以自己的内部状态为准算增量，不要拿快照值当作自己的状态，除非发现它和你上次回的值差得明显（LM 后端的容差是 0.004）。否则游戏里的值会在阈值附近来回抖动，反复触发叫人。
-- 文字类字段限长：text 二百四十个字符，name 二十四个，id 三十二个。
+- Integrator backends should use increments (need, mood, frailty) and not absolute values such as need_set. While a request is in flight the player may have just done an action, and an absolute value would overwrite it, while an increment would not.
+- Numbers in snapshots keep four decimals, and the game's internal values are not rounded. When an integrator backend advances only a few seconds at a time, a single-step increment may be barely larger than the rounding error. So the backend should compute increments from its own internal state and not take the snapshot value as its state, unless it differs clearly from the value it returned last time (the LM backend's tolerance is 0.004). Otherwise values in the game jitter around thresholds and trigger calls for attention again and again.
+- Text fields are length limited: text 240 characters, name 24, id 32.
 
-## 快照
+## Snapshots
 
-### 世界快照 world
+### World snapshot: world
 
-| 字段 | 含义 |
+| Field | Meaning |
 | --- | --- |
 | v | 1 |
-| date | month, day, weekday（零为星期日），iso，day_index（自 1970 年的天数，本地时区） |
-| working | 现在是不是工作时段 |
-| at_desk | 玩家是不是在书桌前 |
-| days_together | 一起生活了多少天 |
-| game_minutes | 游戏累计分钟数 |
-| day_minutes | 今天已过的分钟数 |
-| hour | 钟点，小数，零到二十四 |
-| night | 现在是不是夜里 |
-| mode | 时间模式，目前恒为 real |
-| player | place 和 room，玩家所在的地点和房间 |
-| protagonist | 操纵对象的编号，没有为 null |
-| params | 自由参数，预留，目前为空对象 |
+| date | month, day, weekday (0 is Sunday), iso, day_index (days since 1970, local time zone) |
+| working | Whether it is working hours now |
+| at_desk | Whether the player is at the desk |
+| days_together | How many days they have lived together |
+| game_minutes | Total game minutes so far |
+| day_minutes | Minutes elapsed today |
+| hour | Hour of day, fractional, 0 to 24 |
+| night | Whether it is night now |
+| mode | Time mode, currently always real |
+| player | place and room, where the player is |
+| protagonist | Id of the controlled character, null if none |
+| params | Free parameters, reserved, currently an empty object |
 
-### 角色快照 person
+### Character snapshot: person
 
-| 字段 | 含义 |
+| Field | Meaning |
 | --- | --- |
-| id | 角色编号，稳定不变 |
-| card | 角色卡编号，后端可按它去找卡的全部设定 |
-| health | 健康度，一减虚弱度 |
-| name | 名字，backend_send_names 关闭时是空字符串 |
-| species | 物种编号，human、cat、dog、flower 等 |
-| stage | 人是年龄阶段 infant、toddler、child、teen、adult、elder；非人是物种编号 |
-| age | 年龄，岁，非人为 null |
-| age_band | 更细的年龄档，非人为 null |
-| mood | 心情，零到一，一最好，保留四位小数 |
-| frailty | 虚弱度，零到一，一最虚弱，保留四位小数 |
-| needs | 需求，键是需求名，值零到一，一最急，保留四位小数。不同物种有不同的需求，疾病会加需求 |
-| conditions | 病的编号数组 |
-| traits | 性格编号数组，最多两个 |
-| voice | 声线编号 |
-| flags | 带时限的标记，键是标记名，值有 until（游戏分钟）、value、place、room、mode |
-| rate_mult | 每个需求的个性化速率倍数，性格的倍数乘角色卡的 need_rate，没有特别的是 1。基础速率不发，后端按年龄阶段和物种自己定 |
-| mood_offset | 性格带来的心情偏移 |
-| frailty_mult | 性格带来的虚弱度倍数 |
-| sleeping | 是不是睡着 |
-| protagonist | 是不是操纵对象 |
-| abilities | help（能不能帮别人，含 role 和 efficiency，不能为 null），care_needs（别人能替他做的需求），self_needs（他自己能做的需求），go_actions（他能去的外出动作） |
-| want | 当前的位置愿望，没有为 null |
-| location | place 和 room |
-| care_total | 被照顾的累计次数 |
-| counters | 计数 |
-| seen | 每天只触发一次的规则的记录 |
+| id | Character id, stable |
+| card | Card id, with which a backend can look up all the card's settings |
+| health | Health, one minus frailty |
+| name | Name, an empty string when backend_send_names is off |
+| species | Species id: human, cat, dog, flower and so on |
+| stage | For humans the life stage infant, toddler, child, teen, adult or elder; for non-humans the species id |
+| age | Age in years, null for non-humans |
+| age_band | A finer age band, null for non-humans |
+| mood | Mood, 0 to 1, 1 is best, four decimals |
+| frailty | Frailty, 0 to 1, 1 is most frail, four decimals |
+| needs | Needs: keys are need names, values 0 to 1, 1 is most urgent, four decimals. Different species have different needs, and conditions add needs |
+| conditions | Array of condition ids |
+| traits | Array of trait ids, at most two |
+| voice | Voice id |
+| flags | Timed flags: keys are flag names, values have until (game minutes), value, place, room, mode |
+| rate_mult | Personal rate multiplier for each need: the trait multiplier times the card's need_rate, 1 when nothing special. Base rates are not sent, and the backend sets them by life stage and species |
+| mood_offset | Mood offset from traits |
+| frailty_mult | Frailty multiplier from traits |
+| sleeping | Whether asleep |
+| protagonist | Whether this is the controlled character |
+| abilities | help (whether they can help others, with role and efficiency, null if not), care_needs (needs others can do for them), self_needs (needs they can do themselves), go_actions (outing actions they can go on) |
+| want | Current location wish, null if none |
+| location | place and room |
+| care_total | Total number of times cared for |
+| counters | Counters |
+| seen | Record of once-a-day rules |
 
-需求名参考：thirst、hunger、rest、company、play、diaper、hygiene、homework、mobility 是人的；clean 是小动物的；water、sun、fertilize、prune 是花草的；疾病另加 medicine、sugar、bp、joint、fever、breath、reorient 等。后端遇到不认识的需求名，不碰它就行，游戏自己会算。
+Need names for reference: thirst, hunger, rest, company, play, diaper, hygiene, homework and mobility are for people; clean is for small animals; water, sun, fertilize and prune are for plants; conditions add medicine, sugar, bp, joint, fever, breath, reorient and so on. If a backend meets a need name it does not know, it simply leaves it alone, and the game computes it itself.
 
-## 谁算什么：分工与组合
+## Who computes what: division of labour and combination
 
-游戏里的每个变量（某人的某个需求、心情、虚弱度）在任何时刻只有一个主人：
+Every variable in the game (a person's need, mood or frailty) has exactly one owner at any moment:
 
-- 没有被远程后端声明驱动的，游戏自己算：需求按速率涨，心情向目标松弛，虚弱度按规则升降。
-- 被远程后端在 drives 里声明的，后端算，游戏只执行指令。
-- 玩家的动作永远直接改游戏里的数。积分类后端每次收到快照时，如果发现某个变量和它上次回的不一样，就是玩家动了它，应当以快照为准重新对表，不需要知道玩家做了什么动作。LM 后端就是这样做的。
+- A variable not declared as driven by a remote backend is computed by the game: needs grow by rate, mood relaxes toward its target, and frailty rises and falls by rule.
+- A variable declared by a remote backend in drives is computed by the backend, and the game only executes directives.
+- Player actions always change the game's numbers directly. When an integrator backend receives a snapshot and finds that a variable differs from what it returned last time, the player has touched it, and the backend should resync to the snapshot. It does not need to know which action the player did. The LM backend works this way.
 
-事件、策略、台词三样按 hello 的 handles 决定归谁，没人声明的归内置后端。
+Events, strategies and lines are assigned by handles in hello. Anything nobody declares goes to the built-in backend.
 
-## 页面内与页面外的接口
+## In-page and out-of-page interfaces
 
-除了 HTTP 后端，游戏页面自己也提供读写接口，给在同一页面里或外面的程序用：
+Besides the HTTP backend, the game page offers its own read and write interface, for programs in the same page or outside it:
 
-- 页面内：CY.api.state() 读全体快照，CY.api.apply(指令列表) 写，CY.api.cards() 读全部角色卡，CY.api.onTick(fn) 每次状态变化收一次。
-- 页面外：设置里 api_bridge 改成 true，页面响应 postMessage。发 { type: 'care.getState', id, names } 回 { type: 'care.state', id, state }；发 { type: 'care.apply', id, directives } 回 { type: 'care.applied', id, applied }。默认关闭，没有来源白名单，只在自己的环境里打开。
-- 指令和 HTTP 后端用同一套，同样被检查。
+- In the page: CY.api.state() reads the snapshot of everyone, CY.api.apply(directive list) writes, CY.api.cards() reads all character cards, and CY.api.onTick(fn) is called on every state change.
+- Outside the page: set api_bridge to true in the settings and the page answers postMessage. Send { type: 'care.getState', id, names } and receive { type: 'care.state', id, state }; send { type: 'care.apply', id, directives } and receive { type: 'care.applied', id, applied }. It is off by default and has no origin allowlist, so turn it on only in your own environment.
+- Directives are the same as for the HTTP backend and are checked in the same way.
 
-## 角色卡
+## Character cards
 
-数据文件夹 templates/cards/卡编号.yaml，每类典型角色一张。字段：id，label，group，species，age，stage，pronoun，voice，look，traits，health（score，mood，conditions），class（urgency，self_care，nag，cries），need_rate（需求速率倍数），self_actions，help（proactive，efficiency，interval），dialogue（voice，lines）。快照里的 card 是卡编号。后端可以用 CY.api.cards() 读到全部卡。
+Data folder templates/cards/card-id.yaml, one per typical kind of character. Fields: id, label, group, species, age, stage, pronoun, voice, look, traits, health (score, mood, conditions), class (urgency, self_care, nag, cries), need_rate (need rate multipliers), self_actions, help (proactive, efficiency, interval), dialogue (voice, lines). The card in a snapshot is the card id. A backend can read all cards with CY.api.cards().
 
-## 写一个自己的后端：清单
+## Writing your own backend: checklist
 
-- 响应 OPTIONS 和 POST，回 JSON，带跨域头。
-- 回应里带 "v": 1。
-- hello 里声明 handles：只做积分就把三项都设为 false。
-- drive tick 里按 minutes 做步长，回增量指令，并在 drives 里声明你负责的变量。
-- 对没见过的角色，用快照里的值初始化；对不认识的需求，不碰。
-- 角色编号稳定，角色消失（归档、删除）就清掉自己的内部状态。
-- 用 python backend_basic/server.py 起基础后端，改它的 step()；或者看 frontend/src/data/lm 里怎么把模型写成 YAML。
-- 验证：CARE_BACKEND_URL=你的地址 node frontend/tests/logic_test.js 会对真实后端走一遍；CARE_BACKEND_URL=你的地址 node frontend/tests/sim_eval.js 1 120 family 让一家人在虚拟时钟里过一天，输出请求次数和往返耗时。
+- Answer OPTIONS and POST, reply with JSON and cross-origin headers.
+- Put "v": 1 in every response.
+- Declare handles in hello: if you only integrate, set all three to false.
+- In drive tick use minutes as the step size, return increment directives, and declare the variables you are responsible for in drives.
+- For a character you have not seen before, initialize from the snapshot values; for needs you do not know, leave them alone.
+- Character ids are stable. When a character disappears (archived or deleted), clear your internal state for it.
+- Start the basic backend with python backend_basic/server.py and change its step(), or look at frontend/src/data/lm to see how a model is written as YAML.
+- Verify: CARE_BACKEND_URL=your-address node frontend/tests/logic_test.js runs through a real backend; CARE_BACKEND_URL=your-address node frontend/tests/sim_eval.js 1 120 family lets a family live a day on the virtual clock and prints the request count and round-trip time.

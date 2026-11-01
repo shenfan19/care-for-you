@@ -1,9 +1,9 @@
 # Android
 
-预留给安卓版本的子文件夹，当前阶段搁置，不跟随主线进度，也不影响桌面与网页版。
+Reserved for an Android version. This is on hold for now: it does not follow the main line and does not affect the desktop and web versions.
 
-## 备忘
+## Notes
 
-- 安卓允许获得授权的应用在其他应用之上显示悬浮小气泡，可以做成角色，需要用户授权，应用商店对此有政策限制。
-- 通知加小组件是更稳妥的形态，通知里可以直接放轻量动作。
-- 数据格式与桌面版完全一致，仍是 YAML 文件夹加 settings.ini。
+- Android lets authorized apps draw a floating bubble above other apps, which could be a character. It needs user permission, and app stores restrict it.
+- Notifications plus a widget are the safer form. Light actions can sit right in the notification.
+- The data format is identical to the desktop version: a folder of YAML files plus settings.ini.
