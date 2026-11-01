@@ -69,7 +69,7 @@ CY.i18n.register("ko", {
 "cred.p1": "화면과 로직은 백엔드 없는 정적 웹 페이지입니다. 데이터 파일은 YAML이며, MIT 라이선스의 js-yaml로 읽습니다.", "cred.p2": "이 프로젝트를 개발하는 데 인공지능 보조 도구를 사용했습니다.",
 "cred.p3": "캐릭터 그림, 애니메이션, 글은 모두 독자 제작입니다. 오픈소스 라이선스는 아직 정하지 않았으며, 정해지면 여기와 저장소에 밝히겠습니다.",
 "ver.line": "{app} {v}, 데이터 스키마 {schema}, 공개일 {date}", "ver.lang": "현재 언어: {l}", "ver.account": "계정: 사용 안 함.",
-"log.frail": "{name}이(가) 많이 쇠약해져서 곁에 누군가 필요합니다", "log.recovered": "{name}이(가) 천천히 회복하고 있습니다", "toast.weak": "오늘은 힘이 없다.",
+"log.frail": "{name}이(가) 많이 쇠약해져서 곁에 누군가 필요합니다", "log.recovered": "{name}이(가) 천천히 회복하고 있습니다", "toast.weak": "오늘은 힘이 없다.", "log.bedrest": "{name}이(가) 너무 쇠약해 일어나지 못하고 누워 있습니다", "log.bedrest_end": "{name}이(가) 다시 일어날 힘이 생겼습니다", "toast.bedrest": "{ta}은(는) 오늘 일어날 수 없습니다.", "act.wheel": "휠체어로 밖에 나가기",
 "req.need_fallback": "{name}에게 필요한 것: {need}", "line.reveal_fallback": "줄곧 지켜보고 있었다.", "line.glance_fallback": "{name}이(가) 당신을 흘끗 보았다.", "line.ok": "응.",
 "req.pick_human": "떠올려 보세요. {name}은(는) 평소 당신에게 뭐라고 말하나요?", "req.pick_animal": "떠올려 보세요. {name}은(는) 평소 어떻게 표현하나요?",
 "req.nudge_human": "{name}이(가) 당신을 보며: {text}", "req.nudge_animal": "{name}이(가) 가만히 쳐다보고, 문득 생각난다: {text}",

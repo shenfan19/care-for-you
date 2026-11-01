@@ -73,7 +73,7 @@ CY.i18n.register("fr", {
 "cred.p1": "L'interface et la logique sont une page web statique sans serveur. Les fichiers de données sont en YAML, lus avec js-yaml sous licence MIT.", "cred.p2": "Des outils d'assistance par intelligence artificielle ont été utilisés pour développer ce projet.",
 "cred.p3": "Les illustrations, animations et textes sont originaux. La licence open source n'est pas encore choisie, elle sera indiquée ici et dans le dépôt le moment venu.",
 "ver.line": "{app} {v}, schéma de données {schema}, publié le {date}", "ver.lang": "Langue actuelle : {l}", "ver.account": "Comptes : non activés.",
-"log.frail": "{name} est très fragile et a besoin de quelqu'un près de lui", "log.recovered": "{name} se rétablit doucement", "toast.weak": "Pas de forces aujourd'hui.",
+"log.frail": "{name} est très fragile et a besoin de quelqu'un près de lui", "log.recovered": "{name} se rétablit doucement", "toast.weak": "Pas de forces aujourd'hui.", "log.bedrest": "{name} est trop faible pour se lever et reste au lit", "log.bedrest_end": "{name} a de nouveau la force de se lever", "toast.bedrest": "{ta} ne peut pas se lever aujourd'hui.", "act.wheel": "Sortir en fauteuil roulant",
 "req.need_fallback": "{name} a besoin de : {need}", "line.reveal_fallback": "Veille sur vous depuis le début.", "line.glance_fallback": "{name} vous a regardé.", "line.ok": "Mm.",
 "req.pick_human": "Réfléchissez : que vous dit habituellement {name} ?", "req.pick_animal": "Réfléchissez : comment {name} le montre-t-il d'habitude ?",
 "req.nudge_human": "{name} vous regarde : {text}", "req.nudge_animal": "{name} vous fixe, et soudain vous vous souvenez : {text}",

@@ -98,6 +98,7 @@ CY.i18n.register('zh-CN', {
   'ver.line': '{app} {v}，数据结构版本 {schema}，发布于 {date}', 'ver.lang': '当前语言：{l}', 'ver.account': '账号功能：未启用。',
 
   'log.frail': '{name}很虚弱了，需要有人陪着', 'log.recovered': '{name}慢慢缓过来了', 'toast.weak': '{ta}今天特别没力气。',
+  'log.bedrest': '{name}虚弱得起不了床，只能躺着', 'log.bedrest_end': '{name}有力气下床走动了', 'toast.bedrest': '{ta}今天起不了床。', 'act.wheel': '推轮椅出去走走',
   'req.need_fallback': '{name}需要{need}', 'line.reveal_fallback': '{ta}一直在看着你。', 'line.glance_fallback': '{name}看了你一眼。', 'line.ok': '嗯。',
   'req.pick_human': '你想想，{name}平时会对你说哪句话？', 'req.pick_animal': '你想想，{name}平时是怎么表示的？',
   'req.nudge_human': '{name}看着你：{text}', 'req.nudge_animal': '{name}盯着你，你忽然想起：{text}',

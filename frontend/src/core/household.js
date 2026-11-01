@@ -41,6 +41,8 @@
     if (o.group) for (const q of G.activePeople()) {
       if (q.id === p.id || q === G.protagonist() || !G.isHuman(q) || !GROUP_STAGES.includes(G.stage(q))) continue;
       if (G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || W.locationOf(q).place !== 'home') continue;
+      if (G.stage(q) === 'infant' && !G.owned('stroller')) continue;   /* 没有婴儿车，婴儿留在家里 */
+      if (G.bedridden(q) && !G.owned('wheelchair')) continue;   /* 卧床的人没有轮椅出不了门 */
       group.push(q);
     }
     for (const m of group) {

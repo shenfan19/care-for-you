@@ -294,6 +294,7 @@
       for (const k in defs || {}) {
         const d = defs[k];
         if (d.stages && !d.stages.includes(G.stage(p))) continue;
+        if (!G.usable(p, d)) continue;
         const own = typeof d.label === 'object' ? (d.label[G.stage(p)] || d.label.default) : d.label;
         const lab = CY.tOr('act.' + k + '.' + G.stage(p), CY.tOr('act.' + k, own));
         out[k] = Object.assign({}, d, { label: lab, id: k, min: d.min !== undefined ? d.min : Math.max(3, (d.hold || 3) * 3) });
@@ -527,11 +528,27 @@
   G.selfActFor = selfActionFor;
   G.selfAct = selfAct;
 
+  /* 卧床：老人虚弱度到 0.8 躺下，降到 0.55 以下才起来。坐轮椅的家人本来就坐着，不算。躺着的人不能散步，去不了公园和街上，有轮椅才能被推出去 */
+  G.bedridden = p => !!(p && p.state && p.state.bedrest);
+  G.usable = (p, d) => {
+    if (d.walks && G.bedridden(p)) return false;
+    if (d.only_bedridden && !G.bedridden(p)) return false;
+    if (d.item && !G.owned(d.item)) return false;
+    const need = d.item_for && d.item_for[G.stage(p)];
+    return !need || G.owned(need);
+  };
+  G.bedCheck = p => {
+    const s = p.state;
+    if (!G.isHuman(p) || G.stage(p) !== 'elder' || (p.person.archetype || p.person.card) === 'wheelchair') { if (s.bedrest) delete s.bedrest; return; }
+    if (!s.bedrest && s.frailty >= 0.8) { s.bedrest = true; G.logK(p.id, 'frail', 'log.bedrest', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.bedrest'), p), 'soft'); }
+    else if (s.bedrest && s.frailty < 0.55) { delete s.bedrest; G.logK(p.id, 'recovered', 'log.bedrest_end', { name: p.person.name }); }
+  };
   /* 虚弱度跨过 0.7 或 0.5 时记一笔，游戏自己算的和后端给的都走这里 */
   G.frailCross = (p, was) => {
     const s = p.state;
     if (was < 0.7 && s.frailty >= 0.7) { G.logK(p.id, 'frail', 'log.frail', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.weak'), p), 'soft'); }
     if (was >= 0.5 && s.frailty < 0.5) G.logK(p.id, 'recovered', 'log.recovered', { name: p.person.name });
+    G.bedCheck(p);
   };
 
   function advance(gmin, offline) {

@@ -33,9 +33,10 @@ actions:
   game: { label: 一起打游戏, hold: 7, min: 40, effect: { company: -0.6 }, mood: 0.12, stages: [teen] }
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: -0.6 }, mood: 0.1, stages: [teen, adult, elder] }
   rest: { label: 扶去休息, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
-  walk: { label: 搀着散步, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
-  park: { label: 带去公园, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, minutes: 8, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
-  street: { label: 去街上逛逛, hold: 6, min: 30, away: true, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
+  walk: { label: 搀着散步, walks: true, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
+  park: { label: 带去公园, walks: true, item_for: { infant: stroller }, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, minutes: 8, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
+  street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, hold: 6, min: 30, away: true, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
+  wheel: { label: 推轮椅出去走走, only_bedridden: true, item: wheelchair, hold: 8, min: 45, away: true, outing: { place: park, room: lawn, minutes: 8, group: false }, effect: { mobility: -0.6, company: -0.5 }, mood: 0.15, stages: [elder] }
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
   doctor: { label: 带去看医生, hold: 8, min: 120, away: true, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, at: kitchen, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }

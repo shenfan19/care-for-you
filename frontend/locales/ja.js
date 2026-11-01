@@ -69,7 +69,7 @@ CY.i18n.register("ja", {
 "cred.p1": "画面とロジックはバックエンドのない静的なウェブページです。データファイルは YAML で、js-yaml（MIT ライセンス）で読み込みます。", "cred.p2": "このプロジェクトの開発には人工知能の支援ツールを使用しました。",
 "cred.p3": "キャラクターの絵、アニメーション、文章はオリジナルです。オープンソースライセンスはまだ決めておらず、決まり次第こことリポジトリに記載します。",
 "ver.line": "{app} {v}、データスキーマ {schema}、公開日 {date}", "ver.lang": "現在の言語：{l}", "ver.account": "アカウント：無効。",
-"log.frail": "{name}はとても衰弱していて、誰かにそばにいてほしい", "log.recovered": "{name}は少しずつ回復している", "toast.weak": "今日は力が出ない。",
+"log.frail": "{name}はとても衰弱していて、誰かにそばにいてほしい", "log.recovered": "{name}は少しずつ回復している", "toast.weak": "今日は力が出ない。", "log.bedrest": "{name}は衰弱して起き上がれず、ベッドで休んでいる", "log.bedrest_end": "{name}はまた起き上がれるようになった", "toast.bedrest": "{ta}は今日は起きられない。", "act.wheel": "車いすで外へ連れ出す",
 "req.need_fallback": "{name}は{need}がほしい", "line.reveal_fallback": "ずっと見守っていた。", "line.glance_fallback": "{name}があなたをちらりと見た。", "line.ok": "うん。",
 "req.pick_human": "思い出してみてください。{name}はいつもあなたに何と言いますか？", "req.pick_animal": "思い出してみてください。{name}はいつもどう伝えますか？",
 "req.nudge_human": "{name}があなたを見て言う：{text}", "req.nudge_animal": "{name}がじっと見ている。ふと思い出す：{text}",

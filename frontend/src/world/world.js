@@ -186,6 +186,7 @@
       return { place: 'home', room: PET_ROOM[sp] || 'living', mode: 'stand' };
     }
     const st = G.stage(p), sleeping = G.isSleeping(p);
+    if (G.bedridden(p)) { const b = W.bedOf(p); return { place: 'home', room: b ? b.room : 'elder', mode: 'sleep' }; }   /* 卧床的人一直躺在自己的床上 */
     if (sleeping) { if (st === 'infant') return { place: 'home', room: 'bedroom', mode: 'cradle' }; const b = W.bedOf(p); return { place: 'home', room: b ? b.room : st === 'elder' ? 'elder' : 'bedroom', mode: 'sleep' }; }
     /* 宝宝困了在婴儿床，醒着就在玩具垫上，自己不会走 */
     if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };

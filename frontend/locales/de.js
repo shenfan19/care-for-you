@@ -69,7 +69,7 @@ CY.i18n.register("de", {
 "cred.p1": "Oberfläche und Logik sind eine statische Webseite ohne Backend. Die Datendateien sind YAML und werden mit js-yaml unter MIT-Lizenz gelesen.", "cred.p2": "Bei der Entwicklung dieses Projekts wurden Werkzeuge mit künstlicher Intelligenz eingesetzt.",
 "cred.p3": "Figurenbilder, Animationen und Texte sind original. Die Open-Source-Lizenz steht noch nicht fest und wird hier und im Repository genannt, sobald sie gewählt ist.",
 "ver.line": "{app} {v}, Datenschema {schema}, veröffentlicht {date}", "ver.lang": "Aktuelle Sprache: {l}", "ver.account": "Konten: nicht aktiviert.",
-"log.frail": "{name} ist sehr gebrechlich und braucht jemanden in der Nähe", "log.recovered": "{name} erholt sich langsam", "toast.weak": "Heute keine Kraft.",
+"log.frail": "{name} ist sehr gebrechlich und braucht jemanden in der Nähe", "log.recovered": "{name} erholt sich langsam", "toast.weak": "Heute keine Kraft.", "log.bedrest": "{name} ist zu schwach zum Aufstehen und bleibt im Bett", "log.bedrest_end": "{name} hat wieder die Kraft aufzustehen", "toast.bedrest": "{ta} kann heute nicht aufstehen.", "act.wheel": "Im Rollstuhl nach draußen schieben",
 "req.need_fallback": "{name} braucht: {need}", "line.reveal_fallback": "Hat die ganze Zeit auf dich aufgepasst.", "line.glance_fallback": "{name} hat dich angesehen.", "line.ok": "Mm.",
 "req.pick_human": "Überlege: Was sagt {name} normalerweise zu dir?", "req.pick_animal": "Überlege: Wie zeigt {name} es normalerweise?",
 "req.nudge_human": "{name} sieht dich an: {text}", "req.nudge_animal": "{name} starrt dich an, und plötzlich fällt dir ein: {text}",

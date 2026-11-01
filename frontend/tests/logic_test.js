@@ -1031,6 +1031,30 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {}; G.world.money = 200;
   }
   {
+    /* 卧床：老人虚弱到 0.8 躺下，降到 0.55 以下起来；躺着不能散步，有轮椅才能被推出去；婴儿没有婴儿车出不了门 */
+    const W = CY.world;
+    for (const x of G.people) x.person.active = false;
+    const gpId = await G.createPerson({ arch: 'grandpa', name: '卧床爷' }), babyId = await G.createPerson({ arch: 'baby', name: '小宝' });
+    await G.load(); for (const x of G.people) x.person.active = [gpId, babyId].includes(x.id);
+    const gp = G.get(gpId), bb = G.get(babyId);
+    G.world.owned = {};
+    gp.state.frailty = 0.6; G.bedCheck(gp);
+    check('虚弱度 0.6 不卧床', !G.bedridden(gp) && !!G.actionsOf(gp).walk && !G.actionsOf(gp).wheel);
+    gp.state.frailty = 0.8; G.bedCheck(gp);
+    check('虚弱度到 0.8 卧床，在床上躺着，不能散步，没轮椅也没有推出去', G.bedridden(gp) && W.locationOf(gp).mode === 'sleep' && !G.actionsOf(gp).walk && !G.actionsOf(gp).park && !G.actionsOf(gp).wheel);
+    gp.state.frailty = 0.6; G.bedCheck(gp);
+    check('降到 0.55 以上仍卧床', G.bedridden(gp));
+    G.world.owned = { wheelchair: true };
+    check('有轮椅，卧床的人能被推出去', !!G.actionsOf(gp).wheel && !G.actionsOf(gp).walk);
+    gp.state.frailty = 0.5; G.bedCheck(gp);
+    check('降到 0.55 以下起床，恢复散步', !G.bedridden(gp) && !!G.actionsOf(gp).walk && !G.actionsOf(gp).wheel);
+    G.world.owned = {};
+    check('没有婴儿车，对婴儿不出现带去公园', !G.actionsOf(bb).park);
+    G.world.owned = { stroller: true };
+    check('有婴儿车，婴儿能被带去公园', !!G.actionsOf(bb).park);
+    G.world.owned = {}; G.world.money = 200;
+  }
+  {
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
     const dadId = await G.createPerson({ arch: 'dad', name: 'd' }), gpId = await G.createPerson({ arch: 'grandpa', name: 'g' }), kidId = await G.createPerson({ arch: 'daughter', name: 'k' });

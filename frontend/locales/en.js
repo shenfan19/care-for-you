@@ -98,6 +98,7 @@ CY.i18n.register('en', {
   'ver.line': '{app} {v}, data schema {schema}, released {date}', 'ver.lang': 'Current language: {l}', 'ver.account': 'Accounts: not enabled.',
 
   'log.frail': '{name} is very frail and needs someone nearby', 'log.recovered': '{name} is slowly recovering', 'toast.weak': 'No strength today.',
+  'log.bedrest': '{name} is too weak to get up and now stays in bed', 'log.bedrest_end': '{name} is strong enough to get up again', 'toast.bedrest': '{ta} cannot get out of bed today.', 'act.wheel': 'Push the wheelchair outside',
   'req.need_fallback': '{name} needs: {need}', 'line.reveal_fallback': 'Has been watching over you all along.', 'line.glance_fallback': '{name} glanced at you.', 'line.ok': 'Mm.',
   'req.pick_human': 'Think about it: what does {name} usually say to you?', 'req.pick_animal': 'Think about it: how does {name} usually show it?',
   'req.nudge_human': '{name} looks at you: {text}', 'req.nudge_animal': '{name} stares at you, and you suddenly remember: {text}',

@@ -417,7 +417,7 @@ function beanDraw(o, V) {
   };
   CY.avatar = (p, dir, pose) => {
     if (DRAW[p.species.id]) { const G0 = CY.game; return !['sprite', 'blocky'].includes(CY.figure) ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
-    const G = CY.game, asleep = !!(G && G.isSleeping && p.id && G.isSleeping(p));
+    const G = CY.game, asleep = !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p))));
     const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
     const pz = asleep ? 'sleep' : wc ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand';
     return (CY.figure === 'sprite' ? sprite : CY.figure === 'blocky' ? (a, b, c) => blockySprite(a, b, c === 'chair' ? 'sit' : c) : () => null)(p, dir || '', pz) || beanHuman(p, FIG_V[CY.figure] || 'C', dir);

@@ -69,7 +69,7 @@ CY.i18n.register("es", {
 "cred.p1": "La interfaz y la lógica son una página web estática sin servidor. Los archivos de datos son YAML, leídos con js-yaml bajo licencia MIT.", "cred.p2": "Se usaron herramientas de asistencia de inteligencia artificial para desarrollar este proyecto.",
 "cred.p3": "Las ilustraciones, animaciones y textos son originales. La licencia de código abierto aún no está decidida y se indicará aquí y en el repositorio cuando lo esté.",
 "ver.line": "{app} {v}, esquema de datos {schema}, publicado el {date}", "ver.lang": "Idioma actual: {l}", "ver.account": "Cuentas: no activadas.",
-"log.frail": "{name} está muy frágil y necesita a alguien cerca", "log.recovered": "{name} se va recuperando poco a poco", "toast.weak": "Hoy no tiene fuerzas.",
+"log.frail": "{name} está muy frágil y necesita a alguien cerca", "log.recovered": "{name} se va recuperando poco a poco", "toast.weak": "Hoy no tiene fuerzas.", "log.bedrest": "{name} está demasiado débil para levantarse y se queda en cama", "log.bedrest_end": "{name} tiene fuerzas para levantarse otra vez", "toast.bedrest": "{ta} no puede levantarse hoy.", "act.wheel": "Sacar en silla de ruedas",
 "req.need_fallback": "{name} necesita: {need}", "line.reveal_fallback": "Ha estado velando por ti desde siempre.", "line.glance_fallback": "{name} te miró de reojo.", "line.ok": "Mm.",
 "req.pick_human": "Piensa: ¿qué suele decirte {name}?", "req.pick_animal": "Piensa: ¿cómo suele demostrarlo {name}?",
 "req.nudge_human": "{name} te mira: {text}", "req.nudge_animal": "{name} te mira fijamente y de pronto recuerdas: {text}",

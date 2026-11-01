@@ -238,7 +238,7 @@ CY.i18n.register("zh-TW", {
  "ver.account": "賬號功能：未啟用。",
  "log.frail": "{name}很虛弱了，需要有人陪著",
  "log.recovered": "{name}慢慢緩過來了",
- "toast.weak": "{ta}今天特別沒力氣。",
+ "toast.weak": "{ta}今天特別沒力氣。", "log.bedrest": "{name}虛弱得起不了床，只能躺著", "log.bedrest_end": "{name}有力氣下床走動了", "toast.bedrest": "{ta}今天起不了床。", "act.wheel": "推輪椅出去走走",
  "req.need_fallback": "{name}需要{need}",
  "line.reveal_fallback": "{ta}一直在看著你。",
  "line.glance_fallback": "{name}看了你一眼。",
