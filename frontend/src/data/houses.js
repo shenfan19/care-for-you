@@ -8,7 +8,10 @@
       w: 12, vw: 800, vh: 520, rooms: {}, bedCap: { bedroom: 3, elder: 2 },
       items: {
         toy: [{ s: 'bear', room: 'living', x: 2.9, y: 3.3 }],
-        bed: [{ s: 'cabinetBedDrawer', room: 'bedroom', x: 3.8, y: 0.4 }, { s: 'lampRoundTable', room: 'bedroom', x: 3.8, y: 0.4, lift: 22, key: 4.3 }],
+        bed: [{ s: 'cabinetBedDrawer', room: 'bedroom', x: 3.9, y: 1.0 }, { s: 'lampRoundTable', room: 'bedroom', x: 3.9, y: 1.0, lift: 22, key: 4.9 }],
+        bed2: [{ s: 'lampSquareFloor', room: 'elder', x: 3.6, y: 0.5 }],
+        books: [{ s: 'bookcaseOpen', room: 'living', x: 2.6, y: 0.4 }],
+        fruit: [{ s: 'food-apple', room: 'kitchen', x: 2.4, y: 2.55, lift: 32, key: 4.7 }, { s: 'food-bread', room: 'kitchen', x: 1.65, y: 2.3, lift: 32, key: 4.6 }],
         stroller: [{ s: 'market-shopping-cart', room: 'living', x: 1.0, y: 3.6, rot: 1 }],
         wheelchair: [{ s: 'wheelchair', room: 'elder', x: 2.4, y: 3.2 }],
         decor1: [{ s: 'plantSmall2', room: 'living', x: 3.6, y: 3.5 }],

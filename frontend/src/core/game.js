@@ -562,18 +562,18 @@
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
     const driven = (p, k) => external || (CY.backend && CY.backend.isDriven(p.id, k));
     for (const p of G.activePeople()) {
-      const defs = G.needsOf(p), s = p.state, mods = G.traitMods(p);
+      const defs = G.needsOf(p), s = p.state, mods = G.traitMods(p), shop = G.shopFx(p);
       const prevAct = G.act[p.id];
       const act = G.act[p.id] = G.activityOf(p), sleeping = act === 'sleeping';
       const night = G.isNight();
       for (const k in defs) {
         if (driven(p, k)) continue;
-        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours * (G.owned('bed') ? 1.3 : 1)); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (k === 'play' && G.owned('toy') && ['infant', 'toddler'].includes(G.stage(p)) ? 0.75 : 1) * (k === 'mobility' && G.owned('wheelchair') && G.stage(p) === 'elder' ? 0.7 : 1);
+        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours * shop.rest_sleep); continue; }
+        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       if (!driven(p, 'mood') && !(p.person.help && p.person.help.role === 'nanny')) {
-        let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset + 0.02 * G.decorLevel();
+        let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset + shop.mood;
         s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
       }
       if (offline) continue;

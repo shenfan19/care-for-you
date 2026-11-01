@@ -1089,6 +1089,22 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {}; G.world.money = 200;
   }
   {
+    /* 舒适度修正：商品的 fx 由 G.shopFx 按人汇总，后台计算只读这一处 */
+    const kid = G.activePeople().find(p => G.stage(p) === 'infant' || G.stage(p) === 'toddler'), ad = G.activePeople().find(p => G.stage(p) === 'adult');
+    G.world.owned = {};
+    if (ad) {
+      const base = G.shopFx(ad);
+      check('什么都没买，修正是单位值', base.rest_sleep === 1 && base.mood === 0 && Object.keys(base.rate).length === 0);
+      G.world.owned = { bed: true, bed2: true, books: true, fruit: true, decor1: true, house2: true };
+      const f = G.shopFx(ad);
+      check('好床加床品，睡觉恢复相乘', Math.abs(f.rest_sleep - 1.3 * 1.15) < 1e-9);
+      check('书架只对玩耍起作用，果盘只对饥饿起作用', f.rate.play === 0.85 && f.rate.hunger === 0.9 && f.rate.mobility === undefined);
+      check('心情目标加成相加：书架 0.01，装饰 0.02，中等屋子 0.03', Math.abs(f.mood - 0.06) < 1e-9);
+    }
+    if (kid) { G.world.owned = { toy: true, books: true }; const k = G.shopFx(kid); check('玩具只对婴幼儿，书架不对婴幼儿', k.rate.play === 0.75 && k.mood === 0); }
+    G.world.owned = {}; G.world.money = 200;
+  }
+  {
     /* 买菜：花 40 去超市，二十五分钟后回来，带回八份食材；做饭用掉一份，桌上摆出饭菜，全家更饱 */
     const W = CY.world;
     for (const x of G.people) x.person.active = false;

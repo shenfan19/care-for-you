@@ -58,10 +58,26 @@
   /* 商店：买了就一直有，没有损耗，没有订阅。价格按每游戏小时 40 的收入和一天约 150 到 200 的实际收入定，
      玩具半天，好床两天，婴儿车两天，轮椅三天，装饰按档位一天一档。decor 是装饰的档位，买一档加一档 */
   G.SHOP = [
-    { id: 'toy', price: 60, icon: '🧸' }, { id: 'bed', price: 250, icon: '🛏' }, { id: 'stroller', price: 300, icon: '👶' }, { id: 'wheelchair', price: 450, icon: '♿' },
-    { id: 'decor1', price: 120, icon: '🪴' }, { id: 'decor2', price: 250, icon: '🪴', needs: 'decor1' }, { id: 'decor3', price: 400, icon: '🪴', needs: 'decor2' },
-    { id: 'house2', price: 1500, icon: '🏠' },
+    { id: 'toy', price: 60, icon: '🧸', fx: { rate: { play: 0.75 }, stages: ['infant', 'toddler'] } },
+    { id: 'fruit', price: 150, icon: '🍎', fx: { rate: { hunger: 0.9 } } },
+    { id: 'bed', price: 250, icon: '🛏', fx: { rest_sleep: 1.3 } },
+    { id: 'bed2', price: 500, icon: '🛏', needs: 'bed', fx: { rest_sleep: 1.15 } },
+    { id: 'books', price: 300, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
+    { id: 'stroller', price: 300, icon: '👶' }, { id: 'wheelchair', price: 450, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
+    { id: 'decor1', price: 120, icon: '🪴', fx: { mood: 0.02 } }, { id: 'decor2', price: 250, icon: '🪴', needs: 'decor1', fx: { mood: 0.02 } }, { id: 'decor3', price: 400, icon: '🪴', needs: 'decor2', fx: { mood: 0.02 } },
+    { id: 'house2', price: 1500, icon: '🏠', fx: { mood: 0.03 } },
   ];
+  /* 舒适度修正：买到的东西各带一份 fx，这里按人汇总。rate 是需求涨速倍数，rest_sleep 是睡觉时休息恢复倍数，mood 是心情目标加成，stages 限定哪些年龄阶段受益。
+     后台计算只读这一处，不再各写各的 owned 判断；加新商品只在 SHOP 里加一行 fx */
+  G.shopFx = p => {
+    const o = { rate: {}, rest_sleep: 1, mood: 0 }, st = G.stage(p);
+    for (const it of G.SHOP) {
+      if (!it.fx || !G.owned(it.id) || (it.fx.stages && !it.fx.stages.includes(st))) continue;
+      for (const k in it.fx.rate || {}) o.rate[k] = (o.rate[k] || 1) * it.fx.rate[k];
+      o.rest_sleep *= it.fx.rest_sleep || 1; o.mood += it.fx.mood || 0;
+    }
+    return o;
+  };
   G.owned = id => !!(G.world.owned && G.world.owned[id]);
   G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };
   G.buy = id => {
