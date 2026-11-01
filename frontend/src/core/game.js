@@ -141,7 +141,7 @@
       if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || 35;
       const state = Object.assign({ version: 1, needs: {}, mood: 0.6, frailty: 0.1, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
       state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || 0.5, resp: 0, n_resp: 0, kinds: {} }, state.learn);
-      const story = Object.assign({ version: 1, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
+      const story = Object.assign({ version: 1, arcs: {}, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
       const p = { id, person, species, state, story, voice: {} };
       for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 0.1 + Math.random() * 0.2;
       G.people.push(p);
@@ -420,7 +420,7 @@
     clearTimeout(saveTimer);
     const run = () => {
       G.world.last_seen = new Date().toISOString();
-      G.world.schema = CY.meta ? CY.meta.schema : 4;
+      G.world.schema = CY.meta ? CY.meta.schema : 5;
       store.writeYaml('world.yaml', G.world);
       for (const p of G.people) {
         p.state.last_seen = G.world.last_seen;
@@ -594,6 +594,7 @@
       }
     }
     if (G.economyTick) G.economyTick(gmin, offline);
+    if (!offline && G.arcTick) G.arcTick();
     if (!offline) G.driveTick(gmin);
   }
 
@@ -780,6 +781,7 @@
     const s = p.state;
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
+    if (G.arcCare) G.arcCare(p, a);
     if (a.household) {
       /* 动作带 household：效果落到全家，在家的，醒着的，吃得了饭的人都一样，婴儿幼儿不算；做饭就是这样，不论给别人做还是自己做 */
       const W0 = CY.world;

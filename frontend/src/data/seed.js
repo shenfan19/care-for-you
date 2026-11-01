@@ -403,7 +403,7 @@ traits:
 
 
   /* 疾病：只做基础的典型情景，不是医学建议，更深的内容交给 Life Matters。lines.request 按需求名给出台词，用 {ta} 和 {name} 占位，对谁都适用 */
-  F['templates/conditions/diabetes.yaml'] = `version: 3
+  F['templates/conditions/diabetes.yaml'] = `version: 4
 id: diabetes
 label: 糖尿病
 needs:
@@ -417,6 +417,10 @@ lines:
   request:
     medicine: ["药，是不是该吃了？", "{ta}看了看药盒，又看了看你。"]
     sugar: ["{ta}摸了摸测血糖的小盒子。", "是不是该测一下了？"]
+arc:
+  - { id: first, after_days: 1, min_care: 0, effect: { mood: 0 } }
+  - { id: habit, after_days: 2, min_care: 3, effect: { mood: 0.05 } }
+  - { id: checkup, after_days: 3, min_care: 6, effect: { mood: 0.1, frailty: -0.05 } }
 events:
   dinner:
     evening: true

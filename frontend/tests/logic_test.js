@@ -910,6 +910,45 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = true;
   }
 
+  {
+    /* 病程：进度存在 story.arcs，读档，导出再导入都原样回来，不重复触发，条件不够就停着，世界暂停不跳阶段 */
+    const id = await G.createPerson({ arch: 'grandpa', name: '病程', conditions: ['diabetes'] }); await G.load(); for (const x of G.people) x.person.active = x.id === id;
+    const arcLogs = () => Object.values(G.journal[id] || {}).flat().filter(e => e.k && e.k.indexOf('arc.diabetes.') === 0).map(e => e.k);
+    const day = () => Math.floor(G.world.game_minutes / 1440);
+    const st = () => G.arcState(G.get(id), 'diabetes');
+    G.world.game_minutes = 10 * 1440 + 600; G.act = {};
+    G.arcTick(); check('刚得病的第一天先建进度，不触发阶段', st().stage === 0 && arcLogs().length === 0);
+    G.world.game_minutes += 1440; G.arcTick();
+    check('过一天走到第一阶段，记一笔', st().stage === 1 && arcLogs().join() === 'arc.diabetes.first', JSON.stringify(st()));
+    G.arcTick(); check('同一天再调不重复触发', st().stage === 1 && arcLogs().length === 1);
+    G.save(true); await new Promise(r => setTimeout(r, 50));
+    const before = JSON.stringify(G.get(id).story.arcs);
+    await G.load(); G.act = {};
+    check('读档后进度原样回来', JSON.stringify(G.get(id).story.arcs) === before, before);
+    G.arcTick(); check('读档后不重复触发第一阶段', st().stage === 1 && arcLogs().length === 1);
+    G.world.game_minutes += 5 * 1440; G.arcTick();
+    check('天数够了但照顾次数不够，阶段停着，不倒退不惩罚', st().stage === 1 && st().cares === 0);
+    for (let i = 0; i < 3; i++) G.applyAction(id, 'sugar');
+    check('照顾这个病的需求算一次照顾', st().cares === 3, JSON.stringify(st()));
+    const mood0 = G.get(id).state.mood; G.act = {}; G.arcTick();
+    check('照顾够了走到第二阶段，心情加上', st().stage === 2 && st().cares === 0 && arcLogs().length === 2 && G.get(id).state.mood > mood0 - 1e-9);
+    const keep = G.world.game_minutes; G.stop && G.stop();
+    G.save(true); await new Promise(r => setTimeout(r, 50));
+    const ex = await CY.archive.exportSave();
+    const info = await CY.archive.inspect(new Uint8Array(await ex.blob.arrayBuffer()));
+    check('导出的存档能读，包含病程', info.ok && /arcs:/.test(info.files['people/' + id + '/story.yaml']) && info.manifest.schema === CY.meta.schema);
+    const before2 = JSON.stringify(G.get(id).story.arcs);
+    await CY.archive.apply(info, 'replace'); await G.load(); G.act = {};
+    check('导出再导入后进度原样回来', JSON.stringify(G.get(id).story.arcs) === before2 && G.world.game_minutes === keep, JSON.stringify(G.get(id).story.arcs));
+    G.arcTick(); check('导入后不重复触发', st().stage === 2 && arcLogs().length === 2);
+    for (let i = 0; i < 6; i++) G.applyAction(id, 'medicine');
+    G.world.game_minutes += 4 * 1440; G.arcTick();
+    check('走完三个阶段，标记完成，之后不再触发', st().stage === 3 && st().done && arcLogs().length === 3);
+    G.world.game_minutes += 30 * 1440; G.arcTick(); check('完成后很久也不再触发', arcLogs().length === 3);
+    const old = G.get(id); delete old.story.arcs; G.arcTick();
+    check('旧存档没有 arcs 也能读，当作刚得病从头开始', G.arcState(G.get(id), 'diabetes').stage === 0);
+    for (const x of G.people) x.person.active = true;
+  }
   /* zip：不压缩的写出，读回内容一致 */
   const blob = CY.store.zip([{ name: 'careforyou-data/people/a.yaml', data: new TextEncoder().encode('名字: 爷爷\n') }, { name: 'careforyou-data/settings.ini', data: new TextEncoder().encode('[a]\nb = 1\n') }]);
   fs.writeFileSync(path.join(process.env.TEMP || '/tmp', 'cy_test.zip'), Buffer.from(await blob.arrayBuffer()));
