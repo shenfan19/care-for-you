@@ -57,7 +57,10 @@
     for (const m of group) {
       G.setFlag(m, 'outing', { minutes: o.minutes, place: o.place, room: o.room, mode: 'stand' });
       /* 事件按谁带谁写：带人的是"A 带 B 去哪"，被带的是"B 跟 A 去哪" */
-      if (group.length === 1) G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place });
+      /* 用着婴儿车或轮椅的人，事件写他是被推着出门的 */
+      if (G.usingStroller(m)) G.logK(m.id, 'event', 'log.outing_stroller', { name: m.person.name, place });
+      else if (G.usingWheelchair(m)) G.logK(m.id, 'event', 'log.outing_wheelchair', { name: m.person.name, place });
+      else if (group.length === 1) G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place });
       else if (m === p) G.logK(m.id, 'event', 'log.outing_lead', { name: m.person.name, others: names, place });
       else G.logK(m.id, 'event', 'log.outing_follow', { name: m.person.name, lead: p.person.name, place });
       if (m !== p) m.state.mood = clamp(m.state.mood + 0.05 + (G.owned('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? 0.04 : 0));

@@ -327,7 +327,7 @@ CY.i18n.register("zh-CN", {"about.p5": "让手停在鼠标上，让脑子歇一�
 
 CY.i18n.register("zh-CN", {"me.work_start": "到了工作时间，你在书房办公。", "me.work_end": "下班了，你从书房出来。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
-CY.i18n.register("zh-CN", {"loc.park": "公园", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "马路", "act.park": "带去公园", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一会儿就回来。", "log.outing_start": "{name}出门去{place}了。", "list.sep": "、", "pop.mute": "全部静音", "pop.music": "音乐", "pop.sfx": "音效", "pop.clock": "现在几点", "pop.speed": "时间倍率", "pop.work": "工作时段", "pop.am": "上午", "pop.pm": "下午", "pop.format": "时间制式", "log.outing_lead": "{name}带着{others}出门去{place}了。", "log.outing_follow": "{name}跟着{lead}出门去{place}了。", "log.outing_back": "{name}回来了。", "log.assist": "{who}替你照顾了{name}：{label}", });
+CY.i18n.register("zh-CN", {"loc.park": "公园", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "马路", "act.park": "带去公园", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一会儿就回来。", "log.outing_start": "{name}出门去{place}了。", "list.sep": "、", "log.outing_stroller": "{name}坐进婴儿车，被推着出门去{place}了。", "log.outing_wheelchair": "{name}坐上轮椅，被推着出门去{place}了。", "pop.mute": "全部静音", "pop.music": "音乐", "pop.sfx": "音效", "pop.clock": "现在几点", "pop.speed": "时间倍率", "pop.work": "工作时段", "pop.sync": "对回系统时间", "pop.am": "上午", "pop.pm": "下午", "pop.format": "时间制式", "log.outing_lead": "{name}带着{others}出门去{place}了。", "log.outing_follow": "{name}跟着{lead}出门去{place}了。", "log.outing_back": "{name}回来了。", "log.assist": "{who}替你照顾了{name}：{label}", });
 
 CY.i18n.register("zh-CN", {"add.helper": "在家办公，自动赚钱，也分担照顾"});
 
