@@ -191,3 +191,5 @@ CY.i18n.register("ja", {"act.meal": "ご飯を作ってあげる", "act.cook": "
 CY.i18n.register("ja", {"figure.sprite": "ミニキャラ", "figure.blocky": "ブロックキャラ"});
 CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit、Mini Characters、Cube Pets、Car Kit（すべて CC0 1.0、kenney.nl）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが斜めから描画し、キャラクターの肌、髪、服の色はゲーム内で選んだ色に塗り替えます。植物は Furniture Kit の植物モデルを拡大したもので、ぴったり対応する動物がいないものは最も近い姿を使っています。描画には three.js（MIT ライセンス、ゲームには同梱しません）を使いました。アニメーションと文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。 選択できるブロックキャラは Kenney の Blocky Characters、通りの背景の建物は City Kit Commercial からで、どちらも CC0 1.0 です。"});
 CY.i18n.register("ja", {"corner.eff_tip": "家の平均の状態は {n}% で、働いている人の仕事の効率でもあります。自分も含めて全員を気にかけると収入が高くなります。最低は 40% です。", "log.meal_all": "食事ができて、家にいる人はみんな食べた。"});
+CY.i18n.register("ja", {"act.sleep": "寝る"});
+CY.i18n.register("ja", {"selfact.sleep": "{name}は寝に行った"});

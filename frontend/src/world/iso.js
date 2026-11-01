@@ -112,7 +112,6 @@
         } else if (name === 'elder') {
           const ne = W.bedCount('elder');
           for (let i = 0; i < ne; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
-          if (G0().owned('wheelchair')) spr('wheelchair', 0, 2.4, 3.2);
           spr('sideTableDrawers', 0, 2.5, 0.35); spr('lampRoundTable', 0, 2.5, 0.35, 22, 2.86);
           spr('rugRound', 0, 1.5, 3.1, 0, -9);
         } else if (name === 'toilet') {
@@ -128,10 +127,6 @@
           spr('cabinetTelevision', 1, 0.3, 2.0); spr('televisionModern', 1, 0.3, 2.0, 22, 2.31);
           spr('loungeSofaLong', 3, 3.35, 2.0); spr('tableCoffee', 1, 1.9, 2.0);
           spr('pottedPlant', 0, 0.35, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);
-          if (G0().owned('toy')) spr('bear', 0, 2.9, 3.3);
-          if (G0().decorLevel() >= 1) spr('plantSmall2', 0, 3.6, 3.5);
-          if (G0().decorLevel() >= 2) { spr('rugRectangle', 1, 1.9, 2.0, 0, -8); spr('lampSquareFloor', 0, 0.3, 0.45); }
-          if (G0().decorLevel() >= 3) { spr('radio', 0, 0.3, 3.0, 22, 3.31); spr('plantSmall3', 0, 3.6, 2.9); }
         } else if (name === 'kitchen') {
           spr('kitchenFridge', 0, 0.5, 0.45); spr('kitchenCabinet', 0, 1.35, 0.45); spr('kitchenSink', 0, 2.2, 0.45); spr('kitchenStove', 0, 3.05, 0.45);
           spr('table', 0, 2.0, 2.4); spr('chair', 0, 1.5, 1.75); spr('chair', 0, 2.5, 1.75); spr('chair', 2, 1.5, 3.05); spr('chair', 2, 2.5, 3.05);
@@ -143,6 +138,7 @@
           [1.7, 5.4].forEach(cx => { spr('desk', 0, cx + 0.2, 1.3); spr('computerScreen', 0, cx + 0.2, 1.2, L, cx + 1.6); spr('chairDesk', 2, cx + 0.2, 2.3); });
           spr('pottedPlant', 0, 7.4, 0.8);
         }
+        for (const id in CY.house().items) if (G0().owned(id)) for (const e of CY.house().items[id]) if (e.room === name) spr(e.s, e.rot || 0, e.x, e.y, e.lift || 0, e.key);
         q.sort((a2, b2) => a2.k - b2.k).forEach(it => out.push(it.s));
         /* 房间名，淡淡的 */
         const [lx, ly] = pt(x + w * 0.08, y + h * 0.96, 0).split(',');

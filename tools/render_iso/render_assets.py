@@ -16,12 +16,13 @@ PETS = os.environ.get('KENNEY_PETS', 'C:/fight/kenney_cube-pets/Models/GLB forma
 CARS = os.environ.get('KENNEY_CARS', 'C:/fight/kenney_car-kit/Models/GLB format')
 BLOCKY = os.environ.get('KENNEY_BLOCKY', 'C:/fight/kenney_blocky-characters_20/Models/GLB format')
 CITY = os.environ.get('KENNEY_CITY', 'C:/fight/kenney_city-kit-commercial_2.1/Models/GLB format')
-MAP = {'/blocky/': BLOCKY, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
+MARKET = os.environ.get('KENNEY_MARKET', 'C:/fight/kenney_mini-market/Models/GLB format')
+MAP = {'/market/': MARKET, '/blocky/': BLOCKY, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
 
 class H(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         path = path.split('?', 1)[0]
-        for pre in ('/three/', '/furn/', '/char/', '/pets/', '/cars/', '/blocky/', '/city/'):
+        for pre in ('/three/', '/furn/', '/char/', '/pets/', '/cars/', '/blocky/', '/city/', '/market/'):
             if path.startswith(pre): return os.path.join(MAP[pre], *path[len(pre):].split('/')).replace('%20', ' ')
         return os.path.join(HERE, path.lstrip('/') or 'render.html')
     def log_message(self, *a): pass
@@ -65,6 +66,16 @@ def main(kind):
                 for rot in range(4):
                     r = pg.evaluate('o => window.renderModel(o)', {'url': '/char/%s.glb' % name, 'rot': rot, 'scale': CHAR_SCALE})
                     open(os.path.join(OUT, 'furn', '%s_%d.png' % (name, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
+                    bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
+                m['size'] = [round(v, 3) for v in r['size']]
+                print(name, m['size'])
+        if kind == 'market':
+            os.makedirs(os.path.join(OUT, 'furn'), exist_ok=True)
+            for name in ['shopping-cart']:
+                m = manifest.setdefault('furn', {}).setdefault('market-' + name, {})
+                for rot in range(4):
+                    r = pg.evaluate('o => window.renderModel(o)', {'url': '/market/%s.glb' % name, 'rot': rot, 'scale': FURN_SCALE})
+                    open(os.path.join(OUT, 'furn', 'market-%s_%d.png' % (name, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                 m['size'] = [round(v, 3) for v in r['size']]
                 print(name, m['size'])

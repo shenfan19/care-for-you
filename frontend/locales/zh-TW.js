@@ -657,3 +657,5 @@ CY.i18n.register("zh-TW", {"act.meal": "做飯給ta吃", "act.cook": "做飯自�
 CY.i18n.register("zh-TW", {"figure.sprite": "迷你小人", "figure.blocky": "方塊角色"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。 可選的方塊角色來自 Kenney 的 Blocky Characters，街道背景的樓來自 City Kit Commercial，同為 CC0 1.0。"});
 CY.i18n.register("zh-TW", {"corner.eff_tip": "全家的平均狀態是 {n}%，這也是上班的人現在的工作效率。每個人都照顧到，包括你自己，收入才高，最低按四成算。", "log.meal_all": "一頓飯做好了，在家的人都吃上了。"});
+CY.i18n.register("zh-TW", {"act.sleep": "去睡覺"});
+CY.i18n.register("zh-TW", {"selfact.sleep": "{name}去睡覺了"});

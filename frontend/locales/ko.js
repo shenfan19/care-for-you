@@ -191,3 +191,5 @@ CY.i18n.register("ko", {"act.meal": "밥을 해 주기", "act.cook": "해서 먹
 CY.i18n.register("ko", {"figure.sprite": "미니 캐릭터", "figure.blocky": "블록 캐릭터"});
 CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit, Mini Characters, Cube Pets, Car Kit(모두 CC0 1.0, kenney.nl). CC0는 표기를 요구하지 않지만 출처를 밝힙니다. 3D 모델은 이 프로젝트가 비스듬한 시점으로 렌더링했고, 캐릭터의 피부, 머리카락, 옷 색은 게임 안에서 플레이어의 선택에 따라 다시 칠합니다. 식물은 Furniture Kit의 식물 모델을 키운 것이고, 딱 맞는 동물이 없는 경우 가장 비슷한 모습을 썼습니다. 렌더링에는 three.js(MIT 라이선스, 게임에는 포함되지 않음)를 썼습니다. 애니메이션과 글은 직접 만든 것입니다. 코드는 MIT 라이선스로 공개되어 있으며 저장소의 LICENSE를 보세요. 선택할 수 있는 블록 캐릭터는 Kenney의 Blocky Characters, 거리 배경 건물은 City Kit Commercial에서 왔으며 둘 다 CC0 1.0입니다."});
 CY.i18n.register("ko", {"corner.eff_tip": "집 전체의 평균 상태는 {n}%이며, 일하는 사람의 업무 효율이기도 합니다. 자신을 포함해 모두를 돌보면 수입이 높게 유지됩니다. 최저는 40%입니다.", "log.meal_all": "식사가 준비되어 집에 있는 모두가 먹었다."});
+CY.i18n.register("ko", {"act.sleep": "자러 가기"});
+CY.i18n.register("ko", {"selfact.sleep": "{name}이(가) 자러 갔다"});

@@ -799,6 +799,13 @@
     if (req && req.kind === 'need') {
       if (s.needs[req.need] < 0.4) { delete G.req[pid]; learn(p, 'need', true, (Date.now() - req.since) / 1000); }
     }
+    if (p === G.protagonist() && a.selfonly) {
+      /* 自己做自己的事：旁白一句，不是被照顾的人道谢 */
+      const lk = CY.i18n.hasOwn('selfact.' + a.id) ? 'selfact.' + a.id : 'log.self_did', la = { name: p.person.name, label: G.refAct(a, p) };
+      G.toastFor(p, t(lk, { name: p.person.name, label: a.label }), 'soft'); G.logK(pid, 'self', lk, la);
+      G.playFx(pid, actionId); G.save(); emit();
+      return true;
+    }
     let tx = line(p, 'thanks', actionId, line(p, 'thanks', 'default', t('line.ok')));
     /* 要不要说不一样的话，由后端决定：受了伤，在医院，到了某个次数 */
     const dres = G.drive('action', { person: p, action: { id: actionId, label: a.label }, collect: true });

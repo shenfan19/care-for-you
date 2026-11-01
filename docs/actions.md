@@ -37,8 +37,9 @@ When an action has no self version, for example measuring blood sugar, it stays 
 
 ## Self actions happen somewhere
 
-- A self action can name a room with `at`, and a posture with `pose`. When you do it, you walk to that room and stay in that posture until the action's time is up: pouring water happens in the kitchen, washing in the bathroom, watching TV in the living room, and a nap puts you to sleep in your own bed.
+- A self action can name a room with `at`, and a posture with `pose`. When you do it, you walk to that room and stay in that posture until the action's time is up: pouring water happens in the kitchen, washing in the bathroom, watching TV in the living room, and "Go to sleep" puts you to bed in your own bed, and you sleep until you are rested.
 - Any other action wakes you and moves you to whoever you are looking after.
+- What you do for yourself is told as a short narration, for example "Dad washed up", not as someone thanking you. Thank-you lines are for the person you looked after.
 - At night, if you stand in your bedroom doing nothing for a few seconds, you lie down and sleep as well. Everyone else sleeps by their own schedule and how tired they are, you sleep by where you are.
 
 ## Where it is defined

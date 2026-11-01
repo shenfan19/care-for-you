@@ -32,7 +32,7 @@ This page explains the bar under every character, how it relates to your income,
 ## The shop
 
 - Items are bought once and stay: a toy, a better bed, a stroller, a wheelchair and three tiers of decoration.
-- They change a few numbers in a small way and add things to the house. No time limits, no discounts, and the game is complete without buying anything.
+- They change a few numbers in a small way and add things to the house. Where each item appears is a table per house, `frontend/src/data/houses.js`, so a different house can place the same items in its own spots. No time limits, no discounts, and the game is complete without buying anything.
 
 ## Where it is defined
 

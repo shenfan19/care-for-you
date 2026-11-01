@@ -242,7 +242,11 @@
   W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; pl.act = null; pl.bed = false; W.lastActive = Date.now(); };
   /* 主角在做一件自己的事：动作带 at（房间）和 pose（姿势），做到时间到为止，期间不会自己走开。小睡就是躺到自己的床上。
      夜里在卧室，闲着几秒，也会躺下睡；动手做别的事就醒。别的人睡不睡看作息，主角睡不睡看他在不在床上 */
-  W.actPose = () => { const pl = W.player(), a = pl && pl.act; return a && G.world.game_minutes < a.until ? a.pose : null; };
+  W.actPose = () => {
+    const pl = W.player(), a = pl && pl.act; if (!a) return null;
+    if (a.pose === 'sleep' && a.rested) { const lead = G.protagonist(); if (!lead || (lead.state.needs.rest || 0) <= 0.05) { pl.act = null; pl.bed = false; return null; } return 'sleep'; }   /* 睡到不累为止 */
+    return G.world.game_minutes < a.until ? a.pose : null;
+  };
   W.leadSleeping = () => {
     const lead = G.protagonist(); if (!lead) return false;
     if (W.actPose() === 'sleep') return true;
@@ -255,7 +259,7 @@
     const lead = G.protagonist(), pl = W.player(); if (!lead) return;
     const room = a.pose === 'sleep' ? ((W.bedOf(lead) || {}).room || a.at) : a.at;
     W.moveTo('home', room);
-    pl.act = { pose: a.pose || 'stand', until: G.world.game_minutes + (a.min || 5) };
+    pl.act = { pose: a.pose || 'stand', until: G.world.game_minutes + (a.min || 5), rested: a.pose === 'sleep' };
     if (a.pose === 'sleep') W.toBed();
   };
   W.moveTo = (place, room) => { const a = W.playerAnchor(place, room); W.setPlayer({ place, room, gx: a.gx, gy: a.gy }); };

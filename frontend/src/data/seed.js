@@ -41,7 +41,7 @@ actions:
   drink: { label: 倒水喝, selfonly: true, at: kitchen, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
   cook: { label: 做饭自己吃, household: true, selfonly: true, at: kitchen, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
   snack: { label: 找点吃的, selfonly: true, at: kitchen, self: [child], hold: 1, min: 10, effect: { hunger: -0.6 }, stages: [child] }
-  nap: { label: 小睡一会儿, selfonly: true, at: bedroom, pose: sleep, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { rest: -0.6 }, stages: [child, teen, adult, elder] }
+  sleep: { label: 去睡觉, selfonly: true, at: bedroom, pose: sleep, self: [child, teen, adult, elder], hold: 1, mood: 0, effect: {}, stages: [child, teen, adult, elder] }
   wash: { label: 洗个澡, selfonly: true, at: toilet, self: [child, teen, adult, elder], hold: 1, min: 25, effect: { hygiene: -0.9 }, stages: [child, teen, adult, elder] }
   tv: { label: 看会儿电视, selfonly: true, at: living, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { company: -0.25, play: -0.3 }, stages: [child, teen, adult, elder] }
   rattle: { label: 抓摇铃, selfonly: true, self: [infant], hold: 1, min: 10, effect: { play: -0.4 }, stages: [infant] }

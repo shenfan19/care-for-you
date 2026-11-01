@@ -672,7 +672,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await CY.store.write('templates/cards/elder.yaml', ctx.jsyaml.dump(cardY)); await G.load();
     const e2id = await G.createPerson({ arch: 'elder', name: '改卡' }); await G.load();
     const E2 = G.get(e2id); const Eold = G.get(eid);
-    check('改了卡的自理名单生效', JSON.stringify(E2.person.self_actions) === '["drink"]' && G.canSelf(E2, G.allActionsOf(E2).drink) && !G.canSelf(E2, G.allActionsOf(E2).nap) && G.canSelf(Eold, G.allActionsOf(Eold).nap));
+    check('改了卡的自理名单生效', JSON.stringify(E2.person.self_actions) === '["drink"]' && G.canSelf(E2, G.allActionsOf(E2).drink) && !G.canSelf(E2, G.allActionsOf(E2).wash) && G.canSelf(Eold, G.allActionsOf(Eold).wash));
     check('改了卡的需求速率生效', E2.person.need_rate.thirst === 2);
     await G.load();
   }
@@ -1095,10 +1095,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await G.load(); for (const x of G.people) x.person.active = [dId, gId].includes(x.id);
     G.setProtagonist(dId); W.enforce = true; W.moveTo('home', 'study'); G.setClock(15 * 60);
     const dad = G.get(dId); dad.state.needs.rest = 0.9;
-    G.applyAction(dId, 'nap');
-    check('小睡：主角躺到自己的床上，是睡着的', W.player().room === 'bedroom' && G.activityOf(dad) === 'sleeping' && W.player().bed === true, JSON.stringify(W.player()));
-    G.world.game_minutes += 31;
-    check('小睡的时间到了，主角醒来', G.activityOf(dad) === 'awake');
+    G.applyAction(dId, 'sleep');
+    check('去睡觉：主角躺到自己的床上，是睡着的', W.player().room === 'bedroom' && G.activityOf(dad) === 'sleeping' && W.player().bed === true, JSON.stringify(W.player()));
+    dad.state.needs.rest = 0.02;
+    check('睡到不累就醒来，没有固定时长', G.activityOf(dad) === 'awake');
     G.applyAction(dId, 'drink');
     check('倒水喝要去厨房', W.player().room === 'kitchen');
     G.setClock(23 * 60); W.moveTo('home', 'bedroom'); W.lastActive = Date.now() - 10000;
