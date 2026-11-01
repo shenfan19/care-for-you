@@ -149,7 +149,7 @@
           [1.7, 5.4].forEach(cx => { spr('desk', 0, cx + 0.2, 1.3); spr('computerScreen', 0, cx + 0.2, 1.2, L, cx + 1.6); spr('chairDesk', 2, cx + 0.2, 2.3); });
           spr('pottedPlant', 0, 7.4, 0.8);
         }
-        for (const id in CY.house().items) if (G0().owned(id)) for (const e of CY.house().items[id]) if (e.room === name) spr(e.s, e.rot || 0, e.x, e.y, e.lift || 0, e.key);
+        for (const id in CY.house().items) if (G0().owned(id) && !G0().itemAway(id)) for (const e of CY.house().items[id]) if (e.room === name) spr(e.s, e.rot || 0, e.x, e.y, e.lift || 0, e.key);
         q.sort((a2, b2) => a2.k - b2.k).forEach(it => out.push(it.s));
         /* 房间名，淡淡的 */
         const [lx, ly] = pt(x + w * 0.08, y + h * 0.96, 0).split(',');

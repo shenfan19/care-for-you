@@ -54,7 +54,7 @@
     if (!tm || !mn) return;
     const c = G.clock();
     const gd = G.gameDate();
-    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + c.hh + ':' + c.mm + ' · ' + G.speedLabel();
+    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes) + ' · ' + G.speedLabel();
     tm.title = t('corner.speed_tip', { speed: G.speedLabel() });
     tm.style.cursor = 'pointer';
     tm.onclick = e => { e.stopPropagation(); U.timePopover(tm); };
@@ -97,16 +97,34 @@
       box.querySelectorAll('input').forEach(i => { i.oninput = save; i.onchange = save; });
     });
   };
-  /* 时间：现在几点，时间倍率，工作起止 */
+  /* 时间：现在几点，时间倍率，工作起止，二十四小时制或十二小时制。时刻用下拉选，十二小时制也看得懂，不依赖系统的区域设置 */
+  U.is12h = () => ini.bool(G.cfg, 'ui', 'clock_12h');
+  U.fmtTime = mins => {
+    const h = Math.floor(mins / 60) % 24, m = mins % 60, mm = String(m).padStart(2, '0');
+    if (!U.is12h()) return String(h).padStart(2, '0') + ':' + mm;
+    return (h % 12 || 12) + ':' + mm + ' ' + (h < 12 ? t('pop.am') : t('pop.pm'));
+  };
+  const opt = (v, label, cur) => '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + label + '</option>';
+  const timeSel = (id, mins, step) => {
+    const h = Math.floor(mins / 60), m = mins % 60, h12 = U.is12h(), ms = [];
+    for (let i = 0; i < 60; i += step) ms.push(i); if (!ms.includes(m)) ms.push(m); ms.sort((x, y) => x - y);
+    const hours = h12 ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(v => opt(v, v, h % 12 || 12)).join('') : Array.from({ length: 24 }, (_, v) => opt(v, String(v).padStart(2, '0'), h)).join('');
+    return '<span class="tsel"><select id="' + id + 'h">' + hours + '</select>:<select id="' + id + 'm">' + ms.map(v => opt(v, String(v).padStart(2, '0'), m)).join('') + '</select>' + (h12 ? '<select id="' + id + 'p">' + opt(0, t('pop.am'), h < 12 ? 0 : 1) + opt(1, t('pop.pm'), h < 12 ? 0 : 1) + '</select>' : '') + '</span>';
+  };
+  const readTime = (box, id) => { const h = +box.querySelector('#' + id + 'h').value, m = +box.querySelector('#' + id + 'm').value, pe = box.querySelector('#' + id + 'p'); return (pe ? (h % 12) + 12 * +pe.value : h) * 60 + m; };
   U.timePopover = function (anchor) {
-    const c = G.clock(), wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-'), cur = G.speed();
-    U.popover(anchor, `<label class="prow2">${esc(t('pop.clock'))}<input type="time" id="pclock" value="${c.hh}:${c.mm}"></label>
+    const wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-').map(x => { const q = x.split(':'); return +q[0] * 60 + +q[1]; }), cur = G.speed();
+    U.popover(anchor, `<div class="prow2">${esc(t('pop.clock'))}${timeSel('pc', G.dayMinutes(), 1)}</div>
       <div class="prow2">${esc(t('pop.speed'))}<span class="seg">${G.SPEEDS.map(s => `<button data-s="${s}" class="${s === cur ? 'on' : ''}">×${s}</button>`).join('')}</span></div>
-      <label class="prow2">${esc(t('pop.work'))}<span><input type="time" id="pwf" value="${wh[0]}"> – <input type="time" id="pwt" value="${wh[1]}"></span></label>`, box => {
-      box.querySelector('#pclock').onchange = e => { const m = /^(dd):(dd)$/.exec(e.target.value); if (m) { G.setClock(+m[1] * 60 + +m[2]); G.save(true); U.renderClock(); } };
+      <div class="prow2">${esc(t('pop.work'))}<span>${timeSel('pf', wh[0], 5)} – ${timeSel('pt', wh[1], 5)}</span></div>
+      <div class="prow2">${esc(t('pop.format'))}<span class="seg"><button data-f="24" class="${U.is12h() ? '' : 'on'}">24</button><button data-f="12" class="${U.is12h() ? 'on' : ''}">12</button></span></div>`, box => {
+      /* 手动设了几点，就改用游戏里的时钟，否则昼夜一直跟着系统时间，设了也不生效 */
+      const clk = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.setClock(readTime(box, 'pc')); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); };
+      box.querySelectorAll('#pch, #pcm, #pcp').forEach(e => { e.onchange = clk; });
       box.querySelectorAll('[data-s]').forEach(b => b.onclick = async () => { await G.setSpeed(+b.dataset.s); box.querySelectorAll('[data-s]').forEach(x => x.classList.toggle('on', x === b)); U.renderClock(); });
-      const wsave = async () => { const f = box.querySelector('#pwf').value, to = box.querySelector('#pwt').value; if (f && to && f < to) { G.cfg.economy = G.cfg.economy || {}; G.cfg.economy.work_hours = f + '-' + to; await G.saveCfg(); } };
-      box.querySelector('#pwf').onchange = wsave; box.querySelector('#pwt').onchange = wsave;
+      const wsave = async () => { const f = readTime(box, 'pf'), to = readTime(box, 'pt'); if (f < to) { G.cfg.economy = G.cfg.economy || {}; const z = v => String(Math.floor(v / 60)).padStart(2, '0') + ':' + String(v % 60).padStart(2, '0'); G.cfg.economy.work_hours = z(f) + '-' + z(to); await G.saveCfg(); } };
+      box.querySelectorAll('#pfh, #pfm, #pfp, #pth, #ptm, #ptp').forEach(e => { e.onchange = wsave; });
+      box.querySelectorAll('[data-f]').forEach(b => b.onclick = async () => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.clock_12h = b.dataset.f === '12' ? 'true' : 'false'; await G.saveCfg(); U.renderClock(); U.closePopover(); U.timePopover(anchor); });
     });
   };
 

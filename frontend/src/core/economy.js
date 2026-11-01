@@ -101,6 +101,10 @@
     return true;
   };
   G.tableFood = () => (G.world.fed_until || 0) > G.world.game_minutes;
+  /* 用品出门：婴儿出门时用着婴儿车，卧床的人出门时坐着轮椅；用着的时候家里那件就不在了，画面上人物带着它 */
+  G.usingStroller = p => G.owned('stroller') && G.stage(p) === 'infant' && !!G.flag(p, 'outing');
+  G.usingWheelchair = p => G.owned('wheelchair') && G.bedridden(p) && !!G.flag(p, 'outing');
+  G.itemAway = id => G.activePeople().some(p => id === 'stroller' ? G.usingStroller(p) : id === 'wheelchair' ? G.usingWheelchair(p) : false);
   G.decorLevel = () => (G.owned('decor1') ? 1 : 0) + (G.owned('decor2') ? 1 : 0) + (G.owned('decor3') ? 1 : 0);
   G.NANNY_MOOD = { drain: 0.003, recover: 0.02, tip_cost: 40, tip_gain: 0.15, eff_floor: 0.8 };
   G.nannyEfficiency = () => { const n = G.nanny(); return n ? G.NANNY_MOOD.eff_floor + (1 - G.NANNY_MOOD.eff_floor) * n.state.mood : 1; };

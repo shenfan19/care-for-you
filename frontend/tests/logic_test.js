@@ -1052,6 +1052,11 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('没有婴儿车，对婴儿不出现带去公园', !G.actionsOf(bb).park);
     G.world.owned = { stroller: true };
     check('有婴儿车，婴儿能被带去公园', !!G.actionsOf(bb).park);
+    G.world.owned = { stroller: true, wheelchair: true }; G.clearFlag(bb, 'outing');
+    check('用品没出门时都在家里', !G.itemAway('stroller') && !G.itemAway('wheelchair'));
+    G.setFlag(bb, 'outing', { minutes: 10, place: 'park', room: 'lawn', mode: 'stand' }); G.setFlag(gp, 'outing', { minutes: 10, place: 'park', room: 'lawn', mode: 'stand' }); gp.state.frailty = 0.9; G.bedCheck(gp);
+    check('婴儿出门用着婴儿车，卧床的老人出门坐着轮椅，家里那件不在了', G.usingStroller(bb) && G.itemAway('stroller') && G.usingWheelchair(gp) && G.itemAway('wheelchair'));
+    G.clearFlag(bb, 'outing'); G.clearFlag(gp, 'outing');
     G.world.owned = {}; G.world.money = 200;
   }
   {

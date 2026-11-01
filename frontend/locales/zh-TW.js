@@ -566,7 +566,7 @@ CY.i18n.register("zh-TW", {
  "ini.ui.scene": "房間背景：auto 白天客廳夜裡臥室；living 客廳；bedroom 臥室；kitchen 廚房；lawn 草坪；balcony 陽臺；none 純色",
  "ini.ui.avatar_style": "simple 簡潔抽象的形象；detailed 畫出五官細節",
  "ini.ui.wfh_notice": "是否顯示居家辦公的提示條",
- "ini.ui.theme": "auto 跟隨系統；light 淺色；dark 深色",
+ "ini.ui.clock_12h": "介面上的時刻用十二小時制，預設二十四小時制", "lbl.ui.clock_12h": "十二小時制", "ini.ui.theme": "auto 跟隨系統；light 淺色；dark 深色",
  "ini.ui.background": "背景色調：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰",
  "ini.ui.language": "auto 跟隨瀏覽器；zh-CN 簡體中文；en English",
  "ini.ui.hide_when_fullscreen": "桌面版使用，全屏程式執行時隱藏",
@@ -608,7 +608,7 @@ CY.i18n.register("zh-TW", {"about.p5": "讓手停在滑鼠上，讓腦子歇一�
 
 CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
-CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "list.sep": "、", "pop.mute": "全部靜音", "pop.music": "音樂", "pop.sfx": "音效", "pop.clock": "現在幾點", "pop.speed": "時間倍率", "pop.work": "工作時段", "log.outing_lead": "{name}帶著{others}出門去{place}了。", "log.outing_follow": "{name}跟著{lead}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
+CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "list.sep": "、", "pop.mute": "全部靜音", "pop.music": "音樂", "pop.sfx": "音效", "pop.clock": "現在幾點", "pop.speed": "時間倍率", "pop.work": "工作時段", "pop.am": "上午", "pop.pm": "下午", "pop.format": "時間制式", "log.outing_lead": "{name}帶著{others}出門去{place}了。", "log.outing_follow": "{name}跟著{lead}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
 
 CY.i18n.register("zh-TW", {"add.helper": "在家辦公，自動賺錢，也分擔照顧"});
 

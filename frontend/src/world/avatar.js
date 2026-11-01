@@ -395,7 +395,10 @@ function beanDraw(o, V) {
       const id = 'sp' + (sprUid++);
       tint += `<defs><filter id="${id}f" color-interpolation-filters="sRGB">${fx}</filter><mask id="${id}m" maskUnits="userSpaceOnUse" x="${x}" y="${y}" width="${w}" height="${h}"><image href="${base}_${suf}.png" x="${x}" y="${y}" width="${w}" height="${h}"/></mask></defs><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}" filter="url(#${id}f)" mask="url(#${id}m)"/>`;
     }
-    return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${x}" y="${y}" width="${w}" height="${h}"/>${tint}</svg>`;
+    /* 婴儿出门坐在婴儿车里：车画在婴儿前面，遮住下半身 */
+    let cart = '';
+    if (G && G.usingStroller && G.usingStroller(p)) { const cm = ((CY.isoSprites || {}).furn || {})['market-shopping-cart'], ce = cm && cm[rot]; if (ce) { const ck = 0.62; cart = `<image href="assets/iso/furn/market-shopping-cart_${rot}.png" x="${(50 - ce.ax * ck).toFixed(1)}" y="${(124 - ce.ay * ck + 4).toFixed(1)}" width="${(ce.w * ck).toFixed(1)}" height="${(ce.h * ck).toFixed(1)}"/>`; } }
+    return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${x}" y="${(+y - (cart ? 6 : 0)).toFixed(1)}" width="${w}" height="${h}"/>${tint}${cart}</svg>`;
   };
   /* 动物和花草的精灵：动物来自 Kenney 的 Cube Pets，花草用家具包里的植物放大；没有逐种对应的用最接近的，没有就退回矢量画法 */
   const petSprite = (p, dir, asleep) => {
@@ -417,9 +420,9 @@ function beanDraw(o, V) {
   };
   CY.avatar = (p, dir, pose) => {
     if (DRAW[p.species.id]) { const G0 = CY.game; return !['sprite', 'blocky'].includes(CY.figure) ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
-    const G = CY.game, asleep = !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p))));
+    const G = CY.game, asleep = !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p) && !G.flag(p, 'outing'))));
     const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
-    const pz = asleep ? 'sleep' : wc ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand';
+    const pz = asleep ? 'sleep' : (wc || (G && G.usingWheelchair && G.usingWheelchair(p) && pose !== 'sit')) ? 'chair' : pose === 'sit' ? 'sit' : dir ? 'walk' : 'stand';
     return (CY.figure === 'sprite' ? sprite : CY.figure === 'blocky' ? (a, b, c) => blockySprite(a, b, c === 'chair' ? 'sit' : c) : () => null)(p, dir || '', pz) || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
   };
   /* 为添加角色对话框的预览用，不需要完整的 p */

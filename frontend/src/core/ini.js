@@ -12,6 +12,7 @@
     ['play', 'api_bridge', 'false', '为 true 时，页面响应 postMessage 的 care.getState 和 care.apply，让外部程序读取每个人的需求和状态，也能写入。默认关闭'],
     ['economy', 'work_hours', '09:00-18:00', '每天的工作时段，按昼夜时钟算'],
     ['ui', 'scene', 'auto', '房间背景：auto 白天客厅夜里卧室；living 客厅；bedroom 卧室；kitchen 厨房；lawn 草坪；balcony 阳台；none 纯色'],
+    ['ui', 'clock_12h', 'false', '为 true 时界面上的时刻用十二小时制，默认二十四小时制'],
     ['ui', 'theme', 'auto', 'auto 跟随系统；light 浅色；dark 深色'],
     ['ui', 'background', 'warm', '背景色调：warm 暖米；mint 薄荷；sky 天青；rose 玫瑰；gray 中性灰'],
     ['ui', 'language', 'auto', 'auto 跟随浏览器；zh-CN 简体中文；en English'],

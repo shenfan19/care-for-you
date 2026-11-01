@@ -143,7 +143,7 @@ CY.i18n.register("ko", {"about.p5": "손은 마우스에 두고, 머리를 잠�
 
 CY.i18n.register("ko", {"me.work_start": "업무 시간이 되어 서재에서 일을 시작했다.", "me.work_end": "일이 끝나 서재에서 나왔다.", "me.go": "{place}에 갔다.", "me.back": "집으로 돌아왔다."});
 
-CY.i18n.register("ko", {"loc.park": "공원", "loc.street": "거리", "loc.lawn": "잔디밭", "loc.road": "도로", "act.park": "공원에 데려가기", "act.street": "거리 구경 가기", "toast.outing": "{name}은(는) {place}에 나가 있어요. 곧 돌아와요.", "log.outing_start": "{name}은(는) {place}에 나갔다.", "list.sep": ", ", "pop.mute": "모두 음소거", "pop.music": "음악", "pop.sfx": "효과음", "pop.clock": "현재 시각", "pop.speed": "시간 배속", "pop.work": "근무 시간", "log.outing_lead": "{name}이(가) {others}을(를) 데리고 {place}에 나갔습니다.", "log.outing_follow": "{name}이(가) {lead}와(과) 함께 {place}에 나갔습니다.", "log.outing_back": "{name}이(가) 돌아왔다.", "log.assist": "{who}이(가) 대신 {name}을(를) 돌봤다: {label}", });
+CY.i18n.register("ko", {"loc.park": "공원", "loc.street": "거리", "loc.lawn": "잔디밭", "loc.road": "도로", "act.park": "공원에 데려가기", "act.street": "거리 구경 가기", "toast.outing": "{name}은(는) {place}에 나가 있어요. 곧 돌아와요.", "log.outing_start": "{name}은(는) {place}에 나갔다.", "list.sep": ", ", "pop.mute": "모두 음소거", "pop.music": "음악", "pop.sfx": "효과음", "pop.clock": "현재 시각", "pop.speed": "시간 배속", "pop.work": "근무 시간", "pop.am": "오전", "pop.pm": "오후", "pop.format": "시간 형식", "log.outing_lead": "{name}이(가) {others}을(를) 데리고 {place}에 나갔습니다.", "log.outing_follow": "{name}이(가) {lead}와(과) 함께 {place}에 나갔습니다.", "log.outing_back": "{name}이(가) 돌아왔다.", "log.assist": "{who}이(가) 대신 {name}을(를) 돌봤다: {label}", });
 
 CY.i18n.register("ko", {"add.helper": "재택근무로 알아서 벌고 돌봄도 나눈다"});
 

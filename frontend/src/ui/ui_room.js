@@ -86,9 +86,7 @@
     if (id && ring && U.sel === id) { clearTimeout(hoverT); hoverT = null; clearTimeout(closeT); closeT = null; return; }
     if (id) {
       clearTimeout(closeT); closeT = null;
-      if (hoverT && hoverT.id === id) return;
-      clearTimeout(hoverT && hoverT.t);
-      hoverT = { id, t: setTimeout(() => { hoverT = null; if (U.holdPid) return; U.hoverId = id; U.sel = id; U.openRing(id); U.ringByHover = true; }, ring ? 350 : 120) };
+      /* 悬停只高亮并让他停住，操作圈要单击才弹出，免得遮挡 */
       U.hoverId = id; U.syncFreeze();
       return;
     }
@@ -115,7 +113,7 @@
       const id = CY.scenes.resolve(ini.get(G.cfg, 'ui', 'scene'), h);
       sig = 'f|' + (id || 'none') + '|' + CY.scenes.phase(h); html = () => (id ? CY.scenes.svg(id, h) : '');
       U.room.classList.toggle('hasscene', !!id);
-    } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey() + '|' + (CY.game.tableFood() ? 'f' : '') + '|' + (CY.game.world.owned ? Object.keys(CY.game.world.owned).join() : ''); html = () => CY.iso.svg(U.viewPlace, h); U.room.classList.add('hasscene'); }
+    } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey() + '|' + (CY.game.tableFood() ? 'f' : '') + (CY.game.itemAway('stroller') ? 's' : '') + (CY.game.itemAway('wheelchair') ? 'w' : '') + '|' + (CY.game.world.owned ? Object.keys(CY.game.world.owned).join() : ''); html = () => CY.iso.svg(U.viewPlace, h); U.room.classList.add('hasscene'); }
     if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html(); }
   };
 
@@ -185,7 +183,7 @@
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
         c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="pops"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
-        /* 鼠标移上去就弹出菜单，不用点；触屏没有移上去，还是点一下。重叠的人由 pickAt 按指针离谁近选 */
+        /* 单击弹出操作圈，鼠标移上去只高亮。重叠的人由 pickAt 按指针离谁近选 */
         c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; if ($r('#ringLayer') && U.sel === p.id) return; U.sel = p.id; U.ringByHover = false; U.openRing(p.id); };
         c.style.transition = 'none';
         stage.appendChild(c);
