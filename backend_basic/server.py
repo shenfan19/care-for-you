@@ -1,6 +1,6 @@
 """Care for You 远程后端的基础后端，最小可用，只用标准库。
 游戏设置里 backend_provider 改成 http，backend_url 填 http://127.0.0.1:8787/ 即可。
-协议见仓库根目录 README_backend_protocol_ai.md。
+协议见仓库根目录 README_backend_protocol.md。
 
 这里放一个一阶的需求模型当占位：每个需求按自己的速率往上涨，涨多少由 minutes 决定。
 把 step() 换成你的 ODE，或者把快照转给聊天 AI，再把它的回答整理成指令列表就行。

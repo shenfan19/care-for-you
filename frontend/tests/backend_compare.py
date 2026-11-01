@@ -135,7 +135,7 @@ def fmt(x, n=2):
 
 if __name__ == "__main__":
     print("## 微基准（%d 次顺序请求，9 个角色的快照，4 路并发另测）\n" % N)
-    rows = [micro("基础后端", EX_PORT, "server.py", os.path.join(ROOT, "backend_basic_ai"))]
+    rows = [micro("基础后端", EX_PORT, "server.py", os.path.join(ROOT, "backend_basic"))]
     print("| 后端 | 往返中位 ms | p95 ms | p99 ms | 服务端处理均值 ms | 4 路吞吐 req/s | 请求 KB | 回应 KB | 内存 MB |")
     print("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
     for r in rows:
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     sys.stdout.flush()
 
     print("\n## 游戏仿真（%s 天，玩家每 120 秒看一眼，一家九口，%d 个种子取均值）\n" % (days, seeds))
-    ex = start("server.py", os.path.join(ROOT, "backend_basic_ai"), EX_PORT)
+    ex = start("server.py", os.path.join(ROOT, "backend_basic"), EX_PORT)
     try:
         jobs = [(n, u, s) for s in range(1, seeds + 1) for n, u in (("内置", ""), ("基础后端", "http://127.0.0.1:%d/" % EX_PORT), ("积分后端", "lm"))]
         with ThreadPoolExecutor(3) as exr:

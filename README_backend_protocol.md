@@ -5,7 +5,7 @@
 仓库里有三个后端，用同一份接口：
 
 - 内置后端：在浏览器里用 JS 跑，随游戏一起，规则在数据文件夹的明文 YAML 里，默认使用。代码在 frontend/src/backend 的 local.js 和 local_plan.js。
-- 基础后端：backend_basic_ai/server.py，标准库，一阶线性的需求模型，用来演示接口最小要写什么。
+- 基础后端：backend_basic/server.py，标准库，一阶线性的需求模型，用来演示接口最小要写什么。
 - 积分后端：在浏览器里用 JS 跑，frontend/src/backend/lm.js，把需求、心情、虚弱度当作模型状态来积分，模型是 frontend/src/data/lm 里的 YAML，设置里 backend_provider 选 lm。它不走网络接口，直接产出同样格式的指令。Python 版曾经放在这个仓库，现在挪出去了。
 
 ## 切换
@@ -237,5 +237,5 @@ drive 回应里的 directives，每条都有 op 和 person，op 只能是下面�
 - drive tick 里按 minutes 做步长，回增量指令，并在 drives 里声明你负责的变量。
 - 对没见过的角色，用快照里的值初始化；对不认识的需求，不碰。
 - 角色编号稳定，角色消失（归档、删除）就清掉自己的内部状态。
-- 用 python backend_basic_ai/server.py 起基础后端，改它的 step()；或者看 frontend/src/data/lm 里怎么把模型写成 YAML。
+- 用 python backend_basic/server.py 起基础后端，改它的 step()；或者看 frontend/src/data/lm 里怎么把模型写成 YAML。
 - 验证：CARE_BACKEND_URL=你的地址 node frontend/tests/logic_test.js 会对真实后端走一遍；CARE_BACKEND_URL=你的地址 node frontend/tests/sim_eval.js 1 120 family 让一家人在虚拟时钟里过一天，输出请求次数和往返耗时。

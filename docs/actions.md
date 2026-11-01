@@ -11,7 +11,7 @@ This page explains which actions appear when you click a person, and why.
 
 - Click someone else: only care actions. Self actions are never shown, because you cannot take someone else's medicine for them.
 - Click yourself, the person you are playing: only self actions, plus any care action that has no self version.
-- Going out is not part of this. It is a care action on someone else, and you go along. See [outings_ai.md](outings_ai.md).
+- Going out is not part of this. It is a care action on someone else, and you go along. See [outings.md](outings.md).
 
 This keeps a need from having two buttons that do the same thing. For example you will not see both "pour water" and "pour water to drink" on yourself, or both "help with medicine" and "take my own pills".
 

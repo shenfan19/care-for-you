@@ -1,7 +1,7 @@
 /* 后端协议，第一版。游戏本体只做两件事：把现在的状态打包发给后端，把后端回的指令一条条执行。
    谁在说话，发生什么事，都是后端决定的，游戏本体不再写死某个人或某件事。
 
-   完整的接口说明（传输、指令表、快照字段、分工规则）在仓库根目录 README_backend_protocol_ai.md，下面是速查。
+   完整的接口说明（传输、指令表、快照字段、分工规则）在仓库根目录 README_backend_protocol.md，下面是速查。
 
    请求 request，都是明文 JSON：
      { v: 1, kind: 'hello', client: { name, version } }   握手。回 { v: 1, name, version, handles: { events, strategies, lines } }，handles 里写 false 的由内置后端接手，没写当作 true
