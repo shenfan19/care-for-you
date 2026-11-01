@@ -319,7 +319,12 @@
   G.urgency = p => G.maxNeed(p) * G.classOf(p).urgency;
   /* 长按多久：动作本身的时长，乘以主角的年纪。老人手慢，圈转得慢些 */
   const ACTOR_SLOW = { elder: 1.6 };
-  G.holdSeconds = a => { if (G.DEV) return 0; const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; return +((typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k).toFixed(1); };
+  /* 做饭要给多少人做：在家的，醒着的，吃得了饭的人里饿得厉害的，加上做饭的人自己。人越多做得越久，线性累加，每多一个人多四分之一 */
+  G.mealLoad = () => {
+    const W0 = CY.world;
+    return Math.max(1, G.activePeople().filter(q => G.isHuman(q) && !['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && !(W0 && W0.locationOf(q).place !== 'home') && (q.state.needs.hunger || 0) > 0.5).length);
+  };
+  G.holdSeconds = a => { if (G.DEV) return 0; const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; const base = (typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k; return +Math.min(base * ((a.id === 'meal' || a.id === 'cook') ? 1 + 0.25 * (G.mealLoad() - 1) : 1), a.id === 'meal' || a.id === 'cook' ? 14 : 99).toFixed(1); };
   /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
   G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
   G.fmt = (s, p) => {
@@ -760,8 +765,8 @@
     const s = p.state;
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
-    if (actionId === 'meal') {
-      /* 做一顿饭是全家的饭：在家的，醒着的，吃得了饭的人，饿和渴都降下来 */
+    if (actionId === 'meal' || actionId === 'cook') {
+      /* 做饭是全家的饭，不论给别人做还是自己做：在家的，醒着的，吃得了饭的人，饿和渴都降下来 */
       const W0 = CY.world;
       for (const q of G.activePeople()) {
         if (q === p || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;

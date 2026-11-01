@@ -30,6 +30,12 @@ This keeps a need from having two buttons that do the same thing. For example yo
 
 When an action has no self version, for example measuring blood sugar, it stays available on yourself.
 
+## Cooking feeds the household
+
+- Cooking a meal for someone, or cooking for yourself, is cooking for everyone who is at home, awake and old enough to eat. Their hunger drops together. Babies and toddlers are not included, they have their own feeding action.
+- The more hungry people there are, the longer the progress bar takes. Every extra hungry person adds a quarter of the base time, up to 14 seconds.
+- Drinking water is different. Each person has their own thirst, so pouring a glass of water only helps one person.
+
 ## Babies and toddlers
 
 They cannot do anything for themselves, so they only have care actions: feeding, changing a diaper, bathing, soothing to sleep, playing. Some self actions exist for fun, for example shaking a rattle, but only the character does them, never you.

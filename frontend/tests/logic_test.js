@@ -1075,6 +1075,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('平均太低按四成算', Math.abs(G.efficiency() - 0.4) < 1e-9);
     for (const x of G.people) x.person.active = true;
   }
+  {
+    for (const x of G.people) x.person.active = false;
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' });
+    await G.load(); const ids = [dId, mId, gId]; for (const x of G.people) x.person.active = ids.includes(x.id);
+    G.setProtagonist(dId); for (const id of ids) { G.act[id] = 'awake'; for (const k in G.get(id).state.needs) G.get(id).state.needs[k] = 0.2; }
+    const dad = G.get(dId), mom = G.get(mId), gp = G.get(gId), cook = G.allActionsOf(dad).cook, meal = G.allActionsOf(mom).meal;
+    const h1 = G.holdSeconds(cook);
+    dad.state.needs.hunger = 0.9; mom.state.needs.hunger = 0.9; gp.state.needs.hunger = 0.9;
+    check('饿的人越多做饭的进度条越长，线性累加', G.mealLoad() === 3 && G.holdSeconds(cook) > h1 && Math.abs(G.holdSeconds(cook) - Math.min(h1 * 1.5, 14)) < 0.11, h1 + ' ' + G.holdSeconds(cook));
+    G.applyAction(dId, 'cook');
+    check('自己做饭也是全家的饭', mom.state.needs.hunger < 0.5 && gp.state.needs.hunger < 0.5 && dad.state.needs.hunger < 0.5);
+    mom.state.needs.thirst = 0.9; gp.state.needs.thirst = 0.9; dad.state.needs.thirst = 0.9; G.applyAction(dId, 'drink');
+    check('喝水每个人各管各的', dad.state.needs.thirst < 0.5 && mom.state.needs.thirst === 0.9 && gp.state.needs.thirst === 0.9);
+    for (const x of G.people) x.person.active = true;
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });
