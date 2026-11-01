@@ -402,9 +402,10 @@
   /* 同一个角色近来说过的不再重复 */
   const recent = {};
   G.pickFresh = (p, arr) => {
-    const r = recent[p.id] = recent[p.id] || [];
-    const fresh = arr.filter(x => !r.includes(x)), x = pick(fresh.length ? fresh : arr);
-    r.push(x); if (r.length > 12) r.shift();
+    /* 同一个人同一句话，十分钟内不重复（评估表 D10）：按现实时间记，不按条数记；候选都说过了才允许重复 */
+    const now = Date.now(), r = (recent[p.id] = (recent[p.id] || []).filter(e => now - e.t < 600000));
+    const fresh = arr.filter(x => !r.some(e => e.x === x)), x = pick(fresh.length ? fresh : arr);
+    r.push({ x, t: now });
     return x;
   };
   const line = (p, group, key, fallback) => {
