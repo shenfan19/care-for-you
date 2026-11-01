@@ -239,7 +239,25 @@
   W.atWork = () => { const pl = W.player(); return !W.holding && ((pl.place === 'home' && pl.room === 'study') || (pl.place === 'office' && pl.room === 'desk')); };
   W.atDesk = () => { const pl = W.player(); return pl.place === 'home' && pl.room === 'study' && !W.holding; };
   W.where = () => ({ place: W.player().place, room: W.player().room });
-  W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; W.lastActive = Date.now(); };
+  W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; pl.act = null; pl.bed = false; W.lastActive = Date.now(); };
+  /* 主角在做一件自己的事：动作带 at（房间）和 pose（姿势），做到时间到为止，期间不会自己走开。小睡就是躺到自己的床上。
+     夜里在卧室，闲着几秒，也会躺下睡；动手做别的事就醒。别的人睡不睡看作息，主角睡不睡看他在不在床上 */
+  W.actPose = () => { const pl = W.player(), a = pl && pl.act; return a && G.world.game_minutes < a.until ? a.pose : null; };
+  W.leadSleeping = () => {
+    const lead = G.protagonist(); if (!lead) return false;
+    if (W.actPose() === 'sleep') return true;
+    const pl = W.player(), hr = G.dayMinutes() / 60;
+    return (hr >= 22 || hr < 7) && pl.place === 'home' && pl.room === (G.stage(lead) === 'elder' ? 'elder' : 'bedroom') && !W.holding && Date.now() - W.lastActive > W.IDLE_MS;
+  };
+  /* 睡着时站在自己的床位上 */
+  W.toBed = () => { const lead = G.protagonist(), b = lead && W.bedOf(lead); if (!b) return; const pl = W.player(), pt = W.slotPoint('home', b.room, 'sleep', b.i); Object.assign(pl, { place: 'home', room: b.room, gx: pt.gx, gy: pt.gy, bed: true }); };
+  W.doAt = a => {
+    const lead = G.protagonist(), pl = W.player(); if (!lead) return;
+    const room = a.pose === 'sleep' ? ((W.bedOf(lead) || {}).room || a.at) : a.at;
+    W.moveTo('home', room);
+    pl.act = { pose: a.pose || 'stand', until: G.world.game_minutes + (a.min || 5) };
+    if (a.pose === 'sleep') W.toBed();
+  };
   W.moveTo = (place, room) => { const a = W.playerAnchor(place, room); W.setPlayer({ place, room, gx: a.gx, gy: a.gy }); };
   W.visual = () => { const pl = W.player(); return { place: pl.place, gx: pl.gx, gy: pl.gy }; };
 
@@ -277,6 +295,8 @@
     if (W.holding) { W.lastActive = Date.now(); return; }
     if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.escort = false; W.moveTo(W.WORK.place, W.workRoom()); return; }
     if (W.escort && pl.place !== W.WORK.place) return;   /* 陪着出门的人还在外面，主角不先回去 */
+    if (W.leadSleeping() && !W.player().bed) { W.toBed(); return; }
+    if (W.actPose() || (W.leadSleeping() && W.player().bed)) return;   /* 做着自己的事，或者正睡着，不自己走开 */
     if (Date.now() - W.lastActive < W.IDLE_MS) return;
     if (pl.place !== W.WORK.place || pl.room !== W.workRoom()) { W.moveTo(W.WORK.place, W.workRoom()); }
   };

@@ -32,17 +32,14 @@ When an action has no self version, for example measuring blood sugar, it stays 
 
 ## Cooking feeds the household
 
-- Cooking a meal for someone, or cooking for yourself, is cooking for everyone who is at home, awake and old enough to eat. Their hunger drops together. Babies and toddlers are not included, they have their own feeding action.
-- The more hungry people there are, the longer the progress bar takes. Every extra hungry person adds a quarter of the base time, up to 14 seconds.
+- An action marked `household: true` applies its effect to everyone who is at home, awake and old enough to eat, not only to its target. Cooking is like this, whether you cook a meal for someone or cook for yourself. Babies and toddlers are not included, they have their own feeding action.
 - Drinking water is different. Each person has their own thirst, so pouring a glass of water only helps one person.
 
-## Babies and toddlers
+## Self actions happen somewhere
 
-They cannot do anything for themselves, so they only have care actions: feeding, changing a diaper, bathing, soothing to sleep, playing. Some self actions exist for fun, for example shaking a rattle, but only the character does them, never you.
-
-## When people look after themselves
-
-If a need is high and nobody answers, some characters use their own self action. How often depends on their stage: elders and older children do it more, babies cannot. See the stage table in the internal settings for the numbers. This does not use your time.
+- A self action can name a room with `at`, and a posture with `pose`. When you do it, you walk to that room and stay in that posture until the action's time is up: pouring water happens in the kitchen, washing in the bathroom, watching TV in the living room, and a nap puts you to sleep in your own bed.
+- Any other action wakes you and moves you to whoever you are looking after.
+- At night, if you stand in your bedroom doing nothing for a few seconds, you lie down and sleep as well. Everyone else sleeps by their own schedule and how tired they are, you sleep by where you are.
 
 ## Where it is defined
 

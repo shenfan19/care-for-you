@@ -1080,15 +1080,32 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' });
     await G.load(); const ids = [dId, mId, gId]; for (const x of G.people) x.person.active = ids.includes(x.id);
     G.setProtagonist(dId); for (const id of ids) { G.act[id] = 'awake'; for (const k in G.get(id).state.needs) G.get(id).state.needs[k] = 0.2; }
-    const dad = G.get(dId), mom = G.get(mId), gp = G.get(gId), cook = G.allActionsOf(dad).cook, meal = G.allActionsOf(mom).meal;
-    const h1 = G.holdSeconds(cook);
+    const dad = G.get(dId), mom = G.get(mId), gp = G.get(gId);
     dad.state.needs.hunger = 0.9; mom.state.needs.hunger = 0.9; gp.state.needs.hunger = 0.9;
-    check('饿的人越多做饭的进度条越长，线性累加', G.mealLoad() === 3 && G.holdSeconds(cook) > h1 && Math.abs(G.holdSeconds(cook) - Math.min(h1 * 1.5, 14)) < 0.11, h1 + ' ' + G.holdSeconds(cook));
     G.applyAction(dId, 'cook');
     check('自己做饭也是全家的饭', mom.state.needs.hunger < 0.5 && gp.state.needs.hunger < 0.5 && dad.state.needs.hunger < 0.5);
     mom.state.needs.thirst = 0.9; gp.state.needs.thirst = 0.9; dad.state.needs.thirst = 0.9; G.applyAction(dId, 'drink');
     check('喝水每个人各管各的', dad.state.needs.thirst < 0.5 && mom.state.needs.thirst === 0.9 && gp.state.needs.thirst === 0.9);
     for (const x of G.people) x.person.active = true;
+  }
+  {
+    const W = CY.world;
+    for (const x of G.people) x.person.active = false;
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' });
+    await G.load(); for (const x of G.people) x.person.active = [dId, gId].includes(x.id);
+    G.setProtagonist(dId); W.enforce = true; W.moveTo('home', 'study'); G.setClock(15 * 60);
+    const dad = G.get(dId); dad.state.needs.rest = 0.9;
+    G.applyAction(dId, 'nap');
+    check('小睡：主角躺到自己的床上，是睡着的', W.player().room === 'bedroom' && G.activityOf(dad) === 'sleeping' && W.player().bed === true, JSON.stringify(W.player()));
+    G.world.game_minutes += 31;
+    check('小睡的时间到了，主角醒来', G.activityOf(dad) === 'awake');
+    G.applyAction(dId, 'drink');
+    check('倒水喝要去厨房', W.player().room === 'kitchen');
+    G.setClock(23 * 60); W.moveTo('home', 'bedroom'); W.lastActive = Date.now() - 10000;
+    check('夜里在卧室闲着，主角也躺下睡', G.activityOf(dad) === 'sleeping');
+    W.lastActive = Date.now();
+    check('一动手就醒', G.activityOf(dad) === 'awake');
+    W.enforce = false; for (const x of G.people) x.person.active = true;
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);

@@ -380,7 +380,7 @@ function beanDraw(o, V) {
   const sprite = (p, dir, pose) => {
     const M = (CY.isoSprites || {}).char; if (!M || typeof document === 'undefined') return null;
     const key = CY.charKeyOf(p), m = M[key]; if (!m) return null;
-    const rot = pose === 'sleep' ? 2 : ROT[dir] || 0, base = `assets/iso/char/${key}_${pose}_${rot}`, e = m[pose] && m[pose][rot]; if (!e) return null;
+    const rot = pose === 'sleep' ? 0 : ROT[dir] || 0, base = `assets/iso/char/${key}_${pose}_${rot}`, e = m[pose] && m[pose][rot]; if (!e) return null;
     const a = (p.person && p.person.appearance) || {}, G = CY.game, stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
     const sk = a.skin === undefined ? null : SKIN[a.skin], k = 1.43 * (STAGE_K[stage] || 1) * (pose === 'sleep' ? 0.85 : 1);
     const x = (50 - e.ax * k).toFixed(1), y = (124 - e.ay * k).toFixed(1), w = (e.w * k).toFixed(1), h = (e.h * k).toFixed(1);
@@ -411,7 +411,7 @@ function beanDraw(o, V) {
     const a = (p.person && p.person.appearance) || {}, G1 = CY.game, st = G1 && p.species.food !== undefined ? G1.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
     /* 十八个里机器人，兽人，忍者，海盗，碰撞假人不是家人，只在普通人里挑；老人挑戴眼镜和留胡子的 */
     const pool = (st === 'elder' ? ['i', 'k', 'm'] : ['a', 'b', 'c', 'e', 'f', 'j', 'n', 'q', 'k', 'm']).filter(c => M[c]), key = M[a.blocky] ? a.blocky : pool[hashOf((p.person && p.person.id) || p.id || 'x') % pool.length], m = M[key];
-    const rot = pose === 'sleep' ? 2 : ROT[dir] || 0, e = m && m[pose] && m[pose][rot]; if (!e) return null;
+    const rot = pose === 'sleep' ? 0 : ROT[dir] || 0, e = m && m[pose] && m[pose][rot]; if (!e) return null;
     const G = CY.game, stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35), k = 1.65 * (STAGE_K[stage] || 1) * (pose === 'sleep' ? 0.85 : 1);
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="assets/iso/blocky/${key}_${pose}_${rot}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
   };

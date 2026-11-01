@@ -23,7 +23,7 @@ actions:
   hug: { label: { infant: 抱着, default: 抱一抱 }, hold: 4, min: 8, effect: { company: -0.5, rest: -0.15 }, mood: 0.1, stages: [infant, toddler, child] }
   water: { label: 倒水, hold: 3, min: 3, effect: { thirst: -0.9 }, stages: [toddler, child, teen, adult, elder] }
   feed: { label: { infant: 喂奶, default: 喂饭 }, hold: 5, min: 25, effect: { hunger: -0.9, thirst: -0.4 }, stages: [infant, toddler] }
-  meal: { label: 做饭给ta吃, hold: 6, min: 60, effect: { hunger: -0.9, thirst: -0.2 }, stages: [child, teen, adult, elder] }
+  meal: { label: 做饭给ta吃, household: true, hold: 6, min: 60, effect: { hunger: -0.9, thirst: -0.2 }, stages: [child, teen, adult, elder] }
   diaper: { label: 换尿布, hold: 4, min: 8, effect: { diaper: -1 }, stages: [infant, toddler] }
   bath: { label: { elder: 帮忙洗澡, default: 洗澡 }, hold: 6, min: 25, effect: { hygiene: -1, company: -0.1 }, stages: [infant, toddler, child, elder] }
   play: { label: { infant: 逗逗ta, default: 陪玩 }, hold: 8, min: 40, effect: { play: -0.9, company: -0.4 }, stages: [infant, toddler, child] }
@@ -38,16 +38,16 @@ actions:
   street: { label: 去街上逛逛, hold: 6, min: 30, away: true, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
   doctor: { label: 带去看医生, hold: 8, min: 120, away: true, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
-  drink: { label: 倒水喝, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
-  cook: { label: 做饭自己吃, selfonly: true, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
-  snack: { label: 找点吃的, selfonly: true, self: [child], hold: 1, min: 10, effect: { hunger: -0.6 }, stages: [child] }
-  nap: { label: 小睡一会儿, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { rest: -0.6 }, stages: [child, teen, adult, elder] }
-  wash: { label: 洗个澡, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 25, effect: { hygiene: -0.9 }, stages: [child, teen, adult, elder] }
-  tv: { label: 看会儿电视, selfonly: true, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { company: -0.25, play: -0.3 }, stages: [child, teen, adult, elder] }
+  drink: { label: 倒水喝, selfonly: true, at: kitchen, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
+  cook: { label: 做饭自己吃, household: true, selfonly: true, at: kitchen, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
+  snack: { label: 找点吃的, selfonly: true, at: kitchen, self: [child], hold: 1, min: 10, effect: { hunger: -0.6 }, stages: [child] }
+  nap: { label: 小睡一会儿, selfonly: true, at: bedroom, pose: sleep, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { rest: -0.6 }, stages: [child, teen, adult, elder] }
+  wash: { label: 洗个澡, selfonly: true, at: toilet, self: [child, teen, adult, elder], hold: 1, min: 25, effect: { hygiene: -0.9 }, stages: [child, teen, adult, elder] }
+  tv: { label: 看会儿电视, selfonly: true, at: living, self: [child, teen, adult, elder], hold: 1, min: 30, effect: { company: -0.25, play: -0.3 }, stages: [child, teen, adult, elder] }
   rattle: { label: 抓摇铃, selfonly: true, self: [infant], hold: 1, min: 10, effect: { play: -0.4 }, stages: [infant] }
   babble: { label: 咿咿呀呀, selfonly: true, self: [infant, toddler], hold: 1, min: 8, effect: { company: -0.25 }, stages: [infant, toddler] }
   blocks: { label: 搭积木, selfonly: true, self: [toddler], hold: 1, min: 20, effect: { play: -0.5 }, stages: [toddler] }
-  stretch: { label: 活动活动腿脚, selfonly: true, self: [elder], hold: 1, min: 15, effect: { mobility: -0.5 }, stages: [elder] }
+  stretch: { label: 活动活动腿脚, selfonly: true, at: yard, self: [elder], hold: 1, min: 15, effect: { mobility: -0.5 }, stages: [elder] }
 `;
 
 const petActions = (feedLabel, extra) => `  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: -0.7 } }
