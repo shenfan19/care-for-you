@@ -16,6 +16,7 @@ It is meant to sit in a tab beside your work. Nothing is urgent, nothing is puni
 - Every character is a small agent. They move between rooms on a daily routine, eat at mealtimes, sleep at night, and help each other. Needs push them off their routine.
 - Care is done by pressing and holding an action. There are no countdown penalties and no failure states.
 - A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a nanny you can hire with the money you earn at the desk.
+- A time door in the house: historical and literary visitors stay for a few days, you try to work out what they need, and they leave a keepsake for the cabinet. A short summary of every day goes into a calendar you can browse. See [docs/visitors.md](docs/visitors.md).
 - Eight interface languages, with dialogue in each: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch.
 - Everything is data. Characters, rules, probabilities and lines are plain YAML files you can open and edit. Saves are plain files too.
 
@@ -34,17 +35,17 @@ Python 3 is only needed if you want to run one of the optional backends below.
 ## How to play
 
 - Click a person to see what they want, then press and hold an action until the ring fills.
-- Click the time at the top right of the game window to change the speed of the in-game clock. Settings and sharing are at the top right of the page.
+- A day runs from the afternoon to midnight and takes about five minutes. At midnight you get a short summary, and the calendar button keeps every day. Settings and sharing are at the top right of the page.
 - The people button opens the household: add, edit, archive or remove characters.
 - You play one adult in the household, and you can switch to anyone grown-up from the people menu. Couples earn money at the desk during work hours, or you do if there is no couple.
 
 ## Documentation
 
-Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
+Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The time door and visitor cards: [docs/visitors.md](docs/visitors.md). The optional account server: [account_server/README_account_server.md](account_server/README_account_server.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
 
 ## Data and privacy
 
-Everything is stored on your own device as plain files. There is no account, no server, no analytics and no cookies. By default the page sends your game data nowhere. Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Saves can be downloaded, imported and deleted from the settings.
+Everything is stored on your own device as plain files. No account is needed, and there are no analytics and no cookies. By default the page sends your game data nowhere. An optional account and encrypted cloud save exist only when a server address is set in the advanced settings; see [account_server](account_server/README_account_server.md). Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Saves can be downloaded, imported and deleted from the settings.
 
 ## Data-driven by design
 
@@ -99,5 +100,6 @@ Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen.
 | Animals | [Kenney, Cube Pets](https://kenney.nl/assets/cube-pets) | CC0 1.0 | Rendered the same way. Species without an exact match use the closest-looking model. |
 | Plants | Kenney, Furniture Kit | CC0 1.0 | Plant models enlarged. |
 | Animations, text | This project | MIT | Original. |
+| Visitor cards | This project | CC BY 4.0 | The official visitor cards and their texts, with sources listed on each card. |
 
 CC0 does not require attribution, and the sources are listed anyway. AI-assisted tools were used during development.
