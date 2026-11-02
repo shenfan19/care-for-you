@@ -39,6 +39,7 @@
     window.addEventListener('pagehide', () => G.save(true));
     if (!G.people.length && q.get('onboard') !== '0') U.onboard();
     else if (G.people.length && !G.world.intro_done && q.get('onboard') !== '0') U.introDialog();
+    else if (U.afterStart) U.afterStart();
   }
 
   async function boot() {

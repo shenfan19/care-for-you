@@ -36,6 +36,7 @@
   /* 日终：午夜过后，替玩家把夜里和上午走完，停在第二天午后；离线模式，需求涨得慢，不弹窗不说话。
      钩子 G.dayEndHooks 在跳过之前被调用，参数是刚结束的游戏日序号和是否离线追算，结算页挂在这里 */
   G.dayEndHooks = [];
+  G.dayStartHooks = [];   /* 跳到次日午后之后调用，访客到来挂在这里 */
   G.skipToAfternoon = () => {
     let gap = (G.DAY.start - G.dayMinutes() + 1440) % 1440;
     while (gap > 0) { const c = Math.min(G.DAY.chunk, gap); G.advance(c, true); gap -= c; }
@@ -48,6 +49,7 @@
     for (const h of G.dayEndHooks) h({ day: G._dayN, offline: false });
     G.skipToAfternoon();
     G._dayN = G.gameDate().n;
+    for (const h of G.dayStartHooks) h({ day: G._dayN, offline: false });
     return true;
   };
   /* 离开期间追算：每三小时折一天，最多三天。先走完当天，再整天整天地走 */
@@ -60,6 +62,7 @@
       while (left > 0) { const c = Math.min(D.chunk, left); G.advance(c, true); left -= c; }
       for (const h of G.dayEndHooks) h({ day: n0 + i, offline: true });
       G.skipToAfternoon();
+      for (const h of G.dayStartHooks) h({ day: n0 + i + 1, offline: true });
     }
     G._dayN = G.gameDate().n;
     return days;

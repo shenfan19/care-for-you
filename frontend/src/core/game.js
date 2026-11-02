@@ -132,6 +132,7 @@
     delete G.world.inv; delete G.world.nanny;   /* 旧版的物品和保姆，新版只留钱和 nanny_on */
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY || 200;
     delete G.world.tasks;
+    if (G.loadCalendar) await G.loadCalendar();
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
     const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();
@@ -440,6 +441,7 @@
         else store.writeYaml(`people/${id}/sayings.yaml`, { version: 1, items: G.sayings[id] });
       }
       G.dirty.clear();
+      if (G.saveCalendar) G.saveCalendar();
     };
     if (now) run(); else saveTimer = setTimeout(run, 400);
   };
@@ -941,6 +943,7 @@
   G.tick = function () {
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
+    if (G.holdTick) return;   /* 结算页开着时世界停在午夜，翻页后再走 */
     advance(gameMinutes(dt), false);
     G.dayRoll();
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
@@ -969,7 +972,7 @@
     /* 离开超过三小时，按每三小时一天追算，最多三天；之前的存档如果停在上午，直接走到午后 */
     G.lastTick = Date.now();
     const away = Date.now() - Date.parse(G.world.last_seen || '');
-    if (isFinite(away) && away > 0) G.catchUp(away);
+    G.lastCatchUp = isFinite(away) && away > 0 ? G.catchUp(away) : 0;
     if (G.dayMinutes() < G.DAY.start) G.skipToAfternoon();
     G._dayN = G.gameDate().n;
     scheduleNext();
