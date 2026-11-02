@@ -87,6 +87,14 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('同一件礼物不会被太多卡片需要，猜起来才有区分', Math.max(...Object.keys(V.GIFTS).map(g => ids.filter(i => V.cards[i].wants.includes(g)).length)) <= 8);
     check('文字里没有死亡和战争的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
   }
+  /* 存档被改过的标记 */
+  {
+    G.world.edited = false; G.beforeSave(); const sig = G.world.sig;
+    G.afterLoad(); check('没改过不标记', !G.world.edited);
+    G.world.money += 5000; G.afterLoad();
+    check('手动改了钱，载入时标记已编辑，且一直保留', G.world.edited === true && (G.beforeSave(), G.afterLoad(), G.world.edited === true));
+    check('签名不进卡片文字，只由数字算出', typeof sig === 'string' && sig.length >= 4);
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

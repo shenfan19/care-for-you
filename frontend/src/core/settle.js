@@ -88,5 +88,10 @@
   G.dayEndHooks.unshift(G.closeDay);
 
   G.settleText = line => (line.k && CY.i18n.has(line.k) ? t(line.k, Object.fromEntries(Object.entries(line.a || {}).map(([k, v]) => [k, v && v.t ? (v.t.reduceRight((fb, kk) => CY.tOr(kk, fb), v.d)) : v]))) : line.text || '');
+  /* 存档被手动改过的标记：存盘时写入关键数字的校验，载入时对不上就记一个“已编辑”，分享卡片上会标出来。
+     只是诚实的标注，不是防作弊；存档本来就是明文，鼓励自己改着玩 */
+  G.computeSig = () => { let h = 5381; for (const c of `${Math.floor(G.world.money || 0)}|${Object.keys(G.world.souv || {}).length}|${G.cal.days.length}|care`) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0; return h.toString(16); };
+  G.beforeSave = () => { G.world.sig = G.computeSig(); };
+  G.afterLoad = () => { if (G.world.sig && G.world.sig !== G.computeSig()) G.world.edited = true; };
   G.dayRecord = n => G.cal.days.find(x => x.n === n) || null;
 })(globalThis.CY = globalThis.CY || {});

@@ -134,6 +134,7 @@
     delete G.world.tasks;
     if (G.loadCalendar) await G.loadCalendar();
     if (G.loadVisitorPacks) await G.loadVisitorPacks();
+    if (G.afterLoad) G.afterLoad();
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
     const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();
@@ -428,6 +429,7 @@
   G.save = function (now) {
     clearTimeout(saveTimer);
     const run = () => {
+      if (G.beforeSave) G.beforeSave();
       G.world.last_seen = new Date().toISOString();
       G.world.schema = CY.meta ? CY.meta.schema : 5;
       store.writeYaml('world.yaml', G.world);
