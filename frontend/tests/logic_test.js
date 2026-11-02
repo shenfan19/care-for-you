@@ -1081,7 +1081,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   }
   {
     G.world.owned = {}; G.world.money = 100;
-    check('钱不够不能买，够了能买，买了扣钱，不能重复买', !G.canBuy('bed') && G.canBuy('toy') && G.buy('toy') && G.world.money === 40 && !G.buy('toy'));
+    check('钱不够不能买，够了能买，买了扣钱，不能重复买', !G.canBuy('bed') && G.canBuy('toy') && G.buy('toy') && G.world.money === 20 && !G.buy('toy'));
     G.world.money = 1000;
     check('装饰要一档一档买', !G.canBuy('decor2') && G.buy('decor1') && G.decorLevel() === 1 && G.buy('decor2') && G.decorLevel() === 2);
     G.world.owned = {}; G.world.money = 200;
@@ -1137,7 +1137,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const W = CY.world;
     G.world.owned = {};
     check('小户型没有客房，床位上限卧室三老人房二', !W.PLACES.home.rooms.guest && W.BED_CAP.bedroom === 3 && !W.BED_CAP.guest && W.PLACES.home.w === 12);
-    G.world.money = 1500; check('钱够了能买中等屋子', G.canBuy('house2') && G.buy('house2') && G.owned('house2'));
+    G.world.money = 2000; check('钱够了能买中等屋子', G.canBuy('house2') && G.buy('house2') && G.owned('house2'));
     check('买了以后多一间客房，床位三，家更宽，画面更大', !!W.PLACES.home.rooms.guest && W.BED_CAP.guest === 3 && W.PLACES.home.w === 16 && W.vw('home') === 900 && W.vw('park') === 800);
     const pj = W.project('home', 15, 7);
     check('最远的格子仍在画面里', pj.x > 0 && pj.x < 900 && pj.y > 0 && pj.y < 600, JSON.stringify(pj));

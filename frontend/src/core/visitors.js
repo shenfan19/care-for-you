@@ -5,6 +5,14 @@
   const G = CY.game, V = CY.visitors, store = CY.store;
   const t = (k, v) => CY.t(k, v);
 
+  /* 开局背景：机制相同，只改起始金额；不点名任何具体原因 */
+  G.BACKGROUNDS = { layoff: { money: 300 }, return: { money: 200 }, house: { money: 500 } };
+  G.chooseBackground = id => {
+    const b = G.BACKGROUNDS[id]; if (!b) return false;
+    G.world.background = id; G.world.money = b.money; G.save(true);
+    return true;
+  };
+
   G.DOOR = { act_per_day: 2, gift_max: 3, cooldown_max: 1, arrive_chance: 0.8 };
   G.guestBeds = () => 1 + (G.owned && G.owned('house2') ? 1 : 0);
   G.visits = () => (G.world.visits = G.world.visits || []);

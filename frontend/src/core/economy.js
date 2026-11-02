@@ -13,7 +13,7 @@
   G.WAGE = 40;             /* 工作时段在书桌前，每游戏小时 */
   G.PENSION = 4;           /* 老人主角的退休金，每游戏小时，固定，不用到书桌前 */
   G.NANNY_DAILY = 120;     /* 保姆每天 */
-  G.START_MONEY = 10000;   /* 临时：测试购买，之后改回 200，见待办文件 */
+  G.START_MONEY = 200;     /* 开局背景会改写起始金额，见 G.BACKGROUNDS */
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
   /* 收益效率由负荷决定，不看心情平均：负荷是每个人没被照顾到的程度（1 减心情）乘依赖度，加总后除以主角能顾及的容量。
@@ -89,17 +89,17 @@
     if (!work && G.world.nanny_paid_day === d && G.world.nanny_bye_day !== d) { G.world.nanny_bye_day = d; G.logK('you', 'event', 'log.nanny_leave', {}); }
   };
   /* 保姆现在的状态：here 在岗，wait 还没到上班时间或已下班，rest 今天钱不够休息，off 没请 */
-  /* 商店：买了就一直有，没有损耗，没有订阅。价格按每游戏小时 40 的收入和一天约 150 到 200 的实际收入定，
-     玩具半天，好床两天，婴儿车两天，轮椅三天，装饰按档位一天一档。decor 是装饰的档位，买一档加一档 */
+  /* 商店：买了就一直有，没有损耗，没有订阅。价格按前台一天五分钟、一个游戏日实际收入约 250 重标：
+     玩具不到半天，好床一天半，婴儿车一天半，轮椅两天半，装饰按档位一天一档，大房子八天左右。decor 是装饰的档位，买一档加一档 */
   G.SHOP = [
-    { id: 'toy', price: 60, icon: '🧸', fx: { rate: { play: 0.75 }, stages: ['infant', 'toddler'] } },
-    { id: 'fruit', price: 150, icon: '🍎', fx: { rate: { hunger: 0.9 } } },
-    { id: 'bed', price: 250, icon: '🛏', fx: { rest_sleep: 1.3 } },
-    { id: 'bed2', price: 500, icon: '🛏', needs: 'bed', fx: { rest_sleep: 1.15 } },
-    { id: 'books', price: 300, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
-    { id: 'stroller', price: 300, icon: '👶' }, { id: 'wheelchair', price: 450, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
-    { id: 'decor1', price: 120, icon: '🪴', fx: { mood: 0.02 } }, { id: 'decor2', price: 250, icon: '🪴', needs: 'decor1', fx: { mood: 0.02 } }, { id: 'decor3', price: 400, icon: '🪴', needs: 'decor2', fx: { mood: 0.02 } },
-    { id: 'house2', price: 1500, icon: '🏠', fx: { mood: 0.03 } },
+    { id: 'toy', price: 80, icon: '🧸', fx: { rate: { play: 0.75 }, stages: ['infant', 'toddler'] } },
+    { id: 'fruit', price: 200, icon: '🍎', fx: { rate: { hunger: 0.9 } } },
+    { id: 'bed', price: 350, icon: '🛏', fx: { rest_sleep: 1.3 } },
+    { id: 'bed2', price: 700, icon: '🛏', needs: 'bed', fx: { rest_sleep: 1.15 } },
+    { id: 'books', price: 400, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
+    { id: 'stroller', price: 400, icon: '👶' }, { id: 'wheelchair', price: 600, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
+    { id: 'decor1', price: 160, icon: '🪴', fx: { mood: 0.02 } }, { id: 'decor2', price: 350, icon: '🪴', needs: 'decor1', fx: { mood: 0.02 } }, { id: 'decor3', price: 550, icon: '🪴', needs: 'decor2', fx: { mood: 0.02 } },
+    { id: 'house2', price: 2000, icon: '🏠', fx: { mood: 0.03 } },
   ];
   /* 舒适度修正：买到的东西各带一份 fx，这里按人汇总。rate 是需求涨速倍数，rest_sleep 是睡觉时休息恢复倍数，mood 是心情目标加成，stages 限定哪些年龄阶段受益。
      后台计算只读这一处，不再各写各的 owned 判断；加新商品只在 SHOP 里加一行 fx */

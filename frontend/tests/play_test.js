@@ -42,7 +42,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText).join('|') : '';
     check('住满一天，当晚离开，留言进日历', !G.visits().some(v => v.id === 'zhuge') && /羽扇/.test(txt) && /一觉睡到天黑/.test(txt), txt);
     check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
-    check('已拿到纪念品的人还会再来，但概率很低', (() => { const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < (c.nightingale || 0) && (c.zhuge || 0) < 120; })());
+    check('已拿到纪念品的人还会再来，但概率很低', (() => { G.world.visits = []; const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < (c.nightingale || 0) && (c.zhuge || 0) < 120; })());
     /* 居里夫人：送错收下无反馈，送对留下纪念品，每天次数有上限 */
     G.world.visits = []; G.world.visit_cd = 0; G.world.vday = null; G.arrive('curie'); const i0 = 0;
     check('居里夫人要住三到四天', G.visits()[i0].stay >= 3 && G.visits()[i0].stay <= 4);
@@ -64,6 +64,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('客床数量：默认一张，买大房子两张', G.guestBeds() === 1 && (G.world.owned = Object.assign({}, G.world.owned, { house2: true }), G.guestBeds() === 2));
     check('英文下访客的名字和纪念品换成英文', (CY.i18n.set('en'), CY.t('visitor.curie.name') === 'Marie Curie' && CY.t('visitor.nightingale.souvenir') === 'An oil lamp') && (CY.i18n.set('zh-CN'), true));
   }
+  check('三个开局背景改起始金额', G.chooseBackground('house') && G.world.money === 500 && G.world.background === 'house' && G.chooseBackground('return') && G.world.money === 200 && !G.chooseBackground('nope'));
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });
