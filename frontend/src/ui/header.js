@@ -54,8 +54,8 @@
     if (!tm || !mn) return;
     const c = G.clock();
     const gd = G.gameDate();
-    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes) + ' · ' + G.speedLabel();
-    tm.title = t('corner.speed_tip', { speed: G.speedLabel() });
+    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes);
+    tm.title = '';
     tm.style.cursor = 'pointer';
     tm.onclick = e => { e.stopPropagation(); U.timePopover(tm); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
@@ -113,9 +113,8 @@
   };
   const readTime = (box, id) => { const h = +box.querySelector('#' + id + 'h').value, m = +box.querySelector('#' + id + 'm').value, pe = box.querySelector('#' + id + 'p'); return (pe ? (h % 12) + 12 * +pe.value : h) * 60 + m; };
   U.timePopover = function (anchor) {
-    const wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-').map(x => { const q = x.split(':'); return +q[0] * 60 + +q[1]; }), cur = G.speed();
+    const wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-').map(x => { const q = x.split(':'); return +q[0] * 60 + +q[1]; });
     U.popover(anchor, `<div class="prow2">${esc(t('pop.clock'))}${timeSel('pc', G.dayMinutes(), 1)}</div>
-      <div class="prow2">${esc(t('pop.speed'))}<span class="seg">${G.SPEEDS.map(s => `<button data-s="${s}" class="${s === cur ? 'on' : ''}">×${s}</button>`).join('')}</span></div>
       <div class="prow2">${esc(t('pop.work'))}<span>${timeSel('pf', wh[0], 5)} – ${timeSel('pt', wh[1], 5)}</span></div>
       <div class="prow2"><button id="psync">${esc(t('pop.sync'))}</button></div>
       <div class="prow2">${esc(t('pop.format'))}<span class="seg"><button data-f="24" class="${U.is12h() ? '' : 'on'}">24</button><button data-f="12" class="${U.is12h() ? 'on' : ''}">12</button></span></div>`, box => {
@@ -123,7 +122,6 @@
       const clk = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.setClock(readTime(box, 'pc')); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); };
       box.querySelectorAll('#pch, #pcm, #pcp').forEach(e => { e.onchange = clk; });
       box.querySelector('#psync').onclick = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.alignClock(); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); U.closePopover(); };
-      box.querySelectorAll('[data-s]').forEach(b => b.onclick = async () => { await G.setSpeed(+b.dataset.s); box.querySelectorAll('[data-s]').forEach(x => x.classList.toggle('on', x === b)); U.renderClock(); });
       const wsave = async () => { const f = readTime(box, 'pf'), to = readTime(box, 'pt'); if (f < to) { G.cfg.economy = G.cfg.economy || {}; const z = v => String(Math.floor(v / 60)).padStart(2, '0') + ':' + String(v % 60).padStart(2, '0'); G.cfg.economy.work_hours = z(f) + '-' + z(to); await G.saveCfg(); } };
       box.querySelectorAll('#pfh, #pfm, #pfp, #pth, #ptm, #ptp').forEach(e => { e.onchange = wsave; });
       box.querySelectorAll('[data-f]').forEach(b => b.onclick = async () => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.clock_12h = b.dataset.f === '12' ? 'true' : 'false'; await G.saveCfg(); U.renderClock(); U.closePopover(); U.timePopover(anchor); });

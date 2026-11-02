@@ -56,7 +56,8 @@ const FAMILIES = {
   /* 倍速：默认 1，保持以前的对比基线；CARE_SPEED 设成别的倍数，昼夜改用游戏时钟，days 仍是现实里的天数 */
   G.cfg.time.speed = process.env.CARE_SPEED || '1';
   G.cfg.time.daynight = G.speed() === 1 ? 'system' : 'game';
-  if (G.speed() > 1) G.alignClock();
+  if (process.env.CARE_DAY) { G.cfg.time.day_minutes = process.env.CARE_DAY; delete G.cfg.time.speed; G.cfg.time.daynight = 'game'; G.setClock(G.DAY.start); G._dayN = undefined; G.DAY.enabled = true; }
+  else { G.DAY.enabled = false; if (G.speed() > 1) G.alignClock(); }
   G.lastTick = fake; G.nextAt = fake + 4000;
 
   const stat = { crowdSum: 0, crowdN: 0, ticks: 0, urgentTicks: 0, sleepSkip: 0, cryTicks: 0, awakePersonTicks: 0, reqs: 0, asks: 0, acts: 0, roomMoves: 0, hospital: 0, assists: 0, falls: 0 };
@@ -73,7 +74,8 @@ const FAMILIES = {
     return gain > 0.15 ? best : null;
   };
 
-  const steps = Math.round(days * 86400 / 5);
+  const dayMode = +process.env.CARE_DAY || 0, money0 = G.world.money;
+  const steps = Math.round(dayMode ? days * dayMode * 60 / 5 : days * 86400 / 5);
   for (let i = 0; i < steps; i++) {
     fake += 5000;
     G.tick();
@@ -117,7 +119,7 @@ const FAMILIES = {
     if (!(p.state.frailty >= 0 && p.state.frailty <= 1)) bad.push(p.person.name + '.frailty=' + p.state.frailty);
     const l = CY.world.locationOf(p); if (!l || !l.room) bad.push(p.person.name + ' 没有位置');
   }
-  const hours = days * 24;
+  const hours = steps * 5 / 3600;
   let hosp = 0, assists = 0, falls = 0, social = 0;
   for (const p of G.people) for (const m of Object.values(G.journal[p.id] || {})) for (const e of m) { if (e.type === 'care' && /帮|分担/.test(e.text) === false) {} if (/住院|医院/.test(e.text) && e.type === 'event') hosp++; if (e.type === 'self') falls += /跌倒|摔/.test(e.text) ? 1 : 0; if (e.type === 'care' && /帮你|自己动手|帮着/.test(e.text)) assists++; if (e.type === 'event' && /聊了|玩了一会儿|摸了摸|追着玩|played with|stroked/.test(e.text)) social++; }
   const pct = x => (100 * x).toFixed(1) + '%';
@@ -129,6 +131,7 @@ const FAMILIES = {
   console.log(`- 十分钟内重复的话：${rep} 句，占说出口的 ${said ? (100 * rep / said).toFixed(1) : 0}%（共 ${said} 句）`);
   if (process.env.CARE_REP) console.log(Object.entries(repBy).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[1] + ' ' + x[0]).join(String.fromCharCode(10)));
   if (stat.effN) console.log(`- 工作效率平均 ${(stat.effSum / stat.effN).toFixed(3)}，家人加成平均 ${(stat.bonusSum / stat.effN).toFixed(3)}，折算每小时收入 ${(40 * stat.effSum / stat.effN * stat.bonusSum / stat.effN).toFixed(1)}`);
+  if (dayMode) console.log(`- 每个游戏日现实 ${dayMode} 分钟，每日收入 ${((G.world.money - money0) / days).toFixed(0)}，最后一天 ${G.gameDate().n}`);
   console.log(`- 宝宝哭闹：${(stat.cryTicks * 5 / 3600).toFixed(1)} 小时`);
   console.log(`- 每小时被打扰：${(stat.reqs / hours).toFixed(1)} 次，其中问答 ${(stat.asks / hours).toFixed(1)} 次`);
   console.log(`- 玩家动作：每小时 ${(stat.acts / hours).toFixed(1)} 次`);

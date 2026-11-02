@@ -94,7 +94,7 @@
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     G.world = Object.assign({ game_minutes: 0, last_seen: '' }, await store.readYaml('world.yaml'));
     /* 新档开局对齐系统时间，之后游戏时钟自己走 */
-    if (typeof G.world.clock_shift !== 'number') G.alignClock();
+    if (typeof G.world.clock_shift !== 'number') G.setClock(G.DAY.start);
     const files = await store.list();
     /* 新增的模板文件补上；内置模板的版本比文件里新，就用新的覆盖，旧的留在 _backup 里 */
     const seed = CY.seed.files();
@@ -568,7 +568,7 @@
 
   function advance(gmin, offline) {
     if (gmin <= 0) return;
-    const hours = gmin / 60;
+    const hours = gmin / 60, hp = hours * G.pace();   /* 需求、虚弱、自理按配速折算的小时算，钟面小时只管几点 */
     const boost = G.freq() === 'test' && !offline ? 30 : 1;
     G.world.game_minutes += gmin;
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
@@ -580,8 +580,8 @@
       const night = G.isNight();
       for (const k in defs) {
         if (driven(p, k)) continue;
-        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hours * shop.rest_sleep); continue; }
-        const grow = defs[k].rateNow * hours * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1);
+        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hp * shop.rest_sleep); continue; }
+        const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       if (!driven(p, 'mood') && !(p.person.help && p.person.help.role === 'nanny')) {
@@ -593,15 +593,15 @@
       /* 没人管的时候，有的会自己动手：老人自己倒水做饭，孩子能做的少，婴儿什么也做不了 */
       const sc = G.classOf(p).self_care;
       if (sc > 0 && !sleeping && p !== G.protagonist()) for (const k in defs) {
-        if (s.needs[k] > 0.7 && Math.random() < sc * hours * 1.2 * boost) {
+        if (s.needs[k] > 0.7 && Math.random() < sc * hp * 1.2 * boost) {
           const a = selfActionFor(p, k);
           if (a && selfAct(p, a, k, offline)) break;
         }
       }
       if (!driven(p, 'frailty')) {
         const was = s.frailty;
-        if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hours * boost * mods.frailty);
-        else if (G.maxNeed(p) < 0.4) s.frailty = clamp(s.frailty - 0.01 * hours);
+        if (G.maxNeed(p) > 0.9) s.frailty = clamp(s.frailty + 0.02 * hp * boost * mods.frailty);
+        else if (G.maxNeed(p) < 0.4) s.frailty = clamp(s.frailty - 0.01 * hp);
         G.frailCross(p, was);
       }
     }
@@ -609,6 +609,8 @@
     if (!offline && G.arcTick) G.arcTick();
     if (!offline) G.driveTick(gmin);
   }
+
+  G.advance = advance;
 
   /* ---------- 打断 ---------- */
   /* 打扰频率是内部设计，不在设置里；测试或仿真可以直接改 G.cfg.interrupt.frequency */
@@ -940,6 +942,7 @@
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
     advance(gameMinutes(dt), false);
+    G.dayRoll();
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
     for (const id in G.toast) if (now > G.toast[id].until) delete G.toast[id];
     /* 婴幼儿需求严重时会一直哭闹，直到有人管 */
@@ -963,8 +966,12 @@
   };
   G.start = function () {
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
-    /* 离开期间世界暂停，回来从离开的那一刻接着走，不推算 */
+    /* 离开超过三小时，按每三小时一天追算，最多三天；之前的存档如果停在上午，直接走到午后 */
     G.lastTick = Date.now();
+    const away = Date.now() - Date.parse(G.world.last_seen || '');
+    if (isFinite(away) && away > 0) G.catchUp(away);
+    if (G.dayMinutes() < G.DAY.start) G.skipToAfternoon();
+    G._dayN = G.gameDate().n;
     scheduleNext();
     G.nextAt = Date.now() + 4000;
     clearInterval(G.timer);
