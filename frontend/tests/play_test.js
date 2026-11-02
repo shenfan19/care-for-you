@@ -65,6 +65,28 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('英文下访客的名字和纪念品换成英文', (CY.i18n.set('en'), CY.t('visitor.curie.name') === 'Marie Curie' && CY.t('visitor.nightingale.souvenir') === 'An oil lamp') && (CY.i18n.set('zh-CN'), true));
   }
   check('三个开局背景改起始金额', G.chooseBackground('house') && G.world.money === 500 && G.world.background === 'house' && G.chooseBackground('return') && G.world.money === 200 && !G.chooseBackground('nope'));
+  /* 卡片完整性 */
+  {
+    const V = CY.visitors, ids = V.order, bad = [];
+    const opts = CY.avatarOptions;
+    for (const id of ids) {
+      const c = V.cards[id];
+      if (!c.src || !c.review) bad.push(id + ':出处或核查');
+      if (!c.wants.every(g => V.GIFTS[g]) || (!c.wants.length && !c.care)) bad.push(id + ':礼物');
+      if (!(c.t.hint && c.t.hint.length >= 2)) bad.push(id + ':暗示');
+      for (const k of ['name', 'era', 'souvenir', 'arrive_note', 'ok_line', 'leave_ok', 'leave_miss']) if (!(c.t[k] && c.t[k]['zh-CN'] && c.t[k].en)) bad.push(id + ':' + k);
+      for (const h of c.t.hint) if (!(h['zh-CN'] && h.en)) bad.push(id + ':hint');
+      if (!(c.stay[0] >= 1 && c.stay[1] >= c.stay[0] && c.stay[1] <= 4)) bad.push(id + ':天数');
+      const l = c.look; if (!opts.hairColor.includes(l.hairColor) || !opts.hairStyle.includes(l.hairStyle) || !opts.glasses.includes(l.glasses) || !opts.skin.includes(l.skin)) bad.push(id + ':外观');
+      if (!c.souvenir || !c.souvenir.icon) bad.push(id + ':纪念品');
+    }
+    check('官方卡片不少于三十张', ids.filter(i => V.cards[i].official).length >= 30, String(ids.length));
+    check('每张卡片字段齐全、礼物存在、外观合法、双语齐全', bad.length === 0, bad.join());
+    check('卡片编号和纪念品编号不重复', new Set(ids).size === ids.length && new Set(ids.map(i => V.cards[i].souvenir.id)).size === ids.length);
+    check('每个礼物至少被一张卡片需要', Object.keys(V.GIFTS).filter(g => !ids.some(i => V.cards[i].wants.includes(g))).length <= 6, Object.keys(V.GIFTS).filter(g => !ids.some(i => V.cards[i].wants.includes(g))).join());
+    check('同一件礼物不会被太多卡片需要，猜起来才有区分', Math.max(...Object.keys(V.GIFTS).map(g => ids.filter(i => V.cards[i].wants.includes(g)).length)) <= 8);
+    check('文字里没有死亡和战争的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });
