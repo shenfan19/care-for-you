@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Care for You · 疾病模型实验台</title>
+<meta name="robots" content="noindex">
+<style>
+:root { --bg:#f6f1e8; --card:#fffdf8; --ink:#33302b; --mute:#8a8378; --accent:#c8794a; --line:#e4dccd; --ok:#6b9a6b; --watch:#c28a2e; }
+@media (prefers-color-scheme: dark) { :root { --bg:#201e1b; --card:#2b2825; --ink:#ece6da; --mute:#9a9286; --accent:#e09468; --line:#3c3833; --ok:#86b486; --watch:#d9a84a; } }
+* { box-sizing:border-box; } body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:1100px; margin:0 auto; padding:16px; } h1 { font-size:20px; margin:0 0 4px; } .mute { color:var(--mute); font-size:13px; }
+.grid { display:grid; grid-template-columns:minmax(280px,360px) 1fr; gap:16px; margin-top:12px; } @media (max-width:760px) { .grid { grid-template-columns:1fr; } }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px; }
+label { display:block; margin:6px 0 2px; font-size:13px; color:var(--mute); } select,input,textarea,button { font:inherit; color:inherit; background:var(--card); border:1px solid var(--line); border-radius:6px; padding:4px 8px; }
+textarea { width:100%; height:300px; font:12px/1.4 ui-monospace,Menlo,Consolas,monospace; white-space:pre; } button { cursor:pointer; } button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; } .pk { display:flex; gap:6px; align-items:center; margin:3px 0; } .pk input[type=text] { width:150px; }
+.charts { display:grid; gap:10px; } .ch { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:6px 8px; } .ch b { font-size:13px; } .ch canvas { width:100%; height:90px; display:block; }
+.ro { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; } .ro span { padding:2px 8px; border-radius:10px; border:1px solid var(--line); font-size:13px; } .t-ok { color:var(--ok); } .t-watch { color:var(--watch); } .t-alert { color:var(--accent); }
+#err { color:#b3402e; white-space:pre-wrap; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>疾病模型实验台</h1>
+  <div class="mute">在页面里直接改疾病模型的方程、参数、读数，选动作和时刻，马上用游戏里同一个积分引擎（src/backend/lm.js）算几天，看曲线。不依赖任何服务。改完满意的模型文件放进 src/data/lm，再运行 tools/build_lm_seed.py。</div>
+  <div class="grid">
+    <div>
+      <div class="card">
+        <label>疾病模型</label><select id="model"></select>
+        <div class="row"><div><label>病情</label><select id="sev"></select></div><div><label>天数</label><input id="days" type="number" min="1" max="30" value="4" style="width:64px"></div><div><label>步长（分钟）</label><input id="step" type="number" min="1" max="60" value="5" style="width:64px"></div></div>
+        <label>作息，每个动作的时刻（小时，逗号分隔，空表示不做）</label>
+        <div id="policy"></div>
+        <div class="row" style="margin-top:8px"><button id="goodBtn">按时照顾</button><button id="badBtn">什么都不做</button><button id="run" class="primary">运行</button></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <label>模型文件，可直接改，点运行生效（只在这个页面里，不改磁盘）</label>
+        <textarea id="yaml" spellcheck="false"></textarea>
+        <div id="err"></div>
+      </div>
+    </div>
+    <div>
+      <div class="card"><b>结果</b><div id="summary" class="mute">点运行。</div><div id="ro" class="ro"></div></div>
+      <div class="charts" id="charts" style="margin-top:12px"></div>
+    </div>
+  </div>
+</main>
+<script src="vendor/js-yaml.min.js"></script>
+<script>globalThis.CY = { seed: { files() { return {}; } } };</script>
+<script src="src/data/lm_seed.js"></script>
+<script src="src/backend/lm.js"></script>
+<script>
+(function () {
+  const CY = globalThis.CY, $ = id => document.getElementById(id), seed = CY.lmSeed;
+  const docs = {};   /* 文件名 -> yaml 文本，改动保存在页面里 */
+  for (const p in seed) if (/models\/cond_/.test(p)) docs[p.split('/').pop()] = seed[p];
+  const classesText = seed['templates/lm/classes.yaml'];
+  const ACTION_NEED = { sugar: 'sugar', selfsugar: 'sugar', bp: 'bp', selfbp: 'bp', heat: 'joint', selfheat: 'joint', massage: 'joint', listen: 'lowmood', walkout: 'lowmood' };
+  const NEEDS = { hunger: 0.2, thirst: 0.2, company: 0.2, medicine: 0.3, sugar: 0.2, bp: 0.2, joint: 0.2, lowmood: 0.2 };
+  let current = null;   /* 当前模型文件名 */
+
+  function parseModel(name) { return jsyaml.load(docs[name]); }
+  function fill() {
+    const sel = $('model'); sel.innerHTML = Object.keys(docs).sort().map(f => `<option value="${f}">${f}</option>`).join('');
+    sel.onchange = () => pick(sel.value); pick(sel.value);
+  }
+  function pick(name) {
+    current = name; $('yaml').value = docs[name]; $('err').textContent = '';
+    const d = parseModel(name), care = d.care || {};
+    $('sev').innerHTML = Object.keys(care.presets || { default: 1 }).map(k => `<option ${k === care.default_preset ? 'selected' : ''}>${k}</option>`).join('');
+    const keys = Object.keys(care.pulses || {});
+    $('policy').innerHTML = keys.map(k => `<div class="pk"><span style="min-width:90px">${k}</span><input type="text" data-k="${k}" placeholder="例如 8, 20"></div>`).join('') || '<span class="mute">这个模型没有动作输入</span>';
+    good();
+  }
+  /* 预设的作息：药每天 8 点，测量 10 点，热敷在 10 和 15 点，陪伴在 10，14，18 点；重口味的选择不做 */
+  const GOOD = { medicine: '8', selfmed: '', sugar: '10', selfsugar: '', bp: '10', selfbp: '', heat: '10, 15', selfheat: '', massage: '', listen: '10, 14, 18', walkout: '' };
+  function good() { document.querySelectorAll('#policy input').forEach(i => { i.value = GOOD[i.dataset.k] || ''; }); }
+  function bad() { document.querySelectorAll('#policy input').forEach(i => { i.value = ''; }); }
+
+  function run() {
+    $('err').textContent = '';
+    let model;
+    try { docs[current] = $('yaml').value; model = jsyaml.load($('yaml').value); } catch (e) { $('err').textContent = String(e.message || e); return; }
+    let lm;
+    try {
+      lm = CY.lm; const ds = Object.keys(docs).sort().map(f => [f, f === current ? model : jsyaml.load(docs[f])]);
+      // 每次建新库，避免旧状态
+      lm.build(ds, jsyaml.load(classesText));
+    } catch (e) { $('err').textContent = String(e.message || e); return; }
+    const cond = model.metadata.condition, sev = $('sev').value, days = +$('days').value, stepMin = +$('step').value;
+    const times = {}; document.querySelectorAll('#policy input').forEach(i => { times[i.dataset.k] = i.value.split(',').map(s => parseFloat(s)).filter(x => !isNaN(x)).map(h => Math.round(h * 60)); });
+    const snap = { id: 'p1', species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: Object.assign({}, NEEDS), conditions: [cond], cond_set: { [cond]: { severity: sev } }, flags: {}, sleeping: false, rate_mult: {}, pulses: [] };
+    const series = {}, tAxis = [], eng = lm.engineCond, m = lm.lib.modelsOfCondition(cond)[0];
+    const names = [...Object.keys(m.vars), ...m.aux.map(a => a[0])];
+    let t = 0;
+    while (t < days * 1440) {
+      const dm = t % 1440, hour = dm / 60;
+      snap.sleeping = hour < 6.5 || hour >= 22.5; snap.pulses = [];
+      for (const k in times) if (times[k].some(x => x >= dm && x < dm + stepMin)) snap.pulses.push(k);
+      for (const a of snap.pulses) if (ACTION_NEED[a]) snap.needs[ACTION_NEED[a]] = Math.max(0, snap.needs[ACTION_NEED[a]] - 1);
+      const r = eng.drive({ minutes: stepMin, world: { hour: ((t + stepMin) % 1440) / 60, date: { weekday: Math.floor(t / 1440) % 7 } }, people: [snap] });
+      for (const d of r.directives) { if (d.op === 'need') snap.needs[d.need] = Math.min(1, Math.max(0, snap.needs[d.need] + d.delta)); else if (d.op === 'mood') snap.mood = Math.min(1, Math.max(0, snap.mood + d.delta)); else if (d.op === 'frailty') snap.frailty = Math.min(1, Math.max(0, snap.frailty + d.delta)); }
+      const hrs = stepMin / 60, mx = Math.max(...Object.values(snap.needs));
+      snap.mood = Math.min(1, Math.max(0, snap.mood + (Math.max(0, 1 - 0.7 * mx) - snap.mood) * Math.min(1, hrs * 0.5)));
+      if (mx > 0.9) snap.frailty = Math.min(1, snap.frailty + 0.02 * hrs); else if (mx < 0.4) snap.frailty = Math.max(0, snap.frailty - 0.01 * hrs);
+      t += stepMin; tAxis.push(t / 60);
+      const p = eng.people.p1, env = p.lastEnv || {};
+      for (const n of names) (series[n] = series[n] || []).push(n in p.state ? p.state[n] : env[n]);
+      for (const k of Object.keys(m.drives)) (series['need:' + k] = series['need:' + k] || []).push(snap.needs[k]);
+      (series['mood'] = series['mood'] || []).push(snap.mood); (series['frailty'] = series['frailty'] || []).push(snap.frailty);
+    }
+    const ro = eng.people.p1.readouts();
+    $('ro').innerHTML = ro.map(r => `<span class="t-${r.tone || 'ok'}">${r.label}：${r.value === null ? '没测过' : r.value.toFixed(r.decimals) + ' ' + r.unit + ' ' + (r.word || '')}　（实际 ${r.live === null ? '-' : r.live.toFixed(r.decimals)}）</span>`).join('');
+    $('summary').textContent = `${cond}，${sev}，${days} 天，步长 ${stepMin} 分钟。最后一天各量的范围见曲线上的数字。`;
+    draw(tAxis, series);
+  }
+  function draw(tAxis, series) {
+    const box = $('charts'); box.innerHTML = '';
+    for (const n of Object.keys(series)) {
+      const ys = series[n], lo = Math.min(...ys), hi = Math.max(...ys), div = document.createElement('div'); div.className = 'ch';
+      div.innerHTML = `<b>${n}</b> <span class="mute">${lo.toFixed(3)} ... ${hi.toFixed(3)}</span><canvas></canvas>`; box.appendChild(div);
+      const cv = div.querySelector('canvas'), dpr = window.devicePixelRatio || 1; cv.width = cv.clientWidth * dpr; cv.height = 90 * dpr;
+      const g = cv.getContext('2d'); g.scale(dpr, dpr); const W = cv.clientWidth, H = 90, span = (hi - lo) || 1, T = tAxis[tAxis.length - 1];
+      g.strokeStyle = getComputedStyle(document.body).getPropertyValue('--line'); g.lineWidth = 1;
+      for (let d = 24; d < T; d += 24) { const x = d / T * W; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+      g.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent'); g.lineWidth = 1.6; g.beginPath();
+      ys.forEach((v, i) => { const x = tAxis[i] / T * W, y = H - 6 - (v - lo) / span * (H - 12); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
+    }
+  }
+  $('goodBtn').onclick = () => { good(); run(); }; $('badBtn').onclick = () => { bad(); run(); }; $('run').onclick = run;
+  fill(); run();
+})();
+</script>
+</body>
+</html>

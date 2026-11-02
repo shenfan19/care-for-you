@@ -193,3 +193,5 @@ CY.i18n.register("es", {"cred.p3": "Arte: Furniture Kit, Mini Characters, Cube P
 CY.i18n.register("es", {"corner.eff_tip": "El estado medio del hogar es del {n} %, y es también la eficiencia de quien trabaja. Cuida de todos, tú incluido, y los ingresos se mantienen altos. El mínimo es 40 %.", "log.meal_all": "La comida está lista y todos los que están en casa comen."});
 CY.i18n.register("es", {"act.sleep": "Irse a dormir"});
 CY.i18n.register("es", {"selfact.sleep": "{name} se fue a dormir"});
+CY.i18n.register("es", {"cond.sev": "Gravedad", "cond.sev_mild": "Leve", "cond.sev_moderate": "Moderada", "cond.sev_advanced": "Avanzada", "obs.title": "Observaciones", "obs.measure": "Haz «{act}» una vez para verlo", "obs.none": "Aún no se ve", "selfact.selfsugar": "{name} se midió la glucosa", "act.selfsugar": "Medirse la glucosa solo"});
+CY.i18n.register("es", {"import.pack": "Paquete de enfermedades: {names}, {n} archivos. Van a la carpeta de plantillas y nadie de tu partida se toca."});

@@ -193,3 +193,5 @@ CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit�
 CY.i18n.register("ja", {"corner.eff_tip": "家の平均の状態は {n}% で、働いている人の仕事の効率でもあります。自分も含めて全員を気にかけると収入が高くなります。最低は 40% です。", "log.meal_all": "食事ができて、家にいる人はみんな食べた。"});
 CY.i18n.register("ja", {"act.sleep": "寝る"});
 CY.i18n.register("ja", {"selfact.sleep": "{name}は寝に行った"});
+CY.i18n.register("ja", {"cond.sev": "症状の程度", "cond.sev_mild": "軽い", "cond.sev_moderate": "中くらい", "cond.sev_advanced": "重め", "obs.title": "観察", "obs.measure": "「{act}」を一度すると見られます", "obs.none": "まだ見えません", "selfact.selfsugar": "{name}が自分で血糖を測った", "act.selfsugar": "一人で血糖を測る"});
+CY.i18n.register("ja", {"import.pack": "病気パック：{names}、{n} 個のファイル。テンプレートのフォルダに入れるだけで、セーブの中の人には触れません。"});

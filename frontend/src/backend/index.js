@@ -9,6 +9,8 @@
   const provider = () => CY.ini.get(CY.game.cfg, 'play', 'backend_provider');
   const useHttp = () => provider() === 'http';
   const useLm = () => provider() === 'lm';
+  /* 选 builtin 时，带疾病模型的角色的疾病部分由浏览器里的积分引擎算，其余仍由内置后端管 */
+  const useCond = () => provider() === 'builtin' && CY.ini.bool(CY.game.cfg, 'play', 'condition_models');
   B.names = () => CY.ini.bool(CY.game.cfg, 'play', 'backend_send_names');
 
   /* ---------- 握手 ---------- */
@@ -18,7 +20,7 @@
       if (!B.caps || B.caps.url !== 'lm') { const h = CY.lm.hello(); B.caps = { url: 'lm', name: h.name, version: h.version, handles: h.handles }; B.failed = false; }
       B.driven = B.driven || {}; if (!CY.lm.ready) CY.lm.load(); return;
     }
-    if (!useHttp()) { B.caps = null; B.driven = {}; return; }
+    if (!useHttp()) { B.caps = null; if (!useCond()) B.driven = {}; else if (!CY.lm.ready) CY.lm.load(); return; }
     const u = CY.ini.get(CY.game.cfg, 'play', 'backend_url');
     if (B.caps && B.caps.url === u) return;
     if (hs.busy || (hs.url === u && Date.now() - hs.t < 30000)) return;
@@ -30,7 +32,7 @@
     }, e => { B.caps = null; fail(e); }).then(() => { hs.busy = false; B.pending--; });
   };
   B.handles = k => (B.caps ? B.caps.handles[k] !== false : false);
-  B.isDriven = (pid, name) => !!((useHttp() || useLm()) && B.driven[pid] && B.driven[pid].includes(name));
+  B.isDriven = (pid, name) => !!((useHttp() || useLm() || useCond()) && B.driven[pid] && B.driven[pid].includes(name));
   B.noteDrives = d => {
     B.driven = {};
     if (d && typeof d === 'object') for (const id in d) if (Array.isArray(d[id])) B.driven[id] = d[id].filter(x => typeof x === 'string').slice(0, 40);
@@ -40,7 +42,7 @@
     const G = CY.game, P = CY.protocol, names = B.names();
     const req = { v: P.V, kind: 'drive', trigger, world: P.world(), minutes: extra.minutes || 0 };
     if (trigger === 'tick') {
-      req.people = G.people.filter(p => p.person.active !== false).map(p => P.person(p, { names }));
+      req.people = G.people.filter(p => p.person.active !== false).map(p => { const s = P.person(p, { names }); s.pulses = G.takePulses ? G.takePulses(p.id) : []; return s; });
       req.expired = extra.expired || [];
     } else { req.person = P.person(extra.person, { names }); req.action = extra.action; }
     return req;
@@ -73,7 +75,11 @@
       const r = CY.lm.drive(req); B.noteDrives(r.drives);
       return local().concat(P.sanitize(r.directives));
     }
-    if (!useHttp()) return local();
+    if (!useHttp()) {
+      if (useCond() && req.trigger === 'tick' && CY.lm.wants(req)) { const r = CY.lm.driveConditions(req); B.noteDrives(r.drives); return local().concat(P.sanitize(r.directives)); }
+      if (useCond() && !CY.lm.ready) CY.lm.load();
+      B.driven = {}; return local();
+    }
     if (!B.caps) return local();
     const compose = B.caps.handles.events === false;
     if (compose && req.trigger === 'action') return local();

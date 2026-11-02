@@ -39,7 +39,7 @@
     return {
       id: p.id, card: p.person.card || p.person.archetype || '', health: +(1 - p.state.frailty).toFixed(4), name: opts.names ? p.person.name : '', species: p.species.id, stage: G.classKey(p), age: G.isHuman(p) ? +G.age(p).toFixed(2) : null, age_band: G.ageBand(p),
       mood: +p.state.mood.toFixed(4), frailty: +p.state.frailty.toFixed(4), needs: Object.fromEntries(Object.entries(p.state.needs).map(([k, v]) => [k, +v.toFixed(4)])),
-      conditions: (p.person.conditions || []).slice(), traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
+      conditions: (p.person.conditions || []).slice(), cond_set: p.person.cond_set ? JSON.parse(JSON.stringify(p.person.cond_set)) : {}, traits: (p.person.traits || []).slice(), voice: p.person.voice, flags,
       rate_mult: P.rateMult(p), mood_offset: +G.traitMods(p).mood_offset.toFixed(3), frailty_mult: +G.traitMods(p).frailty.toFixed(3),
       sleeping: G.isSleeping(p), protagonist: G.protagonist() === p, abilities: P.abilities(p), want: G.wants && G.wants[p.id] ? Object.assign({}, G.wants[p.id]) : null, location: { place: loc.place, room: loc.room }, care_total: p.story.care_total || 0, counters: Object.assign({}, p.story.counters), seen: Object.assign({}, p.story.seen),
     };

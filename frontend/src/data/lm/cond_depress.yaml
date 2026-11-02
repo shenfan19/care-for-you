@@ -1,0 +1,91 @@
+metadata:
+  name: cond_depress
+  version: "1.0"
+  lm_format_version: "1.0"
+  condition: depress
+  source: Care for You 手写的情绪低落基础模型，低落随孤独加深，陪伴和散步托住它
+  description:
+    problem: |
+      一个情绪低落的家人，一个人待着越久越低落，有人安静地陪着、一起出去走走，能托住一阵。
+    method: |
+      - 低落程度 dp_low 是游戏里 lowmood 需求的状态，涨的速度随陪伴需求 company 升高，随陪伴托力降低。
+      - 陪伴托力 dp_lift 在听 ta 说话或陪着出去走走之后加 1，时间常数 12 小时。
+    limitations: |
+      - 这是一个照看的小模型，不是对抑郁症的临床描述，没有诊断、治疗或药物。
+      - 只表达陪伴会让低落慢下来，不代表陪伴可以替代专业帮助。
+  ratings:
+    importance: 0.5 - 情绪低落在家庭照看里很常见
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一阶累积
+    simulation: 0.5 - 节奏与游戏内置需求速率同量级
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  dp_k: 0.04
+  dp_company_gain: 1.2
+  dp_lift_cut: 0.8
+  dp_tau_lift_h: 12.0
+  dp_m_gain: 0.03
+
+variables:
+  dp_low:
+    description: 低落的程度，对应游戏里的 lowmood 需求。
+    value: 0.25
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  dp_lift:
+    description: 陪伴托力。
+    value: 0.0
+    unit: index
+    type: state
+    bounds: [0.0, 1.5]
+
+equations:
+  dp_lift_dynamics:
+    description: 陪伴托力衰减。
+    priority: 40
+    step_unit: hour
+    dynamics:
+      dp_lift: "dp_lift * exp(-step / dp_tau_lift_h)"
+  dp_low_dynamics:
+    description: 低落累积，孤独时更快，陪伴托住它。
+    priority: 39
+    step_unit: hour
+    dynamics:
+      dp_low: "dp_low + step * dp_k * speed_lowmood * (1.0 + dp_company_gain * n_company) * (1.0 - dp_lift_cut * min(1.0, dp_lift)) * (1.0 - 0.6 * asleep)"
+
+drives:
+  lowmood: { state: dp_low, lo: 0.0, hi: 1.0, kinds: [human] }
+
+care:
+  max_step_minutes: 15
+  default_preset: moderate
+  presets:
+    mild:
+      params: { dp_k: 0.028 }
+    moderate:
+      params: { dp_k: 0.04 }
+    advanced:
+      params: { dp_k: 0.055 }
+  pulses:
+    listen: [{ var: dp_lift, add: 1.0 }]
+    walkout: [{ var: dp_lift, add: 1.0 }]
+  readouts:
+    - id: spirit
+      label: 今天的精神
+      label_en: Spirits today
+      value: "1.0 - dp_low"
+      unit: ""
+      scale: [0, 1]
+      decimals: 2
+      bands:
+        - { upto: 0.35, tone: alert, word: 提不起劲, word_en: Hard to get going }
+        - { upto: 0.65, tone: watch, word: 有点低落, word_en: A bit low }
+        - { tone: ok, word: 还不错, word_en: Doing alright }
+  effects:
+    mood: "-dp_m_gain * dp_low"
+  story:
+    intro: 情绪低落不是谁的错。ta 需要的常常不是办法，是有人安静地在旁边。陪着听一会儿，或者一起出去走走，低落会慢下来。如果 ta 一直这样，请让 ta 见专业的人。
+    intro_en: Low mood is nobody's fault. What helps is often not a solution but someone quietly nearby. Listening for a while, or walking out together, slows it down. If it stays this way, please help them see a professional.

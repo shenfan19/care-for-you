@@ -4,6 +4,7 @@
    环境变量：
      CARE_BACKEND_URL  设了就把后端换成这个地址的远程后端（设置 backend_provider=http），并统计每次请求的耗时和字节数
      CARE_PROVIDER     设为 lm 就用浏览器里的数值积分后端
+     CARE_COND         设为 0 时关掉疾病模型积分，对比用
      CARE_SEED         随机种子，同一个种子下不同后端的对比才公平
      CARE_SPEED        时间倍速，1、6、24、60，默认 1（1 时昼夜用虚拟的系统时钟，保持以前的对比基线）
      CARE_SIM_JSON     设为 1 时最后多输出一行 JSON 汇总，给 backend_compare.py 读 */
@@ -39,6 +40,7 @@ const FAMILIES = {
       return { ok: r.ok, status: r.status, json: async () => JSON.parse(txt) };
     };
   } else G.cfg.play.backend_provider = 'builtin';
+  if (process.env.CARE_COND === '0') G.cfg.play.condition_models = 'false'; else if (!URL) { await CY.lm.load(); if (!CY.lm.ready) throw new Error(CY.lm.error); }
   if (leadName) { const L = G.people.find(p => p.person.name === leadName); if (L) G.setProtagonist(L.id); }
   CY.world.enforce = false;
 

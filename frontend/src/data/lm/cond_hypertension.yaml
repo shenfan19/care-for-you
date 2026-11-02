@@ -1,0 +1,168 @@
+metadata:
+  name: cond_hypertension
+  version: "1.0"
+  lm_format_version: "1.0"
+  condition: hypertension
+  source: Care for You 手写的高血压基础模型，结构参照 Life Matters 的 hypertension_gout，数值按游戏的节奏取
+  description:
+    problem: |
+      一个血压偏高的家人，血压随盐摄入、心情和药效在一天里起伏。照顾的人能做的是陪吃药，量血压，餐桌上少放点盐。
+    method: |
+      - 收缩压 ht_bp 向目标值松弛，时间常数 4 小时。目标值等于基线加盐负荷偏离、心情偏离的贡献，再减去药效的贡献。
+      - 盐负荷 ht_salt 由三餐带入，时间常数 10 小时衰减。
+      - 药效 ht_med 吃一次加 1，半衰期约十小时。
+      - 长期负担 ht_strain 在平均血压超过 135 时累积，缓慢恢复，只通过 effects 轻轻拉高虚弱度。
+      - 该量血压了 ht_check_debt 是游戏里 bp 需求的状态，血压偏高时涨得更快。
+    limitations: |
+      - 没有昼夜节律，睡觉时的血压下降用一个常数比例近似。
+      - 没有肾脏、血管顺应性等机制。
+  ratings:
+    importance: 0.75 - 高血压是老年家人最常见的慢病
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一阶松弛
+    simulation: 0.5 - 基线与药效落在临床常见范围
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  ht_base: 155.0
+  ht_salt_gain: 12.0
+  ht_salt_ref: 1.25
+  ht_mood_gain: 15.0
+  ht_med_gain: 18.0
+  ht_tau_bp_h: 4.0
+  ht_tau_salt_h: 10.0
+  ht_tau_med_h: 14.0
+  ht_sleep_drop: 0.08
+  ht_strain_thr: 135.0
+  ht_k_strain: 0.004
+  ht_k_heal: 0.002
+  ht_k_check: 0.04
+  ht_f_gain: 0.003
+
+variables:
+  ht_bp:
+    description: 收缩压。
+    value: 140.0
+    unit: mmHg
+    type: state
+    bounds: [90.0, 220.0]
+  ht_bp_avg:
+    description: 近三天平均收缩压。
+    value: 140.0
+    unit: mmHg
+    type: state
+    bounds: [90.0, 220.0]
+  ht_salt:
+    description: 盐负荷。
+    value: 1.25
+    unit: index
+    type: state
+    bounds: [0.0, 3.0]
+  ht_med:
+    description: 药效水平，吃一次药加 1。
+    value: 0.5
+    unit: index
+    type: state
+    bounds: [0.0, 1.5]
+  ht_strain:
+    description: 长期负担，0 到 1。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  ht_check_debt:
+    description: 想量血压的程度，对应游戏里的 bp 需求。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  ht_salt_in:
+    description: 盐摄入，按每小时的量给。
+    value: 0.0
+    unit: index
+    type: input
+
+auxiliary:
+  ht_target: "ht_base + ht_salt_gain * (ht_salt - ht_salt_ref) + ht_mood_gain * (0.6 - mood_now) - ht_med_gain * min(1.0, ht_med) - ht_sleep_drop * ht_base * asleep"
+
+equations:
+  ht_bp_dynamics:
+    description: 血压向目标松弛。
+    priority: 40
+    step_unit: hour
+    dynamics:
+      ht_bp: "ht_bp + (ht_target - ht_bp) * (1.0 - exp(-step / ht_tau_bp_h))"
+  ht_avg_dynamics:
+    description: 近三天平均收缩压。
+    priority: 39
+    step_unit: hour
+    dynamics:
+      ht_bp_avg: "ht_bp_avg + (ht_bp - ht_bp_avg) * (1.0 - exp(-step / 72.0))"
+  ht_salt_dynamics:
+    description: 盐负荷随进餐上升，指数衰减。
+    priority: 41
+    step_unit: hour
+    dynamics:
+      ht_salt: "ht_salt + step * (ht_salt_in - ht_salt / ht_tau_salt_h)"
+  ht_med_dynamics:
+    description: 药效指数衰减。
+    priority: 42
+    step_unit: hour
+    dynamics:
+      ht_med: "ht_med * exp(-step / ht_tau_med_h)"
+  ht_strain_dynamics:
+    description: 平均血压超限时累积负担，平时慢慢恢复。
+    priority: 38
+    step_unit: hour
+    dynamics:
+      ht_strain: "ht_strain + step * (ht_k_strain * max(0.0, ht_bp_avg - ht_strain_thr) / 20.0 - ht_k_heal * ht_strain)"
+  ht_check_dynamics:
+    description: 想量血压的程度。
+    priority: 37
+    step_unit: hour
+    dynamics:
+      ht_check_debt: "ht_check_debt + step * ht_k_check * speed_bp * (1.0 + 1.5 * min(1.0, max(0.0, (ht_bp_avg - 135.0) / 40.0))) * (1.0 - 0.7 * asleep)"
+
+drives:
+  bp: { state: ht_check_debt, lo: 0.0, hi: 1.0, kinds: [human] }
+
+care:
+  max_step_minutes: 10
+  default_preset: moderate
+  presets:
+    mild:
+      params: { ht_base: 145.0, ht_med_gain: 14.0 }
+      state: { ht_bp: 132.0, ht_bp_avg: 132.0 }
+    moderate:
+      params: { ht_base: 155.0, ht_med_gain: 18.0 }
+      state: { ht_bp: 140.0, ht_bp_avg: 140.0 }
+    advanced:
+      params: { ht_base: 172.0, ht_med_gain: 22.0 }
+      state: { ht_bp: 155.0, ht_bp_avg: 155.0 }
+  schedule:
+    - { var: ht_salt_in, hour: 7.5, minutes: 30, value: 0.45, delivery: total }
+    - { var: ht_salt_in, hour: 12.0, minutes: 30, value: 0.6 }
+    - { var: ht_salt_in, hour: 18.5, minutes: 30, value: 0.6 }
+  pulses:
+    medicine: [{ var: ht_med, add: 1.0 }]
+    selfmed: [{ var: ht_med, add: 1.0 }]
+    salt_high: [{ var: ht_salt_in, total: 0.6, minutes: 30 }]
+    salt_low: [{ var: ht_salt_in, total: -0.4, minutes: 30 }]
+  readouts:
+    - id: bp
+      label: 血压
+      label_en: Blood pressure
+      value: ht_bp
+      unit: mmHg
+      scale: [100, 200]
+      reveal_by: [bp, selfbp]
+      bands:
+        - { upto: 129, tone: ok, word: 很平稳, word_en: Steady }
+        - { upto: 149, tone: watch, word: 稍微高了一点, word_en: A little high }
+        - { tone: alert, word: 偏高，今天少盐, word_en: "High, go easy on salt today" }
+  effects:
+    frailty: "ht_f_gain * ht_strain"
+  story:
+    intro: 高血压不会疼，所以最容易被忘记。药要按时吃，隔一阵量一次血压，饭菜里盐放得少一点。量过血压才看得到数字。
+    intro_en: High blood pressure does not hurt, which is why it is so easy to forget. The pills on time, a check now and then, a little less salt in the food. The number only shows after a check.

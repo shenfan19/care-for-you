@@ -377,3 +377,5 @@ CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit�
 CY.i18n.register("zh-CN", {"corner.eff_tip": "全家的平均状态是 {n}%，这也是上班的人现在的工作效率。每个人都照顾到，包括你自己，收入才高，最低按四成算。", "log.meal_all": "一顿饭做好了，在家的人都吃上了。"});
 CY.i18n.register("zh-CN", {"act.sleep": "去睡觉"});
 CY.i18n.register("zh-CN", {"selfact.sleep": "{name}去睡觉了"});
+CY.i18n.register("zh-CN", {"cond.sev": "病情", "cond.sev_mild": "轻", "cond.sev_moderate": "中等", "cond.sev_advanced": "较重", "obs.title": "观察", "obs.measure": "做一次「{act}」就能看到", "obs.none": "暂时看不到", "selfact.selfsugar": "{name}自己测了血糖"});
+CY.i18n.register("zh-CN", {"import.pack": "疾病包：{names}，共 {n} 个文件。只放进模板文件夹，不动存档里的角色。"});

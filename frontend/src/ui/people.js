@@ -36,6 +36,30 @@
     dlg.querySelector('#cback').onclick = () => U.statusDialog(pid);
   };
 
+  /* ---------- 观察：疾病模型给出的读数。需要先做一次（测血糖，量血压）才看得到的读数，没做过就写怎么才能看到；看不到不是坏事，没有任何惩罚 ---------- */
+  const spark = (hist, scale, tone) => {
+    if (!hist || hist.length < 3) return '';
+    const lo = scale ? scale[0] : Math.min(...hist), hi = scale ? scale[1] : Math.max(...hist), W = 96, H = 22, span = (hi - lo) || 1;
+    const pts = hist.map((v, i) => (i / (hist.length - 1) * W).toFixed(1) + ',' + (H - 2 - Math.min(1, Math.max(0, (v - lo) / span)) * (H - 4)).toFixed(1)).join(' ');
+    return `<svg class="spark ${tone || ''}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><polyline points="${pts}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+  };
+  U.observeHtml = p => {
+    if (!CY.lm || !CY.lm.ready || !G.isHuman(p) || !(p.person.conditions || []).length) return '';
+    const rows = CY.lm.readouts(p.id);
+    if (!rows.length) return '';
+    const acts = G.allActionsOf(p);
+    const body = rows.map(r => {
+      const label = U.pickLang(r, 'label') || r.id;
+      if (r.value === null) {
+        const a = r.reveal_by.map(k => acts[k]).find(x => x && !x.selfonly) || r.reveal_by.map(k => acts[k]).find(Boolean);
+        return `<div class="obs"><span class="l">${esc(label)}</span><span class="v mute">${esc(a ? t('obs.measure', { act: a.label }) : t('obs.none'))}</span></div>`;
+      }
+      const num = r.value.toFixed(r.decimals) + (r.unit ? ' ' + r.unit : ''), arrow = r.reveal_by.length || !r.trend ? '' : r.trend > 0 ? ' ↗' : ' ↘';
+      return `<div class="obs"><span class="l">${esc(label)}</span><span class="v obs-${r.tone || 'ok'}"><b>${esc(num)}</b>${arrow} ${esc(U.pickLang(r, 'word'))}</span>${r.reveal_by.length ? '' : spark(r.history, r.scale, 'obs-' + (r.tone || 'ok'))}</div>`;
+    }).join('');
+    return `<h3>${esc(t('obs.title'))}</h3>${body}`;
+  };
+
   /* ---------- 角色的状态和需求 ---------- */
   U.statusDialog = function (pid) {
     const p = G.get(pid); if (!p) return;
@@ -48,11 +72,11 @@
       <h2 style="margin:0 0 4px">${esc(p.person.name)} <span class="pill">${esc(p.person.role || '')}</span></h2>
       <div class="mute">${esc(t('class.' + cls))}${G.isHuman(p) ? ' · ' + esc(t('status.age', { n: +G.age(p).toFixed(1) })) : ''}</div>
       ${G.isHuman(p) || p.person.kind === 'animal' ? `<div class="mute">${esc(t('status.at', { room: t('loc.' + CY.world.locationOf(p).room), likes: Object.entries((p.person.prefs && p.person.prefs.rooms) || CY.world.PREFS[G.classKey(p)] || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => t('loc.' + x[0])).join(t('sep.list')) }))}</div>` : ''}
-      ${G.isHuman(p) || p.person.kind === 'animal' ? `<div class="mute">${esc(t('status.at', { room: t('loc.' + CY.world.locationOf(p).room), likes: Object.entries((p.person.prefs && p.person.prefs.rooms) || CY.world.PREFS[G.classKey(p)] || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => t('loc.' + x[0])).join(t('sep.list')) }))}</div>` : ''}
       <div style="margin:6px 0"><span class="tag">${esc(t('mood.' + st.mood))}</span><span class="tag">${esc(t('act.' + st.activity))}</span>${st.crying ? `<span class="tag">${esc(t('status.crying'))}</span>` : ''}
         ${st.conditions.map(k => `<span class="tag">🩺 ${esc(CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k))}</span>`).join('')}${st.traits.map(k => `<span class="tag">${esc(t('trait.' + k))}</span>`).join('')}</div>
       <div class="srow2"><span class="l">${esc(t('status.mood'))}</span><div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div></div>
       <div class="srow2"><span class="l">${esc(t('status.frailty'))}</span><div class="bar"><i style="width:${Math.round(p.state.frailty * 100)}%"></i></div></div>
+      ${U.observeHtml(p)}
       <h3>${esc(t('status.needs'))}</h3>${bars}
       <h3>${esc(t('status.selfdo', { n: Math.round(st.self_care * 100) }))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
       <div class="row" style="justify-content:space-between;margin-top:12px"><span><button id="stedit">${esc(t('btn.edit'))}</button> <button id="stcard">${esc(t('card.title'))}</button> <button id="starch">${esc(t('btn.archive'))}</button> <button id="stdel">${esc(t('btn.delete'))}</button></span><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);

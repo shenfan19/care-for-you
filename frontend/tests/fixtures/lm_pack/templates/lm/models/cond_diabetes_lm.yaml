@@ -1,0 +1,144 @@
+metadata:
+  name: cond_diabetes_lm
+  version: '1.0'
+  lm_format_version: '1.0'
+  condition: diabetes
+  source: Converted from the LM model "diabetes" by the care_export plugin 0.1.0. Equations, parameters and state variables are the source model's, renamed with the prefix "dmlm_". Needs, readouts, actions and presets come from the recipe.
+  generated: true
+  description: {problem: 2型糖尿病的核心病理是胰岛素分泌不足与胰岛素敏感性下降的双重缺陷，导致餐后血糖长期偏高。血糖控制目标与饮食摄入之间存在直接张力：减少碳水化合物摄入可降低血糖峰值，但过度限制影响能量供应；运动可提升胰岛素敏感性并即时消耗葡萄糖，但与饮食、药物的时序配合至关重要。本模型将血糖调节、胰岛素响应、并发症累积与系统炎症整合在单文件中，描述各机制之间的耦合动态。, result: 默认90天仿真，采用三餐碳水配合隔日有氧运动的方案，显示：在早50g、午70g、晚60g碳水的标准饮食方案下，平均血糖维持在约108 mg/dL，并发症累积评分保持在较低水平。优化结果表明，降低餐食碳水摄入可同时减少平均血糖和并发症评分，但需权衡热量摄入的充足性。, limitations: 参数尚无正式文献来源，12个状态变量的机制系数均为估算值，需要校准。胰岛素动力学高度简化，未包含β细胞功能的不可逆性衰退、黎明现象等临床复杂因素。}
+  ratings: {importance: 0.75 - 糖尿病是全球最重大代谢流行病，综合动力学模型复用价值极高；noref，有import记录但参数质量限制广泛复用, variable: 0.25 - noref标记，12个变量均无文献来源，参数需校准, equation: 0.25 - 参数缺乏文献来源，方程为定性近似，未见独立复现, simulation: 0.5 - 未发现阻断性todo，但未与独立文献目标数值比对, optimization: 0.5 - 决策变量搜索前沿方向合理，未独立验证是否退化, confidence: 0.25 - 未发现阻断性todo，但未与独立文献目标数值比对}
+  supersedes: cond_diabetes
+  source_reviewed: false - Batch-drafted with AI assistance, not yet manually reviewed.
+  source_path: references/medical/disease/metabolic/diabetes_2026.yaml
+variables:
+  dmlm_blood_glucose:
+    description: 血糖浓度
+    value: 95.0
+    unit: mg/dL
+    type: state
+    bounds: [30.0, 600.0]
+  dmlm_fasting_glucose:
+    description: 空腹血糖
+    value: 85.0
+    unit: mg/dL
+    type: state
+    bounds: [50.0, 300.0]
+  dmlm_plasma_insulin:
+    description: 血浆胰岛素
+    value: 8.0
+    unit: μU/mL
+    type: state
+    bounds: [1.0, 300.0]
+  dmlm_insulin_sensitivity:
+    description: 胰岛素敏感性
+    value: 0.75
+    unit: 指数
+    type: state
+    bounds: [0.1, 1.0]
+  dmlm_beta_cell_function:
+    description: β细胞功能
+    value: 0.8
+    unit: 系数
+    type: state
+    bounds: [0.0, 1.0]
+  dmlm_complication_score:
+    description: 并发症综合指数
+    value: 0.0
+    unit: 分
+    type: state
+    bounds: [0.0, 100.0]
+  dmlm_kidney_function:
+    description: 肾功能
+    value: 1.0
+    unit: 系数
+    type: state
+    bounds: [0.1, 1.0]
+  dmlm_inflammation_level:
+    description: 炎症水平
+    value: 1.0
+    unit: 指数
+    type: state
+    bounds: [0.5, 5.0]
+  dmlm_health_score:
+    description: 总体健康评估
+    value: 100.0
+    unit: 分
+    type: state
+    bounds: [0.0, 100.0]
+  dmlm_carb_intake: {description: 碳水摄入, value: 0.0, unit: g, type: input}
+  dmlm_insulin_injection: {description: 胰岛素注射, value: 0.0, unit: U, type: input}
+  dmlm_exercise_intensity: {description: 运动强度, value: 0.0, unit: MET, type: input}
+  dmlm_need_sugar:
+    description: How much the person needs a sugar check, 0 to 1. Generated.
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+equations:
+  dmlm_glucose_dynamics:
+    description: 血糖受摄入与代谢影响
+    step_unit: minute
+    priority: 5
+    dynamics: {dmlm_blood_glucose: dmlm_blood_glucose + (dmlm_carb_intake * 2 - dmlm_blood_glucose * dmlm_insulin_sensitivity * dmlm_plasma_insulin * 0.001 - dmlm_exercise_intensity * 0.5) * step}
+  dmlm_insulin_secret_dynamics:
+    description: 胰岛素随血糖升高而分泌
+    step_unit: minute
+    priority: 5
+    dynamics: {dmlm_plasma_insulin: dmlm_plasma_insulin + (dmlm_blood_glucose - 100) * dmlm_beta_cell_function * 0.05 * step - dmlm_plasma_insulin * 0.1 * step}
+    condition: dmlm_blood_glucose > 100
+  dmlm_damage_dynamics:
+    description: 高血糖累积损伤
+    step_unit: minute
+    priority: 3
+    dynamics: {dmlm_complication_score: dmlm_complication_score + (dmlm_blood_glucose - 180) * 0.01 * step, dmlm_inflammation_level: dmlm_inflammation_level + 0.005 * step}
+    condition: dmlm_blood_glucose > 180
+  dmlm_health_calc:
+    description: 综合健康指数
+    step_unit: minute
+    priority: 1
+    dynamics: {dmlm_health_score: 'max(0, 100 - dmlm_complication_score - abs(dmlm_blood_glucose - 95) * 0.2 - (5 - dmlm_inflammation_level * 10))'}
+  dmlm_need_sugar:
+    description: Need sugar grows at a base rate and faster while the signal is above its comfortable level. Generated.
+    step_unit: hour
+    priority: 1
+    dynamics: {dmlm_need_sugar: 'dmlm_need_sugar + step * 0.05 * speed_sugar * (1.0 + 1.5 * min(1.0, max(0.0, (dmlm_blood_glucose - 110.0) / 110.0))) * (1.0 - 0.7 * asleep)'}
+drives:
+  sugar:
+    state: dmlm_need_sugar
+    lo: 0.0
+    hi: 1.0
+    kinds: [human]
+care:
+  fixed_step_minutes: 1.0
+  schedule:
+  - {var: dmlm_carb_intake, hour: 8.0, minutes: 1.0, value: 50.0}
+  - {var: dmlm_carb_intake, hour: 12.0, minutes: 1.0, value: 70.0}
+  - {var: dmlm_carb_intake, hour: 18.0, minutes: 1.0, value: 60.0}
+  pulses:
+    carb_heavy:
+    - {var: dmlm_carb_intake, total: 35.0, minutes: 30.0}
+    carb_low:
+    - {var: dmlm_carb_intake, total: -25.0, minutes: 30.0}
+  presets:
+    mild:
+      state: {dmlm_insulin_sensitivity: 0.9, dmlm_beta_cell_function: 0.9}
+    moderate:
+      state: {dmlm_insulin_sensitivity: 0.75, dmlm_beta_cell_function: 0.8}
+    advanced:
+      state: {dmlm_insulin_sensitivity: 0.55, dmlm_beta_cell_function: 0.6}
+  default_preset: moderate
+  readouts:
+  - id: glucose
+    label: 血糖
+    label_en: Blood glucose
+    unit: mg/dL
+    scale: [60, 300]
+    reveal_by: [sugar, selfsugar]
+    bands:
+    - {upto: 69, tone: alert, word: 偏低，先吃点东西, word_en: 'Low, have something to eat'}
+    - {upto: 140, tone: ok, word: 很平稳, word_en: Steady}
+    - {upto: 180, tone: watch, word: 稍微高了一点, word_en: A little high}
+    - {tone: alert, word: 偏高，晚饭清淡些, word_en: 'High, keep dinner light'}
+    value: dmlm_blood_glucose
+  effects: {frailty: 0.002 * dmlm_complication_score / 100.0, mood: '-0.02 * max(0.0, (dmlm_blood_glucose - 190.0) / 100.0)'}
+  story: {intro: 糖尿病是慢病，不是急症。重要的是每天的小事：隔一阵测一次血糖，晚饭不要太重。测过血糖，才看得到数字。, intro_en: 'Diabetes is a slow companion, not an emergency. What matters is the small daily things: a check now and then, a dinner that is not too heavy. The number only shows after a check.'}

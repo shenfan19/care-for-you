@@ -1,0 +1,42 @@
+version: 1
+label: 高血压合并痛风
+needs:
+  medicine: {label: 该吃药了, icon: 💊, rate: 0.06}
+  bp: {label: 该量血压了, icon: 🩺, rate: 0.04}
+  lab: {label: 该复查尿酸了, icon: 🧪, rate: 0.03}
+actions:
+  medicine:
+    label: 陪吃药
+    hold: 5
+    min: 5
+    effect: {medicine: -1}
+  bp:
+    label: 量血压
+    hold: 3
+    min: 5
+    effect: {bp: -1}
+  labtest:
+    label: 陪着去抽血化验
+    hold: 8
+    min: 30
+    effect: {lab: -1}
+  selfmed:
+    label: 自己吃药
+    selfonly: true
+    self: [adult, elder]
+    hold: 1
+    min: 3
+    effect: {medicine: -0.8}
+  selfbp:
+    label: 自己量血压
+    selfonly: true
+    self: [adult, elder]
+    hold: 1
+    min: 5
+    effect: {bp: -0.7}
+lines:
+  request:
+    medicine: [药，是不是该吃了？, '{ta}看了看药盒。']
+    bp: [今天还没量血压。, '{ta}揉了揉太阳穴。']
+    lab: [医生说过要复查尿酸。, '{ta}提了一句，脚趾那里有点不舒服。']
+id: htn_gout

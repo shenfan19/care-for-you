@@ -193,3 +193,5 @@ CY.i18n.register("de", {"cred.p3": "Grafik: Kenneys Furniture Kit, Mini Characte
 CY.i18n.register("de", {"corner.eff_tip": "Der Durchschnittszustand des Haushalts liegt bei {n} %, und das ist auch die Arbeitseffizienz des Arbeitenden. Kümmere dich um alle, dich selbst eingeschlossen, dann bleibt das Einkommen hoch. Das Minimum ist 40 %.", "log.meal_all": "Das Essen ist fertig, und alle zu Hause essen mit."});
 CY.i18n.register("de", {"act.sleep": "Schlafen gehen"});
 CY.i18n.register("de", {"selfact.sleep": "{name} ist schlafen gegangen"});
+CY.i18n.register("de", {"cond.sev": "Schweregrad", "cond.sev_mild": "Leicht", "cond.sev_moderate": "Mittel", "cond.sev_advanced": "Fortgeschritten", "obs.title": "Beobachtung", "obs.measure": "Mach einmal „{act}“, um es zu sehen", "obs.none": "Noch nicht sichtbar", "selfact.selfsugar": "{name} hat den Blutzucker gemessen", "act.selfsugar": "Blutzucker allein messen"});
+CY.i18n.register("de", {"import.pack": "Krankheitspaket: {names}, {n} Dateien. Sie kommen in den Vorlagenordner, niemand in deinem Spielstand wird verändert."});

@@ -6,17 +6,29 @@
   const esc = U.esc;
   const $ = id => document.getElementById(id);
   /* ---------- 添加角色 ---------- */
+  /* 数据文件里的文字：中文界面用中文字段，其余语言先用 _en，没有就退回中文 */
+  U.pickLang = (o, k) => (o ? (CY.i18n.lang === 'zh-CN' || CY.i18n.lang === 'zh-TW' ? o[k] : (o[k + '_en'] || o[k])) || '' : '');
   U.archName = id => CY.tOr('arch.' + id, (C.archOf(id) || {}).role || id);
   U.addDialog = function (archId, done, editPid) {
     const O = CY.avatarOptions;
     const editP = editPid && G.get(editPid);
     const arch0 = (editP && C.archOf(editP.person.archetype)) || C.archOf(archId) || C.archetypes[0];
     const st = editP
-      ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
-      : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };
+      ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', sev: (((editP.person.cond_set || {})[(editP.person.conditions || [])[0]]) || {}).severity || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
+      : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', sev: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const GROUPS = ['family', 'animal', 'plant'];
+    /* 有疾病模型的病，显示病情轻重和这种病怎么陪；模型还没载入就先载入，回来再画 */
+    const SEVS = ['mild', 'moderate', 'advanced'];
+    function condStory() {
+      if (!st.cond || !CY.lm) return '';
+      if (!CY.lm.ready) { if (!CY.lm.loading && !CY.lm.error) CY.lm.load().then(() => CY.lm.ready && render()); return ''; }
+      const info = CY.lm.storyOf(st.cond); if (!info) return '';
+      const cur = SEVS.includes(st.sev) ? st.sev : info.default;
+      return `<div class="row">${esc(t('cond.sev'))} ${sel('sev', info.presets, info.presets.map(k => CY.tOr('cond.sev_' + k, k)), cur)}</div>
+        ${info.story ? `<div class="mute stagenote">${esc(U.pickLang(info.story, 'intro'))}</div>` : ''}`;
+    }
     function render() {
       const arch = C.archOf(st.arch), human = arch.species === 'human';
       const archSel = GROUPS.map(g => `<optgroup label="${esc(t('add.group_' + g))}">${C.archetypes.filter(a => a.group === g && !a.hidden && (!editP || a.species === arch0.species)).map(a => `<option value="${a.id}" ${a.id === st.arch ? 'selected' : ''}>${esc(U.archName(a.id))}</option>`).join('')}</optgroup>`).join('');
@@ -29,7 +41,7 @@
           <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])}</div>
           <div class="row">${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.model'))} ${sel('model', ['', ...CY.charKeys], [t('add.model_auto'), ...CY.charKeys.map((k, i) => (i + 1) + (k.startsWith('female') ? ' ♀' : ' ♂'))], look.model || '')}</div>
-          <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>`
+          <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>${condStory()}`
         : `<div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
         ${human && !['infant', 'toddler'].includes(stage) ? `<label class="row"><input type="checkbox" id="ahelper" ${st.helper ? 'checked' : ''}> ${esc(t('add.helper'))}</label>` : ''}
         <div class="row">${esc(t('add.traits'))} <span class="chips inl">${C.TRAITS.map(k => `<button class="chip ${st.traits.includes(k) ? 'on' : ''}" data-tr="${k}" title="${esc(t('trait.' + k + '_tip'))}">${esc(t('trait.' + k))}</button>`).join('')}</span></div>
@@ -46,7 +58,7 @@
       dlg.querySelectorAll('.sw').forEach(s => s.onclick = () => { st.look[s.dataset.k] = s.dataset.k === 'skin' ? +s.dataset.v : s.dataset.v; render(); });
       dlg.querySelectorAll('select[data-s]').forEach(s => s.onchange = () => {
         const k = s.dataset.s;
-        if (k === 'pronoun' || k === 'cond') st[k] = s.value; else st.look[k] = s.value;
+        if (k === 'pronoun' || k === 'cond' || k === 'sev') { st[k] = s.value; if (k === 'cond') st.sev = ''; } else st.look[k] = s.value;
         render();
       });
       const hp = dlg.querySelector('#ahelper'); if (hp) hp.onchange = () => { st.helper = hp.checked; };
@@ -57,12 +69,13 @@
           const first = (editP.person.conditions || [])[0] || '';
           let conds = (editP.person.conditions || []).slice();
           if (st.cond !== first) { conds = conds.filter(c => c !== first); if (st.cond) conds.unshift(st.cond); }
-          await G.updatePerson(editP.id, { arch: st.arch !== arch0.id ? st.arch : undefined, name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, helper: st.helper });
+          const cs = Object.assign({}, editP.person.cond_set); delete cs[first]; if (st.cond && st.sev) cs[st.cond] = { severity: st.sev };
+          await G.updatePerson(editP.id, { arch: st.arch !== arch0.id ? st.arch : undefined, name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, cond_set: cs, helper: st.helper });
           U.closeDialog(); U.afterPeopleChange(); done && done(true);
           return;
         }
         const a = C.archOf(st.arch), role = U.archName(a.id);
-        await G.createPerson({ arch: a.id, name: st.name.trim() || role, name_auto: st.name.trim() && st.name.trim() !== role ? undefined : a.id, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], helper: st.helper });
+        await G.createPerson({ arch: a.id, name: st.name.trim() || role, name_auto: st.name.trim() && st.name.trim() !== role ? undefined : a.id, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], cond_set: st.cond && st.sev ? { [st.cond]: { severity: st.sev } } : undefined, helper: st.helper });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }

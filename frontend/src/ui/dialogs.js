@@ -111,6 +111,16 @@
       const f = e.target.files[0], out = dlg.querySelector('#vimp'); if (!f) return;
       const info = await A.inspect(await f.arrayBuffer());
       if (!info.ok) { out.innerHTML = `<div class="warn">${esc(t('import.err_' + info.error))}</div>`; return; }
+      if (info.kind === 'pack') {
+        out.innerHTML = `<div class="card"><div>${esc(t('import.pack', { names: info.conditions.join(t('sep.list')), n: Object.keys(info.files).length }))}</div><div class="row"><button id="igo" class="primary">${esc(t('import.go'))}</button></div></div>`;
+        out.querySelector('#igo').onclick = async () => {
+          const n = await A.apply(info, 'merge');
+          if (CY.lm) { CY.lm.ready = false; CY.lm.error = null; }
+          G.stop(); await G.load(); G.start(); if (CY.lm) await CY.lm.load(); U.afterPeopleChange();
+          out.innerHTML = `<div class="ok">${esc(t('import.done', { n }))}</div>`;
+        };
+        return;
+      }
       const m = info.manifest;
       out.innerHTML = `<div class="card"><div>${esc(t('import.found', { n: info.people.length, names: info.people.map(p => p.name).join(t('sep.list')) || '-' }))}</div>
         ${m ? `<div class="mute">${esc(t('import.manifest', { v: m.version, at: (m.created || '').slice(0, 16).replace('T', ' ') }))}</div>` : ''}

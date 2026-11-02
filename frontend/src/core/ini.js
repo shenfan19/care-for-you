@@ -5,6 +5,7 @@
     ['interrupt', 'countdown_seconds', '25', '提醒和问答的倒计时秒数，到时没赶上，能自理的自己处理，没有惩罚'],
     ['time', 'daynight', 'auto', 'auto 用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
     ['play', 'backend_provider', 'builtin', 'builtin 是内置后端，规则和台词都在数据文件夹的明文 YAML 里；lm 是内置的数值积分后端，在浏览器里直接积分需求，心情，虚弱度，模型在 templates/lm，实验阶段；http 是把状态发给一个远程后端'],
+    ['play', 'condition_models', 'true', '为 true 时，得了病的角色，其疾病部分由浏览器里的积分引擎按 templates/lm/models 里的疾病模型计算，并在状态窗口里显示读数；没有疾病模型的角色不受影响。关掉就退回纯概率表'],
     ['play', 'backend_url', '', '远程后端的地址，只在 backend_provider 为 http 时用。发出去的只有状态快照，不含名字'],
     ['play', 'backend_timeout', '4000', '远程后端的超时，毫秒'],
     ['play', 'backend_send_names', 'false', '为 true 时，发给远程后端的快照里带角色的名字。默认不带'],

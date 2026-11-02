@@ -105,6 +105,11 @@
         try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
       }
     }
+    /* 疾病模型：metadata.version 比文件里新就覆盖 */
+    for (const p in seed) {
+      if (!/^templates\/lm\/models\/[^/]+\.yaml$/.test(p) || !files.includes(p)) continue;
+      try { const ver = d => parseFloat((d && (d.version || (d.metadata || {}).version)) || 1), cur = jsyaml.load(await store.read(p)) || {}; if (ver(cur) < ver(jsyaml.load(seed[p]))) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
+    }
     G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {} };
     for (const p of files) {
       const m = p.match(/^templates\/(species|conditions)\/([^/]+)\.yaml$/);
@@ -180,6 +185,7 @@
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
     };
     if (spec.name_auto) person.name_auto = spec.name_auto;
+    if (spec.cond_set && Object.keys(spec.cond_set).length) person.cond_set = JSON.parse(JSON.stringify(spec.cond_set));
     if (spec.arch) { person.card = spec.arch; if (Object.keys(person.lines).length) person.lines_lang = 'zh-CN'; }
     const hp = arch.help || {};
     if (human) person.helper = typeof spec.helper === 'boolean' ? spec.helper : !!hp.proactive;
@@ -223,6 +229,7 @@
     if (Array.isArray(patch.traits)) o.traits = patch.traits.slice(0, 2);
     if (typeof patch.helper === 'boolean') o.helper = patch.helper;
     if (Array.isArray(patch.conditions)) o.conditions = patch.conditions.slice();
+    if (patch.cond_set !== undefined) { if (patch.cond_set && Object.keys(patch.cond_set).length) o.cond_set = JSON.parse(JSON.stringify(patch.cond_set)); else delete o.cond_set; }
     if (G.isHuman(p) && typeof patch.age === 'number') {
       o.age = Math.round(patch.age);
       if (CHILDLIKE.includes(o.voice)) o.voice = CY.content.STAGE_VOICE[CY.content.stageOf(o.age)] || o.voice;
@@ -505,8 +512,13 @@
   const itemForNeed = (p, k) => (k === 'hunger' ? foodOf(p) : (G.tpl.items.for_need || {})[k]);
 
   /* 把一个动作的效果加到角色身上，scale 是效果的比例。玩家做和角色自己做都走这里 */
+  /* 动作和选择带来的输入，攒着，下一次向积分引擎要状态时一起带过去 */
+  const pulseBox = {};
+  G.pulse = (pid, key) => { if (key) (pulseBox[pid] = pulseBox[pid] || []).push(String(key)); };
+  G.takePulses = pid => { const l = pulseBox[pid] || []; delete pulseBox[pid]; return l; };
   function applyEffects(p, a, scale) {
     const s = p.state, mods = G.traitMods(p);
+    G.pulse(p.id, a.id);
     for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] < 0 ? (mods.effect[k] || 1) : 1));
     if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
   }
@@ -873,6 +885,7 @@
   function applyChoice(p, c, auto) {
     p.state.mood = clamp(p.state.mood + (c.mood || 0));
     p.state.frailty = clamp(p.state.frailty + (c.frailty || 0));
+    if (c.pulse) G.pulse(p.id, c.pulse);
     const reply = G.fmt(c.reply, p);
     G.toastFor(p, reply, 'speech'); G.say(p.id, 'char', reply);
     G.logK(p.id, 'event', auto ? 'log.dinner_auto' : 'log.dinner', { name: p.person.name, label: c.label, reply });

@@ -193,3 +193,5 @@ CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit, Mini
 CY.i18n.register("ko", {"corner.eff_tip": "집 전체의 평균 상태는 {n}%이며, 일하는 사람의 업무 효율이기도 합니다. 자신을 포함해 모두를 돌보면 수입이 높게 유지됩니다. 최저는 40%입니다.", "log.meal_all": "식사가 준비되어 집에 있는 모두가 먹었다."});
 CY.i18n.register("ko", {"act.sleep": "자러 가기"});
 CY.i18n.register("ko", {"selfact.sleep": "{name}이(가) 자러 갔다"});
+CY.i18n.register("ko", {"cond.sev": "증상 정도", "cond.sev_mild": "가벼움", "cond.sev_moderate": "보통", "cond.sev_advanced": "심함", "obs.title": "관찰", "obs.measure": "「{act}」을(를) 한 번 하면 볼 수 있어요", "obs.none": "아직 볼 수 없어요", "selfact.selfsugar": "{name}이(가) 스스로 혈당을 쟀다", "act.selfsugar": "혼자 혈당 재기"});
+CY.i18n.register("ko", {"import.pack": "질병 팩: {names}, 파일 {n}개. 템플릿 폴더에만 넣고 저장 데이터 속 인물은 건드리지 않습니다."});

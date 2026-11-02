@@ -1,0 +1,204 @@
+metadata:
+  name: cond_htn_gout_lm
+  version: '1.0'
+  lm_format_version: '1.0'
+  condition: htn_gout
+  source: Converted from the LM model "hypertension_gout" by the care_export plugin 0.1.0. Equations, parameters and state variables are the source model's, renamed with the prefix "htgo_". Needs, readouts, actions and presets come from the recipe.
+  generated: true
+  description: {problem: 高血压合并痛风是一种在临床上极为常见的共病组合，然而两病的标准治疗方案之间存在直接冲突。噻嗪类利尿剂，例如氢氯噻嗪，是高血压一线用药，可显著降低收缩压，但同时会升高血尿酸约60至80 μmol/L，直接对抗痛风控制目标，即尿酸应低于360 μmol/L。减重是对两病均有益的干预，但减重过快时体内酮体会竞争尿酸的肾小管排泄，反而导致尿酸一过性升高。没有单一干预能同时满足两套指南的目标，权衡必须通过量化来实现。, result: 默认90天仿真显示，使用12.5 mg氢氯噻嗪配合每日800mg嘌呤摄入时，收缩压从158 mmHg降至约155.0 mmHg，血尿酸从480升至约489.1 μmol/L，仍高于ACR指南目标360 μmol/L。这两个数字与2026-08-12修复前记录的151/420不同，是因为修复前HCTZ剂量效应直接读取瞬时给药量，修复后改读一阶药代衰减状态thiazide_level，两种机制的稳态换算关系不同，不是同一个模型的重新标定，见limitations。优化结果展示了降压剂量与尿酸升高之间的权衡曲线：剂量越大，降压效果越好，同时尿酸风险越高，不存在同时达标的方案。, limitations: 血压与尿酸动力学均采用一阶线性趋近模型，基于稳态假设，真实药物效应存在非线性饱和与个体差异。未涵盖别嘌醇等降尿酸药物的联合治疗场景，也未建模痛风急性发作的触发与消退过程。thiazide_level对血压/尿酸的效应系数（0.4 mmHg/mg、2.8 μmol/L/mg）延续修复前对瞬时剂量的标定，未针对衰减态的稳态量级重新校准，是2026-08-12修复遗留的简化，后续如需更精确的量效关系应重新标定这两个系数。weight_loss_rate声明为决策/约束变量但当前simulation.plans与optimization.startpoint均未提供驱动它的regimen，实际仿真中恒为0，减重相关机制目前不可复现，这是修复前就存在的、本次未处理的建模缺口。}
+  ratings: {importance: 0.75 - 药物冲突问题临床高发，被 A5 系列多次引用，患者群体庞大；被A5系列多次引用，跨科室冲突场景核心组件, variable: 0.75 - ESC/ACR 双指南支撑，HCTZ 效应系数有文献来源, equation: 0.5 - 自建方程锚定文献机制方向，非独立复现的标准形式, simulation: 0.5 - 未发现阻断性todo，但未与独立文献目标数值比对, optimization: 0.75 - ESC/ACR双指南支撑噻嗪类利尿剂降压升尿酸的真实权衡，2026-09-04完整预算(pop80/gen120)验证前沿连续单调非退化, confidence: 0.25 - 未发现阻断性todo，但未与独立文献目标数值比对}
+  source_reviewed: false - Batch-drafted with AI assistance, not yet manually reviewed.
+  source_path: references/medical/disease/chronic/hypertension_gout_2026.yaml
+parameters: {htgo_bp_baseline: 158.0, htgo_ua_baseline: 480.0, htgo_body_weight_ref: 90.0, htgo_k_thiazide_decay: 0.0693}
+variables:
+  htgo_systolic_bp:
+    description: '收缩压（mmHg）。基线158mmHg（高血压2级合并痛风患者典型值）。
+
+      目标：ESC 2018指南 <130 mmHg。
+
+      干预：噻嗪类利尿剂（降压）、减肥（降压）。'
+    value: 158.0
+    unit: mmHg
+    type: state
+    bounds: [90.0, 200.0]
+  htgo_uric_acid:
+    description: '血尿酸（μmol/L）。基线480μmol/L（痛风患者，正常上限420男性/360女性）。
+
+      目标：ACR 2020指南 <360 μmol/L（预防痛风发作）。
+
+      干预矛盾：噻嗪类升高尿酸；减肥降低尿酸；快速减重升高尿酸（酮体竞争）；
+
+      低嘌呤饮食降低尿酸。'
+    value: 480.0
+    unit: μmol/L
+    type: state
+    bounds: [100.0, 900.0]
+  htgo_body_weight:
+    description: 体重（kg）。基线90kg（超重，BMI约29）。减重对BP和UA均有正面效应，但速度受限。
+    value: 90.0
+    unit: kg
+    type: state
+    bounds: [40.0, 150.0]
+  htgo_goal_score:
+    description: '双目标达标综合评分（0-100）。
+
+      BP得分：systolic_bp从158→120线性映射到0→50分；
+
+      UA得分：uric_acid从480→250线性映射到0→50分；
+
+      满分100 = 两个指南目标均完美达标。'
+    value: 0.0
+    unit: 分
+    type: state
+    bounds: [0.0, 100.0]
+  htgo_thiazide_level:
+    description: HCTZ 体内有效水平（一阶药代衰减状态，半衰期≈10h，Beermann & Groschinsky-Grind 1977）。 2026-08-12 新增：此前 bp_dynamics/ua_dynamics 直接读取瞬时 diuretic_dose 作为弛豫目标 的一部分，diuretic_dose 由 regimen 单点脉冲投放（仅在给药那一刻非零），本文件此前用 day 粒度仿真（simulation.step_size=1day）恰好让每日一次脉冲和每日一步的仿真步长 重合，才没有暴露问题；一旦换成更细的仿真粒度（如本仓库 papers/s4_computational_decision_layer/hypertension_gout 同名模型最初就踩过的坑），瞬时剂量在弛豫方程里会被大部分步的"0"读数抵消，药效几乎 消失。改为脉冲先累加进这个衰减状态、bp_dynamics/ua_dynamics 改读该状态，结构复用 papers/s4_computational_decision_layer/hypertension_gout_sim.yaml 已验证过的设计，同时把本文件的仿真粒度从 day 改为 hour，让这一衰减动态本身也得到合理精度的积分。
+    value: 0.0
+    unit: mg
+    type: state
+    bounds: [0.0, 100.0]
+  htgo_diuretic_dose: {description: '氢氯噻嗪（HCTZ）单次剂量（mg）。
+
+      降压效果：25mg → 收缩压降低约10 mmHg（Law 2003）；剂量-效应线性假设。
+
+      尿酸代价：25mg → 尿酸升高约70 μmol/L（Gurwitz 1992）。
+
+      临床推荐范围：12.5-25 mg/day（ESC 2018，指每日一次给药）。
+
+      2026-08-12 起不再被 bp_dynamics/ua_dynamics 直接读取，见 thiazide_level。', value: 0.0, unit: mg, type: input}
+  htgo_purine_intake: {description: '每日嘌呤摄入水平（mg，代表持续的饮食习惯而非单次给药事件）。
+
+      高嘌呤食物：内脏（肝/肾/脑），贝类，红肉 → 每100g约150-1000mg嘌呤。
+
+      低嘌呤目标：<500 mg/日（ACR 2020建议）。
+
+      参考基线：普通饮食约1000 mg/日（Choi 2005）。
+
+      每降低500mg嘌呤 → 尿酸降低约30 μmol/L（Choi 2005数据估算）。
+
+      2026-08-12：regimen 改为全天窗口 + delivery:level（见 simulation.plans），
+
+      使这一读数在任意仿真粒度下都保持恒定，不是需要衰减态缓冲的离散给药事件——
+
+      饮食习惯是"当前持续设定"，不是"单次投放的量"，两者需要不同的建模处理，
+
+      不能套用 diuretic_dose 那种脉冲+衰减态的修法。', value: 1000.0, unit: mg, type: input}
+  htgo_weight_loss_rate: {description: '当前减重速率设定（kg/日，代表持续的饮食/运动方案而非单次事件）。
+
+      正面效应：减重1kg → 收缩压降低约1 mmHg（Neter 2003）；同时降低尿酸。
+
+      负面效应（快速减重>0.071 kg/日，即>0.5 kg/周）：酮体在肾小管竞争尿酸排泄 →
+
+      尿酸反而升高（Fam 2005）。
+
+      ACR 2020推荐：≤0.071 kg/日（≤0.5 kg/周，避免痛风急性发作）。
+
+      约束：0-0.143 kg/日（对应≤1.0 kg/周）。
+
+      2026-08-12：regimen 改为全天窗口 + delivery:level，理由同 purine_intake。', value: 0.0, unit: kg, type: input}
+  htgo_need_bp:
+    description: How much the person needs a bp check, 0 to 1. Generated.
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  htgo_need_lab:
+    description: How much the person needs a lab check, 0 to 1. Generated.
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+equations:
+  htgo_thiazide_level_dynamics:
+    description: HCTZ体内水平：给药脉冲累加，按一阶消除速率常数衰减，供bp_dynamics/ua_dynamics读取。 priority设为全文件最高，确保同一step内bp_dynamics/ua_dynamics读到的是本step更新后的值。
+    step_unit: hour
+    priority: 10
+    dynamics: {htgo_thiazide_level: htgo_thiazide_level + htgo_diuretic_dose - htgo_k_thiazide_decay * htgo_thiazide_level * step}
+  htgo_bp_dynamics:
+    description: 收缩压向目标值的一阶动力学趋近（τ=14天）。 target_SBP = 基线 - HCTZ效应(10mmHg/25mg，改读thiazide_level衰减态) - 减重效应(1mmHg/kg)。 来源：Law 2003 (HCTZ); Neter 2003 (减重)。2026-08-12：τ=14天换算为小时等效值须用 ADR 0121类型B开根公式（本项是"状态-目标"弛豫项）：k_day=1/14≈0.07143， k_hour=1-(1-k_day)^(1/24)≈0.0030831。系数0.4（mmHg/mg）延续原始标定，代表 thiazide_level这个衰减态量级下的降压效力，与真实瞬时剂量的对应关系未重新校准， 是本次改动遗留的简化，与本文件已声明的"一阶线性趋近模型"限制同一性质。
+    step_unit: hour
+    priority: 7
+    dynamics: {htgo_systolic_bp: 'htgo_systolic_bp + (htgo_bp_baseline - htgo_thiazide_level * 0.4 - max(0.0, htgo_body_weight_ref - htgo_body_weight) * 1.0 - htgo_systolic_bp) * 0.0030831 * step'}
+  htgo_ua_dynamics:
+    description: 血尿酸向目标值的一阶动力学趋近（τ=14天）。 target_UA = 基线 + HCTZ效应(+70μmol/L per 25mg，改读thiazide_level衰减态) + 饮食效应((purine-1000)×0.06) + 快速减重惩罚。 快速减重惩罚：max(0, weight_loss_rate - 0.5) × 50 μmol/L（Fam 2005）。 来源：Gurwitz 1992 (HCTZ); Choi 2005 (饮食); Fam 2005 (减重)。2026-08-12： τ换算同bp_dynamics；purine_intake/weight_loss_rate在这里是瞬时读数用于计算目标值， 不是被累加进状态，不需要单独乘step——真正需要按ADR 0121类型B换算的只有τ=14天这一项。
+    step_unit: hour
+    priority: 7
+    dynamics: {htgo_uric_acid: 'htgo_uric_acid + (htgo_ua_baseline + htgo_thiazide_level * 2.8 + (htgo_purine_intake - 1000.0) * 0.06 + max(0.0, htgo_weight_loss_rate - 0.0714) * 350.0 - htgo_uric_acid) * 0.0030831 * step'}
+  htgo_weight_dynamics:
+    description: 体重按当前减重速率设定线性下降（安全约束：≤0.143 kg/日，即≤1.0 kg/周）。 2026-08-12：weight_loss_rate 的 regimen 改为全天窗口+delivery:level（详见该变量 description），本方程需要相应补上 *step 才能正确积分——此前"不乘step"是配合单点脉冲 regimen 在day粒度仿真下的写法，两处必须同步修改，不能只改其中一处。
+    step_unit: day
+    priority: 5
+    dynamics: {htgo_body_weight: 'max(50.0, htgo_body_weight - htgo_weight_loss_rate * step)'}
+    condition: htgo_weight_loss_rate > 0.0
+  htgo_goal_score_calc:
+    description: 双指南达标综合评分。BP目标<130（ESC 2018）；UA目标<360（ACR 2020）。 满分100=两个目标均完美达标。
+    step_unit: day
+    priority: 1
+    dynamics: {htgo_goal_score: 'max(0.0, min(50.0, (htgo_bp_baseline - htgo_systolic_bp) / (htgo_bp_baseline - 120.0) * 50.0)) + max(0.0, min(50.0, (htgo_ua_baseline - htgo_uric_acid) / (htgo_ua_baseline - 250.0) * 50.0))'}
+  htgo_need_bp:
+    description: Need bp grows at a base rate and faster while the signal is above its comfortable level. Generated.
+    step_unit: hour
+    priority: 1
+    dynamics: {htgo_need_bp: 'htgo_need_bp + step * 0.04 * speed_bp * (1.0 + 1.5 * min(1.0, max(0.0, (htgo_systolic_bp - 130.0) / 35.0))) * (1.0 - 0.7 * asleep)'}
+  htgo_need_lab:
+    description: Need lab grows at a base rate and faster while the signal is above its comfortable level. Generated.
+    step_unit: hour
+    priority: 1
+    dynamics: {htgo_need_lab: 'htgo_need_lab + step * 0.03 * speed_lab * (1.0 + 1.5 * min(1.0, max(0.0, (htgo_uric_acid - 420.0) / 120.0))) * (1.0 - 0.7 * asleep)'}
+drives:
+  bp:
+    state: htgo_need_bp
+    lo: 0.0
+    hi: 1.0
+    kinds: [human]
+  lab:
+    state: htgo_need_lab
+    lo: 0.0
+    hi: 1.0
+    kinds: [human]
+care:
+  fixed_step_minutes: 60.0
+  step_scale: {htgo_bp_dynamics: 24.0, htgo_ua_dynamics: 24.0}
+  schedule:
+  - {var: htgo_purine_intake, hour: 0.0, minutes: 1440, value: 800.0, delivery: level}
+  pulses:
+    medicine:
+    - {var: htgo_diuretic_dose, total: 12.5, minutes: 60.0}
+    selfmed:
+    - {var: htgo_diuretic_dose, total: 12.5, minutes: 60.0}
+  presets:
+    mild:
+      params: {htgo_bp_baseline: 146.0, htgo_ua_baseline: 440.0}
+      state: {htgo_systolic_bp: 146.0, htgo_uric_acid: 440.0}
+    moderate:
+      params: {htgo_bp_baseline: 158.0, htgo_ua_baseline: 480.0}
+      state: {htgo_systolic_bp: 158.0, htgo_uric_acid: 480.0}
+    advanced:
+      params: {htgo_bp_baseline: 172.0, htgo_ua_baseline: 540.0}
+      state: {htgo_systolic_bp: 172.0, htgo_uric_acid: 540.0}
+  default_preset: moderate
+  readouts:
+  - id: bp
+    label: 血压
+    label_en: Blood pressure
+    unit: mmHg
+    scale: [100, 200]
+    reveal_by: [bp, selfbp]
+    bands:
+    - {upto: 129, tone: ok, word: 很平稳, word_en: Steady}
+    - {upto: 149, tone: watch, word: 稍微高了一点, word_en: A little high}
+    - {tone: alert, word: 偏高，今天少盐, word_en: 'High, go easy on salt today'}
+    value: htgo_systolic_bp
+  - id: uric
+    label: 尿酸
+    label_en: Uric acid
+    unit: μmol/L
+    scale: [250, 700]
+    reveal_by: [labtest]
+    bands:
+    - {upto: 420, tone: ok, word: 在正常范围, word_en: In the normal range}
+    - {upto: 540, tone: watch, word: 有点偏高, word_en: A bit high}
+    - {tone: alert, word: 偏高，注意饮食, word_en: 'High, watch the diet'}
+    value: htgo_uric_acid
+  effects: {frailty: '0.002 * max(0.0, htgo_systolic_bp - 140.0) / 20.0'}
+  story: {intro: 血压和尿酸要同时照顾，吃药降了血压，尿酸却可能升高。所以每隔一阵量血压，再陪着去化验一次尿酸，两个数字一起看。, intro_en: 'Blood pressure and uric acid have to be watched together: the pill that lowers the pressure can raise the uric acid. So check the pressure now and then, and go for the blood test now and then, and read both numbers.'}

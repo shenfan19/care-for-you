@@ -190,6 +190,8 @@ Each directive in the directives of a drive response has an op and a person. op 
 | frailty | Frailty, 0 to 1, 1 is most frail, four decimals |
 | needs | Needs: keys are need names, values 0 to 1, 1 is most urgent, four decimals. Different species have different needs, and conditions add needs |
 | conditions | Array of condition ids |
+| cond_set | Per-condition settings the player chose, for example { "diabetes": { "severity": "advanced" } }. Empty object when none |
+| pulses | Tick snapshots only: the ids of the actions and story choices done since the last tick, for example ["sugar", "carb_heavy"]. Taken once, the next tick starts empty. A model may turn them into inputs |
 | traits | Array of trait ids, at most two |
 | voice | Voice id |
 | flags | Timed flags: keys are flag names, values have until (game minutes), value, place, room, mode |
@@ -228,6 +230,38 @@ Besides the HTTP backend, the game page offers its own read and write interface,
 ## Character cards
 
 Data folder templates/cards/card-id.yaml, one per typical kind of character. Fields: id, label, group, species, age, stage, pronoun, voice, look, traits, health (score, mood, conditions), class (urgency, self_care, nag, cries), need_rate (need rate multipliers), self_actions, help (proactive, efficiency, interval), dialogue (voice, lines). The card in a snapshot is the card id. A backend can read all cards with CY.api.cards().
+
+## Disease models
+
+A condition (diabetes, high blood pressure, arthritis, low mood) can carry a model: a small LM-format YAML file that the game integrates in the browser, so that the person's numbers follow from what the carers do and what the day looks like. The same files can be written by hand or produced from a Life Matters model by the care_export plugin of the LM Reference Engine.
+
+- Where: data folder templates/lm/models. A file whose metadata.condition names a condition is used only for people who have that condition. The four shipped ones are frontend/src/data/lm/cond_*.yaml, and tools/build_lm_seed.py bundles them into lm_seed.js.
+- Switch: settings play.condition_models, true by default. With backend_provider builtin, only the disease part of people who have a model is integrated and everything else stays with the built-in backend. With backend_provider lm the same models run next to the other LM models. A remote backend (http) is not touched.
+- Replacement: metadata.supersedes names the models this one replaces, so a model converted from Life Matters can take the place of the hand-written one for the same condition. Files with a newer metadata.version overwrite the older file in the data folder.
+
+### What a model file may contain
+
+LM format as read by the LM Reference Engine: parameters (or variables of type parameter), variables of type state and input, auxiliary, equations with step_unit second, minute, hour or day, an optional condition, a priority and dynamics. Expressions are the Python subset min, max, abs, exp, log, sqrt, pow, floor, tanh, sin, cos, if else, and, or, not, comparisons, ** and %. Names the game provides: step, hour, asleep, awake, age, health, inpatient, is_human, mood_now, need_max, mood_offset, frailty_vuln, n_<need> (the need now, 0 to 1), speed_<need> (the person's rate multiplier) and has_<condition>.
+
+Two sections are the game's own:
+
+| Section | Meaning |
+| --- | --- |
+| drives | need name to { state, lo, hi, kinds }: the state variable is the need, scaled from lo..hi to 0..1. A declared need is no longer grown by the game. A need that two conditions both have, such as medicine, is best left to the game; models read it as n_medicine |
+| care.fixed_step_minutes | The model runs on its own clock with this step, as in LM. Inputs are spread over the steps of a window, and equations that add an input without multiplying by step are exact. Without it the model runs on substeps of at most care.max_step_minutes (default 15) |
+| care.step_scale | Equation name to factor: this equation takes factor times longer steps, so a process that takes weeks can happen in a game day |
+| care.schedule | Daily inputs: { var, hour, minutes, value, delivery?: total or level, days? }. total is spread over the window, level holds the value during the window and replaces the default. days uses 0 for Sunday |
+| care.pulses | Care action id or story choice key to a list of { var, add } (add to a state) or { var, total, minutes } (an input window starting now) |
+| care.presets, default_preset | Severity levels: parameters and starting state overridden when the player picks mild, moderate or advanced |
+| care.readouts | What the player may observe: { id, label, label_en, value (an expression), unit, scale, decimals, reveal_by, bands }. A readout with reveal_by shows nothing until one of those actions is done, then shows the value of that moment. bands is a list of { upto, tone: ok, watch or alert, word, word_en }, the last one without upto |
+| care.effects | Per hour rates for mood and frailty, expressions in the model's variables. They are added as ordinary mood and frailty increments, so the game's own rules keep pulling back and a model can only lean on them gently |
+| care.story | intro and intro_en, shown when the condition is chosen |
+
+Running a model needs no server: frontend/lab.html loads the same engine, lets you edit a model file in the page and see the curves for a chosen daily routine, and node frontend/tests/cond_sim.js diabetes 7 moderate care prints the same from a terminal. frontend/tests/cond_test.js checks the engine, the shipped models and the converted fixtures.
+
+### From Life Matters
+
+The plugin plugins/care_export in the LM Reference Engine repository converts an LM model with a recipe file and writes a pack: the renamed model, a condition template when the game does not have the condition yet, and a zip that the import dialog in the game's save settings accepts. The converted model reproduces the LM engine's numbers, and the game's engine reproduces the plugin's evaluator exactly; tests/fixtures/lm_pack holds a pack and the numbers the plugin's evaluator gives for it.
 
 ## Writing your own backend: checklist
 

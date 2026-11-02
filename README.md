@@ -40,7 +40,7 @@ Python 3 is only needed if you want to run one of the optional backends below.
 
 ## Documentation
 
-Mechanics that matter to players and people writing backends are described in `docs`. Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
+Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
 
 ## Data and privacy
 

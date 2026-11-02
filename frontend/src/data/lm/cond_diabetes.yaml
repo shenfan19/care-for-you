@@ -1,0 +1,170 @@
+metadata:
+  name: cond_diabetes
+  version: "1.0"
+  lm_format_version: "1.0"
+  condition: diabetes
+  source: Care for You 手写的二型糖尿病基础模型，结构参照 Life Matters 的 diabetes 与 diabetes_core，数值按游戏的节奏取
+  description:
+    problem: |
+      一个得了二型糖尿病的家人，餐后血糖上去，靠胰岛素敏感性和药把它压回来。照顾的人能做的是陪吃药，测血糖，晚饭时帮着选吃什么。
+    method: |
+      - 血糖 dm_glucose 受三餐碳水推高，按敏感性乘药效的速率回落到基线，基线里含肝脏每小时释放的一份。
+      - 药效 dm_med 吃一次加 1，半衰期约十小时，药效越高敏感性越高。
+      - 近三天平均 dm_avg 是血糖的慢平均，时间常数 72 小时，相当于游戏时间尺度上的糖化指标。
+      - 长期负担 dm_strain 在平均血糖超过 150 时累积，缓慢恢复，只通过 effects 轻轻拉高虚弱度和压低心情。
+      - 该测血糖了 dm_check_debt 是游戏里 sugar 需求的状态，平均血糖越高涨得越快。
+    limitations: |
+      - 没有胰岛素分泌的显式动力学，把分泌缺陷和敏感性下降合并进敏感性一个参数。
+      - 没有低血糖，药效不会把血糖压到 70 以下。
+      - 时间尺度是游戏时间，不是真实的月和年，长期并发症只用 dm_strain 一个指标表示。
+  ratings:
+    importance: 0.75 - 糖尿病是最常见的需要家人照看的慢病之一
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一室线性清除加三餐输入
+    simulation: 0.5 - 餐后峰值、空腹基线落在临床常见范围
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  dm_sens: 0.45
+  dm_g0: 95.0
+  dm_hgp: 12.0
+  dm_k_carb: 2.0
+  dm_k_clear: 0.6
+  dm_med_gain: 0.8
+  dm_tau_med_h: 14.0
+  dm_tau_avg_h: 72.0
+  dm_strain_thr: 150.0
+  dm_k_strain: 0.004
+  dm_k_heal: 0.002
+  dm_k_check: 0.05
+  dm_f_gain: 0.003
+  dm_m_gain: 0.02
+
+variables:
+  dm_glucose:
+    description: 血糖。
+    value: 140.0
+    unit: mg/dL
+    type: state
+    bounds: [70.0, 400.0]
+  dm_med:
+    description: 药效水平，吃一次药加 1。
+    value: 0.5
+    unit: index
+    type: state
+    bounds: [0.0, 1.5]
+  dm_avg:
+    description: 近三天平均血糖。
+    value: 140.0
+    unit: mg/dL
+    type: state
+    bounds: [70.0, 400.0]
+  dm_strain:
+    description: 长期负担，0 到 1。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  dm_check_debt:
+    description: 想测血糖的程度，对应游戏里的 sugar 需求。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  dm_carbs:
+    description: 碳水摄入，按每小时的量给。
+    value: 0.0
+    unit: g
+    type: input
+
+auxiliary:
+  dm_sens_eff: "dm_sens * (1.0 + dm_med_gain * min(1.0, dm_med))"
+
+equations:
+  dm_glucose_dynamics:
+    description: 碳水推高血糖，敏感性乘药效决定回落的速度。
+    priority: 40
+    step_unit: hour
+    dynamics:
+      dm_glucose: "dm_glucose + step * (max(0.0, dm_carbs) * dm_k_carb + dm_hgp - dm_k_clear * dm_sens_eff * (dm_glucose - dm_g0))"
+  dm_med_dynamics:
+    description: 药效指数衰减。
+    priority: 41
+    step_unit: hour
+    dynamics:
+      dm_med: "dm_med * exp(-step / dm_tau_med_h)"
+  dm_avg_dynamics:
+    description: 近三天平均血糖。
+    priority: 39
+    step_unit: hour
+    dynamics:
+      dm_avg: "dm_avg + (dm_glucose - dm_avg) * (1.0 - exp(-step / dm_tau_avg_h))"
+  dm_strain_dynamics:
+    description: 平均血糖超限时累积负担，平时慢慢恢复。
+    priority: 38
+    step_unit: hour
+    dynamics:
+      dm_strain: "dm_strain + step * (dm_k_strain * max(0.0, dm_avg - dm_strain_thr) / 100.0 - dm_k_heal * dm_strain)"
+  dm_check_dynamics:
+    description: 想测血糖的程度，睡觉时涨得慢，平均血糖高时涨得快。
+    priority: 37
+    step_unit: hour
+    dynamics:
+      dm_check_debt: "dm_check_debt + step * dm_k_check * speed_sugar * (1.0 + 1.5 * min(1.0, max(0.0, (dm_avg - 140.0) / 100.0))) * (1.0 - 0.7 * asleep)"
+
+drives:
+  sugar: { state: dm_check_debt, lo: 0.0, hi: 1.0, kinds: [human] }
+
+care:
+  max_step_minutes: 5
+  default_preset: moderate
+  presets:
+    mild:
+      params: { dm_sens: 0.7 }
+      state: { dm_glucose: 125.0, dm_avg: 125.0 }
+    moderate:
+      params: { dm_sens: 0.45 }
+      state: { dm_glucose: 140.0, dm_avg: 140.0 }
+    advanced:
+      params: { dm_sens: 0.3 }
+      state: { dm_glucose: 165.0, dm_avg: 165.0 }
+  schedule:
+    - { var: dm_carbs, hour: 7.5, minutes: 30, value: 45.0 }
+    - { var: dm_carbs, hour: 12.0, minutes: 30, value: 60.0 }
+    - { var: dm_carbs, hour: 18.5, minutes: 30, value: 60.0 }
+  pulses:
+    medicine: [{ var: dm_med, add: 1.0 }]
+    selfmed: [{ var: dm_med, add: 1.0 }]
+    carb_heavy: [{ var: dm_carbs, total: 25.0, minutes: 30 }]
+    carb_low: [{ var: dm_carbs, total: -20.0, minutes: 30 }]
+  readouts:
+    - id: glucose
+      label: 血糖
+      label_en: Blood glucose
+      value: dm_glucose
+      unit: mg/dL
+      scale: [60, 300]
+      reveal_by: [sugar, selfsugar]
+      bands:
+        - { upto: 69, tone: alert, word: 偏低，先吃点东西, word_en: "Low, have something to eat" }
+        - { upto: 140, tone: ok, word: 很平稳, word_en: Steady }
+        - { upto: 180, tone: watch, word: 稍微高了一点, word_en: A little high }
+        - { tone: alert, word: 偏高，晚饭清淡些, word_en: "High, keep dinner light" }
+    - id: glucose_avg
+      label: 近三天平均
+      label_en: Three-day average
+      value: dm_avg
+      unit: mg/dL
+      scale: [80, 250]
+      reveal_by: [sugar, selfsugar]
+      bands:
+        - { upto: 130, tone: ok, word: 控制得不错, word_en: Well controlled }
+        - { upto: 170, tone: watch, word: 还可以更好, word_en: Could be better }
+        - { tone: alert, word: 这几天偏高, word_en: Running high lately }
+  effects:
+    frailty: "dm_f_gain * dm_strain"
+    mood: "-dm_m_gain * max(0.0, (dm_glucose - 190.0) / 100.0)"
+  story:
+    intro: 糖尿病是慢病，不是急症。重要的是每天的小事：按时吃药，隔一阵测一次血糖，晚饭不要太重。测过血糖，才看得到数字；数字好的时候，ta 的心情也会跟着好一点。
+    intro_en: "Diabetes is a slow companion, not an emergency. What matters is the small daily things, taking the pills, checking the sugar now and then, keeping dinner from getting heavy. The number only shows after a check, and when it looks good, the mood follows."

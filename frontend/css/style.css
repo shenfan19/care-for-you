@@ -344,3 +344,6 @@ header .tagline { flex:1; margin:0 0 0 18px; color:var(--mute); font-size:14px; 
 @keyframes typeL { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
 @keyframes typeR { 0%,100% { transform:translateY(-3px); } 50% { transform:translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .cx.working .hand { animation:none !important; } }
+
+.obs { display:flex; align-items:center; gap:8px; margin:3px 0; font-size:14px; } .obs .l { min-width:84px; color:var(--mute); } .obs .v { flex:1; }
+.obs-ok { color:var(--ok); } .obs-watch { color:#c28a2e; } .obs-alert { color:var(--accent); } .spark { flex:none; }

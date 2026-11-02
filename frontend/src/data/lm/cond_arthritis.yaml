@@ -1,0 +1,111 @@
+metadata:
+  name: cond_arthritis
+  version: "1.0"
+  lm_format_version: "1.0"
+  condition: arthritis
+  source: Care for You 手写的关节炎基础模型，疼痛随慢周期的发作程度、早晨僵硬和热敷变化
+  description:
+    problem: |
+      一个关节炎的家人，关节疼痛一阵好一阵坏，早晨更僵，热敷和按摩能缓一阵。
+    method: |
+      - 发作程度 ar_flare 是一个四天一周期的缓慢起伏，由相位 ar_phase 推出，没有随机数，同样的开局永远同样的节奏。
+      - 疼痛 ar_pain 是游戏里 joint 需求的状态，涨的速度随发作程度和早晨 5 点到 9 点的僵硬升高，随热敷温度降低，睡觉时慢。
+      - 热敷温度 ar_warm 做一次热敷或按摩加 1，时间常数 3 小时。
+    limitations: |
+      - 没有天气和活动量的影响。
+      - 没有炎症指标，疼痛只通过 effects 轻轻压低心情。
+  ratings:
+    importance: 0.5 - 关节炎常见，是老人照看里最典型的慢性疼痛
+    variable: 0.25 - 系数为经验取值
+    equation: 0.25 - 一阶累积加慢周期
+    simulation: 0.5 - 节奏与游戏内置需求速率同量级
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 方向合理，幅度未校准
+
+parameters:
+  ar_k: 0.05
+  ar_period_h: 96.0
+  ar_flare_gain: 1.2
+  ar_morning_gain: 0.8
+  ar_warm_cut: 0.6
+  ar_tau_warm_h: 3.0
+  ar_m_gain: 0.02
+
+variables:
+  ar_pain:
+    description: 关节疼痛的程度，对应游戏里的 joint 需求。
+    value: 0.2
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  ar_warm:
+    description: 热敷后的温暖程度。
+    value: 0.0
+    unit: index
+    type: state
+    bounds: [0.0, 1.5]
+  ar_phase:
+    description: 发作周期的相位，小时。
+    value: 0.0
+    unit: hour
+    type: state
+    bounds: [0.0, 200.0]
+
+auxiliary:
+  ar_flare: "0.5 + 0.5 * sin(6.2832 * ar_phase / ar_period_h)"
+  ar_morning: "1.0 if (hour >= 5.0 and hour < 9.0) else 0.0"
+
+equations:
+  ar_phase_dynamics:
+    description: 发作周期的相位前进。
+    priority: 40
+    step_unit: hour
+    dynamics:
+      ar_phase: "(ar_phase + step) % ar_period_h"
+  ar_warm_dynamics:
+    description: 热敷温度衰减。
+    priority: 41
+    step_unit: hour
+    dynamics:
+      ar_warm: "ar_warm * exp(-step / ar_tau_warm_h)"
+  ar_pain_dynamics:
+    description: 疼痛累积，发作和早晨更快，热敷和睡觉时更慢。
+    priority: 39
+    step_unit: hour
+    dynamics:
+      ar_pain: "ar_pain + step * ar_k * speed_joint * (1.0 + ar_flare_gain * ar_flare + ar_morning_gain * ar_morning) * (1.0 - ar_warm_cut * min(1.0, ar_warm)) * (1.0 - 0.7 * asleep)"
+
+drives:
+  joint: { state: ar_pain, lo: 0.0, hi: 1.0, kinds: [human] }
+
+care:
+  max_step_minutes: 15
+  default_preset: moderate
+  presets:
+    mild:
+      params: { ar_k: 0.035, ar_flare_gain: 0.8 }
+    moderate:
+      params: { ar_k: 0.05, ar_flare_gain: 1.2 }
+    advanced:
+      params: { ar_k: 0.07, ar_flare_gain: 1.6 }
+  pulses:
+    heat: [{ var: ar_warm, add: 1.0 }]
+    selfheat: [{ var: ar_warm, add: 1.0 }]
+    massage: [{ var: ar_warm, add: 0.7 }]
+  readouts:
+    - id: joint_day
+      label: 今天关节的状况
+      label_en: Joints today
+      value: ar_flare
+      unit: ""
+      scale: [0, 1]
+      decimals: 2
+      bands:
+        - { upto: 0.35, tone: ok, word: 今天还好, word_en: A good day }
+        - { upto: 0.7, tone: watch, word: 有点僵, word_en: A bit stiff }
+        - { tone: alert, word: 今天不太舒服, word_en: A rough day }
+  effects:
+    mood: "-ar_m_gain * max(0.0, n_joint - 0.6)"
+  story:
+    intro: 关节炎的疼痛一阵好一阵坏，早晨更僵。热敷和按摩能缓一阵，不能根治。你不用把它治好，只是在 ta 疼的时候在旁边。
+    intro_en: Arthritis comes and goes, and mornings are stiffer. A warm pack or a massage eases it for a while, but nothing cures it. You do not have to fix it, only be there when it hurts.

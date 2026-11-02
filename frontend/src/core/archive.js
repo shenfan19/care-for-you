@@ -74,8 +74,14 @@
       if (name.endsWith('.yaml')) { try { jsyaml.load(text); } catch (x) { rejected.push(name); continue; } }
       files[name] = text;
     }
-    if (!files['settings.ini'] && !Object.keys(files).some(n => n.startsWith('people/'))) return { ok: false, error: 'empty' };
     if (manifest && manifest.schema > meta.schema) return { ok: false, error: 'newer', manifest };
+    /* 疾病包：只有模板，没有存档，例如 Life Matters 的 care_export 插件生成的 zip。导入时写进模板文件夹，不动角色 */
+    if (!files['settings.ini'] && !Object.keys(files).some(n => n.startsWith('people/'))) {
+      const tpl = Object.keys(files).filter(n => /^templates\/(lm\/models|conditions)\/[^/]+\.yaml$/.test(n));
+      if (!tpl.length || tpl.length !== Object.keys(files).filter(n => n !== 'README.txt').length) return { ok: false, error: 'empty' };
+      const names = tpl.map(n => { try { const d = jsyaml.load(files[n]) || {}; return (d.metadata && d.metadata.condition) || d.id || n; } catch (x) { return n; } });
+      return { ok: true, kind: 'pack', files, rejected, manifest, people: [], conditions: [...new Set(names)] };
+    }
     const people = [...new Set(Object.keys(files).map(n => (n.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].map(id => {
       let name = id; try { name = jsyaml.load(files[`people/${id}/person.yaml`] || '').name || id; } catch (x) {}
       return { id, name };
@@ -85,6 +91,7 @@
 
   /* mode: replace 用存档整体替换当前数据；merge 只加入当前没有的角色 */
   A.apply = async function (info, mode) {
+    if (info.kind === 'pack') { for (const p in info.files) if (p !== 'README.txt') await store.write(p, info.files[p]); return Object.keys(info.files).length; }
     if (mode === 'replace') {
       const keep = ini.parse((await store.read('settings.ini')) || '');
       await store.wipe();

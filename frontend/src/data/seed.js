@@ -403,7 +403,7 @@ traits:
 
 
   /* 疾病：只做基础的典型情景，不是医学建议，更深的内容交给 Life Matters。lines.request 按需求名给出台词，用 {ta} 和 {name} 占位，对谁都适用 */
-  F['templates/conditions/diabetes.yaml'] = `version: 4
+  F['templates/conditions/diabetes.yaml'] = `version: 5
 id: diabetes
 label: 糖尿病
 needs:
@@ -413,6 +413,7 @@ actions:
   medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: -1 } }
   sugar: { label: 测血糖, hold: 3, min: 5, effect: { sugar: -1 } }
   selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: -0.8 } }
+  selfsugar: { label: 自己测血糖, selfonly: true, self: [adult, elder], hold: 1, min: 5, effect: { sugar: -0.8 } }
 lines:
   request:
     medicine: ["药，是不是该吃了？", "{ta}看了看药盒，又看了看你。"]
@@ -426,12 +427,12 @@ events:
     evening: true
     say: 晚上吃什么？
     choices:
-      - { label: 红烧肉, liked: true, mood: 0.15, frailty: 0.04, reply: "{ta}吃得很高兴。你心里知道，这对{ta}不太好。" }
+      - { label: 红烧肉, liked: true, pulse: carb_heavy, mood: 0.15, frailty: 0.04, reply: "{ta}吃得很高兴。你心里知道，这对{ta}不太好。" }
       - { label: 清蒸鱼配青菜, mood: 0.02, frailty: -0.02, reply: "{ta}嘟囔了一句太清淡，还是吃完了。" }
-      - { label: 杂粮粥配小菜, mood: 0.0, frailty: -0.04, reply: "{ta}点点头，说也行。" }
+      - { label: 杂粮粥配小菜, pulse: carb_low, mood: 0.0, frailty: -0.04, reply: "{ta}点点头，说也行。" }
 `;
 
-  F['templates/conditions/hypertension.yaml'] = `version: 3
+  F['templates/conditions/hypertension.yaml'] = `version: 4
 id: hypertension
 label: 高血压
 needs:
@@ -450,9 +451,9 @@ events:
   salty:
     say: 今天菜里放盐吗？
     choices:
-      - { label: 多放点盐, liked: true, mood: 0.12, frailty: 0.05, reply: "{ta}说这样才有味道。你没说话。" }
+      - { label: 多放点盐, liked: true, pulse: salt_high, mood: 0.12, frailty: 0.05, reply: "{ta}说这样才有味道。你没说话。" }
       - { label: 少盐，加点醋, mood: 0.02, frailty: -0.02, reply: "{ta}尝了一口，说也能吃。" }
-      - { label: 不放盐，多放姜, mood: -0.02, frailty: -0.04, reply: "{ta}皱了皱眉，还是吃光了。" }
+      - { label: 不放盐，多放姜, pulse: salt_low, mood: -0.02, frailty: -0.04, reply: "{ta}皱了皱眉，还是吃光了。" }
 `;
 
   F['templates/conditions/arthritis.yaml'] = `version: 3
