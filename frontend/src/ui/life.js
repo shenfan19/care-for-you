@@ -42,12 +42,12 @@
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
   U.introDialog = function () {
     const BG = ['layoff', 'return', 'house'];
-    const finish = () => { G.world.intro_done = true; G.save(true); U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true); G.maybeArrive(); };
+    const finish = () => { G.world.intro_done = true; G.world.story_pending = false; G.save(true); U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true); G.maybeArrive(); };
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('start.title'))}</h2><p>${esc(t('start.p1'))}</p><p>${esc(t('start.p2'))}</p>
-      <div class="tiles">${BG.map(b => `<button class="tile" data-bg="${b}"><b>${esc(t('start.bg_' + b))}</b><span class="mute">${esc(t('start.bg_' + b + '_note'))}</span></button>`).join('')}</div>`, true);
-    dlg.querySelectorAll('[data-bg]').forEach(b => b.onclick = () => {
-      G.chooseBackground(b.dataset.bg);
-      const d2 = U.dialog(`<h2 style="margin-top:0">${esc(t('start.title'))}</h2><p>${esc(t('start.story_' + b.dataset.bg))}</p><p>${esc(t('start.door'))}</p><div class="mute">${esc(t('start.later'))}</div>
+      <div class="tiles">${BG.map(b => `<button class="tile" data-start-bg="${b}"><b>${esc(t('start.bg_' + b))}</b><span class="mute">${esc(t('start.bg_' + b + '_note'))}</span></button>`).join('')}</div>`, true);
+    dlg.querySelectorAll('[data-start-bg]').forEach(b => b.onclick = () => {
+      G.chooseBackground(b.dataset.startBg);
+      const d2 = U.dialog(`<h2 style="margin-top:0">${esc(t('start.title'))}</h2><p>${esc(t('start.story_' + b.dataset.startBg))}</p><p>${esc(t('start.door'))}</p><div class="mute">${esc(t('start.later'))}</div>
         <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="introok" class="primary">${esc(t('start.go'))}</button></div>`, true);
       d2.querySelector('#introok').onclick = finish;
     });

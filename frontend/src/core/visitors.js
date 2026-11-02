@@ -9,7 +9,7 @@
   G.BACKGROUNDS = { layoff: { money: 300 }, return: { money: 200 }, house: { money: 500 } };
   G.chooseBackground = id => {
     const b = G.BACKGROUNDS[id]; if (!b) return false;
-    G.world.background = id; G.world.money = b.money; G.save(true);
+    G.world.background = id; G.world.money = b.money; G.world.intro_done = true; G.world.story_pending = true; G.save(true);
     return true;
   };
 
@@ -54,7 +54,7 @@
 
   /* 到来：新档第一次必到，之后每天午后看有没有空床，离开后隔最多一天 */
   G.maybeArrive = () => {
-    if (!G.activePeople().length || !G.world.intro_done) return false;
+    if (!G.activePeople().length || !G.world.intro_done || G.world.story_pending) return false;
     if (!G.world.visit_started) { G.world.visit_started = true; return !!G.arrive(G.firstVisitorId()); }
     if (G.visits().length >= G.guestBeds()) return false;
     if ((G.world.visit_cd || 0) > 0) { G.world.visit_cd--; return false; }
