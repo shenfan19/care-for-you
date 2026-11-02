@@ -133,6 +133,7 @@
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY || 200;
     delete G.world.tasks;
     if (G.loadCalendar) await G.loadCalendar();
+    if (G.loadVisitorPacks) await G.loadVisitorPacks();
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
     const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();

@@ -15,4 +15,5 @@ CY.i18n.register('zh-CN', {
   'cal.title': '日历', 'cal.empty': '这一天没有记录', 'cal.none': '还没有任何记录，过完第一天就会出现。', 'cal.md': '{m}月{d}日',
   'cal.wd0': '周日', 'cal.wd1': '周一', 'cal.wd2': '周二', 'cal.wd3': '周三', 'cal.wd4': '周四', 'cal.wd5': '周五', 'cal.wd6': '周六',
   'cal.ym': '{y}年{m}月', 'cal.prev': '上个月', 'cal.next': '下个月', 'cal.close': '关闭',
+  'visit.door_tip': '时空门','visit.log_arrive': '{name}从时空门走了进来。','visit.tab_guest': '访客','visit.tab_shop': '礼物店','visit.tab_cabinet': '展柜','visit.empty': '客床空着，时空门很安静。','visit.stay_left': '还可以住 {n} 天','visit.talk': '说话','visit.care_rest': '请TA睡一觉','visit.give': '送礼物','visit.acts_left': '今天还能照料或送礼 {n} 次','visit.give_none': '背包里还没有礼物，去礼物店看看。','visit.thanks_neutral': '对方收下了，向你道了谢。','visit.limit': '今天的精力用完了，明天再来。','visit.done': '这位客人了却了心愿。','visit.buy': '买','visit.owned': '已有 {n}','visit.shop_note': '礼物只有送到对方真正需要的时候才算数，每样最多备三件。','visit.cabinet_empty': '展柜还空着，客人满意地离开时会留下纪念品。','visit.cabinet_count': '已收集 {n} 件，共 {m} 位客人','visit.cab_from': '来自 {name}','visit.arrive_toast': '{name} 来了','visit.unofficial': '非官方卡片',
 });

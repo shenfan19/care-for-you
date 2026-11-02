@@ -46,7 +46,9 @@
     const n = G.gameDate().n;
     if (G._dayN === undefined) { G._dayN = n; return false; }
     if (n === G._dayN) return false;
+    G._closing = G._dayN;   /* 日终钩子里记下的事算在刚结束的这一天 */
     for (const h of G.dayEndHooks) h({ day: G._dayN, offline: false });
+    G._closing = null;
     G.skipToAfternoon();
     G._dayN = G.gameDate().n;
     for (const h of G.dayStartHooks) h({ day: G._dayN, offline: false });
@@ -60,7 +62,9 @@
     for (let i = 0; i < days; i++) {
       let left = i === 0 ? (1440 - G.dayMinutes() + 1440) % 1440 || 1440 : 1440;
       while (left > 0) { const c = Math.min(D.chunk, left); G.advance(c, true); left -= c; }
+      G._closing = n0 + i;
       for (const h of G.dayEndHooks) h({ day: n0 + i, offline: true });
+      G._closing = null;
       G.skipToAfternoon();
       for (const h of G.dayStartHooks) h({ day: n0 + i + 1, offline: true });
     }

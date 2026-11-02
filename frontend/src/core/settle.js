@@ -10,7 +10,7 @@
 
   const blank = n => ({ n, care: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
   const today = () => {
-    const n = G.gameDate().n;
+    const n = G._closing || G.gameDate().n;
     if (!G.world.today || G.world.today.n !== n) G.world.today = blank(n);
     return G.world.today;
   };
@@ -46,7 +46,7 @@
       for (const n of d.notes.slice(0, 2)) L.push(n);
       return L;
     }
-    for (const n of d.notes.slice(0, 2)) L.push(n);
+    for (const n of d.notes.slice(-3)) L.push(n);
     const c = top(d.care), acts = d.acts;
     if (c) {
       const [name, count] = c;
