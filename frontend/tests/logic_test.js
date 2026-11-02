@@ -1216,9 +1216,15 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.applyAction(mId, 'meal');
     check('做饭给人吃，在家吃得了饭的人都吃上，婴儿不算', gp.state.needs.hunger < 0.5 && mom.state.needs.hunger < 0.5 && baby.state.needs.hunger === 0.9, gp.state.needs.hunger + ' ' + baby.state.needs.hunger);
     for (const id of ids) G.get(id).state.mood = 0.8;
-    check('效率就是全家状态的平均', Math.abs(G.efficiency() - 0.8) < 1e-9);
+    /* 负荷：自己 0.3，妈妈 0.1，爷爷 0.4，宝宝 1，各乘 1 减心情；容量 1 加妈妈这个助力 0.3 */
+    check('效率由负荷决定', Math.abs(G.burden() - 0.36) < 1e-9 && Math.abs(G.capacity() - 1.3) < 1e-9 && Math.abs(G.efficiency() - (0.4 + 0.6 * (1 - 0.36 / 1.3))) < 1e-9, G.burden() + ' ' + G.capacity() + ' ' + G.efficiency());
+    check('家人满意度加成线性叠加，花草不算', Math.abs(G.householdBonus() - 1.24) < 1e-9, G.householdBonus());
+    const before = G.efficiency(), bonus0 = G.householdBonus();
+    for (let i = 0; i < 4; i++) { const fId = await G.createPerson({ arch: 'flower', name: 'f' + i }); await G.load(); for (const x of G.people) x.person.active = ids.includes(x.id) || x.person.kind === 'plant'; G.setProtagonist(dId); G.get(fId).state.mood = 0.9; }
+    check('堆花草堆不出效率和加成', G.efficiency() <= before + 1e-9 && Math.abs(G.householdBonus() - bonus0) < 1e-9, G.efficiency() + ' ' + before);
+    for (const x of G.people) x.person.active = ids.includes(x.id);
     for (const id of ids) G.get(id).state.mood = 0.1;
-    check('平均太低按四成算', Math.abs(G.efficiency() - 0.4) < 1e-9);
+    check('负荷太高按四成算', Math.abs(G.efficiency() - 0.4) < 1e-9, G.efficiency());
     for (const x of G.people) x.person.active = true;
   }
   {

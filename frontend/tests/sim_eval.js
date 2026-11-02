@@ -19,6 +19,10 @@ const sleep0 = () => new Promise(r => setImmediate(r));
 const FAMILIES = {
   family: [['grandpa', '爷爷', ['diabetes']], ['grandma', '奶奶', ['arthritis']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler2', '二岁'], ['baby', '宝宝'], ['daughter', '女儿'], ['cat', '团子'], ['dog', '豆豆']],
   solo: [['grandpa', '爷爷', ['nocturia']]],
+  duo: [['mom', '妈妈'], ['baby', '宝宝']],
+  trio: [['mom', '妈妈'], ['dad', '爸爸'], ['baby', '宝宝']],
+  five: [['grandpa', '爷爷', ['diabetes']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler2', '二岁'], ['baby', '宝宝']],
+  plants: [['dad', '爸爸'], ['flower', '小花'], ['flower', '小草'], ['flower', '小树'], ['flower', '小苗']],
   zoo: [['cat', '团子'], ['dog', '豆豆'], ['rabbit', '糯米'], ['hamster', '仓鼠'], ['flower', '小花']],
 };
 
@@ -42,6 +46,7 @@ const FAMILIES = {
   } else G.cfg.play.backend_provider = 'builtin';
   if (process.env.CARE_COND === '0') G.cfg.play.condition_models = 'false'; else if (!URL) { await CY.lm.load(); if (!CY.lm.ready) throw new Error(CY.lm.error); }
   if (leadName) { const L = G.people.find(p => p.person.name === leadName); if (L) G.setProtagonist(L.id); }
+  if (!G.protagonist()) { const L = G.people.find(p => G.canLead(p)); if (L) G.setProtagonist(L.id); }
   CY.world.enforce = false;
 
   /* 虚拟时钟：Date 被换成可控的，从早上八点开始 */
@@ -75,6 +80,7 @@ const FAMILIES = {
     if (URL) while (CY.backend.pending > 0) await sleep0();
     if (process.env.CARE_TRACE && i % 360 === 0) { const q = G.people.find(x => x.person.name === process.env.CARE_TRACE); if (q) console.log('TRACE', (i * 5 / 3600).toFixed(1) + 'h', G.isSleeping(q) ? 'sleep' : 'awake', 'mood', q.state.mood.toFixed(2), 'fr', q.state.frailty.toFixed(2), Object.entries(q.state.needs).map(([k, v]) => k + ' ' + v.toFixed(2)).join(' ')); }
     stat.ticks++;
+    if (G.protagonist()) { stat.effSum = (stat.effSum || 0) + G.efficiency(); stat.bonusSum = (stat.bonusSum || 0) + G.householdBonus(); stat.effN = (stat.effN || 0) + 1; }
     const people = G.activePeople();
     for (const p of people) {
       if (G.isSleeping(p)) continue;
@@ -122,6 +128,7 @@ const FAMILIES = {
   for (const p of G.people) { const all = [].concat(...Object.values(G.journal[p.id] || {})).filter(e => ['glance', 'cares_back', 'talk', 'reveal'].includes(e.type)).sort((a, b) => (a.t < b.t ? -1 : 1)), last = {}; for (const e of all) { const ts = Date.parse(e.t); said++; if (last[e.text] !== undefined && ts - last[e.text] < 600000) { rep++; repBy[e.type + ' ' + e.text.replace(/^[^s，：]+/, '…').slice(0, 24)] = (repBy[e.type + ' ' + e.text.replace(/^[^s，：]+/, '…').slice(0, 24)] || 0) + 1; } last[e.text] = ts; } }
   console.log(`- 十分钟内重复的话：${rep} 句，占说出口的 ${said ? (100 * rep / said).toFixed(1) : 0}%（共 ${said} 句）`);
   if (process.env.CARE_REP) console.log(Object.entries(repBy).sort((a, b) => b[1] - a[1]).slice(0, 12).map(x => x[1] + ' ' + x[0]).join(String.fromCharCode(10)));
+  if (stat.effN) console.log(`- 工作效率平均 ${(stat.effSum / stat.effN).toFixed(3)}，家人加成平均 ${(stat.bonusSum / stat.effN).toFixed(3)}，折算每小时收入 ${(40 * stat.effSum / stat.effN * stat.bonusSum / stat.effN).toFixed(1)}`);
   console.log(`- 宝宝哭闹：${(stat.cryTicks * 5 / 3600).toFixed(1)} 小时`);
   console.log(`- 每小时被打扰：${(stat.reqs / hours).toFixed(1)} 次，其中问答 ${(stat.asks / hours).toFixed(1)} 次`);
   console.log(`- 玩家动作：每小时 ${(stat.acts / hours).toFixed(1)} 次`);

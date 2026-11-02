@@ -16,11 +16,45 @@
   G.START_MONEY = 10000;   /* 临时：测试购买，之后改回 200，见待办文件 */
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
-  /* 收益效率：每个人头像下的状态条就是各自的心情，全家的平均就是上班的人的工作效率，包括你自己，不算保姆。
-     平均低于四成按四成算，不会越穷越没法挣，也不会一落千丈 */
+  /* 收益效率由负荷决定，不看心情平均：负荷是每个人没被照顾到的程度（1 减心情）乘依赖度，加总后除以主角能顾及的容量。
+     依赖度按年龄阶段，卧床加倍，动物低，花草几乎为零，所以堆花草堆不出效率；每多一个依赖者负荷就多一份，人多自然更累。
+     成年家人和在岗的保姆是助力，抬高容量，所以一个人带孩子最累，有人分担就轻松，不是人越少越好。效率不低于四成，不会越穷越没法挣。
+     家人的满意度另算：每个心情不低的家人给收入加一点，线性叠加，有封顶，花草和动物不算 */
   G.MOOD = { eff_min: 0.4 };
-  G.familyState = () => { const xs = G.activePeople().filter(p => !(p.person.help && p.person.help.role === 'nanny')); return xs.length ? xs.reduce((a, p) => a + p.state.mood, 0) / xs.length : 1; };
-  G.efficiency = () => (G.protagonist() ? Math.min(1, Math.max(G.MOOD.eff_min, G.familyState())) : 1);
+  G.LOAD = {
+    weight: { infant: 1, toddler: 0.8, child: 0.4, teen: 0.15, adult: 0.1, elder: 0.4 }, bedridden: 2, animal: 0.15, plant: 0.03, self: 0.3,
+    capacity: 1, helper: 0.3, nanny_helper: 0.5, helper_mood: 0.5, bonus_each: 0.08, bonus_cap: 0.6, bonus_mood: 0.6,
+  };
+  const isNanny = p => !!(p.person.help && p.person.help.role === 'nanny');
+  const loadWeight = (p, lead) => {
+    const L = G.LOAD;
+    if (p === lead) return L.self;
+    if (p.person.kind === 'plant') return L.plant;
+    if (p.person.kind !== 'human') return L.animal;
+    return (L.weight[G.stage(p)] || 0.1) * (G.bedridden(p) ? L.bedridden : 1);
+  };
+  G.burden = () => { const lead = G.protagonist(); return G.activePeople().filter(p => !isNanny(p)).reduce((a, p) => a + loadWeight(p, lead) * (1 - p.state.mood), 0); };
+  G.capacity = () => {
+    const L = G.LOAD, lead = G.protagonist();
+    let c = L.capacity;
+    for (const p of G.activePeople()) {
+      if (p === lead || G.flag(p, 'hospital')) continue;
+      if (isNanny(p)) { if (G.nannyState() === 'here') c += L.nanny_helper; continue; }
+      if (p.person.kind === 'human' && ['teen', 'adult'].includes(G.stage(p)) && !G.bedridden(p) && p.state.mood >= L.helper_mood) c += L.helper;
+    }
+    return c;
+  };
+  G.householdBonus = () => {
+    const L = G.LOAD, lead = G.protagonist();
+    if (!lead) return 1;
+    const n = G.activePeople().filter(p => p !== lead && !isNanny(p) && p.person.kind === 'human' && p.state.mood >= L.bonus_mood).length;
+    return 1 + Math.min(L.bonus_cap, L.bonus_each * n);
+  };
+  G.efficiency = () => {
+    if (!G.protagonist()) return 1;
+    const share = Math.min(1, G.burden() / G.capacity());
+    return G.MOOD.eff_min + (1 - G.MOOD.eff_min) * (1 - share);
+  };
   G.nanny = () => G.people.find(p => p.person.help && p.person.help.role === 'nanny') || null;
   G.nannyOn = () => !!G.world.nanny_on;
   const setDuty = (n, on) => {
@@ -34,7 +68,7 @@
     const hours = gmin / 60, W = CY.world, lead = G.protagonist();
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
-    else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency();
+    else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();
     if (G.tripTick) G.tripTick();
     const n = G.nanny();
     if (!n) return;
