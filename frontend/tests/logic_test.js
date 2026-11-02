@@ -417,7 +417,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('时间只有现实，一倍速，长按', G.timeMode() === 'real' && G.playMode() === 'reality' && G.inputMode() === 'hold');
   check('长按时间不是线性的', G.holdFor(1) < G.holdFor(10) && G.holdFor(10) < G.holdFor(60) && G.holdFor(60) <= 6 && G.holdFor(600) === 6);
   G.world.game_minutes = 0;
-    check('账号功能默认未启用，调用会明确拒绝', !CY.account.enabled(G.cfg) && (await CY.account.signIn().catch(e => e.message)) === 'not_enabled' && CY.account.consentRecord('upload', true).granted === true);
+    check('账号功能默认未启用，没有服务地址就不出现', !CY.account.enabled(G.cfg) && !CY.account.configured(G.cfg) && CY.account.status().signedIn === false && CY.account.consentRecord('upload', true).granted === true);
 
   /* 手改后的 YAML 容错：缺字段 */
   mem.set(`people/${grandpa.id}/state.yaml`, 'version: 1\n');

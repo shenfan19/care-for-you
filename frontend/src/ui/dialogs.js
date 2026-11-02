@@ -35,7 +35,7 @@
       <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
-      <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button></div>
+      <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button>${CY.account.configured(G.cfg) ? `<button id="dacct">${esc(t('acct.title'))}</button>` : ''}</div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
       <details class="adv"><summary>${esc(t('set.advanced'))}</summary><div class="sform">${advForm}</div></details>
@@ -52,6 +52,7 @@
       await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderRoom(true); U.renderClock();
     });
     dlg.querySelector('#dsave').onclick = () => U.saveDialog();
+    const ac = dlg.querySelector('#dacct'); if (ac) ac.onclick = () => U.accountDialog();
     dlg.querySelector('#dfolder').onclick = async () => {
       try { const had = await store.chooseFolder(); await G.load(); U.closeDialog(); U.afterPeopleChange(); alert(t(had ? 'set.folder_had' : 'set.folder_copied')); } catch (e) { alert(e.message); }
     };
