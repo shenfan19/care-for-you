@@ -1,4 +1,4 @@
-/* 发生的事，说过的话。 */
+/* 发生的事。说过的话仍然记在人物文件夹里，不在页面上单列。 */
 (function (CY) {
   const G = CY.game, ini = CY.ini, store = CY.store, C = CY.content, A = CY.archive, I = CY.i18n;
   const t = (k, v) => CY.t(k, v);
@@ -36,21 +36,6 @@
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });
     $('quietBtn').onclick = () => { view.quiet = !view.quiet; view.more = 40; U.renderFeed(true); };
     const mb = $('moreBtn'); if (mb) mb.onclick = () => { view.more += 60; U.renderFeed(true); };
-  };
-
-  /* ---------- 说过的话（只读：想改字就去数据文件夹里改明文） ---------- */
-  U.renderSaid = function (force) {
-    const root = $('said');
-    const sig = I.lang + G.people.map(p => p.id + p.person.name + (G.sayings[p.id] || []).length).join();
-    if (!force && root.dataset.sig === sig) return;
-    root.dataset.sig = sig;
-    const open = new Set([...root.querySelectorAll('details[open]')].map(d => d.dataset.id));
-    root.innerHTML = `<h2>${esc(t('said.title'))}</h2>` + (G.people.map(p => {
-      const items = (G.sayings[p.id] || []).slice().reverse().filter(s => s.lib || s.by === 'you');
-      const n = items.filter(s => s.by === 'char').length, m = items.filter(s => s.by === 'you').length;
-      return `<details data-id="${p.id}" ${open.has(p.id) ? 'open' : ''}><summary>${esc(p.person.name)}<span class="mute">　${esc(t('said.count', { n, m }))}</span></summary>` +
-        '<div class="tlbox short">' + (items.slice(0, 80).map(s => `<div class="tl"><span class="t">${fmtT(s.t)}</span><span class="who ${s.by === 'you' ? 'said-you' : ''}">${s.by === 'you' ? esc(t('said.you')) : esc(p.person.name)}</span><span class="x">${esc(s.text)}</span>${s.lib ? `<span class="pill" title="${esc(t('said.lib'))}">${esc(s.lib)}${s.ans !== undefined ? '·' + esc(s.ans) : ''}</span>` : ''}</div>`).join('') || `<div class="mute" style="padding:6px 0">${esc(t('said.empty'))}</div>`) + '</div></details>';
-    }).join('') || `<div class="mute">${esc(t('said.nobody'))}</div>`);
   };
 
 })(globalThis.CY = globalThis.CY || {});

@@ -140,3 +140,4 @@ CY.i18n.said("es", {
   sor_juana: ["No estudio para saber más, sino para ignorar menos."],
   kahlo: ["Pinto mi propia realidad."]
 });
+CY.i18n.register("es", { "corner.rate_tip": "La cifra de 💰 es el ingreso por hora de juego mientras trabajas." });

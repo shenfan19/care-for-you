@@ -29,9 +29,9 @@
     document.title = t('app.title');
     U.renderBrand();
     for (const [id, k] of [['shareBtn', 'hdr.share'], ['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
-    for (const k of ['feed', 'said', 'roomBar']) delete $(k).dataset.sig;
+    for (const k of ['feed', 'roomBar']) delete $(k).dataset.sig;
     if (U.room) { U.renderRoom(true); }
-    U.renderClock(); U.renderBar(); U.renderFeed(true); U.renderSaid(true);
+    U.renderClock(); U.renderBar(); U.renderFeed(true);
   };
   async function saveCfg() { await store.write('settings.ini', ini.stringify(G.cfg)); }
 
@@ -60,7 +60,7 @@
     tm.onclick = e => { e.stopPropagation(); U.calendarDialog(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
-    if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
+    if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '% · 💰 ' + (Math.round(G.incomeRate() * 10) / 10) + '/h'; fm.title = t('corner.eff_tip', { n: e }) + ' ' + t('corner.rate_tip'); } }
     mn.onclick = () => U.helpDialog();
     for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }

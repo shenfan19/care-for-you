@@ -63,6 +63,8 @@
     else if (!on && !off) G.setFlag(n, 'offduty', { place: 'street', room: 'road', mode: 'stand' });
   };
 
+  /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
+  G.incomeRate = () => { const lead = G.protagonist(); return lead && G.stage(lead) === 'elder' ? G.PENSION : G.WAGE * G.efficiency() * G.householdBonus(); };
   /* 每次时间推进：赚钱，保姆按天付工资，保姆上下班 */
   G.economyTick = (gmin, offline) => {
     const hours = gmin / 60, W = CY.world, lead = G.protagonist();

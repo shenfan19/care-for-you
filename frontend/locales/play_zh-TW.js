@@ -696,3 +696,4 @@ CY.i18n.register("zh-TW", {
   "visit.fam.pol.peer": "{guest}給{who}倒了杯茶，兩個人並排坐著，沒怎麼說話。",
   "visit.fam.trv.peer": "{guest}和{who}說起各自家鄉的天氣和吃食。"
 });
+CY.i18n.register("zh-TW", { "corner.rate_tip": "💰 後面是工作時每遊戲小時的收入。" });

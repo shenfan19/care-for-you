@@ -157,6 +157,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       check('老年来客对家里老人是平辈，不是听对方讲从前', V.FAMPEER && CY.i18n.has('visit.fam.art.peer') && V.SENIOR_AGE === 50 && V.cards.hippocrates.age >= 60 && V.cards.galois.age < 30);
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
     }
+    check('页面上没有单列的"说过的话"，信息框只剩发生的事；收入率折进舒适度和家人加成', !require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8').includes('id="said"') && (() => { const r = G.incomeRate(); return r > 0 && r <= G.WAGE * 2 && CY.i18n.has('corner.rate_tip'); })());
     check('文字里没有死亡，战争，恋爱和性的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
   }
   /* 存档被改过的标记 */

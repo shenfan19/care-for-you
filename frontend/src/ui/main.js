@@ -21,14 +21,14 @@
     CY.onSprites = () => { if (U.renderRoom) { U.renderRoom(true); U.renderBar && U.renderBar(); } };
     U.buildRoom($('room'));
     G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); });
-    U.renderBar(); U.renderFeed(true); U.renderSaid(true); U.renderClock(); U.renderControls(); U.renderLife();
+    U.renderBar(); U.renderFeed(true); U.renderClock(); U.renderControls(); U.renderLife();
     let lastFeed = 0;
     G.on(() => {
       U.renderRoom(false);
       U.renderClock();
       U.renderBar();
       U.renderLife();
-      if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); U.renderSaid(false); }
+      if (Date.now() - lastFeed > 1500) { lastFeed = Date.now(); U.renderFeed(false); }
     });
     G.backendError = () => U.flash(t('backend.error'));
     CY.world.enforce = true;

@@ -25,3 +25,4 @@ CY.i18n.register('zh-CN', {
   'shop.cabinet': '展柜', 'shop.cabinet_fx': '放在客厅里，客人留下的纪念品会摆在里面。鼠标停在纪念品上能看到是谁留的。',
 });
 CY.i18n.register("zh-CN", { "title.uncle": "叔叔", "title.aunt": "阿姨" });
+CY.i18n.register("zh-CN", { "corner.rate_tip": "💰 后面是工作时每游戏小时的收入。" });

@@ -140,3 +140,4 @@ CY.i18n.said("de", {
   sor_juana: ["Ich studiere nicht, um mehr zu wissen, sondern um weniger zu ignorieren."],
   kahlo: ["Ich male meine eigene Wirklichkeit."]
 });
+CY.i18n.register("de", { "corner.rate_tip": "Die 💰-Zahl ist das Einkommen pro Spielstunde bei der Arbeit." });

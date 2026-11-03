@@ -92,7 +92,7 @@
     dlg.querySelector('#dok').onclick = async () => { await G.deletePerson(pid); U.closeDialog(); U.afterPeopleChange(); back && back(); };
   };
 
-  U.afterPeopleChange = function () { G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); }); U.renderRoom(true); U.renderBar(); U.renderFeed(true); U.renderSaid(true); };
+  U.afterPeopleChange = function () { G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); }); U.renderRoom(true); U.renderBar(); U.renderFeed(true); };
 
   /* ---------- 引导：家里还是空的时候 ----------
      第一屏只有一排场景和三个按钮，放得进一屏；想自己搭就进第二屏，按家人、动物、植物分页。 */
