@@ -1,14 +1,13 @@
-/* 时间：前台一天只玩午后到午夜这一段，默认现实五分钟，到午夜结算，夜里和上午由引擎替玩家走完，第二天从午后接着玩。
-   没有倍速可选，流速由一天的长度推出来：游戏分钟除以现实分钟。离开超过三小时，回来时按每三小时折一天追算，最多三天。
-   动作靠长按，不随流速变。内部测试和仿真仍可用 time.speed 或网址 ?dev= 覆盖流速。
-   游戏里几点由 world.clock_shift 加游戏分钟算出，和陪伴天数、各种倒计时分开存，所以改几点不会弄乱任何计时。
-   新档开局对齐系统时间；之后切倍速不动时钟，想对回系统时间或自己设几点，在设置里。 */
+/* 时间：新档第一天从 14:00 开始，只剩十个小时，几分钟就到午夜，让玩家很快看到每日结算；从第二天起一天是完整的 24 小时，按各自的作息过。
+   没有倍速可选，流速由第一天这十个小时的现实时长推出来：默认 600 游戏分钟除以现实 5 分钟，每现实分钟走 120 游戏分钟，完整的一天约十二分钟。
+   关掉页面游戏就停在那里，没有离线推进，也没有暂停，下次打开从停下的时刻接着走。动作靠长按，不随流速变。内部测试和仿真仍可用 time.speed 或网址 ?dev= 覆盖流速。
+   游戏里几点由 world.clock_shift 加游戏分钟算出，和陪伴天数、各种倒计时分开存，所以改几点不会弄乱任何计时。 */
 (function (CY) {
   const G = CY.game;
   G.timeMode = () => 'real';
   G.SPEEDS = [1, 6, 24, 60];   /* 旧的四档，界面已不用，只留给测试 */
-  /* 一天的前台时段：14:00 到 24:00，现实 minutes 分钟走完 */
-  G.DAY = { enabled: true, start: 840, end: 1440, minutes: 5, away_hours_per_day: 3, away_max_days: 3, chunk: 30 };
+  /* 第一天的时段：14:00 到 24:00，现实 minutes 分钟走完，流速由它定下 */
+  G.DAY = { enabled: true, start: 840, end: 1440, minutes: 5 };
   G.dayRealMinutes = () => { const v = parseFloat((G.cfg.time || {}).day_minutes); return isFinite(v) && v > 0 ? v : G.DAY.minutes; };
   /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */
   G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
@@ -21,8 +20,8 @@
     const d = new Date(y, m - 1, dd + n), pad = x => String(x).padStart(2, '0');
     return { n: n + 1, month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000) };
   };
-  /* 配速：钟面走得比原来的 24 倍快时，需求按现实秒的节奏涨，不跟着钟面涨，所以一天压成五分钟也不会被淹没。1 表示不折算 */
-  G.PACE_BASE = 24;
+  /* 配速：默认流速下是 1，需求跟着钟面走，每个人什么时候饿、渴、困贴近真实的间隔；只有测试把流速调得更快时才按比例压低。1 表示不折算 */
+  G.PACE_BASE = 120;
   /* 现实几秒折成几个游戏分钟。外出，小睡这类要让玩家看得见的事，时长按现实秒写，不然一天压成五分钟以后，出去一趟几秒钟就回来了 */
   G.realMin = sec => sec * G.speed() / 60;
   G.outingMinutes = o => (o.seconds ? G.realMin(o.seconds) : o.minutes);
@@ -37,13 +36,9 @@
     await G.saveCfg(); G.save(true);
   };
   /* 日终：午夜过后，替玩家把夜里和上午走完，停在第二天午后；离线模式，需求涨得慢，不弹窗不说话。
-     钩子 G.dayEndHooks 在跳过之前被调用，参数是刚结束的游戏日序号和是否离线追算，结算页挂在这里 */
+     钩子 G.dayEndHooks 在午夜翻日时被调用，参数是刚结束的游戏日序号，结算页挂在这里 */
   G.dayEndHooks = [];
-  G.dayStartHooks = [];   /* 跳到次日午后之后调用，访客到来挂在这里 */
-  G.skipToAfternoon = () => {
-    let gap = (G.DAY.start - G.dayMinutes() + 1440) % 1440;
-    while (gap > 0) { const c = Math.min(G.DAY.chunk, gap); G.advance(c, true); gap -= c; }
-  };
+  G.dayStartHooks = [];   /* 日终钩子之后调用 */
   G.dayRoll = () => {
     if (!G.DAY.enabled) return false;
     const n = G.gameDate().n;
@@ -52,27 +47,9 @@
     G._closing = G._dayN;   /* 日终钩子里记下的事算在刚结束的这一天 */
     for (const h of G.dayEndHooks) h({ day: G._dayN, offline: false });
     G._closing = null;
-    G.skipToAfternoon();
     G._dayN = G.gameDate().n;
     for (const h of G.dayStartHooks) h({ day: G._dayN, offline: false });
     return true;
-  };
-  /* 离开期间追算：每三小时折一天，最多三天。先走完当天，再整天整天地走 */
-  G.catchUp = away => {
-    const D = G.DAY, days = Math.min(D.away_max_days, Math.floor(away / (D.away_hours_per_day * 3600e3)));
-    if (days < 1) return 0;
-    const n0 = G.gameDate().n;
-    for (let i = 0; i < days; i++) {
-      let left = i === 0 ? (1440 - G.dayMinutes() + 1440) % 1440 || 1440 : 1440;
-      while (left > 0) { const c = Math.min(D.chunk, left); G.advance(c, true); left -= c; }
-      G._closing = n0 + i;
-      for (const h of G.dayEndHooks) h({ day: n0 + i, offline: true });
-      G._closing = null;
-      G.skipToAfternoon();
-      for (const h of G.dayStartHooks) h({ day: n0 + i + 1, offline: true });
-    }
-    G._dayN = G.gameDate().n;
-    return days;
   };
   G.nextSpeed = () => { const i = G.SPEEDS.indexOf(G.speed()); return G.SPEEDS[(i + 1) % G.SPEEDS.length]; };
   G.playMode = () => 'reality';

@@ -119,6 +119,7 @@
     G.cfg = ini.parse((await store.read('settings.ini')) || '');
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     G.world = Object.assign({ game_minutes: 0, last_seen: '' }, await store.readYaml('world.yaml'));
+    delete G.world.beds;   /* 旧版本的床位数字段，现在床位是固定的，不再使用 */
     /* 新档开局对齐系统时间，之后游戏时钟自己走 */
     if (typeof G.world.clock_shift !== 'number') G.setClock(G.DAY.start);
     const files = await store.list();
@@ -656,6 +657,12 @@
   }
 
   G.advance = advance;
+  /* 推进一段时间，跨过午夜时在午夜处停一下先翻日，再走剩下的：午夜前后的事各记在各自的一天里，不会把前一天还没收口的记录冲掉 */
+  G.advanceDay = (gmin, offline) => {
+    const toMid = 1440 - (G.dayMinutes() % 1440);
+    if (G.DAY.enabled && gmin > toMid + 1e-6 && toMid > 0) { advance(toMid, offline); G.dayRoll(); advance(gmin - toMid, offline); }
+    else advance(gmin, offline);
+  };
 
   /* ---------- 打断 ---------- */
   /* 打扰频率是内部设计，不在设置里；测试或仿真可以直接改 G.cfg.interrupt.frequency */
@@ -674,7 +681,7 @@
   const bub = () => (G.tpl && G.tpl.system && G.tpl.system.bubbles) || {};
   const liveToasts = () => Object.values(G.toast).filter(x => x.kind !== 'cry').length;
   const narrow = () => typeof document !== 'undefined' && !!(CY.ui && CY.ui.room && CY.ui.room.clientWidth && CY.ui.room.clientWidth < 560);   /* 窄屏上界面只开一个请求气泡，说话气泡的上限也只有一个 */
-  const cap = () => Math.max(0, (narrow() ? 1 : bub().total || 2) - openReqs());
+  const cap = () => Math.max(0, (narrow() ? bub().narrow || 1 : bub().total || 2) - openReqs());
   const openReqs = () => Math.min(narrow() ? 1 : 2, Object.values(G.req).filter(r => !r.folded).length);
   const showToast = (p, text, kind) => { G.toast[p.id] = { text, kind, until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : kind === 'self' ? 7000 : 9000) }; };
   const gapMs = () => { const g = bub().gap_seconds || [1.5, 3.5]; return (g[0] + Math.random() * (g[1] - g[0])) * 1000; };
@@ -1019,7 +1026,7 @@
   G.tick = function () {
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
-    advance(gameMinutes(dt), false);
+    G.advanceDay(gameMinutes(dt), false);
     G.dayRoll();
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
     for (const id in G.toast) if (now > G.toast[id].until) { delete G.toast[id]; G.toastGapUntil = Math.max(G.toastGapUntil, now + gapMs()); }
@@ -1045,11 +1052,7 @@
   };
   G.start = function () {
     for (const p of G.activePeople()) G.act[p.id] = G.activityOf(p);
-    /* 离开超过三小时，按每三小时一天追算，最多三天；之前的存档如果停在上午，直接走到午后 */
-    G.lastTick = Date.now();
-    const away = Date.now() - Date.parse(G.world.last_seen || '');
-    G.lastCatchUp = isFinite(away) && away > 0 ? G.catchUp(away) : 0;
-    if (G.dayMinutes() < G.DAY.start) G.skipToAfternoon();
+    G.lastTick = Date.now();   /* 关掉页面期间游戏不走，从停下的时刻接着走 */
     G._dayN = G.gameDate().n;
     scheduleNext();
     G.nextAt = Date.now() + 4000;

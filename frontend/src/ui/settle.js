@@ -60,5 +60,5 @@
   /* 午夜：不停世界，弹一张到时间自己消失的总结 */
   G.dayEndHooks.push(info => { if (!info.offline && G.lastSettled && typeof document !== 'undefined') U.dayNotice(G.lastSettled); if (U.renderClock) U.renderClock(); });
   /* 回来时若追算了几天，打开日历停在最新一天 */
-  U.afterStart = () => { if (G.lastCatchUp > 0) U.notice({ title: t('cal.title'), lines: [t('cal.away', { n: G.lastCatchUp })], onclick: () => U.calendarDialog() }); U.renderClock && U.renderClock(); };
+  U.afterStart = () => { U.renderClock && U.renderClock(); };
 })(globalThis.CY = globalThis.CY || {});

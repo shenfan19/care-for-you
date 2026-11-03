@@ -1,22 +1,10 @@
 /* 繁體中文語言包，由簡體中文轉換並按台灣用語調整。 */
 CY.i18n.register("zh-TW", {
  "app.title": "Care for You",
- "app.proto": "原型 {v}",
- "foot.text": "個人專案，與任何學校、單位或機構無關。",
- "hdr.time_tip": "時間流逝的快慢",
- "time.real": "真實時間",
- "time.compressed": "壓縮時間",
- "time.paused": "暫停",
- "hdr.float": "浮出小窗",
- "hdr.float_tip": "把角色浮出成一個置頂小窗",
- "hdr.save": "存檔與下載",
- "hdr.save_tip": "儲存遊戲記錄，下載本地執行包，匯入存檔",
- "hdr.settings": "設定",
+         "hdr.save": "存檔與下載",
+  "hdr.settings": "設定",
  "hdr.about": "關於",
- "float.note": "角色現在在浮出的小窗裡。",
- "float.back": "收回到這裡",
- "float.unsupported": "這個瀏覽器不支援文件畫中畫，請用桌面版 Chrome 或 Edge。",
- "btn.add": "＋ 新增",
+    "btn.add": "＋ 新增",
  "btn.cancel": "取消",
  "btn.close": "關閉",
  "btn.save": "儲存",
@@ -33,12 +21,7 @@ CY.i18n.register("zh-TW", {
  "clock.dh": "{d} 天 {h} 小時",
  "clock.hm": "{h} 小時 {m} 分",
  "clock.m": "{m} 分鐘",
- "clock.elapsed": "已陪伴 {t}",
- "clock.elapsed_tip": "按你選擇的時間快慢累計的遊戲時間，暫停時不增加",
- "clock.real": "現實 {hh}:{mm}",
- "clock.tip_system": "現在的時間，跟隨你電腦的系統時鐘，白天黑夜和你窗外一致",
- "clock.tip_game": "遊戲裡的時間，晝夜按遊戲時間迴圈，後面是你電腦的系統時間",
- "bar.away": "{name}暫時離開",
+      "bar.away": "{name}暫時離開",
  "bar.recall": "叫回來",
  "feed.title": "發生的事",
  "feed.all": "大家", "feed.quiet": "隱藏日常動態",
@@ -48,12 +31,8 @@ CY.i18n.register("zh-TW", {
  "feed.empty": "還沒有發生什麼。",
  "feed.more": "再看一些",
  "fmt.datetime": "{m}月{d}日 {hh}:{mm}",
- "said.title": "說過的話",
- "said.count": "記起的話 {n} 句，你回答的 {m} 句",
- "said.you": "你",
- "said.lib": "庫編號，點號後面是預設回答的序號",
- "said.empty": "還沒有。遊戲裡偶爾會問你問題，或者問你某個人會說哪句話。",
- "said.nobody": "還沒有角色。",
+   "said.you": "你",
+   "said.nobody": "還沒有角色。",
  "type.care": "照顧",
  "type.talk": "談話",
  "type.missed": "沒趕上",
@@ -70,23 +49,16 @@ CY.i18n.register("zh-TW", {
  "add.name_ph": "名字，例如 阿牛",
  "add.pronoun": "稱呼",
  "add.age": "年齡",
- "add.glasses": "眼鏡",
- "add.beard": "鬍子",
- "add.skin": "膚色",
+   "add.skin": "膚色",
  "add.haircolor": "髮色",
- "add.hair": "髮型",
- "add.cloth": "衣服",
+  "add.cloth": "衣服",
  "add.cond": "基礎疾病",
  "add.cond_none": "無",
- "add.coat": "毛色",
- "add.ok": "新增",
+  "add.ok": "新增",
  "pron.he": "他",
  "pron.she": "她",
  "pron.it": "它",
- "age.child": "孩子",
- "age.adult": "成人",
- "age.elder": "老人",
- "glasses.none": "無",
+    "glasses.none": "無",
  "glasses.round": "圓框",
  "glasses.square": "方框",
  "hair.short": "短髮",
@@ -124,8 +96,7 @@ CY.i18n.register("zh-TW", {
  "arch.snake": "蛇",
  "ob.title": "你有什麼人要照顧嗎？",
  "ob.sub": "選一個開始就行，之後隨時可以再新增。",
- "ob.recommend": "推薦",
- "ob.added": "已新增：{names}",
+  "ob.added": "已新增：{names}",
  "ob.start": "開始",
  "ob.skip": "先看看，以後再加",
  "sep.list": "、",
@@ -155,7 +126,7 @@ CY.i18n.register("zh-TW", {
  "set.data_note": "{where}。所有資料都是明文檔案，選資料夾時請確認它不會被同步到別人能看到的地方。",
  "set.folder": "選擇資料資料夾",
  "set.restore": "補回缺失的初始檔案",
- "ob.random": "隨機生成", "ob.custom": "自己搭配", "ob.back": "返回", "ob.more": "更多情境", "preset.selfcare.label": "一個人住，照顧自己", "preset.selfcare.note": "單身獨居，你就是那個人：按時吃藥、測血糖、做飯、休息", "preset.name.self": "我", "corner.speed_tip": "時間 ×{speed}。點擊切換：×1，×6，×24（現實一小時過一天），×60。幾點在設定裡調。", "set.clock": "遊戲時鐘", "set.clock_note": "遊戲裡現在是幾點。它按上面的速度自己走；改它不影響陪伴天數和任何計時。新檔開局對齊你的系統時間。", "set.clock_set": "設為這個時間", "set.clock_sync": "對齊系統時間", "corner.money_tip": "錢。點開可以請保姆", "corner.music_tip": "音樂。點一下開或關", "set.figure": "人物造型", "figure.dressed": "穿衣小豆", "figure.plain": "素色小豆", "figure.dumpling": "團子", "sec.audio": "聲音", "set.advanced": "進階設定", "set.danger": "刪除",
+ "ob.random": "隨機生成", "ob.custom": "自己搭配", "ob.back": "返回", "preset.selfcare.label": "一個人住，照顧自己", "preset.selfcare.note": "單身獨居，你就是那個人：按時吃藥、測血糖、做飯、休息", "preset.name.self": "我", "corner.money_tip": "錢。點開可以請保姆", "corner.music_tip": "音樂。點一下開或關", "set.figure": "人物造型", "figure.dressed": "穿衣小豆", "figure.plain": "素色小豆", "figure.dumpling": "團子", "sec.audio": "聲音", "set.advanced": "進階設定", "set.danger": "刪除",
  "set.wipe_note": "刪除本機上的全部遊戲資料，包括所有角色和記錄。",
  "set.wipe": "刪除全部本地資料",
  "set.folder_had": "已切換到該資料夾裡已有的資料",
@@ -219,24 +190,18 @@ CY.i18n.register("zh-TW", {
  "priv.p1": "所有遊戲資料只儲存在你自己的裝置上，是明文檔案，你可以隨時開啟、修改、複製和刪除。",
  "priv.p2": "目前沒有賬號，沒有伺服器，沒有統計，沒有廣告，也不使用 cookie 或第三方追蹤。",
  "priv.p3": "網頁本身是靜態的，執行時不會把你的遊戲資料發到任何地方。",
- "priv.h2": "AI 功能",
- "priv.p4": "AI 功能預設關閉。只有你在設定裡開啟並填入服務地址後，才會把角色的名字、身份和當前情緒等少量上下文發給你選擇的 AI 服務，用來生成一句臺詞。",
- "priv.p5": "你回答過的話預設不會發出去，需要你另外開啟才會。AI 服務由第三方提供，它如何處理資料由它的政策決定，請你自行了解。金鑰儲存在設定檔案裡，是明文，不要把設定檔案分享給別人，存檔下載預設不含金鑰。",
- "priv.h3": "你的權利",
+    "priv.h3": "你的權利",
  "priv.p6": "你可以隨時下載全部資料，設定裡有刪除全部本地資料的按鈕，刪除後無法恢復。",
  "priv.p7": "如果將來增加賬號或雲端功能，會先寫明收集哪些資料、用來做什麼、儲存多久，並且只在你明確同意後才上傳。同意可以撤回，撤回後可以要求刪除。",
  "priv.p8": "遊戲面向成年人。如果將來在歐盟等地區提供服務，會按當地的資料保護法規，例如 GDPR，完善說明和流程。",
  "priv.h4": "免責宣告",
  "priv.p9": "這是一個遊戲，不是醫療、心理或護理產品，不提供診斷、治療或用藥建議。遊戲裡的疾病只是基礎的情景，不代表真實的醫學判斷，真實的照護請諮詢專業人員。",
  "priv.p10": "遊戲按現狀提供，不作任何擔保。如果你正處於很難受的狀態，或者覺得自己對遊戲產生了不健康的依賴，請聯絡你身邊可信的人或當地的專業援助機構。",
- "priv.note": "本頁說明了目前的設計和承諾，不是法律意見。正式對外提供服務前會請專業人士審閱。",
- "cred.p1": "介面和邏輯是純靜態網頁，沒有後端。資料檔案用 YAML 儲存，解析使用 js-yaml，採用 MIT 許可證。",
+  "cred.p1": "介面和邏輯是純靜態網頁，沒有後端。資料檔案用 YAML 儲存，解析使用 js-yaml，採用 MIT 許可證。",
  "cred.p2": "本專案在開發中使用了人工智慧輔助工具。",
  "cred.p3": "角色形象、動畫和文字均為原創。開源許可證尚未確定，確定後會在這裡和倉庫裡寫明。",
  "ver.line": "{app} {v}，資料結構版本 {schema}，釋出於 {date}",
- "ver.lang": "當前語言：{l}",
- "ver.account": "賬號功能：未啟用。",
- "log.frail": "{name}很虛弱了，需要有人陪著",
+   "log.frail": "{name}很虛弱了，需要有人陪著",
  "log.recovered": "{name}慢慢緩過來了",
  "toast.weak": "{ta}今天特別沒力氣。", "log.bedrest": "{name}虛弱得起不了床，只能躺著", "log.bedrest_end": "{name}有力氣下床走動了", "toast.bedrest": "{ta}今天起不了床。", "act.wheel": "推輪椅出去走走",
  "req.need_fallback": "{name}需要{need}",
@@ -265,11 +230,7 @@ CY.i18n.register("zh-TW", {
  "ans.generic1": "嗯，我聽著呢。",
  "ans.generic2": "等我忙完告訴你。",
  "ans.generic3": "我也想知道。",
- "hdr.lang_tip": "語言",
- "hdr.theme_tip": "明暗：{mode}，點選切換",
- "hdr.ratio_tip": "壓縮時間的快慢，現實一分鐘等於遊戲多少分鐘",
- "ratio.label": "×{n}",
- "unit.min": "{n} 分鐘",
+     "unit.min": "{n} 分鐘",
  "unit.hour": "{n} 小時",
  
  "sec.play": "體驗",
@@ -327,31 +288,11 @@ CY.i18n.register("zh-TW", {
  "class.tree": "小樹",
  "type.cry": "哭鬧",
  "type.self": "自己來",
- "life.wfh": "你正在居家辦公，家裡還有 {n} 個要照顧的。",
- "life.working": "工作中，家裡還有 {n} 個要照顧的。",
- "life.offwork": "不在工作時段，家裡還有 {n} 個要照顧的。",
+    
+     
  
- "life.mode_tip": "切換長按和點選。長按佔用你現實裡的時間，點選花掉遊戲裡的時間",
- "life.mode_hold": "長按：佔用現實時間",
- "life.mode_click": "點選：花掉遊戲時間",
- "life.busy": "正在{what}",
  
- "life.household": "家人與保母",
-
- 
- "home.title": "家人與保母",
- "home.note": "按誰最需要你排列，由類別和當下的需求自然決定，不需要自己排優先順序。",
- "home.urgency": "緊迫程度",
- "home.self": "自理 {n}%",
- "intro.title": "照顧是有代價的",
- "intro.p1": "你正在居家辦公，同時家裡還有人要照顧。每一次照顧，都要從別的地方擠出來。",
- "intro.p2": "長按會打斷你現實里正在做的事，點選會花掉遊戲裡的時間，那段時間裡你賺不了錢。選一種體驗：",
- "intro.light": "輕量體驗",
- "intro.light_note": "只有長按，沒有金錢，適合工作時放在一邊。",
- "intro.life": "完整體驗",
- "intro.life_note": "點選開始，花掉遊戲裡的時間。工作賺錢，用來買食材、藥品、尿布和玩具，也可以請保母，但保母在場的效果會打折。嬰兒沒人管會一直哭，老人能自己照顧自己一陣。",
- "intro.later": "頂欄裡的現實、加速、暫停可以隨時切換，其餘細節在設定裡改。",
- "toast.busy": "你正忙著{what}。",
+             "toast.busy": "你正忙著{what}。",
  "toast.started": "開始{what}，要花 {min} 分鐘。",
  
  "toast.nobody": "……",
@@ -373,11 +314,7 @@ CY.i18n.register("zh-TW", {
  "mode.switched_reality": "已切換到現實模式：時間和現實同步，動作靠長按。加速裡還有 {k} 件沒做完的事，先停著，回到加速模式再接著做。",
  "mode.switched_story": "已切換到加速模式：時間壓縮為 ×{n}，動作點一下開始，花掉遊戲裡的時間。一次只能做一件事，插進來的新事會讓舊的先暫停。",
  "mode.switched_paused": "已暫停，時間不走，也不會有人來打擾。",
- "intro.reality": "現實模式",
- "intro.reality_note": "時間和現實同步，只有長按，沒有錢，適合放在工作旁邊，打斷的是你真實的時間。",
- "intro.story": "加速模式",
- "intro.story_note": "時間壓縮，點一下就開始，花掉遊戲裡的時間。工作賺錢，買食材藥品尿布玩具，也可以請保母。一次只做一件事，新的會讓舊的先暫停。嬰兒沒人管會一直哭，老人能自己照顧自己一陣。",
- "scene.auto": "自動",
+     "scene.auto": "自動",
  "scene.living": "客廳",
  "scene.bedroom": "臥室",
  "scene.kitchen": "廚房",
@@ -584,13 +521,13 @@ CY.i18n.register("zh-TW", {
 
 CY.i18n.register("zh-TW", {"player.title": "爸爸", "player.name": "你"});
 
-CY.i18n.register("zh-TW", {"btn.edit": "編輯", "btn.archive": "封存", "btn.delete": "刪除", "btn.restore": "恢復", "bar.archived": "已封存 {n} 位", "del.title": "刪除{name}？", "del.note": "刪除後{name}的紀錄、說過的話和狀態都會從本機移除，無法恢復。只是想讓ta先離開的話，可以選封存，紀錄會留著。"});
+CY.i18n.register("zh-TW", {"btn.edit": "編輯", "btn.archive": "封存", "btn.delete": "刪除", "btn.restore": "恢復", "del.title": "刪除{name}？", "del.note": "刪除後{name}的紀錄、說過的話和狀態都會從本機移除，無法恢復。只是想讓ta先離開的話，可以選封存，紀錄會留著。"});
 
-CY.i18n.register("zh-TW", {"hdr.share": "分享卡片", "share.title": "分享卡片", "share.note": "只在你的裝置上生成一張圖，你選哪些數字就放哪些，預設不含名字。遊戲不會上傳，也不推薦你分享。", "share.f_time": "陪伴時間", "share.f_care": "照顧次數", "share.f_talk": "聊過天", "share.f_called": "被叫的次數", "share.f_back": "收到的心意", "share.f_names": "顯示名字", "share.save": "儲存圖片", "share.send": "分享", "share.line_time": "陪伴了 {t}", "share.line_care": "照顧了 {n} 次", "share.line_talk": "聊了 {n} 次", "share.line_called": "被叫了 {n} 聲{title}", "share.line_back": "收到了 {n} 份心意", "share.foot": "Care for You · 沒有分數，只有陪伴", "cond.heart": "心臟病", "cond.parkinson": "帕金森氏症", "cond.depress": "情緒低落", "cond.nocturia": "夜尿多", "cond.eczema": "濕疹", "cond.fracture": "骨折復原", "cond.trauma": "創傷後驚醒", "cond.allergy": "過敏", "need.chest": "胸口發悶", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上廁所", "need.itch": "皮膚發癢", "need.pain": "傷處疼", "need.nightmare": "睡不安穩", "need.sneeze": "打噴嚏流眼淚", "need.veg": "想吃新鮮蔬菜", "need.humid": "要噴水保濕", "act.restsit": "扶著坐下歇歇", "act.steady": "扶穩", "act.listen": "靜靜聽ta說", "act.walkout": "陪著出去走走", "act.lead": "扶去廁所", "act.nightlight": "開小夜燈", "act.selftoilet": "自己去廁所", "selfact.selftoilet": "自己去廁所", "act.ointment": "塗藥膏", "act.trimnails": "剪指甲", "act.support": "扶著走幾步", "act.painkill": "吃止痛藥", "act.rehab": "陪著做復健動作", "act.stayclose": "陪在身邊不說話", "act.warmdrink": "遞一杯熱飲", "act.antihist": "吃抗過敏藥", "act.airclean": "打掃除塵", "act.veggie": "餵新鮮蔬菜", "act.mist": "噴水保濕", "act.train": "教口令", "act.teach": "教說話", "class.guineapig": "天竺鼠", "class.gecko": "守宮", "arch.guineapig": "天竺鼠", "arch.gecko": "守宮", "arch.refugee_elder": "逃難來的老人", "arch.refugee_mother": "逃難來的媽媽", "arch.refugee_child": "逃難來的孩子", "arch.wheelchair": "坐輪椅的家人", "preset.host.label": "收留一家逃難的人", "preset.host.note": "一位老人，一位媽媽，一個孩子，剛到一個陌生的地方，需要時間慢慢安下心來", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "媽媽", "preset.name.refugee_child": "孩子", "preset.night.label": "夜裡起夜的爺爺", "preset.night.note": "夜尿多，夜裡要起來，白天也有些虛弱，需要有人留意"});
+CY.i18n.register("zh-TW", {"hdr.share": "分享卡片", "share.title": "分享卡片", "share.note": "只在你的裝置上生成一張圖，你選哪些數字就放哪些，預設不含名字。遊戲不會上傳，也不推薦你分享。", "share.f_time": "陪伴時間", "share.f_care": "照顧次數", "share.f_talk": "聊過天", "share.f_called": "被叫的次數", "share.f_back": "收到的心意", "share.f_names": "顯示名字", "share.save": "儲存圖片", "share.send": "分享", "share.line_time": "陪伴了 {t}", "share.line_care": "照顧了 {n} 次", "share.line_talk": "聊了 {n} 次", "share.line_back": "收到了 {n} 份心意", "share.foot": "Care for You · 沒有分數，只有陪伴", "cond.heart": "心臟病", "cond.parkinson": "帕金森氏症", "cond.depress": "情緒低落", "cond.nocturia": "夜尿多", "cond.eczema": "濕疹", "cond.fracture": "骨折復原", "cond.trauma": "創傷後驚醒", "cond.allergy": "過敏", "need.chest": "胸口發悶", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上廁所", "need.itch": "皮膚發癢", "need.pain": "傷處疼", "need.nightmare": "睡不安穩", "need.sneeze": "打噴嚏流眼淚", "need.veg": "想吃新鮮蔬菜", "need.humid": "要噴水保濕", "act.restsit": "扶著坐下歇歇", "act.steady": "扶穩", "act.listen": "靜靜聽ta說", "act.walkout": "陪著出去走走", "act.lead": "扶去廁所", "act.nightlight": "開小夜燈", "act.selftoilet": "自己去廁所", "selfact.selftoilet": "自己去廁所", "act.ointment": "塗藥膏", "act.trimnails": "剪指甲", "act.support": "扶著走幾步", "act.painkill": "吃止痛藥", "act.rehab": "陪著做復健動作", "act.stayclose": "陪在身邊不說話", "act.warmdrink": "遞一杯熱飲", "act.antihist": "吃抗過敏藥", "act.airclean": "打掃除塵", "act.veggie": "餵新鮮蔬菜", "act.mist": "噴水保濕", "act.train": "教口令", "act.teach": "教說話", "class.guineapig": "天竺鼠", "class.gecko": "守宮", "arch.guineapig": "天竺鼠", "arch.gecko": "守宮", "arch.refugee_elder": "逃難來的老人", "arch.refugee_mother": "逃難來的媽媽", "arch.refugee_child": "逃難來的孩子", "arch.wheelchair": "坐輪椅的家人", "preset.host.label": "收留一家逃難的人", "preset.host.note": "一位老人，一位媽媽，一個孩子，剛到一個陌生的地方，需要時間慢慢安下心來", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "媽媽", "preset.name.refugee_child": "孩子", "preset.night.label": "夜裡起夜的爺爺", "preset.night.note": "夜尿多，夜裡要起來，白天也有些虛弱，需要有人留意"});
 
-CY.i18n.register("zh-TW", {"loc.home": "家", "loc.office": "辦公室", "loc.hospital": "醫院", "loc.bedroom": "臥室", "loc.market": "超市", "loc.aisle": "超市裡", "act.groceries": "去買菜", "log.groceries": "買菜回來了，帶回 {n} 份食材", "loc.guest": "客房", "loc.elder": "老人房", "loc.toilet": "衛生間", "loc.study": "書房", "loc.living": "客廳", "loc.kitchen": "廚房", "loc.yard": "院子", "loc.ward": "病房", "loc.desk": "工位", "nav.here": "你在{place}", "nav.transit": "正在路上", "nav.travel_hold": "前往{place}，長按 {n} 秒", "nav.travel_click": "前往{place}，花 {t}", "walk.to": "走到{room}", "walk.travel": "前往{place}", "toast.offsite": "{name}在{place}，先過去吧", "toast.walking": "正在走過去，到了就做", "log.fall_minor": "{name}夜裡起夜時摔了一下，沒有大礙。", "log.fall_serious": "{name}夜裡起夜摔倒了，被送到了醫院。", "log.discharge": "{name}出院回家了。", "log.night_wc": "{name}夜裡起來上了廁所。", "room.edit": "編輯{name}", "life.drag": "拖動可以調整順序"});
+CY.i18n.register("zh-TW", {"loc.home": "家", "loc.office": "辦公室", "loc.hospital": "醫院", "loc.bedroom": "臥室", "loc.market": "超市", "loc.aisle": "超市裡", "act.groceries": "去買菜", "log.groceries": "買菜回來了，帶回 {n} 份食材", "loc.guest": "客房", "loc.elder": "老人房", "loc.toilet": "衛生間", "loc.study": "書房", "loc.living": "客廳", "loc.kitchen": "廚房", "loc.yard": "院子", "loc.ward": "病房", "loc.desk": "工位", "nav.here": "你在{place}", "nav.travel_hold": "前往{place}，長按 {n} 秒", "toast.offsite": "{name}在{place}，先過去吧", "toast.walking": "正在走過去，到了就做", "log.fall_minor": "{name}夜裡起夜時摔了一下，沒有大礙。", "log.fall_serious": "{name}夜裡起夜摔倒了，被送到了醫院。", "log.discharge": "{name}出院回家了。", "log.night_wc": "{name}夜裡起來上了廁所。", "room.edit": "編輯{name}", });
 
-CY.i18n.register("zh-TW", {"hdr.people": "角色", "hdr.people_tip": "新增、編輯、封存、刪除角色", "people.title": "管理角色", "people.note": "新增、編輯、封存和刪除都在這裡。", "people.archived": "已封存", "loc.family": "全家", "time.sync": "與現實同步", "time.free": "遊戲時間，與現實分開", "time.ff": "快轉到 {time}", "time.tip_real": "遊戲裡幾點就是現實裡幾點，動作靠長按", "time.tip_free": "遊戲用自己的時間，一倍速，和現實的幾點分開。點「對回現實」回到現實時間", "time.tip_compressed": "快轉中，動作點一下，花掉遊戲裡的時間", "time.back": "對回現實", "time.back_tip": "遊戲時間直接變成現實此刻的時間，不漸變，只記錄時間", "time.stop": "停下", "time.stop_tip": "停在現在的遊戲時間，回到一倍速", "ff.title": "快轉…", "ff.tip": "快轉到一個時刻，到了自動回到一倍速。快轉裡點一下做事，花掉遊戲裡的時間", "ff.morning": "到下一個早上 7:00", "ff.noon": "到中午 12:00", "ff.evening": "到傍晚 18:00", "ff.night": "到夜裡 22:00", "ff.p60": "快轉 1 小時", "ff.p180": "快轉 3 小時", "ff.p360": "快轉 6 小時", "ff.start": "開始快轉，到 {time} 停下，之後用遊戲自己的時間，和現實分開。", "ff.done": "到 {time} 了，回到一倍速。遊戲時間和現實分開，想回去點「對回現實」。", "intro.light": "輕量體驗", "intro.light_note": "只有長按，沒有錢，適合放在工作旁邊，打斷的是你真實的時間。", "intro.full": "完整體驗", "intro.full_note": "工作賺錢，買食材藥品尿布玩具，也可以請保母。嬰兒沒人管會一直哭，老人能自己照顧自己一陣。", "intro.p2": "你可以選只有長按的輕量體驗，也可以選要工作賺錢、買物品的完整體驗。想快轉時，頂欄裡有快轉。選一種開始：", "intro.later": "快轉和對回現實在頂欄裡，其餘細節在設定裡改。"});
+CY.i18n.register("zh-TW", {"hdr.people_tip": "新增、編輯、封存、刪除角色", "people.title": "管理角色", "people.note": "新增、編輯、封存和刪除都在這裡。", "people.archived": "已封存", "loc.family": "全家", });
 
 CY.i18n.register("zh-TW", {"backend.error": "遠端後端連不上，已改用內建後端。"});
 
@@ -598,17 +535,17 @@ CY.i18n.register("zh-TW", {"trait.shy": "害羞", "trait.shy_tip": "話少，不
 
 CY.i18n.register("zh-TW", {"arch.hedgehog": "刺蝟", "arch.duck": "鴨子", "arch.ferret": "雪貂", "arch.axolotl": "六角恐龍", "arch.chicken": "小雞", "arch.orchid": "蘭花", "arch.bamboo": "竹子", "arch.gongong": "公公", "arch.popo": "婆婆", "arch.grandson": "孫子", "arch.granddaughter": "孫女", "arch.younger_brother": "弟弟", "arch.younger_sister": "妹妹", "arch.niece": "外甥女", "arch.classmate": "同學", "class.hedgehog": "刺蝟", "class.duck": "鴨子", "class.ferret": "雪貂", "class.axolotl": "六角恐龍", "class.chicken": "小雞", "class.orchid": "蘭花", "class.bamboo": "竹子", "preset.threegen.label": "三代同堂", "preset.threegen.note": "爺爺奶奶，媽媽，寶寶，每個人的節奏都不一樣", "preset.solo.label": "一個人，一隻貓，幾盆花", "preset.solo.note": "安靜的日子，需要的不多，但每天都要看一眼", "preset.zoo.label": "一屋子小動物", "preset.zoo.note": "貓，狗，兔子，刺蝟，各有各的脾氣", "preset.garden.label": "花草一角", "preset.garden.note": "不說話，只按時間需要澆水和陽光", "preset.name.grandma": "奶奶", "preset.name.mom": "媽媽", "preset.name.dog": "豆豆", "preset.name.rabbit": "糯米", "preset.name.hedgehog": "小刺", "preset.name.orchid": "蘭蘭", "preset.name.bamboo": "青青", "preset.name.cactus": "小刺球"});
 
-CY.i18n.register("zh-TW", {"intro.p2": "你可以選只有長按的輕量體驗，也可以選要工作賺錢、買物品的完整體驗。選一種開始：", "intro.later": "其餘細節在設定裡改。"});
+CY.i18n.register("zh-TW", {});
 
-CY.i18n.register("zh-TW", {"about.p5": "讓手停在滑鼠上，讓腦子歇一會兒。"});
+CY.i18n.register("zh-TW", {});
 
 CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
-CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "list.sep": "、", "log.outing_stroller": "{name}坐進嬰兒車，被推著出門去{place}了。", "log.outing_wheelchair": "{name}坐上輪椅，被推著出門去{place}了。", "pop.mute": "全部靜音", "pop.music": "音樂", "pop.sfx": "音效", "pop.speed": "時間倍率", "pop.work": "工作時段", "pop.am": "上午", "pop.pm": "下午", "pop.format": "時間制式", "log.outing_lead": "{name}帶著{others}出門去{place}了。", "log.outing_follow": "{name}跟著{lead}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
+CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.lawn": "草坪", "loc.road": "馬路", "act.park": "帶去公園", "act.street": "去街上逛逛", "toast.outing": "{name}在{place}玩呢，一會兒就回來。", "log.outing_start": "{name}出門去{place}了。", "list.sep": "、", "log.outing_stroller": "{name}坐進嬰兒車，被推著出門去{place}了。", "log.outing_wheelchair": "{name}坐上輪椅，被推著出門去{place}了。", "pop.mute": "全部靜音", "pop.music": "音樂", "pop.sfx": "音效", "pop.work": "工作時段", "pop.am": "上午", "pop.pm": "下午", "pop.format": "時間制式", "log.outing_lead": "{name}帶著{others}出門去{place}了。", "log.outing_follow": "{name}跟著{lead}出門去{place}了。", "log.outing_back": "{name}回來了。", "log.assist": "{who}替你照顧了{name}：{label}", });
 
 CY.i18n.register("zh-TW", {"add.helper": "在家辦公，自動賺錢，也分擔照顧"});
 
-CY.i18n.register("zh-TW", {"intro.p2": "離開書桌去照顧人，那段時間就賺不了錢。錢用來買物品，也可以請保母。"});
+CY.i18n.register("zh-TW", {});
 
 CY.i18n.register("zh-TW", {"people.lead": "設為操縱對象", "people.lead_on": "操縱對象，點擊取消"});
 
@@ -631,10 +568,10 @@ CY.i18n.register("zh-TW", {"badge.help": "去幫忙"});
 CY.i18n.register("zh-TW", {"social.pets": "{a}和{b}追著玩了一陣。"});
 CY.i18n.register("zh-TW", {});
 CY.i18n.register("zh-TW", {});
-CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "share.note": "只在你的裝置上產生一張圖，放什麼內容由你勾選，名字也由你決定。遊戲不會上傳，也不推薦你分享。", "brand.name": "照顧你", "wd.0": "週日", "wd.1": "週一", "wd.2": "週二", "wd.3": "週三", "wd.4": "週四", "wd.5": "週五", "wd.6": "週六", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
+CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "share.note": "只在你的裝置上產生一張圖，放什麼內容由你勾選，名字也由你決定。遊戲不會上傳，也不推薦你分享。", "brand.name": "照顧你", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
 CY.i18n.register("zh-TW", {"corner.day": "第 {m} 個月 第 {d} 天"});
 CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到 100，0 是關掉。現場合成的安靜音樂，夜裡更低更慢。瀏覽器要求先點一下頁面才會出聲", "ini.audio.mute": "為 true 時音樂和音效全部靜音，不改兩個音量的值", "lbl.audio.mute": "全部靜音", "ini.audio.sfx_volume": "音效音量，0 到 100，0 是關掉。點按、有人開口、完成打勾、發生了事情時的輕響"});
-CY.i18n.register("zh-TW", {"lbl.interrupt.countdown_seconds": "提醒倒數，秒", "lbl.economy.work_hours": "工作時段", "lbl.audio.music_volume": "背景音樂", "lbl.audio.sfx_volume": "音效", "set.clock_note": "改它不改變陪伴天數和任何計時。"});
+CY.i18n.register("zh-TW", {"lbl.interrupt.countdown_seconds": "提醒倒數，秒", "lbl.economy.work_hours": "工作時段", "lbl.audio.music_volume": "背景音樂", "lbl.audio.sfx_volume": "音效", });
 CY.i18n.register("zh-TW", {"about.p1": "照顧你是一個在網頁裡玩的小遊戲。家裡有老人、寶寶、貓狗、花草，你一邊工作，他們會不定時來叫你一聲：要杯水，說句話，陪一會兒。你停下手，照看一下，再回去做自己的事。沒有分數，沒有失敗，不用下載，不用帳號。", "about.how": "點一個人看他想要什麼，按住動作鍵，等圓圈走滿就做完了。點視窗右上角的時間可以調快慢。開著分頁放在一邊做自己的事就行。", "about.title": "關於照顧你"});
 CY.i18n.register("zh-TW", {"about.tab_data": "資料驅動", "data.intro": "角色什麼時候要什麼，說什麼話，都是資料決定的，不是寫死在程式裡的。驅動方式有三種，現在只有第一種是完整可用的，預設也只用第一種。", "data.h1": "一，機率查表，已完成，預設", "data.p1": "每個人的需求按各自的速度增長，什麼時候出事、說哪句話、誰幫誰，都是查明文檔案裡的表和機率。檔案在資料資料夾裡，用記事本改了就生效。也可以換成你自己的程式，介面公開。", "data.h2": "二，數值積分，未完成", "data.p2": "把需求、心情和身體當成連續變化的數值，按方程一步步推進，而不是查表。目前只有一個可以自己執行的實驗後端，還沒有接進遊戲的介面，也沒有經過驗證，不建議當真。", "data.h3": "三，AI 接入，未完成", "data.p3": "AI 接入讓外部的 AI 服務來改寫台詞，預設關閉，目前只是實驗。只有你在進階設定裡打開並填入服務位址，才會把角色的名字、身分和目前情緒等少量內容傳給你選的服務，你回答過的話預設不傳。服務由第三方提供，怎麼處理資料由它的政策決定。金鑰以明文存在設定檔裡，不要把設定檔分享給別人，存檔下載預設不含金鑰。", "priv.p3": "網頁本身是靜態的，預設不會把你的遊戲資料傳到任何地方。只有你自己在進階設定裡打開遠端後端或 AI 接入才會傳送，傳什麼見「資料驅動」一頁。", "cred.p3": "角色形象、動畫和文字均為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"about.tab_data": "資料與隱私", "about.tab_author": "作者與致謝", "data.head": "資料怎麼驅動", "about.p4": "目前是早期版本，會有不完善的地方。歡迎到 GitHub 倉庫提 issue 回饋：", "au.page": "個人主頁", "au.issues": "意見與問題", "au.mail": "郵件", "au.credits": "致謝與授權"});

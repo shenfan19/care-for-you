@@ -10,7 +10,7 @@
 
   const blank = n => ({ n, care: {}, fam: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
   const today = () => {
-    const n = G._closing || G.gameDate().n;
+    const n = G._closing || G._dayN || G.gameDate().n;   /* 事记在还没收口的那一天，午夜过了到翻日之间的一小段也算前一天 */
     if (!G.world.today || G.world.today.n !== n) G.world.today = blank(n);
     return G.world.today;
   };

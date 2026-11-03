@@ -29,7 +29,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   }
 
   /* 访客：家里的临时成员 */
-  const endDay = async () => { let g = 0; while (!G.dayRoll() && g++ < 100) G.advance(30, false); await new Promise(r => setTimeout(r, 80)); };
+  const endDay = async () => { const n0 = G.gameDate().n; let g = 0; while (G.gameDate().n === n0 && g++ < 200) G.advanceDay(30, false); G.dayRoll(); await new Promise(r => setTimeout(r, 80)); };
   const wait = () => new Promise(r => setTimeout(r, 80));
   {
     G.DOOR.meet_chance = 0;
@@ -51,6 +51,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.applyAction(zhuge.id, 'invite_rest');
     check('请他睡一会儿，满足并留下纪念品', zhuge.person.visitor.ok === true && G.souvenirs().nightingale > 0);
     zhuge.person.visitor.stay = 1;
+    G._dayN = G.gameDate().n;   /* 前面的测试走过了午夜，这里重新对齐日序号 */
     const nd = G.gameDate().n, tLeave0 = Math.floor(G.world.game_minutes); await endDay();
     const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText) : [];
     check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'nightingale') && !G.people.some(p => p.person.name === '弗洛伦斯·南丁格尔'));
@@ -181,8 +182,9 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   }
   /* 出门和小睡按现实秒算：一天压成五分钟以后，带人去医院，逛街，扶去休息，都要停留得让玩家看得见 */
   {
-    CY.world.enforce = false;
+    CY.world.enforce = false; G.setClock(15 * 60);   /* 逛街只在白天，前面的测试可能已经把钟走到夜里 */
     const gp = G.people.find(q => q.person.archetype === 'grandpa'); G.world.protagonist = null;
+    gp.state.frailty = 0.1; for (const k in gp.state.needs) gp.state.needs[k] = 0.2;   /* 前面的测试走了很久，需求涨满的人走不动 */
     G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'doctor'); const f = G.flag(gp, 'outing');
     check('带去看医生是出门去医院，待上约五十现实秒', !!f && f.place === 'hospital' && Math.abs((f.until - G.world.game_minutes) - G.realMin(50)) < 1e-6, f && JSON.stringify(f));
     G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'street'); const f2 = G.flag(gp, 'outing');

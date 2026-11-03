@@ -1,47 +1,31 @@
 /* English language pack. Characters' lines, the saying library and the question bank are content packs in the templates folder and are still Chinese; labels fall back to the template text when a key is missing. */
 CY.i18n.register('en', {
   'app.title': 'Care for You',
-  'app.proto': 'prototype {v}',
-  'foot.text': 'A personal project, not affiliated with any school, employer or organization.',
-  'hdr.time_tip': 'How fast time passes',
-  'time.real': 'Real time', 'time.compressed': 'Compressed time', 'time.paused': 'Paused',
-  'hdr.float': 'Pop out', 'hdr.float_tip': 'Pop the characters out into an always-on-top mini window',
-  'hdr.save': 'Save & download', 'hdr.save_tip': 'Save your game, download the local app, import a save',
-  'hdr.settings': 'Settings', 'hdr.about': 'About',
-  'float.note': 'The characters are in the pop-out window.', 'float.back': 'Bring them back',
-  'float.unsupported': 'This browser does not support Document Picture-in-Picture. Please use desktop Chrome or Edge.',
-  'btn.add': '+ Add', 'btn.cancel': 'Cancel', 'btn.close': 'Close', 'btn.save': 'Save', 'btn.later': 'Later',
+            'hdr.save': 'Save & download',   'hdr.settings': 'Settings', 'hdr.about': 'About',
+      'btn.add': '+ Add', 'btn.cancel': 'Cancel', 'btn.close': 'Close', 'btn.save': 'Save', 'btn.later': 'Later',
   'room.empty': 'Nobody is here yet.', 'room.away': 'Let {name} step away from the desktop', 'room.bar': 'Mood {mood}%  Frailty {frail}%',
   'ask.own': 'Say your own…', 'ask.send': 'Say', 'pick.reroll': 'None of these', 'nudge.yes': 'OK, I will', 'nudge.no': 'Later', 'unit.sec': '{n}s',
 
   'clock.dh': '{d} d {h} h', 'clock.hm': '{h} h {m} min', 'clock.m': '{m} min',
-  'clock.elapsed': 'Together for {t}', 'clock.elapsed_tip': 'Game time that has passed at the speed you chose. It does not grow while paused.',
-  'clock.real': 'real {hh}:{mm}',
-  'clock.tip_system': 'The current time, following your computer clock, so day and night match your window',
-  'clock.tip_game': 'Time inside the game, with day and night cycling on game time. The real clock is shown after it.',
-
+        
   'bar.away': '{name} stepped away', 'bar.recall': 'call back',
   'feed.title': 'What happened', 'feed.all': 'Everyone', 'feed.quiet': 'Hide everyday chatter', 'feed.stat': 'Cared {care} times, talked {talk} times, missed {missed} times',
   'feed.stat_back': ', {n} kindnesses from {name}', 'feed.day': 'Day {n}', 'feed.empty': 'Nothing has happened yet.', 'feed.more': 'Show more',
   'fmt.datetime': '{m}/{d} {hh}:{mm}',
-  'said.title': 'Things said', 'said.count': '{n} remembered, {m} of your answers', 'said.you': 'You', 'said.lib': 'Library id; the number after the dot is the preset answer',
-  'said.empty': 'Nothing yet. The game will occasionally ask you a question, or ask what someone would say.', 'said.nobody': 'No characters yet.',
+  'said.you': 'You',   'said.nobody': 'No characters yet.',
   'type.care': 'Care', 'type.talk': 'Talk', 'type.missed': 'Missed', 'type.cares_back': 'Kindness', 'type.glance': 'A glance', 'type.event': 'Event',
   'type.frail': 'Frail', 'type.recovered': 'Recovered', 'type.reveal': 'The moment', 'type.picked': 'Remembered', 'type.nudge': 'Reminder',
 
   'add.group_family': 'Family and friends', 'add.group_animal': 'Animals', 'add.name_ph': 'Name, e.g. Ben',
-  'add.pronoun': 'Pronoun', 'add.age': 'Age', 'add.glasses': 'Glasses', 'add.beard': 'Beard', 'add.skin': 'Skin', 'add.haircolor': 'Hair color', 'add.hair': 'Hair',
-  'add.cloth': 'Clothes', 'add.cond': 'Basic condition', 'add.cond_none': 'None', 'add.coat': 'Coat', 'add.ok': 'Add',
-  'pron.he': 'he', 'pron.she': 'she', 'pron.it': 'it', 'age.child': 'Child', 'age.adult': 'Adult', 'age.elder': 'Elder',
-  'glasses.none': 'None', 'glasses.round': 'Round', 'glasses.square': 'Square',
+  'add.pronoun': 'Pronoun', 'add.age': 'Age', 'add.skin': 'Skin', 'add.haircolor': 'Hair color',   'add.cloth': 'Clothes', 'add.cond': 'Basic condition', 'add.cond_none': 'None', 'add.ok': 'Add',
+  'pron.he': 'he', 'pron.she': 'she', 'pron.it': 'it',   'glasses.none': 'None', 'glasses.round': 'Round', 'glasses.square': 'Square',
   'hair.short': 'Short', 'hair.long': 'Long', 'hair.bob': 'Bob', 'hair.ponytail': 'Ponytail', 'hair.bun': 'Bun', 'hair.curly': 'Curly', 'hair.bald': 'Bald',
   'theme.auto': 'Follow system', 'theme.light': 'Light', 'theme.dark': 'Dark',
   'bg.warm': 'Warm', 'bg.mint': 'Mint', 'bg.sky': 'Sky', 'bg.rose': 'Rose', 'bg.gray': 'Gray', 'lang.auto': 'Follow browser',
   'arch.grandpa': 'Grandpa', 'arch.grandma': 'Grandma', 'arch.waigong': 'Grandpa (maternal)', 'arch.waipo': 'Grandma (maternal)', 'arch.dad': 'Dad', 'arch.mom': 'Mom', 'arch.aunt': 'Aunt', 'arch.uncle': 'Uncle', 'arch.me': 'Me',
   'arch.brother': 'Brother', 'arch.sister': 'Sister', 'arch.daughter': 'Daughter', 'arch.son': 'Son', 'arch.nephew': 'Nephew', 'arch.friend': 'Friend', 'arch.cat': 'Cat', 'arch.dog': 'Dog', 'arch.snake': 'Snake',
 
-  'ob.title': 'Who do you have to take care of?', 'ob.sub': 'Pick one to begin. You can add more at any time.', 'ob.recommend': 'Suggested',
-  'ob.added': 'Added: {names}', 'ob.start': 'Start', 'ob.skip': 'Just look around for now', 'sep.list': ', ',
+  'ob.title': 'Who do you have to take care of?', 'ob.sub': 'Pick one to begin. You can add more at any time.',   'ob.added': 'Added: {names}', 'ob.start': 'Start', 'ob.skip': 'Just look around for now', 'sep.list': ', ',
   'preset.trio.label': 'Try it: Grandpa, a little one and a cat', 'preset.trio.note': 'Three different rhythms to get a feel for it',
   'preset.elder.label': 'An elder who needs company', 'preset.elder.note': 'Has diabetes, with small choices about medicine and meals',
   'preset.pet.label': 'Just one cat', 'preset.pet.note': 'The lightest start',
@@ -50,7 +34,7 @@ CY.i18n.register('en', {
   'sec.interrupt': 'Interruptions', 'sec.time': 'Time', 'sec.player': 'Names', 'sec.interaction': 'Interaction', 'sec.ui': 'Interface', 'sec.privacy': 'Privacy', 'sec.account': 'Account', 'sec.ai': 'AI',
   'set.title': 'Settings', 'set.look': 'Look and language', 'set.theme': 'Theme', 'set.bg': 'Background', 'set.lang': 'Language',
   'set.data': 'Where data lives', 'set.data_note': '{where}. All data is plain files. If you pick a folder, make sure it is not synced somewhere others can see.',
-  'set.folder': 'Choose data folder', 'set.restore': 'Restore missing starter files', 'ob.random': 'Surprise me', 'ob.custom': 'Build my own', 'ob.back': 'Back', 'ob.more': 'More scenarios', 'preset.selfcare.label': 'Living alone, looking after myself', 'preset.selfcare.note': 'You live on your own and manage your own condition: medicine, blood sugar, meals, rest', 'preset.name.self': 'Me', 'corner.speed_tip': 'Time ×{speed}. Click to change: ×1, ×6, ×24 (one real hour is one game day), ×60. Set the clock in Settings.', 'set.clock': 'Game clock', 'set.clock_note': 'What time it is in the game. It runs by itself at the speed above; changing it does not touch days together or any timers. A new game starts at your system time.', 'set.clock_set': 'Set this time', 'set.clock_sync': 'Match system time', 'corner.money_tip': 'Money. Open to hire a nanny', 'corner.music_tip': 'Music. Tap to turn on or off', 'set.figure': 'Character style', 'figure.dressed': 'Dressed bean', 'figure.plain': 'Plain bean', 'figure.dumpling': 'Dumpling', 'sec.audio': 'Sound', 'ini.audio.sfx': 'Sound effects: soft sounds for taps, someone speaking up, a finished task and events. Made live, no audio files', 'ini.audio.music': 'Background music: quiet, made live, lower and slower at night. The browser needs one click on the page before it can play', 'ini.audio.volume': 'Volume, 0 to 1', 'set.advanced': 'Advanced settings', 'set.danger': 'Delete', 'set.wipe_note': 'Delete all game data on this device, including every character and record.',
+  'set.folder': 'Choose data folder', 'set.restore': 'Restore missing starter files', 'ob.random': 'Surprise me', 'ob.custom': 'Build my own', 'ob.back': 'Back', 'preset.selfcare.label': 'Living alone, looking after myself', 'preset.selfcare.note': 'You live on your own and manage your own condition: medicine, blood sugar, meals, rest', 'preset.name.self': 'Me', 'corner.money_tip': 'Money. Open to hire a nanny', 'corner.music_tip': 'Music. Tap to turn on or off', 'set.figure': 'Character style', 'figure.dressed': 'Dressed bean', 'figure.plain': 'Plain bean', 'figure.dumpling': 'Dumpling', 'sec.audio': 'Sound', 'ini.audio.sfx': 'Sound effects: soft sounds for taps, someone speaking up, a finished task and events. Made live, no audio files', 'ini.audio.music': 'Background music: quiet, made live, lower and slower at night. The browser needs one click on the page before it can play', 'ini.audio.volume': 'Volume, 0 to 1', 'set.advanced': 'Advanced settings', 'set.danger': 'Delete', 'set.wipe_note': 'Delete all game data on this device, including every character and record.',
   'set.wipe': 'Delete all local data', 'set.folder_had': 'Switched to the data already in that folder', 'set.folder_copied': 'Copied the current data into that folder', 'set.restored': 'Restored {n} files',
   'wipe.title': 'Delete all local data', 'wipe.body': 'This removes every character, record and setting on this device and cannot be undone. Downloading a save first is recommended.',
   'wipe.save_first': 'Download a save first', 'wipe.sure': 'I understand this cannot be undone', 'wipe.go': 'Delete',
@@ -81,22 +65,17 @@ CY.i18n.register('en', {
   'priv.p1': 'All game data is stored only on your own device, as plain files you can open, edit, copy and delete at any time.',
   'priv.p2': 'There are currently no accounts, no servers, no analytics, no ads, and no cookies or third-party tracking.',
   'priv.p3': 'The page itself is static and does not send your game data anywhere while running.',
-  'priv.h2': 'AI features',
-  'priv.p4': 'AI is off by default. Only after you turn it on in Settings and enter a service address will a small amount of context, such as a character name, role and current mood, be sent to the AI service you chose to generate one line of dialogue.',
-  'priv.p5': 'Your own answers are not sent unless you turn that on separately. The AI service is provided by a third party and handles data under its own policy, so please read it. The key is stored in the settings file in plain text, so do not share that file. Saves exclude the key by default.',
-  'priv.h3': 'Your rights',
+        'priv.h3': 'Your rights',
   'priv.p6': 'You can download all of your data at any time. Settings has a button to delete all local data, which cannot be undone.',
   'priv.p7': 'If accounts or cloud features are added later, we will first state what is collected, why, and for how long, and upload only with your explicit consent. Consent can be withdrawn, and you can then ask for deletion.',
   'priv.p8': 'The game is meant for adults. If it is ever offered in the EU or elsewhere, the notices and processes will be completed according to local data protection law such as the GDPR.',
   'priv.h4': 'Disclaimer',
   'priv.p9': 'This is a game, not a medical, psychological or nursing product. It gives no diagnosis, treatment or medication advice. The conditions in the game are basic scenarios and not real medical judgments. For real care, consult a professional.',
   'priv.p10': 'The game is provided as is, without warranty. If you are in a very difficult place, or feel you are becoming unhealthily dependent on the game, please reach out to someone you trust or to local professional support.',
-  'priv.note': 'This page describes the current design and commitments. It is not legal advice, and it will be reviewed by a professional before any formal public service.',
-  'cred.p1': 'The interface and logic are a static web page with no backend. Data files are YAML, parsed with js-yaml under the MIT license.',
+    'cred.p1': 'The interface and logic are a static web page with no backend. Data files are YAML, parsed with js-yaml under the MIT license.',
   'cred.p2': 'Artificial intelligence assistance tools were used in developing this project.',
   'cred.p3': 'Character art, animations and text are original. The open source license has not been decided yet and will be stated here and in the repository once it is.',
-  'ver.line': '{app} {v}, data schema {schema}, released {date}', 'ver.lang': 'Current language: {l}', 'ver.account': 'Accounts: not enabled.',
-
+  'ver.line': '{app} {v}, data schema {schema}, released {date}', 
   'log.frail': '{name} is very frail and needs someone nearby', 'log.recovered': '{name} is slowly recovering', 'toast.weak': 'No strength today.',
   'log.bedrest': '{name} is too weak to get up and now stays in bed', 'log.bedrest_end': '{name} is strong enough to get up again', 'toast.bedrest': '{ta} cannot get out of bed today.', 'act.wheel': 'Push the wheelchair outside',
   'req.need_fallback': '{name} needs: {need}', 'line.reveal_fallback': 'Has been watching over you all along.', 'line.glance_fallback': '{name} glanced at you.', 'line.ok': 'Mm.',
@@ -148,11 +127,7 @@ CY.i18n.register('en', {
 });
 
 CY.i18n.register("en", {
- "hdr.lang_tip": "Language",
- "hdr.theme_tip": "Theme: {mode}. Click to switch",
- "hdr.ratio_tip": "Compressed time speed: game minutes per real minute",
- "ratio.label": "x{n}",
- "unit.min": "{n} min",
+     "unit.min": "{n} min",
  "unit.hour": "{n} h",
  
  "sec.play": "Experience",
@@ -210,31 +185,11 @@ CY.i18n.register("en", {
  "class.tree": "Tree",
  "type.cry": "Crying",
  "type.self": "On their own",
- "life.wfh": "You are working from home, with {n} to look after.",
- "life.working": "At work, with {n} to look after at home.",
- "life.offwork": "Outside work hours, with {n} to look after at home.",
+    
+     
  
- "life.mode_tip": "Switch between hold and click. Holding costs your real time; clicking costs game time.",
- "life.mode_hold": "Hold: costs real time",
- "life.mode_click": "Click: costs game time",
- "life.busy": "Busy: {what}",
  
- "life.household": "Household",
-
- 
- "home.title": "Household and nannies",
- "home.note": "Ordered by who needs you most, which comes naturally from their class and current needs. You do not set priorities yourself.",
- "home.urgency": "Urgency",
- "home.self": "Self-care {n}%",
- "intro.title": "Care has a cost",
- "intro.p1": "You are working from home while someone at home needs looking after. Every moment of care has to be squeezed out of somewhere else.",
- "intro.p2": "Holding interrupts what you are really doing. Clicking spends game time, during which you earn nothing. Pick an experience:",
- "intro.light": "Light",
- "intro.light_note": "Hold only, no money. Easy to leave running while you work.",
- "intro.life": "Full",
- "intro.life_note": "Click to start and spend game time. Work to earn money for food, medicine, diapers and toys, or hire a nanny at reduced effect. A baby with nobody coming will cry without end; an elder can look after themselves for a while.",
- "intro.later": "You can change this later in Settings, or switch hold and click with the button under the top bar.",
- "toast.busy": "You are busy: {what}.",
+             "toast.busy": "You are busy: {what}.",
  "toast.started": "Started {what}; it takes {min} min.",
  
  "toast.nobody": "…",
@@ -314,12 +269,7 @@ CY.i18n.register("en", {
  "mode.switched_reality": "Switched to Reality mode: time follows the real clock and actions need a long press. {k} unfinished fast-mode tasks wait until you return to Fast mode.",
  "mode.switched_story": "Switched to Fast mode: time runs x{n} and an action starts with a click, spending game time. One thing at a time; a new task pauses the old one.",
  "mode.switched_paused": "Paused. Time stands still and nobody will interrupt you.",
- "intro.reality": "Reality mode",
- "intro.reality_note": "Time follows the real clock. Hold only, no money. Easy to leave next to your work; it interrupts your real time.",
- "intro.story": "Fast mode",
- "intro.story_note": "Time is compressed and an action starts with a click, spending game time. Work for money, buy food, medicine, diapers and toys, or hire a nanny. One thing at a time; a new task pauses the old one. A baby left alone cries without end, while an elder can look after themselves for a while.",
- "intro.later": "You can switch between Reality, Fast and Pause in the top bar at any time. Other details are in Settings.",
- "scene.auto": "Auto",
+      "scene.auto": "Auto",
  "scene.living": "Living room",
  "scene.bedroom": "Bedroom",
  "scene.kitchen": "Kitchen",
@@ -423,13 +373,13 @@ CY.i18n.register("en", {
 
 CY.i18n.register("en", {"player.title": "Dad", "player.name": "you"});
 
-CY.i18n.register("en", {"btn.edit": "Edit", "btn.archive": "Archive", "btn.delete": "Delete", "btn.restore": "Restore", "bar.archived": "{n} archived", "del.title": "Delete {name}?", "del.note": "Deleting removes the records, sayings and state of {name} from this device and cannot be undone. To just set them aside, choose Archive and the records stay."});
+CY.i18n.register("en", {"btn.edit": "Edit", "btn.archive": "Archive", "btn.delete": "Delete", "btn.restore": "Restore", "del.title": "Delete {name}?", "del.note": "Deleting removes the records, sayings and state of {name} from this device and cannot be undone. To just set them aside, choose Archive and the records stay."});
 
-CY.i18n.register("en", {"hdr.share": "Share card", "share.title": "Share card", "share.note": "A picture made only on your device with the numbers you choose, no names by default. Nothing is uploaded, and the game never nudges you to share.", "share.f_time": "Time together", "share.f_care": "Times cared", "share.f_talk": "Chats", "share.f_called": "Times called", "share.f_back": "Kindnesses received", "share.f_names": "Show names", "share.save": "Save image", "share.send": "Share", "share.line_time": "Together for {t}", "share.line_care": "Cared {n} times", "share.line_talk": "Chatted {n} times", "share.line_called": "Called {title} {n} times", "share.line_back": "Received {n} kindnesses", "share.foot": "Care for You · No score, just company", "cond.heart": "Heart condition", "cond.parkinson": "Parkinson’s", "cond.depress": "Low mood", "cond.nocturia": "Frequent night urination", "cond.eczema": "Eczema", "cond.fracture": "Fracture recovery", "cond.trauma": "Waking in fear after trauma", "cond.allergy": "Allergy", "need.chest": "Chest feels tight", "need.tremor": "Hands trembling", "need.lowmood": "Feeling low", "need.toilet": "Needs the toilet", "need.itch": "Skin is itchy", "need.pain": "Hurts where injured", "need.nightmare": "Restless", "need.sneeze": "Sneezing, watery eyes", "need.veg": "Wants fresh greens", "need.humid": "Needs misting", "act.restsit": "Help sit and rest", "act.steady": "Steady the hands", "act.listen": "Listen quietly", "act.walkout": "Walk outside together", "act.lead": "Help to the toilet", "act.nightlight": "Turn on a night light", "act.selftoilet": "Go to the toilet alone", "selfact.selftoilet": "Go to the toilet alone", "act.ointment": "Apply ointment", "act.trimnails": "Trim nails", "act.support": "Help walk a few steps", "act.painkill": "Take painkillers", "act.rehab": "Do rehab exercises together", "act.stayclose": "Stay close in silence", "act.warmdrink": "Hand over a warm drink", "act.antihist": "Take allergy medicine", "act.airclean": "Clean and dust", "act.veggie": "Feed fresh greens", "act.mist": "Mist with water", "act.train": "Teach a command", "act.teach": "Teach a word", "class.guineapig": "Guinea pig", "class.gecko": "Gecko", "arch.guineapig": "Guinea pig", "arch.gecko": "Gecko", "arch.refugee_elder": "An elder who fled", "arch.refugee_mother": "A mother who fled", "arch.refugee_child": "A child who fled", "arch.wheelchair": "A family member in a wheelchair", "preset.host.label": "Hosting a family who fled", "preset.host.note": "An elder, a mother and a child, newly arrived in an unfamiliar place, who need time to settle and feel safe", "preset.name.refugee_elder": "Elder", "preset.name.refugee_mother": "Mama", "preset.name.refugee_child": "Child", "preset.night.label": "Grandpa who gets up at night", "preset.night.note": "Frequent night trips to the toilet and a bit frail by day, so someone needs to keep an eye out"});
+CY.i18n.register("en", {"hdr.share": "Share card", "share.title": "Share card", "share.note": "A picture made only on your device with the numbers you choose, no names by default. Nothing is uploaded, and the game never nudges you to share.", "share.f_time": "Time together", "share.f_care": "Times cared", "share.f_talk": "Chats", "share.f_called": "Times called", "share.f_back": "Kindnesses received", "share.f_names": "Show names", "share.save": "Save image", "share.send": "Share", "share.line_time": "Together for {t}", "share.line_care": "Cared {n} times", "share.line_talk": "Chatted {n} times", "share.line_back": "Received {n} kindnesses", "share.foot": "Care for You · No score, just company", "cond.heart": "Heart condition", "cond.parkinson": "Parkinson’s", "cond.depress": "Low mood", "cond.nocturia": "Frequent night urination", "cond.eczema": "Eczema", "cond.fracture": "Fracture recovery", "cond.trauma": "Waking in fear after trauma", "cond.allergy": "Allergy", "need.chest": "Chest feels tight", "need.tremor": "Hands trembling", "need.lowmood": "Feeling low", "need.toilet": "Needs the toilet", "need.itch": "Skin is itchy", "need.pain": "Hurts where injured", "need.nightmare": "Restless", "need.sneeze": "Sneezing, watery eyes", "need.veg": "Wants fresh greens", "need.humid": "Needs misting", "act.restsit": "Help sit and rest", "act.steady": "Steady the hands", "act.listen": "Listen quietly", "act.walkout": "Walk outside together", "act.lead": "Help to the toilet", "act.nightlight": "Turn on a night light", "act.selftoilet": "Go to the toilet alone", "selfact.selftoilet": "Go to the toilet alone", "act.ointment": "Apply ointment", "act.trimnails": "Trim nails", "act.support": "Help walk a few steps", "act.painkill": "Take painkillers", "act.rehab": "Do rehab exercises together", "act.stayclose": "Stay close in silence", "act.warmdrink": "Hand over a warm drink", "act.antihist": "Take allergy medicine", "act.airclean": "Clean and dust", "act.veggie": "Feed fresh greens", "act.mist": "Mist with water", "act.train": "Teach a command", "act.teach": "Teach a word", "class.guineapig": "Guinea pig", "class.gecko": "Gecko", "arch.guineapig": "Guinea pig", "arch.gecko": "Gecko", "arch.refugee_elder": "An elder who fled", "arch.refugee_mother": "A mother who fled", "arch.refugee_child": "A child who fled", "arch.wheelchair": "A family member in a wheelchair", "preset.host.label": "Hosting a family who fled", "preset.host.note": "An elder, a mother and a child, newly arrived in an unfamiliar place, who need time to settle and feel safe", "preset.name.refugee_elder": "Elder", "preset.name.refugee_mother": "Mama", "preset.name.refugee_child": "Child", "preset.night.label": "Grandpa who gets up at night", "preset.night.note": "Frequent night trips to the toilet and a bit frail by day, so someone needs to keep an eye out"});
 
-CY.i18n.register("en", {"loc.home": "Home", "loc.office": "Office", "loc.hospital": "Hospital", "loc.bedroom": "Bedroom", "loc.market": "Market", "loc.aisle": "Aisle", "act.groceries": "Go grocery shopping", "log.groceries": "Back from the market with {n} meals of groceries", "loc.guest": "Guest room", "loc.elder": "Elders’ room", "loc.toilet": "Bathroom", "loc.study": "Study", "loc.living": "Living room", "loc.kitchen": "Kitchen", "loc.yard": "Yard", "loc.ward": "Ward", "loc.desk": "Desk", "nav.here": "You are at {place}", "nav.transit": "On the way", "nav.travel_hold": "Go to {place}, hold {n} s", "nav.travel_click": "Go to {place}, takes {t}", "walk.to": "Walk to {room}", "walk.travel": "Go to {place}", "toast.offsite": "{name} is at {place}, go there first", "toast.walking": "Walking over, it will start on arrival", "log.fall_minor": "{name} slipped during a night trip to the toilet, but it is nothing serious.", "log.fall_serious": "{name} fell during a night trip to the toilet and was taken to the hospital.", "log.discharge": "{name} is out of the hospital and back home.", "log.night_wc": "{name} got up in the night to use the toilet.", "room.edit": "Edit {name}", "life.drag": "Drag to reorder", "ini.play.auto_return": "When true, after caring with nothing else to do, you walk back to your post by yourself, and the travel time still counts. When false you stay where you are until you move.", "ini.play.fall_scale": "Multiplier for the chance of a fall on a night trip, for testing. It will come from the Life Matters nocturia model once connected.", "ini.play.model_provider": "Provider for models such as nocturia. Only the built-in default exists for now; look-up tables, Life Matters or others can be added later."});
+CY.i18n.register("en", {"loc.home": "Home", "loc.office": "Office", "loc.hospital": "Hospital", "loc.bedroom": "Bedroom", "loc.market": "Market", "loc.aisle": "Aisle", "act.groceries": "Go grocery shopping", "log.groceries": "Back from the market with {n} meals of groceries", "loc.guest": "Guest room", "loc.elder": "Elders’ room", "loc.toilet": "Bathroom", "loc.study": "Study", "loc.living": "Living room", "loc.kitchen": "Kitchen", "loc.yard": "Yard", "loc.ward": "Ward", "loc.desk": "Desk", "nav.here": "You are at {place}", "nav.travel_hold": "Go to {place}, hold {n} s", "toast.offsite": "{name} is at {place}, go there first", "toast.walking": "Walking over, it will start on arrival", "log.fall_minor": "{name} slipped during a night trip to the toilet, but it is nothing serious.", "log.fall_serious": "{name} fell during a night trip to the toilet and was taken to the hospital.", "log.discharge": "{name} is out of the hospital and back home.", "log.night_wc": "{name} got up in the night to use the toilet.", "room.edit": "Edit {name}", "ini.play.auto_return": "When true, after caring with nothing else to do, you walk back to your post by yourself, and the travel time still counts. When false you stay where you are until you move.", "ini.play.fall_scale": "Multiplier for the chance of a fall on a night trip, for testing. It will come from the Life Matters nocturia model once connected.", "ini.play.model_provider": "Provider for models such as nocturia. Only the built-in default exists for now; look-up tables, Life Matters or others can be added later."});
 
-CY.i18n.register("en", {"hdr.people": "People", "hdr.people_tip": "Add, edit, archive or delete people", "people.title": "Manage people", "people.note": "Add, edit, archive and delete all live here.", "people.archived": "Archived", "loc.family": "Everyone", "time.sync": "In sync with real time", "time.free": "Game time, apart from real time", "time.ff": "Fast-forward to {time}", "time.tip_real": "Game time matches the real clock, actions use a long press", "time.tip_free": "The game runs on its own clock at normal speed, apart from the real clock. Use Back to real time to rejoin it", "time.tip_compressed": "Fast-forwarding: an action is one click and spends game time", "time.back": "Back to real time", "time.back_tip": "Game time jumps straight to the real time now, no transition, only the time is recorded", "time.stop": "Stop", "time.stop_tip": "Stop at the current game time and return to normal speed", "ff.title": "Fast-forward…", "ff.tip": "Fast-forward to a time of day, then return to normal speed automatically. While fast-forwarding, a click does a thing and spends game time", "ff.morning": "To the next 7:00 morning", "ff.noon": "To noon 12:00", "ff.evening": "To evening 18:00", "ff.night": "To night 22:00", "ff.p60": "Skip 1 hour", "ff.p180": "Skip 3 hours", "ff.p360": "Skip 6 hours", "ff.start": "Fast-forwarding until {time}, then the game keeps its own time, apart from the real clock.", "ff.done": "It is {time} now, back to normal speed. Game time is apart from real time; use Back to real time to rejoin.", "intro.light": "Light experience", "intro.light_note": "Only the long press, no money. Easy to keep beside your work; what it interrupts is your real time.", "intro.full": "Full experience", "intro.full_note": "Work for money, buy food, medicine, diapers and toys, or hire a nanny. A baby left alone cries without end, while an elder can look after themselves for a while.", "intro.p2": "Choose a light experience with only the long press, or a full one with work and shopping. When you want to skip ahead, the top bar has Fast-forward. Pick one to begin:", "intro.later": "Fast-forward and Back to real time are in the top bar; other details are in Settings."});
+CY.i18n.register("en", {"hdr.people_tip": "Add, edit, archive or delete people", "people.title": "Manage people", "people.note": "Add, edit, archive and delete all live here.", "people.archived": "Archived", "loc.family": "Everyone", });
 
 CY.i18n.register("en", {"backend.error": "The remote backend is unreachable, so the built-in one is being used.", "ini.play.backend_provider": "builtin uses the built-in backend, whose rules and lines live in plain YAML in the data folder. http sends the state to a remote address that decides who speaks and what happens, and falls back to the built-in one on failure.", "ini.play.backend_url": "Address of the remote backend, used only when backend_provider is http. Only a state snapshot is sent, without names.", "ini.play.backend_timeout": "Timeout for the remote backend, in milliseconds.", "ini.play.backend_send_names": "When true, the snapshot sent to the remote backend includes people’s names. Off by default."});
 
@@ -437,17 +387,17 @@ CY.i18n.register("en", {"trait.shy": "Shy", "trait.shy_tip": "Speaks little and 
 
 CY.i18n.register("en", {"arch.hedgehog": "Hedgehog", "arch.duck": "Duck", "arch.ferret": "Ferret", "arch.axolotl": "Axolotl", "arch.chicken": "Chicken", "arch.orchid": "Orchid", "arch.bamboo": "Bamboo", "arch.gongong": "Father-in-law", "arch.popo": "Mother-in-law", "arch.grandson": "Grandson", "arch.granddaughter": "Granddaughter", "arch.younger_brother": "Younger brother", "arch.younger_sister": "Younger sister", "arch.niece": "Niece", "arch.classmate": "Classmate", "class.hedgehog": "Hedgehog", "class.duck": "Duck", "class.ferret": "Ferret", "class.axolotl": "Axolotl", "class.chicken": "Chicken", "class.orchid": "Orchid", "class.bamboo": "Bamboo", "preset.threegen.label": "Three generations", "preset.threegen.note": "Grandpa, Grandma, Mom and a baby, each on a different rhythm", "preset.solo.label": "Living alone, a cat and some plants", "preset.solo.note": "Quiet days, little needed, but worth a look every day", "preset.zoo.label": "A houseful of small animals", "preset.zoo.note": "A cat, a dog, a rabbit and a hedgehog, each with its own temper", "preset.garden.label": "A corner of plants", "preset.garden.note": "Silent, only needing water and sun in time", "preset.name.grandma": "Grandma", "preset.name.mom": "Mom", "preset.name.dog": "Buddy", "preset.name.rabbit": "Mochi", "preset.name.hedgehog": "Spike", "preset.name.orchid": "Lily", "preset.name.bamboo": "Green", "preset.name.cactus": "Prickle"});
 
-CY.i18n.register("en", {"intro.p2": "Choose a light experience with only the long press, or a full one with work and shopping. Pick one to begin:", "intro.later": "Other details are in Settings."});
+CY.i18n.register("en", {});
 
-CY.i18n.register("en", {"about.p5": "Let your hand rest on the mouse, and let your mind rest a while."});
+CY.i18n.register("en", {});
 
 CY.i18n.register("en", {"me.work_start": "Work hours began, and you settled in at the desk.", "me.work_end": "Work ended and you stepped away from the desk.", "me.go": "You went to {place}.", "me.back": "You came back home."});
 
-CY.i18n.register("en", {"loc.park": "Park", "loc.street": "Street", "loc.lawn": "Lawn", "loc.road": "Road", "act.park": "Take to the park", "act.street": "Go for a stroll in town", "toast.outing": "{name} is out at {place} and will be back soon.", "log.outing_start": "{name} went out to {place}.", "list.sep": ", ", "log.outing_stroller": "{name} was settled in the stroller and pushed out to {place}.", "log.outing_wheelchair": "{name} was helped into the wheelchair and pushed out to {place}.", "pop.mute": "Mute all", "pop.music": "Music", "pop.sfx": "Sound effects", "pop.speed": "Time speed", "pop.work": "Work hours", "pop.am": "AM", "pop.pm": "PM", "pop.format": "Clock format", "log.outing_lead": "{name} took {others} out to {place}.", "log.outing_follow": "{name} went out to {place} with {lead}.", "log.outing_back": "{name} is back.", "log.assist": "{who} looked after {name} for you: {label}", "ini.play.needs_source": "builtin lets the game grow needs itself; backend means needs come entirely from the backend through need_set directives, for example your own ODE, and the game stops growing them.", "ini.play.api_bridge": "When true, the page answers postMessage care.getState and care.apply so an outside program can read and write every person’s needs and state. Off by default.", });
+CY.i18n.register("en", {"loc.park": "Park", "loc.street": "Street", "loc.lawn": "Lawn", "loc.road": "Road", "act.park": "Take to the park", "act.street": "Go for a stroll in town", "toast.outing": "{name} is out at {place} and will be back soon.", "log.outing_start": "{name} went out to {place}.", "list.sep": ", ", "log.outing_stroller": "{name} was settled in the stroller and pushed out to {place}.", "log.outing_wheelchair": "{name} was helped into the wheelchair and pushed out to {place}.", "pop.mute": "Mute all", "pop.music": "Music", "pop.sfx": "Sound effects", "pop.work": "Work hours", "pop.am": "AM", "pop.pm": "PM", "pop.format": "Clock format", "log.outing_lead": "{name} took {others} out to {place}.", "log.outing_follow": "{name} went out to {place} with {lead}.", "log.outing_back": "{name} is back.", "log.assist": "{who} looked after {name} for you: {label}", "ini.play.needs_source": "builtin lets the game grow needs itself; backend means needs come entirely from the backend through need_set directives, for example your own ODE, and the game stops growing them.", "ini.play.api_bridge": "When true, the page answers postMessage care.getState and care.apply so an outside program can read and write every person’s needs and state. Off by default.", });
 
 CY.i18n.register("en", {"add.helper": "Works from home, earns on their own and shares the care"});
 
-CY.i18n.register("en", {"intro.p2": "Time away from the desk is time you do not earn. Money buys supplies, and can hire a nanny."});
+CY.i18n.register("en", {});
 
 CY.i18n.register("en", {"people.lead": "Control this one", "people.lead_on": "Controlled, tap to clear"});
 
@@ -470,10 +420,10 @@ CY.i18n.register("en", {"badge.help": "Going to help"});
 CY.i18n.register("en", {"social.pets": "{a} and {b} chased each other around for a bit."});
 CY.i18n.register("en", {});
 CY.i18n.register("en", {});
-CY.i18n.register("en", {"corner.day": "Day {n}", "share.note": "A picture made only on your device. You choose what goes on it, names included. Nothing is uploaded, and the game never nudges you to share.", "brand.name": "Care for You", "wd.0": "Sun", "wd.1": "Mon", "wd.2": "Tue", "wd.3": "Wed", "wd.4": "Thu", "wd.5": "Fri", "wd.6": "Sat", "tag.1": "Stop for a moment and look after the people at home.", "tag.2": "Nothing here is urgent. Someone just wants you to look up.", "tag.3": "A small excuse to step away from work for five minutes.", "tag.4": "No score. Nobody keeps count of how you did.", "tag.5": "You look after them, and they quietly look after you.", "tag.6": "Slow down. They will wait."});
+CY.i18n.register("en", {"corner.day": "Day {n}", "share.note": "A picture made only on your device. You choose what goes on it, names included. Nothing is uploaded, and the game never nudges you to share.", "brand.name": "Care for You", "tag.1": "Stop for a moment and look after the people at home.", "tag.2": "Nothing here is urgent. Someone just wants you to look up.", "tag.3": "A small excuse to step away from work for five minutes.", "tag.4": "No score. Nobody keeps count of how you did.", "tag.5": "You look after them, and they quietly look after you.", "tag.6": "Slow down. They will wait."});
 CY.i18n.register("en", {"corner.day": "Month {m} · Day {d}"});
 CY.i18n.register("en", {"ini.audio.music_volume": "Background music volume, 0 to 100, 0 is off. Quiet synthesized music, lower and slower at night. Browsers only play sound after one click on the page.", "ini.audio.mute": "When true, music and sound effects are all muted without changing the two volume values", "lbl.audio.mute": "Mute all", "ini.audio.sfx_volume": "Sound effect volume, 0 to 100, 0 is off. Soft sounds for taps, someone speaking, a check mark, something happening."});
-CY.i18n.register("en", {"lbl.interrupt.countdown_seconds": "Reminder countdown, seconds", "lbl.economy.work_hours": "Work hours", "lbl.audio.music_volume": "Music", "lbl.audio.sfx_volume": "Sound effects", "set.clock_note": "Changing it does not change days together or any timer."});
+CY.i18n.register("en", {"lbl.interrupt.countdown_seconds": "Reminder countdown, seconds", "lbl.economy.work_hours": "Work hours", "lbl.audio.music_volume": "Music", "lbl.audio.sfx_volume": "Sound effects", });
 CY.i18n.register("en", {"about.p1": "Care for You is a small game you play in your browser. The people, pets and plants at home call out to you now and then while you work: a glass of water, a word, some company. You stop, look after them, and go back to what you were doing. No score, no failing, no download, no account.", "about.how": "Click a person to see what they want, then press and hold an action until the ring fills. Click the time in the top right of the window to change the speed. Leave the tab open beside your work."});
 CY.i18n.register("en", {"about.tab_data": "Data-driven", "data.intro": "What each character wants, when, and what they say is decided by data, not hard-coded. There are three ways to drive it. Only the first is complete, and it is the only one used by default.", "data.h1": "1. Probability tables, done, default", "data.p1": "Each person's needs grow at their own pace, and when something happens, which line is said and who helps whom are all looked up in tables and probabilities in plain files. The files live in the data folder, and editing them in Notepad takes effect. You can also swap in your own program, the interface is public.", "data.h2": "2. Numerical integration, unfinished", "data.p2": "Needs, mood and body are treated as continuously changing quantities and advanced step by step by equations, instead of table lookups. For now there is only an experimental backend you can run yourself. It is not wired into the game interface and has not been validated, so please do not take it seriously.", "data.h3": "3. AI connection, unfinished", "data.p3": "The AI connection lets an outside AI service rewrite the lines. It is off by default and only experimental. Only if you turn it on in advanced settings and enter a service address will a small amount of context, such as a character's name, role and current mood, be sent to the service you chose. What you have answered is not sent by default. The service is run by a third party and its own policy decides how data is handled. The key is stored as plain text in the settings file, so do not share that file. Downloaded saves do not include the key by default.", "priv.p3": "The page itself is static and by default sends your game data nowhere. Data is only sent if you yourself turn on a remote backend or the AI connection in advanced settings, and what is sent is described on the Data-driven page.", "cred.p3": "The characters, animations and text are original. The code is open source under the MIT license, see LICENSE in the repository."});
 CY.i18n.register("en", {"about.tab_data": "Data and privacy", "about.tab_author": "Author and credits", "data.head": "How it is driven", "about.p4": "This is an early version and will be rough in places. Feedback is welcome as an issue in the GitHub repository:", "au.page": "Personal page", "au.issues": "Feedback and issues", "au.mail": "Email", "au.credits": "Credits and license"});

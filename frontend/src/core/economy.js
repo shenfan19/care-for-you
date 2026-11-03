@@ -10,8 +10,8 @@
   };
   G.isWorkTime = () => { const [a, b] = G.workWindow(), d = G.dayMinutes(); return d >= a && d < b; };
 
-  G.WAGE = 20;             /* 工作时段在书桌前，每游戏小时。前台一天五分钟，攒钱要慢：一个游戏日约 120，买东西要攒几天，挂机和前台玩都不会被钱追着跑 */
-  G.PENSION = 2;           /* 老人主角的退休金，每游戏小时，固定，不用到书桌前 */
+  G.WAGE = 14;             /* 工作时段在书桌前，每游戏小时。没有挂机惩罚，挂机也能攒钱，所以收入压低，完整的一天约 125，买东西要攒几天，挂机和前台玩都不会被钱追着跑 */
+  G.PENSION = 1.4;           /* 老人主角的退休金，每游戏小时，固定，不用到书桌前 */
   G.START_MONEY = 200;
   const today = () => Math.floor(G.world.game_minutes / 1440);
 

@@ -58,7 +58,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'].forEach(k => used.add('hair.' + k));
   ['zip', 'empty', 'newer'].forEach(k => used.add('import.err_' + k));
   ['about', 'privacy', 'credits', 'version'].forEach(k => used.add('about.tab_' + k));
-  for (let i = 1; i <= 10; i++) used.add('priv.p' + i);
+  for (const i of [1, 2, 3, 6, 7, 8, 9, 10]) used.add('priv.p' + i);
   used.add('player.title'); used.add('player.name');
   ['reality', 'story', 'paused'].forEach(m => { used.add('mode.' + m); used.add('mode.' + m + '_tip'); used.add('mode.hint_' + m); used.add('mode.switched_' + m); });
   ['auto', 'living', 'bedroom', 'kitchen', 'lawn', 'balcony', 'none'].forEach(k => used.add('scene.' + k));
@@ -367,16 +367,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'auto';
   G.cfg.time.mode = 'real';
   check('没有倍速档，流速由一天长度推出：六百游戏分钟除以五现实分钟是 120，昼夜用游戏时钟', (delete G.cfg.time.speed, G.speed() === 120 && G.daySource() === 'game'));
-  { /* 一天只玩午后到午夜，午夜后引擎走完夜里和上午，停在第二天 14:00，日历加一天，钩子被调用 */
-    G.setClock(23 * 60 + 58); G._dayN = G.gameDate().n; const d0 = G.gameDate().n, calls = [];
-    G.dayEndHooks.push(x => calls.push(x));
+  { /* 午夜翻日：从第二天起是完整的一天，不跳过夜里和上午，时钟在 0 点接着走，日历加一天，钩子被调用 */
+    G.setClock(23 * 60 + 58); G._dayN = G.gameDate().n; const d0 = G.gameDate().n, calls = [], starts = [];
+    G.dayEndHooks.push(x => calls.push(x)); G.dayStartHooks.push(x => starts.push(x));
     G.advance(5, false);
-    check('午夜翻日', G.dayRoll() === true && G.dayMinutes() === G.DAY.start && G.gameDate().n === d0 + 1 && calls.length === 1 && calls[0].day === d0 && calls[0].offline === false, G.dayMinutes() + ' ' + G.gameDate().n);
-    const fresh = G.gameDate().n; G.world.last_seen = ''; G._dayN = fresh;
-    check('离开不到三小时不追算', G.catchUp(2 * 3600e3) === 0);
-    check('离开七小时追算两天', G.catchUp(7 * 3600e3) === 2 && G.gameDate().n === fresh + 2 && G.dayMinutes() === G.DAY.start && calls.length === 3 && calls[2].offline, G.gameDate().n);
-    check('离开很久最多追三天', G.catchUp(100 * 3600e3) === 3);
-    G.dayEndHooks.length = 0;
+    check('午夜翻日，从零点接着走，不跳到午后', G.dayRoll() === true && G.dayMinutes() < 10 && G.gameDate().n === d0 + 1 && calls.length === 1 && calls[0].day === d0 && starts.length === 1, G.dayMinutes() + ' ' + G.gameDate().n);
+    check('没有离线追算，也没有跳过夜里的函数', G.catchUp === undefined && G.skipToAfternoon === undefined);
+    G.dayEndHooks.length = 0; G.dayStartHooks.pop();
   }
   G.DAY.enabled = false;   /* 其余测试按连续时间写，不走日终跳过 */
   check('倍速写坏了按 1，旧设置 real 也按 1', (G.cfg.time.speed = 'abc', G.speed() === 1) && (G.cfg.time.speed = 'real', G.speed() === 1 && G.daySource() === 'game'));
@@ -399,11 +396,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const gm0 = G.world.game_minutes;
     G.world.last_seen = new Date(Date.now() - 2 * 3600e3).toISOString();
     G.start(); G.stop();
-    /* 系统钟点早于 14:00 时 G.start 会把新档推到午后，这一项只在 14:00 之后才有意义 */
-    check('离开两小时回来，游戏时间不动', G.world.game_minutes === gm0 || new Date().getHours() < 14);
-    G.cfg.time.daynight = 'game'; G.DAY.enabled = true; G.world.last_seen = new Date(Date.now() - 5 * 3600e3).toISOString();
-    G.start(); G.stop(); G.DAY.enabled = false;
-    check('离开五小时回来，追算一天，停在午后', G.world.game_minutes > gm0 && G.dayMinutes() === G.DAY.start, G.dayMinutes());
+    check('离开两小时回来，游戏时间不动', G.world.game_minutes === gm0);
+    G.cfg.time.daynight = 'game'; G.world.last_seen = new Date(Date.now() - 5 * 3600e3).toISOString();
+    G.start(); G.stop();
+    check('离开五小时回来，游戏时间照样不动', G.world.game_minutes === gm0);
     G.cfg.time.daynight = 'system';
     check('新档开局从午后两点开始', await (async () => { const w = G.world.clock_shift; { const wy = Object.assign({}, G.world); delete wy.clock_shift; await CY.store.writeYaml('world.yaml', wy); } await G.load(); const ok = typeof G.world.clock_shift === 'number' && G.dayMinutes() === G.DAY.start; G.world.clock_shift = w; return ok; })());
   }
