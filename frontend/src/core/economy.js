@@ -76,7 +76,12 @@
   ];
   /* 床位：开局按家里的人数加一张空床，最少四张，最多八张。每买一张，家里就能多住一个人，也能多留一位穿越者；床位用完了就不能再添人，也不会有新的穿越者来 */
   G.BED_MAX = 8; G.BED_PRICE = { 4: 600, 5: 900, 6: 1300, 7: 1800 };
-  G.bedUsers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
+  /* 客厅里一开始就有一张客人床，只给穿越者睡，不占买来的床位，也不让家人用，不然床位被家人占满就永远没有客人来。
+     客厅这张床上的客人是编号最小的那位穿越者，其余的客人才占买来的床 */
+  G.sleepers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
+  G.livingGuest = () => G.sleepers().filter(p => p.person.visitor).sort((a, b) => (a.id < b.id ? -1 : 1))[0] || null;
+  G.bedUsers = () => { const g = G.livingGuest(); return G.sleepers().filter(p => p !== g); };
+  G.guestRoom = () => (G.livingGuest() ? G.bedsFree() : G.bedsFree() + 1);   /* 还能接待几位客人 */
   G.bedsOwned = () => (typeof G.world.beds === 'number' ? G.world.beds : Math.max(4, G.bedUsers().length + 1));
   G.bedsFree = () => G.bedsOwned() - G.bedUsers().length;
   G.bedPrice = () => (G.bedsOwned() >= G.BED_MAX ? null : G.BED_PRICE[G.bedsOwned()] || 600);

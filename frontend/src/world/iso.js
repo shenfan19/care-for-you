@@ -143,7 +143,7 @@
           spr('rugRound', 0, 1.9, 2.0, 0, -9);
           spr('cabinetTelevision', 1, 0.3, 2.0); spr('televisionModern', 1, 0.3, 2.0, 22, 2.31);
           spr('loungeSofaLong', 3, 3.35, 2.0); spr('tableCoffee', 1, 1.9, 2.0);
-          spr('pottedPlant', 0, 0.35, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);
+          spr('bedSingle', 0, 1.4, 3.2); spr('pottedPlant', 0, 3.6, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);   /* 客人床 */
         } else if (name === 'kitchen') {
           spr('kitchenFridge', 0, 0.5, 0.45); spr('kitchenCabinet', 0, 1.35, 0.45); spr('kitchenSink', 0, 2.2, 0.45); spr('kitchenStove', 0, 3.05, 0.45);
           spr('table', 0, 2.0, 2.4); spr('chair', 0, 1.5, 1.75); spr('chair', 0, 2.5, 1.75); spr('chair', 2, 1.5, 3.05); spr('chair', 2, 2.5, 3.05);

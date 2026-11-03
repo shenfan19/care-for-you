@@ -33,7 +33,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   const wait = () => new Promise(r => setTimeout(r, 80));
   {
     G.DOOR.meet_chance = 0;
-    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0; G.world.beds = G.bedUsers().length + 1;
+    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0; G.world.beds = G.bedUsers().length;
     const before = G.people.length;
     CY.i18n.set('zh-CN');
     check('第一位来客固定是南丁格尔，不分语言', (G.firstVisitorId() === 'nightingale') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
@@ -44,7 +44,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
     check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.nightingale, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('female') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
     check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
-    check('只剩一张空床，来了一位以后不会再来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
+    check('家里没有空床也会来第一位睡客厅，来了以后不会再来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
     check('请ta睡一会儿只对访客出现', 'invite_rest' in G.actionsOf(zhuge) && !('invite_rest' in G.actionsOf(baby)) && !('invite_rest' in G.actionsOf(grandpa)));
     check('访客不当助力，也不算家人加成', (() => { const c0 = G.capacity(), b0 = G.householdBonus(); zhuge.state.mood = 0.9; return G.capacity() === c0 && G.householdBonus() === b0; })());
     check('访客不会卧床', (zhuge.state.frailty = 1, G.bedCheck(zhuge), !G.bedridden(zhuge)));
@@ -207,7 +207,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('回答来客的问题，好感加一点', st3.fav === G.FAV.ask && !st3.ok);
     for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
     G.world.beds = G.bedUsers().length; G.world.visit_started = true; G.world.visit_cd = 0; G.world.meets = {};
-    check('床位用完了，不会有新的穿越者来，组团到来也要床位够', G.bedsFree() === 0 && (await G.maybeArrive()) === false && G.pickGroup() === null);
+    check('买来的床用完了，客厅的客人床仍可接待一位，之后不会再来，组团到来也要床位够', G.bedsFree() === 0 && G.pickGroup() === null && (await G.maybeArrive()) === true && G.guestRoom() === 0 && (G.world.visit_cd = 0, await G.maybeArrive()) === false);
+    check('客人睡在客厅的客人床，不占买来的床位', (() => { const g = G.livingGuest(); return g && CY.world.bedOf(g).room === 'living' && CY.world.bedPlan().living[0] === g.id && !G.bedUsers().includes(g); })());
     G.world.beds = undefined;
   }
   /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */

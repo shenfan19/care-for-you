@@ -36,7 +36,7 @@
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
     study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .37], seat: [[.52, .37], [.78, .5]] },
     guest: { stand: [[.5, .7], [.25, .8], [.75, .8], [.5, .9]], sleep: [[.3, .2], [.5, .2], [.7, .2]], cradle: [[.5, .5]], player: [.5, .92] },
-    living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
+    living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.35, .82]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
@@ -52,7 +52,8 @@
   Object.defineProperty(W, 'BED_CAP', { get: () => { const cap = { bedroom: 0, elder: 0, guest: 0 }, n = G.bedsOwned ? G.bedsOwned() : 4; for (let i = 0; i < Math.min(n, BED_ORDER.length); i++) cap[BED_ORDER[i]]++; return cap; } });
   W.bedPlan = () => {
     const plan = { bedroom: [], elder: [], guest: [], living: [] }, cap = W.BED_CAP;
-    const sleepers = G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant').sort((a, b) => (a.id < b.id ? -1 : 1));
+    const lg = G.livingGuest(), sleepers = G.bedUsers().sort((a, b) => (a.id < b.id ? -1 : 1));
+    if (lg) plan.living.push(lg.id);   /* 客厅的客人床 */
     const put = (p, order) => { for (const r of order) if (r === 'living' || plan[r].length < (cap[r] || 0)) { plan[r].push(p.id); return; } };
     for (const p of sleepers) if (G.stage(p) === 'elder') put(p, ['elder', 'bedroom', 'guest', 'living']);
     for (const p of sleepers) if (G.stage(p) !== 'elder') put(p, ['bedroom', 'elder', 'guest', 'living']);

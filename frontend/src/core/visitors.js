@@ -93,7 +93,7 @@
   /* 组团到来：几位结伴来，床位要够几位；平时很少发生，还没遇见过的组合优先 */
   G.arriveGroup = async ids => { for (const id of ids) if (!G.visitorPeople().some(p => p.person.visitor.id === id)) await G.arrive(id, true); return checkMeet(); };
   G.pickGroup = () => {
-    const seen = G.world.meets || {}, pool = V.MEETS.filter(m => !seen[m.key] && G.bedsFree() >= m.ids.length);
+    const seen = G.world.meets || {}, pool = V.MEETS.filter(m => !seen[m.key] && G.guestRoom() >= m.ids.length);
     if (!pool.length) return null;
     const w = m => (m.ids.length === 3 ? 0.5 : 1);
     let r = Math.random() * pool.reduce((a, m) => a + w(m), 0);
@@ -106,7 +106,7 @@
     if (!G.activePeople().length || !G.world.intro_done || G.world.story_pending) return false;
     if (!G.world.visit_started) { G.world.visit_started = true; return !!(await G.arrive(G.firstVisitorId())); }
     if (!G.visitorPeople().length && Math.random() < G.DOOR.meet_chance) { const m = G.pickGroup(); if (m) return G.arriveGroup(m.ids); }
-    if (G.bedsFree() <= 0) return false;   /* 床位用完了，不会有新的穿越者来 */
+    if (G.guestRoom() <= 0) return false;   /* 客厅的客人床和买来的床都占满了，不会有新的穿越者来 */
     if ((G.world.visit_cd || 0) > 0) { G.world.visit_cd--; return false; }
     if (Math.random() > G.DOOR.arrive_chance) return false;
     const id = G.pickVisitor();
