@@ -63,8 +63,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.world.visit_cd = 0; G.world.vday = null;
     const cp = await G.arrive('curie');
     check('居里夫人是家里的人，需求里没有特别的疲倦', G.visitorPeople().length === 1 && cp.person.name === '玛丽·居里' && !(cp.state.needs.rest >= 0.8));
-    G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
-    check('买礼物扣钱，背包里有', G.world.money === 2000 - 30 - 500 - 70 && G.giftInv().tea === 1 && G.giftInv().lab_suit === 1);
+    const V0 = CY.visitors.GIFTS; G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
+    check('买礼物扣钱，背包里有', G.world.money === 2000 - V0.tea.price - V0.lab_suit.price - V0.kite.price && G.giftInv().tea === 1 && G.giftInv().lab_suit === 1);
     check('每样最多三件', (() => { for (let i = 0; i < 5; i++) G.buyGift('seeds'); return G.giftInv().seeds === 3; })());
     check('背包没有的礼物，送出时按目录价当场买下；钱不够不送', (() => { const m = G.world.money, v = G.world.vday; G.world.money = 10; G.world.vday = null; const a = G.giveGift(cp.id, 'clock'); G.world.money = m; G.world.vday = v; return a.error === 'money'; })());
     const bad = G.giveGift(cp.id, 'tea');

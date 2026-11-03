@@ -7,7 +7,7 @@
 
   /* 礼物目录：[id, 图标, 价格, 中文, 英文] */
   V.GIFTS = {};
-  for (const [id, icon, price, zh, en] of [
+  for (const [id, icon, price0, zh, en] of [
     ['tea', '🍵', 30, '一包茶', 'Tea'], ['seeds', '🌱', 30, '一包种子', 'Seeds'], ['aspirin', '💊', 40, '阿司匹林', 'Aspirin'], ['soup', '🍲', 40, '一锅热汤', 'Hot soup'],
     ['notebook', '📓', 40, '笔记本', 'Notebook'], ['book', '📖', 50, '一本书', 'A book'], ['blanket', '🧣', 60, '厚毯子', 'A thick blanket'], ['pen', '🖊️', 60, '钢笔', 'Fountain pen'],
     ['umbrella', '☂️', 70, '一把伞', 'Umbrella'], ['kite', '🪁', 70, '风筝', 'Kite'], ['lamp', '💡', 80, '台灯', 'Desk lamp'], ['gloves', '🧤', 80, '厚手套', 'Thick gloves'],
@@ -15,7 +15,7 @@
     ['spectacles', '👓', 120, '一副眼镜', 'Spectacles'], ['chess', '♟️', 120, '棋盘', 'Chess set'], ['paints', '🎨', 140, '一盒颜料', 'Box of paints'], ['medkit', '🧰', 150, '药箱', 'First-aid kit'],
     ['flute', '🎶', 150, '一支笛子', 'A flute'], ['harmonica', '🎵', 180, '口琴', 'Harmonica'], ['clock', '⏰', 200, '座钟', 'Table clock'], ['coat', '🧥', 220, '厚外套', 'Warm coat'],
     ['telescope', '🔭', 300, '望远镜', 'Telescope'], ['microscope', '🔬', 400, '显微镜', 'Microscope'], ['lab_suit', '🥼', 500, '防护服', 'Protective suit'],
-  ]) { V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } }; CY.i18n.register('zh-CN', { ['gift.' + id]: zh }); CY.i18n.register('en', { ['gift.' + id]: en }); }
+  ]) { const price = Math.round(price0 * 1.5 / 5) * 5; /* 礼物价格按慢攒钱重标，比日常家具更花钱 */ V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } }; CY.i18n.register('zh-CN', { ['gift.' + id]: zh }); CY.i18n.register('en', { ['gift.' + id]: en }); }
 
   /* 首位访客按语言安排，缺省南丁格尔 */
   V.FIRST = { 'zh-CN': 'zhuge', 'zh-TW': 'zhuge', default: 'nightingale' };

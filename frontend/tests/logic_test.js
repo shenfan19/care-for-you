@@ -907,9 +907,9 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const atHour = h => { G.cfg.time.daynight = 'game'; G.world.clock_shift = ((h * 60 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; };
     CY.world.enforce = false; G.cfg.economy.work_hours = '09:00-18:00'; G.setProtagonist(null);
     atHour(10); G.world.money = 100; G.economyTick(60, false);
-    check('工作时段每小时赚 40', Math.abs(G.world.money - 140) < 0.01, G.world.money);
+    check('工作时段每小时赚 G.WAGE', Math.abs(G.world.money - (100 + G.WAGE)) < 0.01, G.world.money);
     atHour(22); G.economyTick(60, false);
-    check('不是工作时段不赚钱', Math.abs(G.world.money - 140) < 0.01);
+    check('不是工作时段不赚钱', Math.abs(G.world.money - (100 + G.WAGE)) < 0.01);
     check('保姆不出现在可添加的角色里', !CY.content.archetypes.filter(a => !a.hidden).some(a => a.id === 'nanny'));
     G.world.money = 50; await G.hireNanny(); atHour(10);
     const nn = G.nanny();
@@ -917,13 +917,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.economyTick(0, false);
     check('钱不够的那天保姆休息，不欠账也不扣钱', G.world.money === 50 && !!G.flag(nn, 'offduty'), G.world.money);
     G.world.money = 500; G.world.game_minutes += 1440; atHour(10); G.economyTick(0, false);
-    check('钱够了的一天自动付 120，保姆白天上班', G.world.money === 380 && !G.flag(nn, 'offduty'), G.world.money);
+    check('钱够了的一天自动付 G.NANNY_DAILY，保姆白天上班', G.world.money === 500 - G.NANNY_DAILY && !G.flag(nn, 'offduty'), G.world.money);
     atHour(22); G.economyTick(0, false);
     check('晚上保姆下班', !!G.flag(nn, 'offduty'));
     await G.dismissNanny();
     check('不请了：保姆不再来，钱不变', !G.nannyOn() && nn.person.active === false || G.get(nn.id).person.active === false);
     const pen = (() => { const e = G.people.find(p => p.person.kind === 'human' && G.stage(p) === 'elder'); return e; })();
-    if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，每小时 4', Math.abs(G.world.money - m1 - 4) < 0.01); G.setProtagonist(null); }
+    if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，每小时 G.PENSION', Math.abs(G.world.money - m1 - G.PENSION) < 0.01); G.setProtagonist(null); }
     for (const x of G.people) x.person.active = true;
   }
 
@@ -985,7 +985,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('切回中文名字回到中文', G.get(ida).person.name === '爷爷');
     G.world.money = 500; G.world.game_minutes = 0; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined;
     G.setClock(7 * 60); check('上班时间前保姆状态是等待', G.nannyState() === 'wait');
-    G.setClock(10 * 60); G.economyTick(0, true); check('上班时间到了保姆来并收费', G.nannyState() === 'here' && G.world.money === 380, G.world.money);
+    G.setClock(10 * 60); G.economyTick(0, true); check('上班时间到了保姆来并收费', G.nannyState() === 'here' && G.world.money === 500 - G.NANNY_DAILY, G.world.money);
     G.world.nanny_on = false;
   }
   {
