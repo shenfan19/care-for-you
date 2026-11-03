@@ -23,6 +23,9 @@
   };
   /* 配速：钟面走得比原来的 24 倍快时，需求按现实秒的节奏涨，不跟着钟面涨，所以一天压成五分钟也不会被淹没。1 表示不折算 */
   G.PACE_BASE = 24;
+  /* 现实几秒折成几个游戏分钟。外出，小睡这类要让玩家看得见的事，时长按现实秒写，不然一天压成五分钟以后，出去一趟几秒钟就回来了 */
+  G.realMin = sec => sec * G.speed() / 60;
+  G.outingMinutes = o => (o.seconds ? G.realMin(o.seconds) : o.minutes);
   G.pace = () => (G.DAY.enabled ? Math.min(1, G.PACE_BASE / G.speed()) : 1);
   G.speedLabel = () => '×' + Math.round(G.speed());
   /* 让游戏里现在是几点几分，0 到 1439 */

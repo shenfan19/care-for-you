@@ -28,19 +28,19 @@ actions:
   bath: { label: { elder: 帮忙洗澡, default: 洗澡 }, hold: 6, min: 25, effect: { hygiene: -1, company: -0.1 }, stages: [infant, toddler, child, elder] }
   play: { label: { infant: 逗逗ta, default: 陪玩 }, hold: 8, min: 40, effect: { play: -0.9, company: -0.4 }, stages: [infant, toddler, child] }
   read: { label: 读绘本, hold: 6, min: 20, effect: { play: -0.4, company: -0.3, rest: -0.2 }, mood: 0.1, stages: [toddler, child] }
-  soothe: { label: { child: 讲睡前故事, default: 哄睡 }, hold: 10, min: 30, effect: { rest: -0.9 }, stages: [infant, toddler, child] }
+  soothe: { label: { child: 讲睡前故事, default: 哄睡 }, nap: 30, hold: 10, min: 30, effect: { rest: -0.9 }, stages: [infant, toddler, child] }
   homework: { label: 陪写作业, hold: 7, min: 45, effect: { homework: -1, company: -0.3 }, stages: [child, teen] }
   game: { label: 一起打游戏, hold: 7, min: 40, effect: { company: -0.6 }, mood: 0.12, stages: [teen] }
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: -0.6 }, mood: 0.1, stages: [teen, adult, elder] }
-  rest: { label: 扶去休息, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
-  invite_rest: { label: 请ta睡一会儿, visitor_only: true, hold: 6, min: 15, effect: { rest: -0.9 }, mood: 0.05, stages: [child, teen, adult, elder] }
+  rest: { label: 扶去休息, nap: 40, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
+  invite_rest: { label: 请ta睡一会儿, visitor_only: true, nap: 40, hold: 6, min: 15, effect: { rest: -0.9 }, mood: 0.05, stages: [child, teen, adult, elder] }
   gift: { label: 送礼, visitor_only: true, hold: 3, min: 0, effect: {}, stages: [child, teen, adult, elder] }
   walk: { label: 搀着散步, walks: true, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
-  park: { label: 带去公园, walks: true, item_for: { infant: stroller }, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, minutes: 8, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
-  street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, hold: 6, min: 30, away: true, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
-  wheel: { label: 推轮椅出去走走, only_bedridden: true, item: wheelchair, hold: 8, min: 45, away: true, outing: { place: park, room: lawn, minutes: 8, group: false }, effect: { mobility: -0.6, company: -0.5 }, mood: 0.15, stages: [elder] }
+  park: { label: 带去公园, walks: true, item_for: { infant: stroller }, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, seconds: 40, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
+  street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, hold: 6, min: 30, away: true, outing: { place: street, room: road, seconds: 30, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }
+  wheel: { label: 推轮椅出去走走, only_bedridden: true, item: wheelchair, hold: 8, min: 45, away: true, outing: { place: park, room: lawn, seconds: 40, group: false }, effect: { mobility: -0.6, company: -0.5 }, mood: 0.15, stages: [elder] }
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: -0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
-  doctor: { label: 带去看医生, hold: 8, min: 120, away: true, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
+  doctor: { label: 带去看医生, hold: 8, min: 120, away: true, manual: true, outing: { place: hospital, room: ward, seconds: 50, group: false }, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, at: kitchen, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: -0.8 }, stages: [child, teen, adult, elder] }
   groceries: { label: 去买菜, selfonly: true, trip: { place: market, room: aisle, minutes: 25, cost: 40, meals: 8 }, hold: 3, min: 5, effect: {}, mood: 0.05, stages: [teen, adult, elder] }
   cook: { label: 做饭自己吃, household: true, selfonly: true, at: kitchen, self: [teen, adult, elder], hold: 1, min: 60, effect: { hunger: -0.8 }, stages: [teen, adult, elder] }
@@ -89,7 +89,7 @@ needs:
   play: { label: 想出去玩, icon: "🎾", rate: 0.12 }
 actions:
 ${petActions('喂狗粮', `  play: { label: 扔球, hold: 7, min: 20, effect: { play: -0.9, company: -0.3 } }
-  walk: { label: 遛一圈, hold: 10, min: 40, away: true, outing: { place: park, room: lawn, minutes: 6, group: false }, effect: { play: -1, company: -0.5 }, mood: 0.12 }
+  walk: { label: 遛一圈, hold: 10, min: 40, away: true, outing: { place: park, room: lawn, seconds: 30, group: false }, effect: { play: -1, company: -0.5 }, mood: 0.12 }
   train: { label: 教口令, hold: 6, min: 20, effect: { play: -0.4, company: -0.3 }, mood: 0.08 }`)}`;
 
   F['templates/species/rabbit.yaml'] = `version: 3

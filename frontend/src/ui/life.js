@@ -27,17 +27,30 @@
 
   /* 第一次有了角色之后，讲清楚照顾的代价 */
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
+  /* 开局第二步和第三步：先选你是谁，再是来到老屋，南丁格尔走出来。第一步是选家庭配置，在 U.onboard。
+     选好之前第一位来客不来；故事读完才记下开局完成，南丁格尔随后从时空门走进院子 */
   U.introDialog = function () {
-    const BG = ['layoff', 'return', 'house'];
+    G.world.story_pending = true;
     const finish = () => { G.world.intro_done = true; G.world.story_pending = false; G.save(true); U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true); G.maybeArrive(); };
-    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('start.title'))}</h2><p>${esc(t('start.p1'))}</p><p>${esc(t('start.p2'))}</p>
-      <div class="tiles">${BG.map(b => `<button class="tile" data-start-bg="${b}"><b>${esc(t('start.bg_' + b))}</b><span class="mute">${esc(t('start.bg_' + b + '_note'))}</span></button>`).join('')}</div>`, true);
-    dlg.querySelectorAll('[data-start-bg]').forEach(b => b.onclick = () => {
-      G.chooseBackground(b.dataset.startBg);
-      const d2 = U.dialog(`<h2 style="margin-top:0">${esc(t('start.title'))}</h2><p>${esc(t('start.story_' + b.dataset.startBg))}</p><p>${esc(t('start.door'))}</p><div class="mute">${esc(t('start.later'))}</div>
+    const story = () => {
+      const d2 = U.dialog(`<h2 style="margin-top:0">${esc(t('start.house_title'))}</h2><p>${esc(t('start.house_p1'))}</p><p>${esc(t('start.house_p2', { name: t('visitor.nightingale.name') }))}</p>
+        <p class="settle-line">${esc(t('start.house_say'))}</p><p class="mute">${esc(t('start.house_p3'))}</p>
         <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="introok" class="primary">${esc(t('start.go'))}</button></div>`, true);
       d2.querySelector('#introok').onclick = finish;
-    });
+    };
+    const cands = () => G.people.filter(p => !p.person.visitor && p.person.active !== false && G.canLead(p));
+    const pickLead = () => {
+      const list = cands();
+      if (!list.length) return story();
+      if (!G.protagonist()) G.setProtagonist(list[0].id);
+      const cur = G.protagonist(), hint = t('start.lead_note', { btn: t('people.lead') });
+      const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('start.lead_title'))}</h2><div class="mute" style="margin:6px 0 10px">${esc(hint)}</div>
+        <div class="tiles">${list.map(p => `<button class="tile ${cur && cur.id === p.id ? 'on' : ''}" data-lead="${p.id}"><div style="width:56px;height:70px;margin:0 auto">${CY.avatar(p)}</div><b>${esc(p.person.name)}</b></button>`).join('')}</div>
+        <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="leadnext" class="primary">${esc(t('start.next'))}</button></div>`, true);
+      dlg.querySelectorAll('[data-lead]').forEach(b => b.onclick = () => { G.setProtagonist(b.dataset.lead); dlg.querySelectorAll('[data-lead]').forEach(x => x.classList.toggle('on', x === b)); U.afterPeopleChange(); });
+      dlg.querySelector('#leadnext').onclick = story;
+    };
+    pickLead();
   };
 
   /* 一句话提示，几秒后消失 */

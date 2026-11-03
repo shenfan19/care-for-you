@@ -17,8 +17,8 @@
     ['telescope', '🔭', 300, '望远镜', 'Telescope'], ['microscope', '🔬', 400, '显微镜', 'Microscope'], ['lab_suit', '🥼', 500, '防护服', 'Protective suit'],
   ]) { const price = Math.round(price0 * 1.5 / 5) * 5; /* 礼物价格按慢攒钱重标，比日常家具更花钱 */ V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } }; CY.i18n.register('zh-CN', { ['gift.' + id]: zh }); CY.i18n.register('en', { ['gift.' + id]: en }); }
 
-  /* 首位访客按语言安排，缺省南丁格尔 */
-  V.FIRST = { 'zh-CN': 'zhuge', 'zh-TW': 'zhuge', default: 'nightingale' };
+  /* 第一位来客固定是南丁格尔：开局故事里她从时空门走出来，说这里有趣，很快就会离开 */
+  V.FIRST = { default: 'nightingale' };
 
   /* 写卡片：spec.t 里每个字段是 [中文, 英文] 或 {语言: 文字}；hint 是这样的数组 */
   const L = ['zh-CN', 'en'];

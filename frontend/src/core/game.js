@@ -366,6 +366,7 @@
   G.activityOf = p => {
     if (p === G.protagonist()) return CY.world && CY.world.leadSleeping() ? 'sleeping' : 'awake';   /* 主角睡不睡看他在不在床上：小睡，或者夜里在卧室里闲着 */
     if (p.species.id !== 'human' && !NOCTURNAL.includes(p.species.id)) return 'awake';
+    if (G.flag(p, 'nap')) return 'sleeping';
     const [a, b] = G.sleepWindow(p), dm = G.dayMinutes();
     if (!inWindow(dm, a, b)) return 'awake';
     const st = G.stage(p);
@@ -707,6 +708,7 @@
   };
 
   function fire() {
+    if (G.world.story_pending) return;   /* 开局的选择和故事还没读完，家人先不打扰 */
     const awake = p => !G.isSleeping(p);
     const free = G.activePeople().filter(p => !p.person.visitor && !G.req[p.id] && awake(p) && p !== G.protagonist());
     if (!free.length) return;
@@ -839,6 +841,8 @@
       const lead = G.protagonist(), W = CY.world;
       if (lead && lead !== p && W && W.moveTo && W.PLACES[a.outing.place]) { W.moveTo(a.outing.place, a.outing.room); W.escort = true; G.logK('you', 'event', 'me.go', { place: G.ref('loc.' + a.outing.place, a.outing.place) }); }
     }
+    /* 送人睡觉：睡着的人走到自己的床上躺下，睡这么多现实秒，不是效果一下子加上就算了 */
+    if (a.nap && G.isHuman(p) && p !== G.protagonist()) { G.setFlag(p, 'nap', { minutes: G.realMin(a.nap) }); G.act[p.id] = G.activityOf(p); }
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
     p.story.care_total++;

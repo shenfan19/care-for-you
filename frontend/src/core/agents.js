@@ -103,7 +103,7 @@
     if (!a || !eligibleTo(from)) return true;
     if (to !== from) {
       if (!eligibleTo(to) || !W || W.locationOf(to).place !== W.locationOf(from).place) return true;
-      G.setFlag(to, 'outing', { minutes: a.outing.minutes, place: a.outing.place, room: a.outing.room, mode: 'stand' });
+      G.setFlag(to, 'outing', { minutes: G.outingMinutes(a.outing), place: a.outing.place, room: a.outing.room, mode: 'stand' });
     }
     applyEffects(from, a, 1);
     from.state.mood = clamp(from.state.mood + (a.mood === undefined ? 0.08 : a.mood));

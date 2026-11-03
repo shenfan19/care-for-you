@@ -55,7 +55,7 @@
     }
     const place = G.ref('loc.' + o.place, o.place), names = group.slice(1).map(m => m.person.name).join(t('list.sep'));
     for (const m of group) {
-      G.setFlag(m, 'outing', { minutes: o.minutes, place: o.place, room: o.room, mode: 'stand' });
+      G.setFlag(m, 'outing', { minutes: G.outingMinutes(o), place: o.place, room: o.room, mode: 'stand' });
       /* 事件按谁带谁写：带人的是"A 带 B 去哪"，被带的是"B 跟 A 去哪" */
       /* 用着婴儿车或轮椅的人，事件写他是被推着出门的 */
       if (G.usingStroller(m)) G.logK(m.id, 'event', 'log.outing_stroller', { name: m.person.name, place });

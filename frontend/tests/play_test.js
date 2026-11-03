@@ -1,4 +1,4 @@
-/* 玩法测试：每日结算与日历、访客、送礼、展柜、开局背景、分享卡片数据。和 logic_test 分开，各自独立跑。 */
+/* 玩法测试：每日结算与日历、访客、送礼、展柜、开局故事、分享卡片数据。和 logic_test 分开，各自独立跑。 */
 const { ctx, CY, G } = require('./harness');
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
@@ -36,28 +36,28 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0;
     const before = G.people.length;
     CY.i18n.set('zh-CN');
-    check('新档第一次来的是诸葛亮，英文环境是南丁格尔', (G.firstVisitorId() === 'zhuge') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
+    check('第一位来客固定是南丁格尔，不分语言', (G.firstVisitorId() === 'nightingale') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
     check('没选完开局故事时不来', (G.world.story_pending = true, await G.maybeArrive()) === false && (G.world.story_pending = false, true));
     check('第一天午后必到，是家里的一个人', (await G.maybeArrive()) === true && G.people.length === before + 1 && G.visitorPeople().length === 1);
     const zhuge = G.visitorPeople()[0];
-    check('访客有名字、外观和疲倦', zhuge.person.name === '诸葛亮' && zhuge.person.appearance.hair_style === 'bun' && zhuge.state.needs.rest >= 0.8 && zhuge.person.visitor.id === 'zhuge');
+    check('访客有名字、外观和疲倦', zhuge.person.name === '弗洛伦斯·南丁格尔' && zhuge.person.appearance.hair_style === 'bun' && zhuge.state.needs.rest >= 0.8 && zhuge.person.visitor.id === 'nightingale');
     check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
-    check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.zhuge, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('male') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
+    check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.nightingale, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('female') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
     check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
     check('只有一张客床，不会来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
     check('请ta睡一会儿只对访客出现', 'invite_rest' in G.actionsOf(zhuge) && !('invite_rest' in G.actionsOf(baby)) && !('invite_rest' in G.actionsOf(grandpa)));
     check('访客不当助力，也不算家人加成', (() => { const c0 = G.capacity(), b0 = G.householdBonus(); zhuge.state.mood = 0.9; return G.capacity() === c0 && G.householdBonus() === b0; })());
     check('访客不会卧床', (zhuge.state.frailty = 1, G.bedCheck(zhuge), !G.bedridden(zhuge)));
     G.applyAction(zhuge.id, 'invite_rest');
-    check('请他睡一会儿，满足并留下纪念品', zhuge.person.visitor.ok === true && G.souvenirs().zhuge > 0);
+    check('请他睡一会儿，满足并留下纪念品', zhuge.person.visitor.ok === true && G.souvenirs().nightingale > 0);
     zhuge.person.visitor.stay = 1;
     const nd = G.gameDate().n; await endDay();
     const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText) : [];
-    check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'zhuge') && !G.people.some(p => p.person.name === '诸葛亮'));
-    check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /诸葛亮从时空门里走了出来/.test(txt[0]) && /诸葛亮睡了一觉/.test(txt[1]) && txt.some(x => x === '诸葛亮离开了，但留下了一把羽扇作为礼物。'), txt.join(' | '));
+    check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'nightingale') && !G.people.some(p => p.person.name === '弗洛伦斯·南丁格尔'));
+    check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /弗洛伦斯·南丁格尔从时空门里走了出来/.test(txt[0]) && /弗洛伦斯·南丁格尔睡了一觉/.test(txt[1]) && txt.some(x => x === '弗洛伦斯·南丁格尔离开了，但留下了一盏油灯作为礼物。'), txt.join(' | '));
     check('结算的那天记为没看过，点开日历后清掉', G.unread().includes(nd) && (G.markRead(nd), !G.unread().includes(nd)));
     check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
-    check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < 40; })());
+    check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.nightingale || 0) < 40; })());
     /* 居里夫人：送错收下无反馈，送对留下纪念品，每天次数有上限 */
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
     G.world.visit_cd = 0; G.world.vday = null;
@@ -178,6 +178,19 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.world.money += 5000; G.afterLoad();
     check('手动改了钱，载入时标记已编辑，且一直保留', G.world.edited === true && (G.beforeSave(), G.afterLoad(), G.world.edited === true));
     check('签名不进卡片文字，只由数字算出', typeof sig === 'string' && sig.length >= 4);
+  }
+  /* 出门和小睡按现实秒算：一天压成五分钟以后，带人去医院，逛街，扶去休息，都要停留得让玩家看得见 */
+  {
+    CY.world.enforce = false;
+    const gp = G.people.find(q => q.person.archetype === 'grandpa'); G.world.protagonist = null;
+    G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'doctor'); const f = G.flag(gp, 'outing');
+    check('带去看医生是出门去医院，待上约五十现实秒', !!f && f.place === 'hospital' && Math.abs((f.until - G.world.game_minutes) - G.realMin(50)) < 1e-6, f && JSON.stringify(f));
+    G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'street'); const f2 = G.flag(gp, 'outing');
+    check('逛街待约三十现实秒，不是几秒钟就回来', !!f2 && (f2.until - G.world.game_minutes) >= G.realMin(25), f2 && JSON.stringify(f2));
+    G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'rest');
+    check('扶去休息：睡着了，躺在自己的床上，睡约四十现实秒', G.activityOf(gp) === 'sleeping' && !!G.flag(gp, 'nap') && Math.abs((G.flag(gp, 'nap').until - G.world.game_minutes) - G.realMin(40)) < 1e-6 && CY.world.locationOf(gp).mode === 'sleep', JSON.stringify([G.activityOf(gp), !!G.flag(gp, 'nap'), CY.world.locationOf(gp)]));
+    G.clearFlag(gp, 'nap'); check('小睡到点自己醒', G.activityOf(gp) !== 'sleeping' || G.dayMinutes() < 6.5 * 60 || G.dayMinutes() >= 22 * 60);
+    const doc = CY.protocol && CY.protocol.person ? G.actionsOf(gp).doctor : null; check('看医生只由玩家带去，不进家人自己想去的清单', !doc || doc.manual === true);
   }
   /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */
   {

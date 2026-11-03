@@ -5,14 +5,6 @@
   const G = CY.game, V = CY.visitors, store = CY.store;
   const t = (k, v) => CY.t(k, v);
 
-  /* 开局背景：机制相同，只改起始金额；不点名任何具体原因 */
-  G.BACKGROUNDS = { layoff: { money: 300 }, return: { money: 200 }, house: { money: 500 } };
-  G.chooseBackground = id => {
-    const b = G.BACKGROUNDS[id]; if (!b) return false;
-    G.world.background = id; G.world.money = b.money; G.world.intro_done = true; G.world.story_pending = true; G.save(true);
-    return true;
-  };
-
   G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
   G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };

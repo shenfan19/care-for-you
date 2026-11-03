@@ -63,7 +63,7 @@
   P.abilities = p => {
     const G = CY.game, acts = Object.values(G.actionsOf(p)), care = new Set(), self = new Set(), go = [];
     for (const a of acts) {
-      if (a.outing) { go.push(a.id); continue; }
+      if (a.outing) { if (!a.manual) go.push(a.id); continue; }   /* manual 的外出，比如看医生，只由玩家带去，不进家人自己想去的清单 */
       if (a.selfonly || a.away) continue;
       for (const k in a.effect || {}) if (a.effect[k] < 0) care.add(k);
     }
