@@ -4,6 +4,20 @@
 (function (CY) {
   const I = CY.i18n = { lang: 'zh-CN', fallback: 'zh-CN', packs: {}, names: { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English', fr: 'Français', ja: '日本語', ko: '한국어', es: 'Español', de: 'Deutsch' } };
   I.register = (lang, dict) => { I.packs[lang] = Object.assign(I.packs[lang] || {}, dict); };
+  /* 访客卡片的译文包：每张卡一行 [名字, 时代, 纪念品, 临别一句, 暗示一, 暗示二, 满足时], 到来和离开的句子用语言自己的模板拼出来，个别卡用第八项 o 覆盖。
+     模板里 {n} 是名字，{s} 是纪念品，{q} 是临别一句。纪念品和名字放在冒号后面，各语言不用处理冠词和格 */
+  I.cards = (lang, tpl, rows) => {
+    const d = {};
+    for (const id in rows) {
+      const r = rows[id], o = r[7] || {}, k = x => `visitor.${id}.${x}`;
+      d[k('name')] = r[0]; d[k('era')] = r[1]; d[k('souvenir')] = r[2]; d[k('hint.0')] = r[4]; d[k('hint.1')] = r[5]; d[k('ok_line')] = r[6];
+      d[k('arrive_note')] = o.arrive || tpl.arrive.replace(/\{n\}/g, r[0]);
+      d[k('leave_ok')] = o.ok || tpl.ok.replace(/\{n\}/g, r[0]).replace('{s}', r[2]).replace('{q}', r[3]);
+      d[k('leave_miss')] = o.miss || tpl.miss.replace(/\{n\}/g, r[0]);
+      d[k('wrong_late')] = o.late || '';
+    }
+    I.register(lang, d);
+  };
   I.detect = pref => {
     if (pref && pref !== 'auto' && I.packs[pref]) return pref;
     const low = (typeof navigator !== 'undefined' && navigator.language || 'zh-CN').toLowerCase();

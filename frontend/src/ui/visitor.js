@@ -30,7 +30,7 @@
   /* 访客到来时提醒一下 */
   G.visitHooks.push((type, p) => {
     if (typeof document === 'undefined') return;
-    if (type === 'arrive' && U.flash) U.flash(t('visit.arrive_toast', { name: p.person.name }));
+    if (type === 'arrive' && U.flash) U.flash(t('visit.arrive_toast', { name: p.person.name }) + (G.visitorCard(p) && !G.visitorCard(p).official ? ' · ' + t('visit.unofficial') : ''));
     if (U.renderClock) U.renderClock();
   });
 })(globalThis.CY = globalThis.CY || {});

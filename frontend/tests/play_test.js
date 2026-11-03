@@ -129,6 +129,14 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
       G.world.meets = {}; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
     }
+    {
+      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.)/.test(k)), miss = {};
+      for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) { const m = want.filter(k => P.en[k] !== '' && !(P[l] && P[l][k])); if (m.length) miss[l] = m.slice(0, 5).join(); }
+      check('八种语言的玩法文字和卡片文字齐全', Object.keys(miss).length === 0, JSON.stringify(miss));
+      const ph = [], hold = s => [...new Set(String(s).match(/\{[a-z_]+\}/g) || [])].sort().join();
+      for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) for (const k of want) if (P[l] && P[l][k] && hold(P[l][k]) !== hold(P.en[k])) ph.push(l + ':' + k);
+      check('各语言译文里的占位符和英文一致', ph.length === 0, ph.slice(0, 6).join());
+    }
     check('文字里没有死亡和战争的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
   }
   /* 存档被改过的标记 */

@@ -4,7 +4,7 @@ const ctx = vm.createContext({ console, Math, Date, JSON, RegExp, Promise, Abort
 ctx.globalThis = ctx;
 const root = path.join(__dirname, '..');
 const run = f => vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);
-for (const f of ['vendor/js-yaml.min.js', 'src/core/meta.js', 'src/core/i18n.js', 'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'locales/play_zh-CN.js', 'locales/play_en.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js']) run(f);
+for (const f of ['vendor/js-yaml.min.js', 'src/core/meta.js', 'src/core/i18n.js', 'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'locales/play_zh-CN.js', 'locales/play_en.js', 'locales/play_de.js', 'locales/play_es.js', 'locales/play_fr.js', 'locales/play_ja.js', 'locales/play_ko.js', 'locales/play_zh-TW.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js']) run(f);
 /* 内存存储代替浏览器存储，zip 读写用真实实现 */
 const mem = new Map();
 ctx.__mem = mem;

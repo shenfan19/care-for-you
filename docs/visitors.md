@@ -17,6 +17,7 @@ This page explains the daily rhythm, the visitors who come through the time door
 - A guest stays one to three days and may leave at random. They leave whether or not they are content. The ones who left unsatisfied may come back later.
 - A guest needs a free guest bed. There is one at the start, and the bigger house adds another.
 - The first guest arrives on the first afternoon and is chosen by the interface language. Everyone else arrives at random, and guests you have not yet satisfied come more often than ones you already have.
+- All texts, including the fifty cards, are available in the eight interface languages: Simplified and Traditional Chinese, English, Japanese, Korean, German, French and Spanish. The translations are machine-assisted and not proofread by native speakers, so corrections are welcome.
 - There are fifty official cards. Each card carries a region and a field. Every region has the same total chance of being picked, so a region with more cards does not come more often. Medicine is slightly favoured, politics and the military slightly less. The interface language adds a small lean towards its home region; nothing is guessed from your location.
 - Guests chat with the family now and then, one short line per guest per day, picked by the guest's field and the age of the family member.
 - Rarely, two or three guests arrive together and share a line that belongs only to them, such as Li Bai, Du Fu and Basho, or Nightingale, Seacole and Hippocrates. Each combination happens at most once.
