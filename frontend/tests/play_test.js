@@ -32,6 +32,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   const endDay = async () => { let g = 0; while (!G.dayRoll() && g++ < 100) G.advance(30, false); await new Promise(r => setTimeout(r, 80)); };
   const wait = () => new Promise(r => setTimeout(r, 80));
   {
+    G.DOOR.meet_chance = 0;
     G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0;
     const before = G.people.length;
     CY.i18n.set('zh-CN');
@@ -103,6 +104,30 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('卡片编号和纪念品编号不重复', new Set(ids).size === ids.length && new Set(ids.map(i => V.cards[i].souvenir.id)).size === ids.length);
     check('每个礼物至少被一张卡片需要', Object.keys(V.GIFTS).filter(g => !ids.some(i => V.cards[i].wants.includes(g))).length <= 6, Object.keys(V.GIFTS).filter(g => !ids.some(i => V.cards[i].wants.includes(g))).join());
     check('同一件礼物不会被太多卡片需要，猜起来才有区分', Math.max(...Object.keys(V.GIFTS).map(g => ids.filter(i => V.cards[i].wants.includes(g)).length)) <= 8);
+    check('官方卡片五十张，地区和行业标签齐全', ids.filter(i => V.cards[i].official).length === 50 && ids.every(i => V.AREAS.includes(V.cards[i].area) && V.FIELDS.includes(V.cards[i].field)));
+    {
+      const cnt = k => ids.reduce((m, i) => (m[V.cards[i][k]] = (m[V.cards[i][k]] || 0) + 1, m), {});
+      const ar = cnt('area'), fd = cnt('field');
+      check('每个地区至少六张，医疗卡最多', V.AREAS.every(a => ar[a] >= 5) && fd.med >= fd.sci - 0 && fd.pol <= 2, JSON.stringify(ar) + JSON.stringify(fd));
+      for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
+      G.world.souv = {}; G.world.met = {}; G.world.last_area = null; CY.i18n.set('en');
+      const byArea = {}, byField = {}; let n = 0;
+      for (let i = 0; i < 6000; i++) { const id = G.pickVisitor(); G.world.last_area = null; const c = V.cards[id]; byArea[c.area] = (byArea[c.area] || 0) + 1; byField[c.field] = (byField[c.field] || 0) + 1; n++; }
+      check('英文下六个地区被抽到的比例接近相等，没有偏向', V.AREAS.every(a => Math.abs(byArea[a] / n - 1 / 6) < 0.03), JSON.stringify(byArea));
+      check('政治军事少，医疗每张被抽到的机会略高', (byField.pol || 0) / fd.pol < (byField.sci || 0) / fd.sci && (byField.med || 0) / fd.med > (byField.sci || 0) / fd.sci);
+      CY.i18n.set('zh-CN');
+      const h = { ea: 0, other: 0 }; for (let i = 0; i < 4000; i++) { G.world.last_area = null; const a = V.cards[G.pickVisitor()].area; h[a === 'ea' ? 'ea' : 'other']++; }
+      check('中文下东亚略多一点，但没有压倒', h.ea / 4000 > 1 / 6 && h.ea / 4000 < 0.28, String(h.ea / 4000));
+      for (const m of V.MEETS) if (!m.ids.every(i => V.cards[i]) || !CY.i18n.has('meet.' + m.key)) bad.push('组合' + m.key);
+      check('珍稀组合的成员都存在，文字已登记', bad.filter(x => x.startsWith('组合')).length === 0 && V.MEETS.length >= 8);
+      for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+      G.world.meets = {}; G.world.today = null;
+      const got = await G.arriveGroup(['li_bai', 'du_fu', 'basho']);
+      check('三位同时到来：算遇见，小组也一并记为遇见过', got === true && G.visitorPeople().length === 3 && G.world.meets.poets3 && G.world.meets.friends2);
+      check('遇见的话进当天小结，同一组合不重复触发', G.world.today.notes.some(x => x.k === 'meet.poets3') && (await G.arriveGroup(['li_bai', 'du_fu', 'basho'])) === false);
+      for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+      G.world.meets = {}; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
+    }
     check('文字里没有死亡和战争的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
   }
   /* 存档被改过的标记 */

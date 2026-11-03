@@ -130,4 +130,140 @@
     [['他眯着眼睛看你写的字，说眼睛越来越花了。', 'He squinted at your handwriting and said his eyes were getting worse.'], ['他说算着算着，旁边孩子爬到膝盖上也不影响。', 'He said he could keep calculating even with a child climbing on his knee.']],
     ['📐', '一页演算的复印件', 'A copy of a page of workings'], ['光线暗下来，也还能算下去。', 'Even when the light dims, you can keep calculating.'], 'Encyclopaedia Britannica, Leonhard Euler.',
     ['他戴上东西，把纸凑得近了一些。', 'He put it on and held the paper closer.']);
+
+  /* ---------- 第三批：补足地区和行业，共五十张 ----------
+     这一批由 AI 起草并做初核，review 里写明待用户终审。传说性质或来源有争议的人物，文字只写传统上广为人知的部分。 */
+  const OK3 = "2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好";
+
+  P("hippocrates", ["希波克拉底", "Hippocrates"], ["古希腊", "Ancient Greece"], "Greece", 55, "他", ["c", "gray", "short", "none", "#a7b5a0"], [2, 3], ["aspirin", "soup"],
+    [["他在床边坐了很久，一句话不说，先把人看明白，才开口问昨晚睡得怎么样。", "He sat by the bed for a long while without a word, looking carefully before asking how the night had been."], ["他说传说里自己让人嚼过柳树皮，又说清淡的饮食和休息比什么都要紧。", "He said that, as the story goes, he once had people chew willow bark, and that plain food and rest matter most."]],
+    ["🌿", "一片柳叶", "A willow leaf"], ["多看一看，多等一等，身体自己会帮忙。", "Look a little longer, wait a little longer, and the body will help."], "Encyclopaedia Britannica, Hippocrates; the Hippocratic Corpus on observation, diet and rest. The willow bark remedy is a traditional attribution.",
+    ["他嚼了嚼，点点头，说味道和故乡的一样。", "He chewed it, nodded, and said it tasted like home."], "2026-11-02 AI初核通过，待用户终审：柳树皮疗法是传统说法，文字已标明");
+  P("ibn_al_nafis", ["伊本·纳菲斯", "Ibn al-Nafis"], ["十三世纪，叙利亚与埃及", "13th century, Syria and Egypt"], "Syria / Egypt", 50, "他", ["d", "black", "short", "none", "#7c8fb0"], [2, 3], ["medkit", "notebook"],
+    [["他在纸上画了一个心脏，说血不是直接穿过中间的隔，而是要绕到肺里走一圈。", "He drew a heart on paper and said the blood does not pass straight through the middle wall but goes around through the lungs."], ["他说他大半辈子都在医院里，最爱看的是病人慢慢好起来。", "He said he had spent most of his life in hospitals and loved most to watch patients slowly recover."]],
+    ["🫀", "一页肺循环的手稿抄本", "A copy of a manuscript page on the lungs and blood"], ["看得仔细，才写得对。", "Only careful looking leads to careful writing."], "Encyclopaedia Britannica, Ibn al-Nafis; description of the pulmonary transit of blood, commentary on Avicenna's Canon.",
+    ["他接过东西，立刻翻开写了起来。", "He took it and opened it to write at once."], OK3);
+  P("omar_khayyam", ["奥马尔·海亚姆", "Omar Khayyam"], ["十一至十二世纪，波斯", "11th-12th century, Persia"], "Persia", 50, "他", ["d", "black", "short", "none", "#8a6f9a"], [1, 2], ["telescope", "chess"],
+    [["他在纸上画了几段圆锥曲线，说三次方程也能用几何的办法解出来。", "He drew a few conic sections and said even cubic equations can be solved with geometry."], ["他说算了一晚上的历，想找个人下盘棋歇一歇。", "He said he had spent the whole evening on calendar sums and wanted someone to play a game of chess with."]],
+    ["📅", "一页历法算稿", "A page of calendar calculations"], ["日子数得清，才好好过。", "Count the days well and you can live them well."], "Encyclopaedia Britannica, Omar Khayyam; algebra treatise on cubic equations, the Jalali calendar reform. Attribution of the quatrains is debated and not used here.",
+    ["他把棋子一枚枚摆好，说今晚的星星一定很好。", "He set out the pieces one by one and said tonight's stars would be good."], OK3);
+  P("scheherazade", ["山鲁佐德", "Scheherazade"], ["《一千零一夜》中的人物", "A character from One Thousand and One Nights"], "Arabian Nights (fiction)", 28, "她", ["d", "black", "long", "none", "#b0707a"], [1, 2], ["lamp", "blanket"],
+    [["她说她肚子里有很多很多故事，一个晚上讲不完。", "She said she held so many stories that one night would never be enough."], ["她问你家里有没有人想听故事，最好是睡觉之前。", "She asked whether anyone in the house wanted a story, preferably before bed."]],
+    ["🕯️", "一支故事蜡烛", "A story candle"], ["故事讲给愿意听的人，就不会断。", "Tell a story to someone who wants to listen and it never ends."], "One Thousand and One Nights, the frame story; Encyclopaedia Britannica, Arabian Nights.",
+    ["她把灯放在床边，轻声讲起了第一个故事。", "She set it by the bed and softly began the first story."], "2026-11-02 AI初核通过，待用户终审：只用说书人形象，不涉及框架故事里的情节");
+  P("sushruta", ["妙闻", "Sushruta"], ["古印度，传说中的外科医生", "Ancient India, traditionally the author of a surgical text"], "India", 50, "他", ["e", "black", "short", "none", "#c49a5b"], [2, 3], ["medkit", "gloves"],
+    [["他说学外科要先在瓜果和皮囊上练手，不能一上来就在人身上试。", "He said surgery must be practised first on gourds and leather bags, never straight on a person."], ["他把器具一件件擦干净摆好，说每一步都要先想清楚再动手。", "He wiped each instrument clean and laid them out, saying every step must be thought through before the hand moves."]],
+    ["📜", "一页器械图谱的复印件", "A copy of a page of instrument drawings"], ["手要稳，心要静，用之前先想一遍。", "Steady hands, a quiet mind, and think it through once before you begin."], "Encyclopaedia Britannica, Sushruta; the Sushruta Samhita. Dates and authorship are debated, so the card only states what the text is traditionally known for.",
+    ["他戴上看了看，满意地点点头。", "He tried them on and nodded with satisfaction."], "2026-11-02 AI初核通过，待用户终审：年代与作者有争议，卡片只写传统说法");
+  P("aryabhata", ["阿耶波多", "Aryabhata"], ["五至六世纪，印度", "5th-6th century, India"], "India", 40, "他", ["e", "black", "short", "none", "#d1b25a"], [1, 2], ["telescope", "notebook"],
+    [["他指着天说，星星看上去在转，也可能是我们脚下的地在转。", "He pointed at the sky and said the stars seem to turn, but perhaps it is the ground under our feet that turns."], ["他算出圆周和直径的比大约是三点一四一六，一遍又一遍地核对。", "He worked out that the circle to its diameter is about 3.1416, and checked it again and again."]],
+    ["🔢", "一页圆周率的算稿", "A page of calculations of pi"], ["数字不会骗人，只要你肯再算一遍。", "Numbers do not lie, as long as you are willing to count once more."], "Encyclopaedia Britannica, Aryabhata; the Aryabhatiya, an approximation of pi and the explanation of the apparent motion of the stars by the rotation of the Earth.",
+    ["他架好看了看，认真记下了几个数字。", "He set it up, looked through it, and carefully noted a few numbers."], OK3);
+  P("le_huu_trac", ["黎有晫（海上懒翁）", "Le Huu Trac (Hai Thuong Lan Ong)"], ["十八世纪，越南", "18th century, Vietnam"], "Vietnam", 55, "他", ["d", "gray", "short", "none", "#7a9a6a"], [2, 3], ["seeds", "medkit"],
+    [["他说药不一定贵，田埂边的草，用对了也是药。", "He said medicine need not be costly: a plant at the edge of a field is medicine too, if used well."], ["他说给穷人看病不必收钱，药材可以自己种。", "He said there is no need to charge the poor, and you can grow the herbs yourself."]],
+    ["🌿", "一包晒干的草药", "A bundle of dried herbs"], ["医者的心，比药更要紧。", "A healer's heart matters more than the medicine."], "Encyclopaedia Britannica and Vietnamese historical sources on Le Huu Trac (Hai Thuong Lan Ong), physician and author of Hai Thuong y tong tam linh.",
+    ["他捻了捻种子，说这一把种下去，来年就够用了。", "He rolled the seeds between his fingers and said a handful planted now would be enough next year."], OK3);
+  P("raden_saleh", ["拉登·萨利赫", "Raden Saleh"], ["十九世纪，爪哇", "19th century, Java"], "Indonesia", 40, "他", ["e", "black", "short", "none", "#9a6a4b"], [1, 2], ["paints", "notebook"],
+    [["他随身带着速写本，在院子里一坐就是一下午。", "He carried a sketchbook and could sit in the yard the whole afternoon."], ["他喜欢画动物和天气的变化，问你家的猫愿不愿意坐着不动。", "He liked to paint animals and changes in the weather, and asked whether your cat would sit still."]],
+    ["🖼️", "一幅小画的复印件", "A copy of a small painting"], ["光是怎么落下来的，要一直看着才画得对。", "To paint the way light falls, you have to keep watching it."], "Encyclopaedia Britannica, Raden Saleh; regarded as the first modern Indonesian painter, trained in Europe.",
+    ["他打开颜料，对着窗口调起了颜色。", "He opened the paints and began mixing colours facing the window."], OK3);
+  P("sunthorn_phu", ["顺吞蒲", "Sunthorn Phu"], ["十八至十九世纪，泰国", "18th-19th century, Thailand"], "Thailand", 50, "他", ["e", "black", "short", "none", "#c9a05a"], [1, 2], ["pen", "shoes"],
+    [["他说走到哪里就写到哪里，沿路的风景都能写成诗。", "He said he wrote wherever he walked, and any scenery along the way could become a poem."], ["他说话爱押韵，一句话说到一半就变成了诗。", "He liked to rhyme, and half a sentence would turn into verse."]],
+    ["📜", "一页诗稿的抄本", "A copy of a page of verse"], ["路是读不完的书，写下来才算走过。", "The road is a book you never finish; you have walked it only once you write it down."], "Encyclopaedia Britannica and UNESCO, Sunthorn Phu, Thai poet, author of Phra Aphai Mani; honoured by UNESCO in 1986.",
+    ["他换上鞋，在屋里走了一圈，嘴里念出了一句新的。", "He put on the shoes, took a turn around the room, and murmured a new line."], OK3);
+  P("al_fihri", ["法蒂玛·菲赫里", "Fatima al-Fihri"], ["九世纪，摩洛哥", "9th century, Morocco"], "Morocco", 45, "她", ["d", "black", "bun", "none", "#6f9a8a"], [1, 2], ["book", "lamp"],
+    [["她问你家孩子在读什么书，说有个地方能读书，比什么都重要。", "She asked what the children were reading and said a place to study matters more than almost anything."], ["她说，她把家里留下的钱，都用来盖一座能读书的地方。", "She said she spent what her family left her on building a place where people could study."]],
+    ["📚", "一页学堂的图样", "A sketch of a school"], ["能让人读书的地方，就是最好的家产。", "A place where people can study is the best inheritance."], "Encyclopaedia Britannica, University of al-Qarawiyyin; traditional accounts credit Fatima al-Fihri with founding it in 859. Some details are traditional.",
+    ["她把灯放在桌上，翻开了一本书。", "She put the lamp on the table and opened a book."], "2026-11-02 AI初核通过，待用户终审：只写办学，不涉及宗教内容");
+  P("ibn_khaldun", ["伊本·赫勒敦", "Ibn Khaldun"], ["十四世纪，突尼斯与埃及", "14th century, Tunisia and Egypt"], "Tunisia", 50, "他", ["d", "gray", "short", "none", "#7a7a9a"], [2, 3], ["book", "lamp"],
+    [["他说弄懂一件事，不能只听传说，要看前前后后的缘由。", "He said to understand a thing you cannot rely on legend alone; look at the causes before and after."], ["他随身带着一摞厚厚的书稿，说还要再改。", "He carried a thick stack of manuscript and said it still needed revising."]],
+    ["📘", "一页导言的复印件", "A copy of a page of the Introduction"], ["看得远，是因为把前面的事看清了。", "You see far because you have seen clearly what came before."], "Encyclopaedia Britannica, Ibn Khaldun; the Muqaddimah (1377).",
+    ["他把灯拨亮，又翻开稿子写了起来。", "He turned the lamp up and went back to his manuscript."], OK3);
+  P("horton", ["詹姆斯·阿非利加努斯·霍顿", "James Africanus Horton"], ["十九世纪，塞拉利昂", "19th century, Sierra Leone"], "Sierra Leone", 40, "他", ["f", "black", "short", "round", "#5f7f9a"], [2, 3], ["umbrella", "coat"],
+    [["他说一个地方的病，要用那个地方的天气、水和饮食来看，每一样都要记。", "He said the illnesses of a place must be read against its weather, water and food, and each must be recorded."], ["他在英国学了医，回来后一直在记家乡的病例。", "He trained in medicine in Britain and, back home, kept recording the cases of his homeland."]],
+    ["🌦️", "一页天气和病例的记录", "A page of weather and case records"], ["数据是诚实的，你只要肯记。", "Records are honest, as long as you keep them."], "Encyclopaedia Britannica and Dictionary of African Biography, James Africanus Horton; Physical and Medical Climate and Meteorology of the West Coast of Africa (1867).",
+    ["他撑开看了看，说雨季的数字又要多记一栏。", "He opened it, looked at the sky, and said the rainy season needed another column."], OK3);
+  P("anansi", ["阿南西", "Anansi"], ["西非阿肯人的民间故事", "West African Akan folktales"], "Ghana (folklore)", 40, "他", ["f", "black", "short", "none", "#c08a3a"], [1, 2], ["gloves", "scarf"],
+    [["他说所有的故事原来都是他的，后来才被带到了世上。", "He said all the stories were once his, and only later were they carried out into the world."], ["他八只手一起忙，还嫌不够用，问你有没有多的手套。", "He kept eight hands busy and still found them too few, and asked if you had spare gloves."]],
+    ["🕸️", "一小段银丝", "A short strand of silver thread"], ["故事是织出来的，一针一线，慢慢来。", "Stories are woven, thread by thread, so take your time."], "Akan folktales of Anansi, Encyclopaedia Britannica, Anansi.",
+    ["他把东西往手上一套，高兴地摆弄起来。", "He pulled them on and happily flexed his fingers."], "2026-11-02 AI初核通过，待用户终审：民间故事形象，不涉及宗教");
+  P("imhotep", ["伊姆霍特普", "Imhotep"], ["古埃及，传说他也是医者", "Ancient Egypt, later remembered as a healer"], "Egypt", 45, "他", ["f", "black", "short", "none", "#c9b27a"], [1, 2], ["map", "lamp"],
+    [["他说盖一座高高的石头建筑，先要把地基量得比谁都准。", "He said to raise a tall stone building you must measure the foundation more carefully than anyone."], ["后来的人说他也会治病，他听了笑笑，没有说是还是不是。", "Later people said he could heal as well; he smiled and neither agreed nor denied it."]],
+    ["🔺", "一页阶梯形的草图", "A sketch of a stepped building"], ["高的东西，都是从稳的地方开始的。", "Anything tall begins from somewhere steady."], "Encyclopaedia Britannica, Imhotep; architect of the Step Pyramid at Saqqara. His reputation as a healer comes from later tradition.",
+    ["他把东西摊开，指着上面的一个点，说就从这里量起。", "He spread it out, pointed at one spot, and said they would measure from here."], "2026-11-02 AI初核通过，待用户终审：行医一说是后世传统，文字已标明");
+  P("sor_juana", ["胡安娜修女", "Sor Juana Ines de la Cruz"], ["十七世纪，新西班牙（今墨西哥）", "17th century, New Spain (now Mexico)"], "Mexico", 40, "她", ["d", "black", "bun", "none", "#6a7a9a"], [2, 3], ["book", "spectacles"],
+    [["她书架上的书比谁都多，她说一整面墙也不够放。", "Her shelf held more books than anyone's, and she said a whole wall was not enough."], ["她说女子也有读书的权利，说这话时很平静。", "She said women have the right to read too, and said it very calmly."]],
+    ["🖋️", "一页诗稿的复印件", "A copy of a page of verse"], ["想读的书，值得好好等。", "A book you want to read is worth waiting for."], "Encyclopaedia Britannica, Sor Juana Ines de la Cruz; poet and scholar of New Spain, her Reply to Sor Filotea.",
+    ["她捧着书，翻到第一页，安静地读了起来。", "She held the book, turned to the first page and began to read in silence."], "2026-11-02 AI初核通过，待用户终审：只写读书和写作，不涉及宗教生活");
+  P("machado", ["马查多·德·阿西斯", "Machado de Assis"], ["十九至二十世纪，巴西", "19th-20th century, Brazil"], "Brazil", 55, "他", ["e", "gray", "short", "round", "#7a6a5a"], [1, 2], ["spectacles", "tea"],
+    [["他说话慢条斯理，总在你以为他要认真的时候讲个笑话。", "He spoke slowly and always told a joke just when you thought he was about to be serious."], ["他说读书的人就像朋友，写东西时得时不时跟他打个招呼。", "He said a reader is like a friend, and while writing you should greet them now and then."]],
+    ["📕", "一页校样的复印件", "A copy of a page of proofs"], ["字要一个一个排对，才对得起读的人。", "Set each word right, and you deserve the reader."], "Encyclopaedia Britannica, Machado de Assis; founder and first president of the Brazilian Academy of Letters.",
+    ["他戴上看了看，满意地笑了。", "He put them on, looked around, and smiled with satisfaction."], OK3);
+  P("finlay", ["卡洛斯·芬莱", "Carlos Finlay"], ["十九至二十世纪，古巴", "19th-20th century, Cuba"], "Cuba", 55, "他", ["c", "gray", "short", "square", "#7a8f6a"], [2, 3], ["microscope", "tea"],
+    [["他盯着一只蚊子看了很久，说小东西也可能是大麻烦的源头。", "He stared at a mosquito for a long time and said a small thing may be the source of a large trouble."], ["他说想法被人笑了很多年也没关系，等证据就是了。", "He said it did not matter that people had laughed at his idea for years; one simply waits for the evidence."]],
+    ["🦟", "一页蚊子的素描", "A sketch of a mosquito"], ["耐心比争论管用。", "Patience works better than argument."], "Encyclopaedia Britannica, Carlos Finlay; proposed in 1881 that mosquitoes carry yellow fever.",
+    ["他把眼睛凑上去，半天没有抬头。", "He put an eye to it and did not look up for a long time."], OK3);
+  P("kahlo", ["弗里达·卡罗", "Frida Kahlo"], ["二十世纪，墨西哥", "20th century, Mexico"], "Mexico", 35, "她", ["e", "black", "bun", "none", "#c0506a"], [1, 2], ["paints", "scarf"],
+    [["她问你家里有没有镜子，她喜欢对着镜子画自己。", "She asked whether you had a mirror, because she liked to paint herself looking into one."], ["她的衣服颜色鲜艳，还说家里养过猴子、小狗和鹦鹉。", "Her clothes were brightly coloured, and she said she had kept monkeys, dogs and a parrot at home."]],
+    ["🌺", "一朵纸花", "A paper flower"], ["颜色是不会骗人的，我只是照着画。", "Colours do not lie; I only paint what I see."], "Encyclopaedia Britannica, Frida Kahlo; self-portraits, her house in Coyoacan and her pets.",
+    ["她立刻铺开颜料，说要先画这条围巾的红。", "She spread out the paints at once and said she would start with the red of the scarf."], "2026-11-02 AI初核通过，待用户终审：只写绘画与家居，不涉及政治立场和健康状况");
+  P("sequoyah", ["塞阔雅", "Sequoyah"], ["十八至十九世纪，切罗基族", "18th-19th century, Cherokee"], "United States", 50, "他", ["f", "black", "short", "none", "#8a6a4b"], [1, 2], ["pen", "lamp"],
+    [["他说要给自己的话造一套文字，试了很多年，一个符号一个符号地改。", "He said he wanted to make a writing system for his own language, and tried for years, changing it symbol by symbol."], ["他随身带着一叠写满符号的纸，说还要再核对一遍。", "He carried a stack of paper full of symbols and said he still had to check them once more."]],
+    ["📝", "一页音节表的复印件", "A copy of a page of a syllable chart"], ["自己的话，值得有自己的字。", "Your own language deserves its own letters."], "Encyclopaedia Britannica, Sequoyah; creator of the Cherokee syllabary, completed about 1821.",
+    ["他把灯移近，一个符号一个符号地对了起来。", "He moved the lamp closer and checked the symbols one by one."], OK3);
+  P("tupaia", ["图帕伊亚", "Tupaia"], ["十八世纪，社会群岛", "18th century, Society Islands"], "Raiatea (Polynesia)", 40, "他", ["f", "black", "long", "none", "#6a9a8f"], [1, 2], ["map", "umbrella"],
+    [["他不看星图，凭星星出现的方向，就能说出哪个岛在哪边。", "He needed no star chart; from the direction in which stars rise, he could say where each island lay."], ["他在纸上画了一张海的图，上面有七十多个岛。", "He drew a chart of the sea on paper, with more than seventy islands on it."]],
+    ["🧭", "一张海图的复印件", "A copy of a sea chart"], ["海上没有路，只有记住的方向。", "There are no roads at sea, only directions you remember."], "Encyclopaedia Britannica, Tupaia; navigator and priest from Raiatea, his chart of the Pacific islands drawn in 1769.",
+    ["他把东西展开，用手指在上面比了比远处的岛。", "He spread it out and traced the distant islands with a finger."], "2026-11-02 AI初核通过，待用户终审：只写航海与海图，不涉及殖民叙事");
+
+  /* ---------- 地区和行业标签：选人时按地区均分，行业略微倾斜 ----------
+     area：ea 东亚，sa 南亚与东南亚，wa 西亚与中亚，eu 欧洲，af 非洲，am 美洲与大洋洲。
+     field：med 医疗，sci 科学与工程，art 文学艺术，edu 学问与教育，pol 政治与军事，trv 旅行与航海。 */
+  V.AREAS = ["ea", "sa", "wa", "eu", "af", "am"];
+  V.FIELDS = ["med", "sci", "art", "edu", "pol", "trv"];
+  const TAGS = {
+    nightingale: ["eu", "med"], zhuge: ["ea", "pol"], curie: ["eu", "sci"], galois: ["eu", "sci"], mozart: ["eu", "art"], beethoven: ["eu", "art"], da_vinci: ["eu", "art"],
+    li_bai: ["ea", "art"], du_fu: ["ea", "art"], su_shi: ["ea", "art"], zhang_heng: ["ea", "sci"], li_shizhen: ["ea", "med"], lin_daiyu: ["ea", "art"], archimedes: ["eu", "sci"],
+    ibn_sina: ["wa", "med"], al_khwarizmi: ["wa", "sci"], ada: ["eu", "sci"], ramanujan: ["sa", "sci"], tagore: ["sa", "art"], hokusai: ["ea", "art"], murasaki: ["ea", "art"],
+    basho: ["ea", "art"], ibn_battuta: ["af", "trv"], austen: ["eu", "art"], pasteur: ["eu", "med"], seacole: ["am", "med"], dickinson: ["am", "art"], wang_xizhi: ["ea", "art"],
+    zhang_zhongjing: ["ea", "med"], euler: ["eu", "sci"],
+    hippocrates: ["eu", "med"], ibn_al_nafis: ["wa", "med"], omar_khayyam: ["wa", "sci"], scheherazade: ["wa", "art"], sushruta: ["sa", "med"], aryabhata: ["sa", "sci"],
+    le_huu_trac: ["sa", "med"], raden_saleh: ["sa", "art"], sunthorn_phu: ["sa", "art"], al_fihri: ["af", "edu"], ibn_khaldun: ["af", "edu"], horton: ["af", "med"],
+    anansi: ["af", "art"], imhotep: ["af", "sci"], sor_juana: ["am", "art"], machado: ["am", "art"], finlay: ["am", "med"], kahlo: ["am", "art"], sequoyah: ["am", "edu"], tupaia: ["am", "trv"],
+  };
+  for (const id in TAGS) { const c = V.cards[id]; if (c) { c.area = TAGS[id][0]; c.field = TAGS[id][1]; } }
+
+  /* ---------- 同时到来的珍稀组合：两位或三位同在家里时，有一句只属于他们的话 ---------- */
+  V.MEETS = [];
+  const M = (key, ids, zh, en) => {
+    V.MEETS.push({ key, ids });
+    CY.i18n.register("zh-CN", { ["meet." + key]: zh });
+    CY.i18n.register("en", { ["meet." + key]: en });
+  };
+  M("poets3", ["li_bai", "du_fu", "basho"], "芭蕉读过李白和杜甫的诗，站在一旁行了个礼，三个人从天黑聊到了天亮。", "Basho had read the poems of Li Bai and Du Fu; he stood aside and bowed, and the three talked from dusk to dawn.");
+  M("nurses3", ["nightingale", "seacole", "hippocrates"], "希波克拉底问她们：病人最需要什么？三个人几乎同时回答：休息。", "Hippocrates asked the two women what a patient needs most. All three answered almost together: rest.");
+  M("numbers3", ["euler", "ramanujan", "al_khwarizmi"], "花拉子米听见他们在算级数，笑着说：算法这个词，还是从我的名字来的。", "Al-Khwarizmi heard them working on series and smiled: the word algorithm comes from my name, you know.");
+  M("readers3", ["al_fihri", "sor_juana", "murasaki"], "三位爱读书的女子坐在同一盏灯下，各读各的书，谁也没有打扰谁。", "Three women who loved books sat under one lamp, each reading her own, none disturbing the others.");
+  M("friends2", ["li_bai", "du_fu"], "李白和杜甫在院子里碰上了，话没说完两个人先笑了，像认识了很多年。", "Li Bai and Du Fu ran into each other in the yard and laughed before either finished a sentence, as if they had known each other for years.");
+  M("nurses2", ["nightingale", "seacole"], "南丁格尔和西科尔认出了彼此，说起很多年前曾经见过一面。", "Florence Nightingale and Mary Seacole recognised each other and recalled having met once, many years ago.");
+  M("math2", ["euler", "ramanujan"], "欧拉和拉马努金一起算起了级数，没人看得出谁在教谁。", "Euler and Ramanujan started working on series together, and nobody could tell who was teaching whom.");
+  M("music2", ["mozart", "beethoven"], "莫扎特哼了一段旋律，贝多芬在纸上写了几句回应，两个人这样聊了一晚上。", "Mozart hummed a melody and Beethoven wrote a few lines in reply on paper, and they talked like that all evening.");
+  M("healers2", ["ibn_sina", "hippocrates"], "伊本·西纳翻出一本旧书，说里面好几处都引用了希波克拉底。", "Ibn Sina pulled out an old book and said several passages in it quoted Hippocrates.");
+  M("herbs2", ["li_shizhen", "zhang_zhongjing"], "李时珍翻着随身的本草书，张仲景在一旁补了几句方子的写法，两个人不住地点头。", "Li Shizhen leafed through his herbal while Zhang Zhongjing added a few notes on writing prescriptions, and both kept nodding.");
+  M("novels2", ["murasaki", "austen"], "紫式部和简·奥斯汀聊起写小说，两个人都说，写家里人说话最难。", "Murasaki Shikibu and Jane Austen talked about writing novels, and both said that the hardest thing to write is how a family talks.");
+
+  /* ---------- 来客和家人的小互动：按行业和对方的年龄段取一句，一天最多一次 ---------- */
+  const FAM = {
+    med: { little: ["弯下腰看了看{who}的小脸，说气色不错", "bent down, looked at {who}'s little face and said the colour was good"], child: ["问{who}今天有没有好好喝水，听到回答才放心", "asked {who} whether water had been drunk today, and was only content once told"], adult: ["和{who}聊起了怎么好好睡一觉", "talked with {who} about how to get a proper night's sleep"], elder: ["轻轻按了按{who}的手腕，说看着还稳", "gently pressed {who}'s wrist and said it felt steady"] },
+    sci: { little: ["拿一个小东西在{who}面前晃了晃，看着{who}的眼睛跟着转", "waved a small thing before {who} and watched the eyes follow it"], child: ["教{who}数了数窗外飞过的鸟", "taught {who} to count the birds flying past the window"], adult: ["和{who}就着一个问题讨论了很久，谁也没说服谁", "discussed a question with {who} for a long time, and neither convinced the other"], elder: ["请教{who}年轻时的见闻，听得很认真", "asked {who} about things seen in younger days and listened closely"] },
+    art: { little: ["对着{who}哼了一小段调子，{who}笑了", "hummed a little tune at {who}, who laughed"], child: ["在纸上给{who}画了一只小动物", "drew a little animal on paper for {who}"], adult: ["给{who}念了几句自己最近想到的句子", "read {who} a few lines thought up lately"], elder: ["坐在{who}旁边，听{who}讲从前的事，没有打断", "sat beside {who} and listened to old stories without interrupting"] },
+    edu: { little: ["给{who}念了一页书，念着念着声音越来越轻", "read a page aloud to {who}, the voice growing softer and softer"], child: ["问{who}今天学了什么，听得很认真", "asked {who} what was learned today and listened closely"], adult: ["和{who}说起读书的事，两个人都说想再多读一点", "talked with {who} about reading, and both said they wanted to read more"], elder: ["向{who}请教了一句老话的意思", "asked {who} what an old saying meant"] },
+    pol: { little: ["蹲下来，认真地陪{who}玩了一会儿", "crouched down and played earnestly with {who} for a while"], child: ["教{who}摆了一局棋", "taught {who} to set up a game of chess"], adult: ["和{who}商量起了家里一天的安排", "talked over the day's arrangements at home with {who}"], elder: ["给{who}端了杯茶，请{who}多保重", "brought {who} a cup of tea and asked {who} to take care"] },
+    trv: { little: ["给{who}讲了一个远方的小故事", "told {who} a small story from far away"], child: ["给{who}看了路上收集的小东西", "showed {who} the little things gathered along the road"], adult: ["和{who}聊起了沿路见过的地方", "talked with {who} about places seen along the way"], elder: ["听{who}讲起老家的路，问得很细", "listened to {who} describe the road back home and asked many questions"] },
+  };
+  V.FAMLINES = FAM;
+  for (const f in FAM) for (const g in FAM[f]) {
+    CY.i18n.register("zh-CN", { [`visit.fam.${f}.${g}`]: "{guest}" + FAM[f][g][0] + "。" });
+    CY.i18n.register("en", { [`visit.fam.${f}.${g}`]: "{guest} " + FAM[f][g][1] + "." });
+  }
 })(globalThis.CY = globalThis.CY || {});

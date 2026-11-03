@@ -13,7 +13,9 @@
     return true;
   };
 
-  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard' };
+  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150] };
+  /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
+  G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
   G.guestBeds = () => 1 + (G.owned && G.owned('house2') ? 1 : 0);
   G.visitorPeople = () => G.activePeople().filter(p => p.person.visitor);
   G.souvenirs = () => (G.world.souv = G.world.souv || {});
@@ -34,7 +36,17 @@
   /* 挑一位：没拿到纪念品的优先，来过但没满足的次之，已拿到的很少再来 */
   G.pickVisitor = () => {
     const here = new Set(G.visitorPeople().map(p => p.person.visitor.id)), souv = G.souvenirs(), met = G.world.met || {};
-    const pool = V.order.filter(id => !here.has(id)).map(id => ({ id, w: souv[id] ? 0.15 : met[id] ? 2 : 3 }));
+    const nf = {}; for (const id of V.order) { const f = V.cards[id].field; nf[f] = (nf[f] || 0) + 1; }
+    /* 行业也向均匀靠拢：卡多的行业每张权重降一点，卡少的升一点，开方并限在 0.6 到 1.5，不完全拉平 */
+    const soft = f => Math.min(1.5, Math.max(0.6, Math.sqrt(V.order.length / V.FIELDS.length / (nf[f] || 1))));
+    /* 行业因子算完，再让每个地区的因子总和相等：地区之间始终均分，行业只在地区内部分配 */
+    const fw = id => { const f = V.cards[id].field; return soft(f) * (G.PICK.field[f] || 1); }, asum = {};
+    for (const id of V.order) { const a = V.cards[id].area; asum[a] = (asum[a] || 0) + fw(id); }
+    const home = G.PICK.home_of[CY.i18n.lang] || [], last = G.world.last_area;
+    const pool = V.order.filter(id => !here.has(id)).map(id => {
+      const c = V.cards[id], base = souv[id] ? 0.15 : met[id] ? 2 : 3;
+      return { id, w: base * fw(id) / asum[c.area] * (home.includes(c.area) ? G.PICK.home : 1) * (c.area === last ? G.PICK.repeat : 1) };
+    });
     const sum = pool.reduce((a, b) => a + b.w, 0);
     if (!sum) return null;
     let r = Math.random() * sum;
@@ -44,7 +56,7 @@
   G.firstVisitorId = () => V.FIRST[CY.i18n.lang] || V.FIRST.default;
 
   /* 到来：建一个人，放在门口，之后和家里人一样自己走动 */
-  G.arrive = async id => {
+  G.arrive = async (id, quiet) => {
     const c = V.cards[id]; if (!c) return null;
     const pid = await G.createPerson({ arch: c.age >= 60 ? 'neighbor' : 'friend', name: t(`visitor.${id}.name`), age: c.age, pronoun: c.pronoun, look: c.look });
     const p = await G.loadOnePerson(pid, []);
@@ -55,17 +67,44 @@
     await saveVisitor(p);
     if (CY.world && CY.world.agents) CY.world.agents[pid] = { room: G.DOOR.door_room, next: Date.now() + 15000 };
     G.world.met = Object.assign({}, G.world.met, { [id]: ((G.world.met || {})[id] || 0) + 1 });
+    G.world.last_area = c.area;
     G.settleNote('settle.visit_arrive', { name: nameRef(id) });
     G.logK('you', 'event', 'visit.log_arrive', { name: nameRef(id) });
     fire('arrive', p);
+    if (!quiet) checkMeet();
     G.save();
     return p;
+  };
+
+  /* 珍稀组合：几位同时在家，且这一组还没遇见过，就记一句只属于他们的话。大组先看，触发后包含在里面的小组也算遇见过 */
+  const checkMeet = () => {
+    const here = new Set(G.visitorPeople().map(p => p.person.visitor.id)), seen = G.world.meets = G.world.meets || {};
+    for (const m of V.MEETS.slice().sort((a, b) => b.ids.length - a.ids.length)) {
+      if (seen[m.key] || !m.ids.every(i => here.has(i))) continue;
+      for (const o of V.MEETS) if (o.ids.every(i => m.ids.includes(i))) seen[o.key] = day();
+      G.settleNote('meet.' + m.key, {});
+      G.logK('you', 'event', 'meet.' + m.key, {});
+      fire('meet', m);
+      return true;
+    }
+    return false;
+  };
+  /* 组团到来：不看客床，因为是结伴来的；平时很少发生，还没遇见过的组合优先 */
+  G.arriveGroup = async ids => { for (const id of ids) if (!G.visitorPeople().some(p => p.person.visitor.id === id)) await G.arrive(id, true); return checkMeet(); };
+  G.pickGroup = () => {
+    const seen = G.world.meets || {}, pool = V.MEETS.filter(m => !seen[m.key]);
+    if (!pool.length) return null;
+    const w = m => (m.ids.length === 3 ? 0.5 : 1);
+    let r = Math.random() * pool.reduce((a, m) => a + w(m), 0);
+    for (const m of pool) { r -= w(m); if (r <= 0) return m; }
+    return pool[pool.length - 1];
   };
 
   /* 新档第一次必到，之后每天午后看有没有空床，离开后隔最多一天 */
   G.maybeArrive = async () => {
     if (!G.activePeople().length || !G.world.intro_done || G.world.story_pending) return false;
     if (!G.world.visit_started) { G.world.visit_started = true; return !!(await G.arrive(G.firstVisitorId())); }
+    if (!G.visitorPeople().length && Math.random() < G.DOOR.meet_chance) { const m = G.pickGroup(); if (m) return G.arriveGroup(m.ids); }
     if (G.visitorPeople().length >= G.guestBeds()) return false;
     if ((G.world.visit_cd || 0) > 0) { G.world.visit_cd--; return false; }
     if (Math.random() > G.DOOR.arrive_chance) return false;
@@ -155,6 +194,27 @@
       nextHint[p.id] = now + 1000 * rint(G.DOOR.hint_gap[0], G.DOOR.hint_gap[1]);
       const text = t(`visitor.${st.id}.hint.${st.talk % n}`); st.talk++;
       if (G.toastFor) G.toastFor(p, text, 'soft');
+    }
+  });
+
+  /* 来客和家人的小互动：隔一阵挑一位家人，按来客的行业和对方的年龄段取一句，冒成气泡并记进当天小结；每位来客一天最多一次 */
+  const GROUP = { infant: 'little', toddler: 'little', child: 'child', teen: 'child', adult: 'adult', elder: 'elder' };
+  const nextFam = {};
+  G.on(() => {
+    const now = Date.now();
+    for (const p of G.visitorPeople()) {
+      const st = p.person.visitor, c = V.cards[st.id];
+      if (!c || G.isSleeping(p)) continue;
+      if (nextFam[p.id] === undefined) nextFam[p.id] = now + 1000 * rint(G.DOOR.fam_gap[0], G.DOOR.fam_gap[1]);
+      if (now < nextFam[p.id]) continue;
+      nextFam[p.id] = now + 1000 * rint(G.DOOR.fam_gap[0], G.DOOR.fam_gap[1]);
+      if (st.fam_day === day()) continue;
+      const kin = G.activePeople().filter(q => !q.person.visitor && G.isHuman(q) && GROUP[G.stage(q)]);
+      if (!kin.length) continue;
+      const q = kin[Math.floor(Math.random() * kin.length)], key = `visit.fam.${c.field}.${GROUP[G.stage(q)]}`;
+      st.fam_day = day();
+      G.settleNote(key, { guest: nameRef(st.id), who: q.person.name });
+      if (G.toastFor) G.toastFor(p, t(key, { guest: p.person.name, who: q.person.name }), 'soft');
     }
   });
 

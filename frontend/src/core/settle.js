@@ -55,7 +55,10 @@
       return L;
     }
     /* 访客先说：到来，被照顾，收到礼物，离开，都按发生的顺序 */
-    for (const n of d.notes.slice(-5)) L.push(n);
+    /* 最多六句：先舍家人互动，再舍最早的，遇见的话和别的访客事不丢 */
+    const ns = d.notes.slice();
+    while (ns.length > 6) { const i = ns.findIndex(n => /^visit\.fam\./.test(n.k)), j = i >= 0 ? i : ns.findIndex(n => !/^meet\./.test(n.k)); ns.splice(j >= 0 ? j : 0, 1); }
+    for (const n of ns) L.push(n);
     /* 家人的日常：照顾得最多的两个人，各挑最常做的一件事 */
     const fam = Object.entries(d.fam || {}).sort((a, b) => (d.care[b[0]] || 0) - (d.care[a[0]] || 0)).slice(0, 2);
     for (const [name, acts] of fam) {
