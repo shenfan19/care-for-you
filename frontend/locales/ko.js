@@ -195,3 +195,4 @@ CY.i18n.register("ko", {"act.sleep": "자러 가기"});
 CY.i18n.register("ko", {"selfact.sleep": "{name}이(가) 자러 갔다"});
 CY.i18n.register("ko", {"cond.sev": "증상 정도", "cond.sev_mild": "가벼움", "cond.sev_moderate": "보통", "cond.sev_advanced": "심함", "obs.title": "관찰", "obs.measure": "「{act}」을(를) 한 번 하면 볼 수 있어요", "obs.none": "아직 볼 수 없어요", "selfact.selfsugar": "{name}이(가) 스스로 혈당을 쟀다", "act.selfsugar": "혼자 혈당 재기"});
 CY.i18n.register("ko", {"import.pack": "질병 팩: {names}, 파일 {n}개. 템플릿 폴더에만 넣고 저장 데이터 속 인물은 건드리지 않습니다."});
+CY.i18n.register('ko', {'act.invite_rest': '잠깐 쉬게 하기'});

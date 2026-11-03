@@ -167,6 +167,15 @@
         for (let i = 0; i < 5; i++) ball(r.gx + 0.5 + i * 0.36, r.gy + 0.55, 14, 4, 4, ['#e8707e', '#f2c14e', '#fff', '#c58ae0', '#f2c14e'][i]);
         box(r.gx + 3.15, r.gy + 0.55, 0.3, 0.3, 30, '#8a5a3a'); ball(r.gx + 3.3, r.gy + 0.7, 52, 34, 26, '#5f9a58'); ball(r.gx + 3.0, r.gy + 0.7, 60, 22, 18, '#74ad68');
         box(r.gx + 0.1, r.gy + 3.7, 3.8, 0.12, 14, '#d9c9a8');
+        /* 时空门：院子右侧的一道发光的门框，访客从这里走出来，是家里一直在的东西 */
+        {
+          const X = r.gx + 3.6, Y0 = r.gy + 1.55, Y1 = r.gy + 2.55, Z = 76;
+          poly([pt(X - 0.12, Y0 - 0.1, 0), pt(X - 0.12, Y1 + 0.1, 0), pt(X - 0.12, Y1 + 0.1, Z + 6), pt(X - 0.12, Y0 - 0.1, Z + 6)], '#4a3b86');
+          poly([pt(X, Y0, 4), pt(X, Y1, 4), pt(X, Y1, Z), pt(X, Y0, Z)], '#b9a6ff', 'opacity=".95"');
+          out.push(`<polygon points="${[pt(X, Y0 + 0.14, 8), pt(X, Y1 - 0.14, 8), pt(X, Y1 - 0.14, Z - 6), pt(X, Y0 + 0.14, Z - 6)].join(' ')}" fill="#f2eaff"><animate attributeName="opacity" values=".55;1;.55" dur="3.2s" repeatCount="indefinite"/></polygon>`);
+          const [dx, dy] = pt(X, (Y0 + Y1) / 2, Z / 2).split(',');
+          out.push(`<circle cx="${dx}" cy="${dy}" r="7" fill="#ffffff" opacity=".7"><animate attributeName="r" values="5;11;5" dur="3.2s" repeatCount="indefinite"/></circle>`);
+        }
       }
       return `<svg viewBox="0 0 ${W.vw(place)} ${W.vh(place)}" preserveAspectRatio="xMidYMid meet">${out.join('')}</svg>`;
     },

@@ -62,7 +62,7 @@
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
     if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
     mn.onclick = () => U.helpDialog();
-    for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()], ['cornerCal', 'cal.title', () => U.calendarDialog()], ['cornerDoor', 'visit.door_tip', () => U.visitorDialog && U.visitorDialog()]]) {
+    for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()], ['cornerGift', 'gift.tip', () => U.giftDialog && U.giftDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }
     }
     const ms = root.querySelector('#cornerMusic');
@@ -117,10 +117,12 @@
     U.popover(anchor, `<div class="prow2">${esc(t('pop.clock'))}${timeSel('pc', G.dayMinutes(), 1)}</div>
       <div class="prow2">${esc(t('pop.work'))}<span>${timeSel('pf', wh[0], 5)} – ${timeSel('pt', wh[1], 5)}</span></div>
       <div class="prow2"><button id="psync">${esc(t('pop.sync'))}</button></div>
+      <div class="prow2"><button id="pcal">📅 ${esc(t('cal.title'))}</button></div>
       <div class="prow2">${esc(t('pop.format'))}<span class="seg"><button data-f="24" class="${U.is12h() ? '' : 'on'}">24</button><button data-f="12" class="${U.is12h() ? 'on' : ''}">12</button></span></div>`, box => {
       /* 手动设了几点，就改用游戏里的时钟，否则昼夜一直跟着系统时间，设了也不生效 */
       const clk = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.setClock(readTime(box, 'pc')); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); };
       box.querySelectorAll('#pch, #pcm, #pcp').forEach(e => { e.onchange = clk; });
+      box.querySelector('#pcal').onclick = () => { U.closePopover(); U.calendarDialog(); };
       box.querySelector('#psync').onclick = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.alignClock(); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); U.closePopover(); };
       const wsave = async () => { const f = readTime(box, 'pf'), to = readTime(box, 'pt'); if (f < to) { G.cfg.economy = G.cfg.economy || {}; const z = v => String(Math.floor(v / 60)).padStart(2, '0') + ':' + String(v % 60).padStart(2, '0'); G.cfg.economy.work_hours = z(f) + '-' + z(to); await G.saveCfg(); } };
       box.querySelectorAll('#pfh, #pfm, #pfp, #pth, #ptm, #ptp').forEach(e => { e.onchange = wsave; });

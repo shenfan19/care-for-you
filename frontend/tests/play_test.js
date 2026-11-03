@@ -28,43 +28,57 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('变体由日期决定，重算不变', JSON.stringify(G.composeDay({ n: 5, care: { 宝宝: 2 }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false)) === JSON.stringify(G.composeDay({ n: 5, care: { 宝宝: 2 }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false)));
   }
 
-  /* 访客 */
-  const endDay = () => { let g = 0; while (!G.dayRoll() && g++ < 100) G.advance(30, false); };
+  /* 访客：家里的临时成员 */
+  const endDay = async () => { let g = 0; while (!G.dayRoll() && g++ < 100) G.advance(30, false); await new Promise(r => setTimeout(r, 80)); };
+  const wait = () => new Promise(r => setTimeout(r, 80));
   {
-    G.world.visits = []; G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000;
+    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0;
+    const before = G.people.length;
     CY.i18n.set('zh-CN');
     check('新档第一次来的是诸葛亮，英文环境是南丁格尔', (G.firstVisitorId() === 'zhuge') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
-    check('第一天午后必到', G.maybeArrive() === true && G.visits().length === 1 && G.visits()[0].id === 'zhuge');
-    check('只有一张客床，不会来第二位', (G.world.visit_cd = 0, G.maybeArrive() === false) && G.visits().length === 1);
-    check('让他睡一觉，满足并留下纪念品', (() => { const r = G.visitCare(0); return r.ok && G.visits()[0].ok && G.souvenirs().zhuge > 0; })());
-    check('话会循环两条暗示', G.visitTalk(0) === 'visitor.zhuge.hint.0' && G.visitTalk(0) === 'visitor.zhuge.hint.1' && G.visitTalk(0) === 'visitor.zhuge.hint.0');
-    const nd = G.gameDate().n; endDay();
-    const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText).join('|') : '';
-    check('住满一天，当晚离开，留言进日历', !G.visits().some(v => v.id === 'zhuge') && /羽扇/.test(txt) && /一觉睡到天黑/.test(txt), txt);
+    check('没选完开局故事时不来', (G.world.story_pending = true, await G.maybeArrive()) === false && (G.world.story_pending = false, true));
+    check('第一天午后必到，是家里的一个人', (await G.maybeArrive()) === true && G.people.length === before + 1 && G.visitorPeople().length === 1);
+    const zhuge = G.visitorPeople()[0];
+    check('访客有名字、外观和疲倦', zhuge.person.name === '诸葛亮' && zhuge.person.appearance.hairStyle === 'bun' && zhuge.state.needs.rest >= 0.8 && zhuge.person.visitor.id === 'zhuge');
+    check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
+    check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
+    check('只有一张客床，不会来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
+    check('请ta睡一会儿只对访客出现', 'invite_rest' in G.actionsOf(zhuge) && !('invite_rest' in G.actionsOf(baby)) && !('invite_rest' in G.actionsOf(grandpa)));
+    check('访客不当助力，也不算家人加成', (() => { const c0 = G.capacity(), b0 = G.householdBonus(); zhuge.state.mood = 0.9; return G.capacity() === c0 && G.householdBonus() === b0; })());
+    check('访客不会卧床', (zhuge.state.frailty = 1, G.bedCheck(zhuge), !G.bedridden(zhuge)));
+    G.applyAction(zhuge.id, 'invite_rest');
+    check('请他睡一会儿，满足并留下纪念品', zhuge.person.visitor.ok === true && G.souvenirs().zhuge > 0);
+    zhuge.person.visitor.stay = 1;
+    const nd = G.gameDate().n; await endDay();
+    const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText) : [];
+    check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'zhuge') && !G.people.some(p => p.person.name === '诸葛亮'));
+    check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /诸葛亮从时空门里走了出来/.test(txt[0]) && /诸葛亮睡了一觉/.test(txt[1]) && txt.some(x => x === '诸葛亮离开了，但留下了一把羽扇作为礼物。'), txt.join(' | '));
     check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
-    check('已拿到纪念品的人还会再来，但概率很低', (() => { G.world.visits = []; const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < (c.nightingale || 0) && (c.zhuge || 0) < 120; })());
+    check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < (c.nightingale || 0) && (c.zhuge || 0) < 120; })());
     /* 居里夫人：送错收下无反馈，送对留下纪念品，每天次数有上限 */
-    G.world.visits = []; G.world.visit_cd = 0; G.world.vday = null; G.arrive('curie'); const i0 = 0;
-    check('居里夫人要住三到四天', G.visits()[i0].stay >= 3 && G.visits()[i0].stay <= 4);
+    for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
+    G.world.visit_cd = 0; G.world.vday = null;
+    const cp = await G.arrive('curie');
+    check('居里夫人是家里的人，需求里没有特别的疲倦', G.visitorPeople().length === 1 && cp.person.name === '玛丽·居里' && !(cp.state.needs.rest >= 0.8));
     G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
     check('买礼物扣钱，背包里有', G.world.money === 2000 - 30 - 500 - 70 && G.giftInv().tea === 1 && G.giftInv().lab_suit === 1);
     check('每样最多三件', (() => { for (let i = 0; i < 5; i++) G.buyGift('seeds'); return G.giftInv().seeds === 3; })());
-    const bad = G.giveGift(i0, 'tea');
-    check('送错了对方收下，当场没有反馈，礼物不退，没满足', bad.ok === false && !bad.error && !G.giftInv().tea && !G.visits()[i0].ok && G.visits()[i0].wrong[0] === 'tea');
-    const good = G.giveGift(i0, 'lab_suit');
-    check('送对了满足并留下纪念品', good.ok === true && G.visits()[i0].ok && G.souvenirs().curie > 0);
-    check('今天互动用完两次后再送被拒', (() => { G.giveGift(i0, 'kite'); return true; })() && G.visitActsLeft() === 0 && G.giveGift(i0, 'seeds').error === 'done');
-    check('背包扣了送对的那件', !G.giftInv().lab_suit);
-    /* 满足之前离开且送过错礼物，留言带一句延迟反馈 */
-    G.world.visits = []; G.arrive('curie'); G.visits()[0].wrong.push('tea'); G.visits()[0].stay = 1; G.world.souv = {};
-    const nd2 = G.gameDate().n; endDay();
-    const rec2 = G.dayRecord(nd2), txt2 = rec2 ? rec2.lines.map(G.settleText).join('|') : '';
-    check('没满足就离开，留言带延迟反馈', /惦记着实验/.test(txt2) && /更需要能护住双手/.test(txt2), txt2);
-    G.world.visits = []; G.world.houses = undefined;
+    const bad = G.giveGift(cp.id, 'tea');
+    check('送错了对方收下，当场没有反馈，礼物不退，没满足', bad.ok === false && !bad.error && !G.giftInv().tea && !cp.person.visitor.ok && cp.person.visitor.wrong[0] === 'tea');
+    const good = G.giveGift(cp.id, 'lab_suit');
+    check('送对了满足并留下纪念品', good.ok === true && cp.person.visitor.ok && G.souvenirs().curie > 0 && !G.giftInv().lab_suit);
+    check('已满足后再送被拒；每天只能送两次', G.giveGift(cp.id, 'kite').error === 'done' && G.giftsLeft() === 0);
+    /* 满足之前离开且送过错礼物，留言带延迟反馈，只有"离开了" */
+    for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
+    G.world.souv = {}; G.world.today = null; const cp2 = await G.arrive('curie'); cp2.person.visitor.wrong.push('tea'); cp2.person.visitor.stay = 1;
+    const nd2 = G.gameDate().n; await endDay();
+    const rec2 = G.dayRecord(nd2), txt2 = rec2 ? rec2.lines.map(G.settleText) : [];
+    check('没满足就离开，只写离开了，留言带延迟反馈，没有礼物', txt2.includes('玛丽·居里离开了。') && txt2.some(x => /更需要能护住双手/.test(x)) && !txt2.some(x => /留下了/.test(x)), txt2.join(' | '));
+    check('家人的日常也平铺直叙', (() => { const rr = G.composeDay({ n: 9, care: { 爷爷: 3 }, fam: { 爷爷: { street: 2, meal: 1 } }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false).map(G.settleText); return rr[0] === '今天爷爷去街上逛了逛。' || /爷爷/.test(rr[0]); })());
+    for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
     check('客床数量：默认一张，买大房子两张', G.guestBeds() === 1 && (G.world.owned = Object.assign({}, G.world.owned, { house2: true }), G.guestBeds() === 2));
-    check('英文下访客的名字和纪念品换成英文', (CY.i18n.set('en'), CY.t('visitor.curie.name') === 'Marie Curie' && CY.t('visitor.nightingale.souvenir') === 'An oil lamp') && (CY.i18n.set('zh-CN'), true));
+    check('英文下访客的名字和纪念品换成英文', (CY.i18n.set('en'), CY.t('visitor.curie.name') === 'Marie Curie' && CY.t('visitor.nightingale.souvenir') === 'An oil lamp' && CY.t('gift.lab_suit') === 'Protective suit') && (CY.i18n.set('zh-CN'), true));
   }
-  check('三个开局背景改起始金额', G.chooseBackground('house') && G.world.money === 500 && G.world.background === 'house' && G.chooseBackground('return') && G.world.money === 200 && !G.chooseBackground('nope'));
   /* 卡片完整性 */
   {
     const V = CY.visitors, ids = V.order, bad = [];

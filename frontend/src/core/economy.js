@@ -40,14 +40,14 @@
     for (const p of G.activePeople()) {
       if (p === lead || G.flag(p, 'hospital')) continue;
       if (isNanny(p)) { if (G.nannyState() === 'here') c += L.nanny_helper; continue; }
-      if (p.person.kind === 'human' && ['teen', 'adult'].includes(G.stage(p)) && !G.bedridden(p) && p.state.mood >= L.helper_mood) c += L.helper;
+      if (p.person.kind === 'human' && !p.person.visitor && ['teen', 'adult'].includes(G.stage(p)) && !G.bedridden(p) && p.state.mood >= L.helper_mood) c += L.helper;
     }
     return c;
   };
   G.householdBonus = () => {
     const L = G.LOAD, lead = G.protagonist();
     if (!lead) return 1;
-    const n = G.activePeople().filter(p => p !== lead && !isNanny(p) && p.person.kind === 'human' && p.state.mood >= L.bonus_mood).length;
+    const n = G.activePeople().filter(p => p !== lead && !isNanny(p) && p.person.kind === 'human' && !p.person.visitor && p.state.mood >= L.bonus_mood).length;
     return 1 + Math.min(L.bonus_cap, L.bonus_each * n);
   };
   G.efficiency = () => {

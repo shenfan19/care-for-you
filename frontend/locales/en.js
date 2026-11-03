@@ -500,3 +500,4 @@ CY.i18n.register("en", {"act.sleep": "Go to sleep"});
 CY.i18n.register("en", {"selfact.sleep": "{name} went to sleep"});
 CY.i18n.register("en", {"cond.sev": "Severity", "cond.sev_mild": "Mild", "cond.sev_moderate": "Moderate", "cond.sev_advanced": "Advanced", "obs.title": "Observations", "obs.measure": "Do “{act}” once to see it", "obs.none": "Not visible yet", "selfact.selfsugar": "{name} checked the blood sugar", "act.selfsugar": "Check blood sugar alone", "ini.play.condition_models": "When true, the disease part of a person who has an illness is computed in the browser from the models in templates/lm/models, and readings show in the status window. People without a disease model are untouched. Turn it off to fall back to plain probability tables."});
 CY.i18n.register("en", {"import.pack": "Disease pack: {names}, {n} files. They go into the templates folder and no one in your save is touched."});
+CY.i18n.register('en', {'act.invite_rest': 'Invite to rest'});

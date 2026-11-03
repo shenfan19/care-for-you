@@ -379,3 +379,4 @@ CY.i18n.register("zh-CN", {"act.sleep": "去睡觉"});
 CY.i18n.register("zh-CN", {"selfact.sleep": "{name}去睡觉了"});
 CY.i18n.register("zh-CN", {"cond.sev": "病情", "cond.sev_mild": "轻", "cond.sev_moderate": "中等", "cond.sev_advanced": "较重", "obs.title": "观察", "obs.measure": "做一次「{act}」就能看到", "obs.none": "暂时看不到", "selfact.selfsugar": "{name}自己测了血糖"});
 CY.i18n.register("zh-CN", {"import.pack": "疾病包：{names}，共 {n} 个文件。只放进模板文件夹，不动存档里的角色。"});
+CY.i18n.register('zh-CN', {'act.invite_rest': '请ta睡一会儿'});

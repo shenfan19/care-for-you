@@ -8,7 +8,7 @@
   G.loadCalendar = async () => { G.cal = Object.assign({ version: 1, days: [] }, await store.readYaml('calendar.yaml')); };
   G.saveCalendar = () => { if (G._calDirty) { G._calDirty = false; store.writeYaml('calendar.yaml', G.cal); } };
 
-  const blank = n => ({ n, care: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
+  const blank = n => ({ n, care: {}, fam: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
   const today = () => {
     const n = G._closing || G.gameDate().n;
     if (!G.world.today || G.world.today.n !== n) G.world.today = blank(n);
@@ -16,17 +16,25 @@
   };
   G.settleNote = (k, a) => { today().notes.push({ k, a: a || {} }); };
 
-  /* 记事实：包一层 G.log，不改原来的记录 */
+  /* 记事实：包一层 G.log，不改原来的记录。访客身上发生的事按时间顺序直接记成句子，家人的动作只数次数，日终再挑 */
+  G.actIdOf = meta => { const ref = meta && meta.a && meta.a.label && meta.a.label.t, last = ref && ref[ref.length - 1]; return last ? String(last).replace(/^act\./, '').replace(/\.\w+$/, '') : ''; };
+  const ACT_LINES = ['meal', 'rest', 'invite_rest', 'street', 'park', 'walk', 'chat', 'play', 'bath', 'doctor', 'medicine', 'sugar', 'water', 'hand', 'soothe', 'read', 'homework', 'game', 'pet', 'wheel'];
+  const actKey = id => 'settle.act_' + (ACT_LINES.includes(id) ? id : 'other');
   const log0 = G.log;
   G.log = function (pid, type, text, meta) {
     try {
       const d = today(), p = G.get(pid), name = p ? p.person.name : '', k = meta && meta.k;
       if (type === 'care' && p && k === 'log.care') {
-        d.care[name] = (d.care[name] || 0) + 1;
-        const ref = meta.a && meta.a.label && meta.a.label.t, id = ref && ref[ref.length - 1] ? String(ref[ref.length - 1]).replace(/^act\./, '').replace(/\.\w+$/, '') : '';
-        if (id) d.acts[id] = (d.acts[id] || 0) + 1;
-      } else if (type === 'cry' && p) d.cry[name] = (d.cry[name] || 0) + 1;
-      else if (type === 'self' && p) d.self[name] = (d.self[name] || 0) + 1;
+        const id = G.actIdOf(meta);
+        if (p.person.visitor) {
+          const key = actKey(id), dup = d.notes.some(n => n.k === key && n.a.who === name);
+          if (!dup) d.notes.push({ k: key, a: { name: G.ref('visitor.' + p.person.visitor.id + '.name', name), who: name } });
+        } else {
+          d.care[name] = (d.care[name] || 0) + 1;
+          d.fam = d.fam || {}; (d.fam[name] = d.fam[name] || {})[id] = (d.fam[name][id] || 0) + 1;
+        }
+      } else if (type === 'cry' && p && !p.person.visitor) d.cry[name] = (d.cry[name] || 0) + 1;
+      else if (type === 'self' && p && !p.person.visitor) d.self[name] = (d.self[name] || 0) + 1;
       else if (type === 'recovered' && p && !d.recovered.includes(name)) d.recovered.push(name);
       else if (type === 'frail' && p && !d.frail.includes(name)) d.frail.push(name);
       else if (k === 'log.bought' && meta.a && meta.a.item) d.bought.push(meta.a.item);
@@ -43,16 +51,16 @@
     const L = [], line = (k, a) => L.push({ k: variant('settle.' + k, d.n), a: a || {} });
     if (offline) {
       line('away');
-      for (const n of d.notes.slice(0, 2)) L.push(n);
+      for (const n of d.notes.slice(0, 3)) L.push(n);
       return L;
     }
-    for (const n of d.notes.slice(-3)) L.push(n);
-    const c = top(d.care), acts = d.acts;
-    if (c) {
-      const [name, count] = c;
-      if (acts.meal || acts.cook) line('meal', { name });
-      else if (acts.park || acts.street || acts.walk) line('out', { name });
-      else line('care', { name, n: count });
+    /* 访客先说：到来，被照顾，收到礼物，离开，都按发生的顺序 */
+    for (const n of d.notes.slice(-5)) L.push(n);
+    /* 家人的日常：照顾得最多的两个人，各挑最常做的一件事 */
+    const fam = Object.entries(d.fam || {}).sort((a, b) => (d.care[b[0]] || 0) - (d.care[a[0]] || 0)).slice(0, 2);
+    for (const [name, acts] of fam) {
+      const id = Object.entries(acts).sort((a, b) => b[1] - a[1])[0][0];
+      line('fam_' + (['meal', 'rest', 'street', 'park', 'walk', 'chat', 'play', 'bath', 'doctor', 'medicine', 'sugar', 'water', 'hand', 'soothe', 'read', 'homework', 'game', 'pet'].includes(id) ? id : 'other'), { name });
     }
     const cr = top(d.cry);
     if (cr) line('cry', { name: cr[0] });
@@ -66,8 +74,8 @@
     const people = G.activePeople().filter(p => p.person.kind === 'human' && !(p.person.help && p.person.help.role === 'nanny'));
     const mood = people.length ? people.reduce((a, p) => a + p.state.mood, 0) / people.length : 0.6;
     if (!L.length) line('quiet');
-    if (L.length < 5) line(mood >= 0.7 ? 'end_good' : mood < 0.45 ? 'end_low' : 'end_mid');
-    return L.slice(0, 5);
+    if (L.length < 6) line(mood >= 0.7 ? 'end_good' : mood < 0.45 ? 'end_low' : 'end_mid');
+    return L.slice(0, 7);
   };
 
   G.dateOf = n => {

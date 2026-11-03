@@ -85,6 +85,32 @@
     emit();
   };
 
+  /* 读一个人进内存：载入时逐个调用，访客到来时单独调用 */
+  G.loadOnePerson = async (id, files) => {
+      const person = await store.readYaml(`people/${id}/person.yaml`);
+      if (!person) return null;
+      person.id = id;
+      const species = G.tpl.species[person.species];
+      if (!species) { console.warn('找不到物种模板', person.species); return null; }
+      /* 肤色色板加了两档偏白的，旧存档里的肤色序号按新色板换算，保持原来的颜色 */
+      if (person.appearance && typeof person.appearance.skin === 'number' && person.appearance.skin_v !== 2) { person.appearance.skin = [1, 2, 4, 5, 6, 7][person.appearance.skin] || 2; person.appearance.skin_v = 2; }
+      if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || 35;
+      const state = Object.assign({ version: 1, needs: {}, mood: 0.6, frailty: 0.1, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
+      state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || 0.5, resp: 0, n_resp: 0, kinds: {} }, state.learn);
+      const story = Object.assign({ version: 1, arcs: {}, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
+      const p = { id, person, species, state, story, voice: {} };
+      for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 0.1 + Math.random() * 0.2;
+      G.people.push(p);
+      const sy = await store.readYaml(`people/${id}/sayings.yaml`);
+      G.sayings[id] = (sy && sy.items) || [];
+      G.journal[id] = {};
+      for (const f of files.filter(f => f.startsWith(`people/${id}/journal/`))) {
+        const j = await store.readYaml(f);
+        G.journal[id][f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || [];
+      }
+      return p;
+  };
+
   G.load = async function () {
     if (!(await store.list()).includes('settings.ini')) {
       const seed = CY.seed.files();
@@ -138,29 +164,7 @@
     delete G.world.busy;
     G.people = []; G.journal = {}; G.sayings = {};
     const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();
-    for (const id of ids) {
-      const person = await store.readYaml(`people/${id}/person.yaml`);
-      if (!person) continue;
-      person.id = id;
-      const species = G.tpl.species[person.species];
-      if (!species) { console.warn('找不到物种模板', person.species); continue; }
-      /* 肤色色板加了两档偏白的，旧存档里的肤色序号按新色板换算，保持原来的颜色 */
-      if (person.appearance && typeof person.appearance.skin === 'number' && person.appearance.skin_v !== 2) { person.appearance.skin = [1, 2, 4, 5, 6, 7][person.appearance.skin] || 2; person.appearance.skin_v = 2; }
-      if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || 35;
-      const state = Object.assign({ version: 1, needs: {}, mood: 0.6, frailty: 0.1, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
-      state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || 0.5, resp: 0, n_resp: 0, kinds: {} }, state.learn);
-      const story = Object.assign({ version: 1, arcs: {}, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
-      const p = { id, person, species, state, story, voice: {} };
-      for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 0.1 + Math.random() * 0.2;
-      G.people.push(p);
-      const sy = await store.readYaml(`people/${id}/sayings.yaml`);
-      G.sayings[id] = (sy && sy.items) || [];
-      G.journal[id] = {};
-      for (const f of files.filter(f => f.startsWith(`people/${id}/journal/`))) {
-        const j = await store.readYaml(f);
-        G.journal[id][f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || [];
-      }
-    }
+    for (const id of ids) await G.loadOnePerson(id, files);
     G.journal.you = {};
     for (const f of files.filter(f => f.startsWith('me/journal/'))) { const j = await store.readYaml(f); G.journal.you[f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || []; }
     await loadContent(files);
@@ -553,13 +557,14 @@
     if (d.trip && (G.world.trip || (G.world.money || 0) < d.trip.cost)) return false;   /* 已经在路上，或钱不够 */
     if (d.walks && G.bedridden(p)) return false;
     if (d.only_bedridden && !G.bedridden(p)) return false;
+    if (d.visitor_only && !(p.person && p.person.visitor)) return false;
     if (d.item && !G.owned(d.item)) return false;
     const need = d.item_for && d.item_for[G.stage(p)];
     return !need || G.owned(need);
   };
   G.bedCheck = p => {
     const s = p.state;
-    if (!G.isHuman(p) || G.stage(p) !== 'elder' || (p.person.archetype || p.person.card) === 'wheelchair') { if (s.bedrest) delete s.bedrest; return; }
+    if (!G.isHuman(p) || G.stage(p) !== 'elder' || p.person.visitor || (p.person.archetype || p.person.card) === 'wheelchair') { if (s.bedrest) delete s.bedrest; return; }
     if (!s.bedrest && s.frailty >= 0.8) { s.bedrest = true; G.logK(p.id, 'frail', 'log.bedrest', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.bedrest'), p), 'soft'); }
     else if (s.bedrest && s.frailty < 0.55) { delete s.bedrest; G.logK(p.id, 'recovered', 'log.bedrest_end', { name: p.person.name }); }
   };

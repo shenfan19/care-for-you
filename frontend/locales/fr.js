@@ -199,3 +199,4 @@ CY.i18n.register("fr", {"act.sleep": "Aller dormir"});
 CY.i18n.register("fr", {"selfact.sleep": "{name} est allé dormir"});
 CY.i18n.register("fr", {"cond.sev": "Gravité", "cond.sev_mild": "Légère", "cond.sev_moderate": "Moyenne", "cond.sev_advanced": "Avancée", "obs.title": "Observations", "obs.measure": "Faites « {act} » une fois pour le voir", "obs.none": "Pas encore visible", "selfact.selfsugar": "{name} a mesuré sa glycémie", "act.selfsugar": "Mesurer sa glycémie seul"});
 CY.i18n.register("fr", {"import.pack": "Pack de maladies : {names}, {n} fichiers. Ils vont dans le dossier des modèles, personne dans votre sauvegarde n’est touché."});
+CY.i18n.register('fr', {'act.invite_rest': 'Inviter à se reposer'});

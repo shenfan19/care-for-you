@@ -15,7 +15,7 @@
     ['spectacles', '👓', 120, '一副眼镜', 'Spectacles'], ['chess', '♟️', 120, '棋盘', 'Chess set'], ['paints', '🎨', 140, '一盒颜料', 'Box of paints'], ['medkit', '🧰', 150, '药箱', 'First-aid kit'],
     ['flute', '🎶', 150, '一支笛子', 'A flute'], ['harmonica', '🎵', 180, '口琴', 'Harmonica'], ['clock', '⏰', 200, '座钟', 'Table clock'], ['coat', '🧥', 220, '厚外套', 'Warm coat'],
     ['telescope', '🔭', 300, '望远镜', 'Telescope'], ['microscope', '🔬', 400, '显微镜', 'Microscope'], ['lab_suit', '🥼', 500, '防护服', 'Protective suit'],
-  ]) V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } };
+  ]) { V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } }; CY.i18n.register('zh-CN', { ['gift.' + id]: zh }); CY.i18n.register('en', { ['gift.' + id]: en }); }
 
   /* 首位访客按语言安排，缺省南丁格尔 */
   V.FIRST = { 'zh-CN': 'zhuge', 'zh-TW': 'zhuge', default: 'nightingale' };
@@ -40,7 +40,7 @@
   const OFF = true;
 
   V.add({
-    id: 'nightingale', official: OFF, region: 'Britain', years: '1820-1910', age: 55, pronoun: '她', stay: [1, 1], care: 'rest',
+    id: 'nightingale', official: OFF, region: 'Britain', years: '1820-1910', age: 55, pronoun: '她', stay: [1, 1], care: 'invite_rest', tired: 0.85,
     look: look('#fde3d0', 'brown', 'bun', 'none', '#7d8fa8'), souvenir: { id: 'oil_lamp', icon: '🪔' },
     src: 'Encyclopaedia Britannica, Florence Nightingale; Crimean War nursing, later years largely bedridden by illness.', review: '2026-11-02 通过：无政治与宗教争议，只提护理与休息',
     t: {
@@ -54,7 +54,7 @@
     },
   });
   V.add({
-    id: 'zhuge', official: OFF, region: 'China', years: '181-234', age: 45, pronoun: '他', stay: [1, 1], care: 'rest',
+    id: 'zhuge', official: OFF, region: 'China', years: '181-234', age: 45, pronoun: '他', stay: [1, 1], care: 'invite_rest', tired: 0.85,
     look: look('#f6d2b4', 'black', 'bun', 'none', '#5f8a7a'), souvenir: { id: 'feather_fan', icon: '🪶' },
     src: '《三国志·蜀书·诸葛亮传》，司马懿评“食少事烦”。', review: '2026-11-02 通过：只写操劳与休息，不涉及战争评价',
     t: {
