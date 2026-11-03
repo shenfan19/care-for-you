@@ -7,7 +7,13 @@
   const $ = id => document.getElementById(id);
   /* ---------- 添加角色 ---------- */
   /* 数据文件里的文字：中文界面用中文字段，其余语言先用 _en，没有就退回中文 */
-  U.pickLang = (o, k) => (o ? (CY.i18n.lang === 'zh-CN' || CY.i18n.lang === 'zh-TW' ? o[k] : (o[k + '_en'] || o[k])) || '' : '');
+  U.pickLang = (o, k) => {
+    if (!o) return '';
+    if (CY.i18n.lang === 'zh-CN') return o[k] || '';
+    const en = o[k + '_en'];
+    /* 疾病读数的词按英文原文做键，八种语言各有译文，缺了才退到英文 */
+    return (en && CY.tOr('lm.' + String(en).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, ''), en)) || o[k] || '';
+  };
   U.archName = id => CY.tOr('arch.' + id, (C.archOf(id) || {}).role || id);
   U.addDialog = function (archId, done, editPid) {
     const O = CY.avatarOptions;
