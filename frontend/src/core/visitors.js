@@ -13,7 +13,7 @@
     return true;
   };
 
-  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150] };
+  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
   G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
   G.guestBeds = () => 1 + (G.owned && G.owned('house2') ? 1 : 0);
@@ -205,6 +205,31 @@
       nextHint[p.id] = now + 1000 * rint(G.DOOR.hint_gap[0], G.DOOR.hint_gap[1]);
       const text = t(`visitor.${st.id}.hint.${from + (st.talk % pool)}`); st.talk++;
       if (G.toastFor) G.toastFor(p, text, 'soft');
+    }
+  });
+
+  /* 来客和主角的对话：隔一阵向主角提一个问题，两个回答，回答完来客接一句。每个人在类型卡（行业）的通用问题之上，有自己特化的一条，
+     例如阿基米德要辩论，南丁格尔劝你歇一歇。每位来客一次停留最多问三个，特化的先问。问题就是一个普通的问答气泡，没回答会收起，不算数 */
+  G.visitorAsk = p => {
+    const st = p.person.visitor, c = V.cards[st.id], lead = G.protagonist(); if (!c || !lead || G.req[p.id]) return null;
+    const used = st.asked = st.asked || [], spec = V.ASKS[st.id];
+    let key, base, rest;
+    if (spec && !used.includes(st.id)) { key = st.id; base = `visitor.${st.id}.ask`; rest = spec.rest; }
+    else { const g = [0, 1].map(n => `${c.field}.${n}`).filter(k => !used.includes(k)); if (!g.length) return null; key = g[Math.floor(Math.random() * g.length)]; base = `visit.ask.${key}`; }
+    used.push(key);
+    G.req[p.id] = G.mkReq({ pid: p.id, kind: 'ask', askId: 'visit:' + key, text: t(base + '.say'), answers: [t(base + '.a0'), t(base + '.a1')], reply: t(base + '.reply'), rest });
+    saveVisitor(p);
+    return key;
+  };
+  const nextAsk = {};
+  G.on(() => {
+    const now = Date.now();
+    for (const p of G.visitorPeople()) {
+      if (G.isSleeping(p) || G.req[p.id] || !G.protagonist()) continue;
+      if (nextAsk[p.id] === undefined) nextAsk[p.id] = now + 1000 * rint(G.DOOR.ask_gap[0], G.DOOR.ask_gap[1]);
+      if (now < nextAsk[p.id]) continue;
+      nextAsk[p.id] = now + 1000 * rint(G.DOOR.ask_gap[0], G.DOOR.ask_gap[1]);
+      G.visitorAsk(p);
     }
   });
 

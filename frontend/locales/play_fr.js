@@ -140,4 +140,32 @@ CY.i18n.said("fr", {
   sor_juana: ["Je n'étudie pas pour en savoir plus, mais pour en ignorer moins."],
   kahlo: ["Je peins ma propre réalité."]
 });
-CY.i18n.register("fr", { "corner.rate_tip": "Le chiffre 💰 est le revenu par heure de jeu pendant le travail." });
+CY.i18n.register("fr", { "corner.rate_tip": "Le revenu du foyer est ce que la maison rapporte par heure de jeu pendant le travail. Plus de confort rapporte plus." });
+
+CY.i18n.register("fr", { "corner.income": "Revenu du foyer {n}/h" });
+CY.i18n.asks("fr", {
+  "archimedes": ["Donne-moi un point d'appui et je soulèverai la Terre. Me crois-tu ?", "Oui, mais donne-moi d'abord un levier assez long.", "Non. Discutons-en.", "Bien ! Dessine-moi ton levier et nous le calculerons pouce par pouce."],
+  "nightingale": ["Tu es occupé depuis longtemps. Ceux qui prennent soin des autres doivent aussi dormir.", "D'accord, je me repose un moment.", "Après cette période chargée.", "Je garde la lampe pour toi. Va."],
+  "zhuge": ["As-tu un plan pour la maison ? Laisse-moi en fixer l'ordre.", "Conseille-moi, je te prie.", "Je m'en occupe. Prends un thé.", "L'urgent d'abord, le lent ensuite, et surtout ne t'épuise pas."],
+  "curie": ["Sais-tu ce que tu fais chaque jour ? Seul ce qu'on comprend cesse de faire peur.", "Je veux essayer de comprendre.", "Je veux juste en finir.", "Alors une chose à la fois. Note ce que tu ne comprends pas."],
+  "galois": ["Y a-t-il quelque chose que tu veux faire et pour quoi tu n'as jamais eu le temps ?", "Oui, et je veux commencer maintenant.", "Oui, mais ce n'est pas le moment.", "N'attends pas. Je le pense vraiment : n'attends pas."],
+  "da_vinci": ["As-tu déjà observé comment un oiseau se pose ?", "Non, apprends-moi à regarder.", "Oui : d'abord les ailes, puis les serres.", "Exactement ! Les meilleurs maîtres sont ceux qui ne disent rien."],
+  "hippocrates": ["Dis-moi, où te sens-tu le plus mal aujourd'hui ? Ne pense pas aux causes, seulement à ce que tu ressens.", "Un peu fatigué, les épaules lourdes.", "Rien, je vais bien.", "Mm. Le corps parle d'abord ; nous écouterons lentement."],
+  "su_shi": ["Les poèmes peuvent attendre, pas le dîner. Que voudrais-tu manger ?", "Un bol de soupe de nouilles chaude.", "Choisis, je mange n'importe quoi.", "Bien ! Je trouverai le moyen que ce soit meilleur que ça n'en a l'air."],
+  "li_bai": ["La lune est belle ce soir. Dis-moi, devrions-nous prendre une tasse de thé ?", "Oui, je m'assois un moment avec toi.", "Bois-la, j'ai encore à faire.", "La lune n'attend personne, mais elle ne presse personne non plus. Reste un moment."],
+  "du_fu": ["Je pense souvent combien ce serait bien si chacun avait une maison chaude. Qu'en penses-tu ?", "En voici une. Es-tu bien maintenant ?", "C'est trop difficile ; s'occuper d'une famille suffit.", "Réchauffer un foyer, c'est réchauffer un coin du monde."],
+  "ada": ["Penses-tu qu'une machine pourrait un jour comprendre la poésie ?", "Peut-être, si quelqu'un le lui apprenait.", "Non, la poésie est l'affaire des humains.", "Belle question. Ne tirons pas de conclusions hâtives ; usons d'abord pleinement de l'imagination."],
+  "pasteur": ["Tout ce qu'on ne voit pas n'est pas absent, tu sais. T'es-tu lavé les mains ?", "Oui, ne t'inquiète pas.", "J'y vais tout de suite.", "Bien. Le hasard favorise ceux qui sont préparés, et la santé aussi."],
+  "med.0": ["As-tu bu de l'eau aujourd'hui, et mangé ? Prends d'abord soin de toi, puis des autres.", "Oui, les deux.", "Pas encore, j'y vais.", "Bien. C'est le remède le moins cher."],
+  "med.1": ["Comment dors-tu ? Le sommeil est la plus ancienne des ordonnances.", "Plutôt bien.", "Pas bien, je me réveille souvent.", "Note-le ; cette nuit nous chercherons ensemble."],
+  "sci.0": ["Une chose m'intrigue : pourquoi les adultes s'attendrissent-ils dès qu'un enfant pleure ?", "Parce que nous ne supportons pas sa tristesse.", "L'évolution, sans doute.", "Intéressant. Les deux explications méritent une expérience."],
+  "sci.1": ["As-tu remarqué que les ombres sont un peu plus courtes aujourd'hui qu'hier ?", "Maintenant que tu le dis, oui.", "Je n'avais pas remarqué.", "Le monde change sans cesse ; nous sommes seulement trop occupés pour regarder."],
+  "art.0": ["Une devinette : un mot pour ton humeur d'aujourd'hui.", "Calme.", "Agitée.", "Un bon mot. Je le garde ; il finira peut-être dans un poème."],
+  "art.1": ["La lumière de ta maison est ravissante. As-tu déjà passé un crépuscule à ne rien faire, juste à regarder ?", "Parfois.", "Non, je suis toujours occupé.", "Essaie. Les plus beaux tableaux et poèmes naissent souvent de l'oisiveté."],
+  "edu.0": ["Qu'as-tu lu récemment ? Pas forcément un livre ; tout compte.", "Un album illustré pour enfants.", "Rien du tout.", "Les albums illustrés comptent, et ils sont parmi les plus soigneusement écrits."],
+  "edu.1": ["Laisse-moi te demander : enseigner, est-ce pour qu'on retienne ou pour qu'on questionne ?", "Pour qu'on questionne.", "Pour qu'on retienne.", "Les deux réponses sont justes ; seul l'ordre diffère."],
+  "pol.0": ["Un foyer ressemble à un petit royaume : l'un cuisine, l'autre balaie, un autre maintient la paix. Qui es-tu ?", "Un peu de tout.", "Je maintiens la paix.", "Alors tu occupes le poste le plus difficile."],
+  "pol.1": ["Voir l'ensemble d'abord, puis les détails. Quel est l'ensemble de ta maison aujourd'hui ?", "Que tout le monde est en sécurité.", "Je n'y ai pas pensé.", "La sécurité suffit. Beaucoup poursuivent ce mot toute leur vie."],
+  "trv.0": ["Loin de chez moi, ce n'est pas le paysage qui me manque, mais un bol de nourriture chaude. Et toi ?", "Pareil.", "Le calme me manque.", "Chacun a sa propre nostalgie. Les deux valent la peine d'être gardées."],
+  "trv.1": ["As-tu déjà pensé que cette maison est le plus long chemin que tu aies parcouru ?", "Non, mais cela semble juste.", "Oui, je le parcours chaque jour.", "Tout à fait. Les plus longs voyages ne passent souvent pas la porte."]
+});

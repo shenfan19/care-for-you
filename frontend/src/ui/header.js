@@ -60,7 +60,7 @@
     tm.onclick = e => { e.stopPropagation(); U.calendarDialog(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
-    if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '% · 💰 ' + (Math.round(G.incomeRate() * 10) / 10) + '/h'; fm.title = t('corner.eff_tip', { n: e }) + ' ' + t('corner.rate_tip'); } }
+    if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '% · ' + t('corner.income', { n: Math.round(G.incomeRate() * 10) / 10 }); fm.title = t('corner.eff_tip', { n: e }) + ' ' + t('corner.rate_tip'); } }
     mn.onclick = () => U.helpDialog();
     for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }

@@ -24,6 +24,15 @@
     for (const id in rows) rows[id].forEach((x, i) => { d[`visitor.${id}.hint.${2 + i}`] = x; });
     I.register(lang, d);
   };
+  /* 来客向主角提的问题的译文：键是卡片编号，或者行业加序号（如 med.0）；每条 [问，回答一，回答二，来客的回应] */
+  I.asks = (lang, rows) => {
+    const d = {};
+    for (const key in rows) {
+      const b = key.includes('.') ? `visit.ask.${key}` : `visitor.${key}.ask`;
+      ['say', 'a0', 'a1', 'reply'].forEach((k, i) => { d[`${b}.${k}`] = rows[key][i]; });
+    }
+    I.register(lang, d);
+  };
   I.detect = pref => {
     if (pref && pref !== 'auto' && I.packs[pref]) return pref;
     const low = (typeof navigator !== 'undefined' && navigator.language || 'zh-CN').toLowerCase();

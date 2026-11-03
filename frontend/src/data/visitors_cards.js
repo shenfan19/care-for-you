@@ -322,4 +322,38 @@
     CY.i18n.register("zh-CN", { [`visit.fam.${f}.peer`]: "{guest}" + PEER[f][0] + "。" });
     CY.i18n.register("en", { [`visit.fam.${f}.peer`]: "{guest} " + PEER[f][1] + "." });
   }
+
+  /* ---------- 来客向主角提的问题：类型卡（行业）通用的两条，加上个人特化的一条 ----------
+     每条是 [问, 回答一, 回答二, 来客的回应]，中英文写在这里，其他语言在各自的语言包里。rest 是第几个回答会让主角歇一歇。 */
+  V.ASKS = {};
+  V.GASKS = {};
+  const regAsk = (base, row) => ["say", "a0", "a1", "reply"].forEach((k, i) => { CY.i18n.register("zh-CN", { [`${base}.${k}`]: row[0][i] }); CY.i18n.register("en", { [`${base}.${k}`]: row[1][i] }); });
+  const ASK = (id, zh, en, rest) => { V.ASKS[id] = { rest }; regAsk(`visitor.${id}.ask`, [zh, en]); };
+  const GASK = (key, zh, en) => { V.GASKS[key] = 1; regAsk(`visit.ask.${key}`, [zh, en]); };
+
+  ASK("archimedes", ["给我一个支点，我能撬起地球。你相信吗？", "我信，但先给我一根够长的杠杆。", "不信，我们来辩一辩。", "好！先把你的杠杆画出来，我们一寸一寸地算。"], ["Give me a place to stand and I will move the Earth. Do you believe me?", "I do, but first give me a lever long enough.", "No. Let us debate it.", "Good! Draw me your lever and we shall reckon it inch by inch."]);
+  ASK("nightingale", ["你已经忙了很久了。照顾别人的人，也要睡觉。", "好，我歇一会儿。", "等忙完这一阵。", "灯我替你守着，去吧。"], ["You have been busy for a long time. Those who care for others must sleep too.", "All right, I will rest a while.", "After this busy stretch.", "I will keep the lamp for you. Go on."], 0);
+  ASK("zhuge", ["家中诸事，你可有章法？我愿为你排个先后。", "请先生指点。", "我心里有数，先生请喝茶。", "急事先办，缓事后办，最要紧的，是别把自己累垮。"], ["Do you have a plan for the household? Let me set an order for it.", "Please advise me.", "I have it in hand. Have some tea.", "Urgent things first, slow things after, and above all do not wear yourself out."]);
+  ASK("curie", ["你知道自己每天在做什么吗？只有理解了，才不用害怕。", "我想试着弄明白。", "我只想把事情做完。", "那就一件一件来。不懂的，先写下来。"], ["Do you know what you are doing each day? Only once you understand it, there is nothing to fear.", "I want to try to understand.", "I just want to get it done.", "Then one thing at a time. Write down what you do not understand."]);
+  ASK("galois", ["你有没有什么想做，却一直没时间做的事？", "有，我想现在就开始。", "有，但还不是时候。", "别等。我是说，真的，别等。"], ["Is there something you want to do and never had time for?", "Yes, and I want to begin now.", "Yes, but the time is not right.", "Do not wait. I mean it, truly, do not wait."]);
+  ASK("da_vinci", ["你有没有认真看过一只鸟怎么停下来？", "没有，你教我看。", "看过，它先收翅膀再收爪子。", "对！世界上最好的老师，就是不说话的东西。"], ["Have you ever properly watched how a bird comes to rest?", "No, teach me to watch.", "I have: wings first, then claws.", "Yes! The best teachers are the ones that say nothing."]);
+  ASK("hippocrates", ["说说看，你今天哪里最不舒服？先别想原因，只说感觉。", "有点累，肩膀很沉。", "没什么，我很好。", "嗯。身体先开口，我们再慢慢听。"], ["Tell me, where do you feel worst today? Do not think of causes, only of how it feels.", "A little tired, and my shoulders are heavy.", "Nothing, I am fine.", "Mm. The body speaks first; we shall listen slowly."]);
+  ASK("su_shi", ["诗可以等，晚饭不能等。你想吃什么？", "一碗热汤面。", "你定，我吃什么都好。", "好！我来想个办法，让它比看上去更好吃。"], ["Poems can wait, dinner cannot. What would you like to eat?", "A bowl of hot noodle soup.", "You choose, I will eat anything.", "Good! I shall find a way to make it better than it looks."]);
+  ASK("li_bai", ["今晚月色好，你说，该不该喝一杯茶？", "该，陪你坐一会儿。", "你喝，我还有事。", "月亮不等人，可它也不赶人，坐一会儿吧。"], ["The moon is fine tonight. Tell me, should we have a cup of tea?", "Yes, I will sit with you a while.", "You go ahead, I still have things to do.", "The moon does not wait for anyone, but it does not hurry anyone either. Sit a while."]);
+  ASK("du_fu", ["我常想，若天下人都有一间暖和的屋子，该多好。你觉得呢？", "这里就是一间，您也暖和了吧。", "太难了，能顾好一家就不错。", "能暖一家，便是暖了天下的一角。"], ["I often think how good it would be if everyone had a warm house. What do you think?", "This place is one. Are you comfortable now?", "That is too hard; looking after one family is enough.", "To warm one home is to warm one corner of the world."]);
+  ASK("ada", ["你觉得，机器有一天能懂得诗吗？", "也许，如果有人教它。", "不会，诗是人的事。", "好问题。我们都别急着下结论，先把想象力用足。"], ["Do you think a machine might one day understand poetry?", "Perhaps, if someone taught it.", "No, poetry belongs to people.", "A fine question. Let us not rush to conclusions; first use our imagination to the full."]);
+  ASK("pasteur", ["不是所有看不见的东西都不存在。你洗手了吗？", "洗了，您放心。", "这就去洗。", "很好。机遇只偏爱有准备的人，健康也是。"], ["Not everything unseen is absent, you know. Have you washed your hands?", "I have, do not worry.", "I will go and wash now.", "Good. Chance favors the prepared, and so does health."]);
+
+  GASK("med.0", ["你今天喝水了吗？吃饭了吗？先管好自己，再管别人。", "喝了，也吃了。", "还没，我这就去。", "好，这是最便宜的良药。"], ["Have you had water today, and a meal? Look after yourself first, then others.", "Yes, both.", "Not yet, I will go now.", "Good. That is the cheapest medicine."]);
+  GASK("med.1", ["你睡得怎么样？睡眠是最古老的药方。", "还好。", "不太好，常常醒。", "记下来，晚上我们再一起想办法。"], ["How have you been sleeping? Sleep is the oldest prescription.", "Fine.", "Not well, I keep waking.", "Write it down; tonight we will think of something together."]);
+  GASK("sci.0", ["有件事我一直想不明白：为什么孩子一哭，大人就心软？", "因为我们都怕他难过。", "大概是进化吧。", "有意思。两种解释都值得做个实验。"], ["Something puzzles me: why do adults soften the moment a child cries?", "Because we cannot bear their sadness.", "Evolution, probably.", "Interesting. Both explanations deserve an experiment."]);
+  GASK("sci.1", ["你有没有发现，今天的影子比昨天短了一点？", "你这么一说，还真是。", "我没注意。", "世界一直在变，只是我们太忙，没空看。"], ["Have you noticed that today's shadows are a little shorter than yesterday's?", "Now that you say it, yes.", "I did not notice.", "The world keeps changing; we are just too busy to look."]);
+  GASK("art.0", ["给你出个题：用一个词，形容你今天的心情。", "平静。", "忙乱。", "好词。我记下了，也许哪天会写进诗里。"], ["A riddle for you: one word for your mood today.", "Calm.", "Hectic.", "A good word. I will keep it; perhaps it will end up in a poem."]);
+  GASK("art.1", ["你家的光线真好。你有没有在黄昏时什么也不做，就看一会儿？", "有时候。", "没有，总是在忙。", "试试看。最好的画和诗，常常从发呆里来。"], ["The light in your house is lovely. Have you ever done nothing at dusk, just watched it?", "Sometimes.", "No, I am always busy.", "Try it. The best paintings and poems often begin in idleness."]);
+  GASK("edu.0", ["你最近读了什么？不必是书，什么都算。", "在读孩子的绘本。", "什么也没读。", "绘本也是书，而且是写得最认真的一类。"], ["What have you been reading lately? It need not be a book; anything counts.", "A children's picture book.", "Nothing at all.", "Picture books count, and they are among the most carefully written."]);
+  GASK("edu.1", ["我想问你：教一个人，是为了让他记住，还是为了让他想问？", "为了让他想问。", "为了让他记住。", "两个答案都对，只是顺序不同。"], ["Let me ask: is teaching meant to make people remember, or to make them ask?", "To make them ask.", "To make them remember.", "Both are right; only the order differs."]);
+  GASK("pol.0", ["一个家和一个小国差不多：有人做饭，有人扫地，有人负责不吵架。你是哪一样？", "我什么都负责一点。", "我负责不吵架。", "那是最难的一份差事。"], ["A household is much like a small kingdom: someone cooks, someone sweeps, someone keeps the peace. Which are you?", "A little of everything.", "I keep the peace.", "Then yours is the hardest post of all."]);
+  GASK("pol.1", ["凡事先看大局，再看细节。你家今天的大局是什么？", "大家都平安。", "我还没想过。", "平安就够了。多少人一辈子都在追这两个字。"], ["See the whole first, then the details. What is the whole of your home today?", "That everyone is safe.", "I have not thought about it.", "Safe is enough. Many chase those two words all their lives."]);
+  GASK("trv.0", ["出门在外，我最想念的不是风景，是一碗热饭。你呢？", "我也是。", "我想念安静。", "各有各的乡愁，都值得好好收着。"], ["Away from home, what I miss is not the scenery but a bowl of hot food. And you?", "The same.", "I miss quiet.", "Each has their own homesickness. Both are worth keeping."]);
+  GASK("trv.1", ["你有没有想过，这间屋子是你走过的最远的一段路？", "没有，但听起来有道理。", "想过，我每天都在走。", "对，最长的旅程，往往不出门。"], ["Have you ever thought that this house is the farthest road you have walked?", "No, but it sounds right.", "Yes, I walk it every day.", "Quite so. The longest journeys often never leave the door."]);
 })(globalThis.CY = globalThis.CY || {});

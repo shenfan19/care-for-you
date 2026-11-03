@@ -659,7 +659,7 @@
     });
   }
 
-  const mkReq = (o) => {
+  const mkReq = G.mkReq = (o) => {
     if (o.kind === 'need' && G.get(o.pid)) G.pop(o.pid, 'ask', ((G.needsOf(G.get(o.pid)) || {})[o.need] || {}).icon || '❗');
     return Object.assign({ since: Date.now(), deadline: Date.now() + ini.num(G.cfg, 'interrupt', 'countdown_seconds') * 1000 }, o);
   };
@@ -902,7 +902,9 @@
     G.say(pid, 'you', text, req.askId, custom !== undefined && custom !== null ? 'custom' : idx);
     G.logK(pid, 'talk', 'log.talk', { q: req.text, a: text });
     p.story.care_total++; p.state.mood = clamp(p.state.mood + 0.1);
-    const rp = G.sayLine(p, 'reply', custom !== undefined && custom !== null ? 'custom' : 'a' + idx);
+    /* 来客自己带着回答：卡片里写的一句，选了劝你歇一歇的那个回答，主角的休息需求就降一点 */
+    const rp = req.reply || G.sayLine(p, 'reply', custom !== undefined && custom !== null ? 'custom' : 'a' + idx);
+    if (req.rest !== undefined && req.rest === idx) { const lead = G.protagonist(); if (lead && lead.state.needs.rest !== undefined) lead.state.needs.rest = Math.max(0, lead.state.needs.rest - 0.12); }
     G.toastFor(p, rp || line(p, 'thanks', 'default', t('line.ok')), 'speech');
     learn(p, 'ask', true, (Date.now() - req.since) / 1000);
     G.playFx(pid, 'talk');

@@ -25,4 +25,5 @@ CY.i18n.register('en', {
   'shop.cabinet': 'Display cabinet', 'shop.cabinet_fx': 'Stands in the living room and holds the keepsakes guests leave behind. Hover over a keepsake to see who left it.',
 });
 CY.i18n.register("en", { "title.uncle": "Uncle", "title.aunt": "Aunt" });
-CY.i18n.register("en", { "corner.rate_tip": "The 💰 figure is income per game hour while working." });
+CY.i18n.register("en", { "corner.rate_tip": "Household income is what the home earns per game hour while working. A higher comfort level earns more." });
+CY.i18n.register("en", { "corner.income": "Household income {n}/h" });

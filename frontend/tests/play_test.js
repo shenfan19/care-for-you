@@ -130,7 +130,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       G.world.meets = {}; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
     }
     {
-      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.)/.test(k)), miss = {};
+      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.|corner\.)/.test(k)), miss = {};
       for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) { const m = want.filter(k => P.en[k] !== '' && !(P[l] && P[l][k])); if (m.length) miss[l] = m.slice(0, 5).join(); }
       check('八种语言的玩法文字和卡片文字齐全', Object.keys(miss).length === 0, JSON.stringify(miss));
       const ph = [], hold = s => [...new Set(String(s).match(/\{[a-z_]+\}/g) || [])].sort().join();
@@ -155,6 +155,17 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       const V = CY.visitors, said = ids => ids.every(i => V.cards[i].t.hint.length > V.NEED_HINTS);
       check('有名言的来客，名言排在需求暗示后面', said(['galois', 'archimedes', 'li_bai', 'hippocrates', 'kahlo']) && V.cards.galois.t.hint[V.NEED_HINTS]['zh-CN'].includes('我没有时间了'));
       check('老年来客对家里老人是平辈，不是听对方讲从前', V.FAMPEER && CY.i18n.has('visit.fam.art.peer') && V.SENIOR_AGE === 50 && V.cards.hippocrates.age >= 60 && V.cards.galois.age < 30);
+      /* 来客向主角提问：特化的先问，再是行业通用的；南丁格尔劝你歇一歇，选对了主角的休息需求降下来 */
+      {
+        for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+        const lead = G.protagonist(); const ar = await G.arrive('archimedes', true), nf = await G.arrive('nightingale', true);
+        const k1 = G.visitorAsk(ar), r1 = G.req[ar.id];
+        check('阿基米德先问自己特化的问题：辩论', k1 === 'archimedes' && r1 && r1.kind === 'ask' && /支点/.test(r1.text) && r1.answers.length === 2 && /杠杆/.test(r1.reply));
+        delete G.req[ar.id]; const k2 = G.visitorAsk(ar); check('特化问过以后问行业通用的（科学）', /^sci\.[01]$/.test(k2));
+        lead.state.needs.rest = 0.8; G.visitorAsk(nf); G.answerAsk(nf.id, 0);
+        check('南丁格尔劝你歇一歇，选了歇的回答，主角休息需求下降', lead.state.needs.rest < 0.75);
+        for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+      }
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
     }
     check('页面上没有单列的"说过的话"，信息框只剩发生的事；收入率折进舒适度和家人加成', !require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8').includes('id="said"') && (() => { const r = G.incomeRate(); return r > 0 && r <= G.WAGE * 2 && CY.i18n.has('corner.rate_tip'); })());

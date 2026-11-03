@@ -140,4 +140,32 @@ CY.i18n.said("de", {
   sor_juana: ["Ich studiere nicht, um mehr zu wissen, sondern um weniger zu ignorieren."],
   kahlo: ["Ich male meine eigene Wirklichkeit."]
 });
-CY.i18n.register("de", { "corner.rate_tip": "Die 💰-Zahl ist das Einkommen pro Spielstunde bei der Arbeit." });
+CY.i18n.register("de", { "corner.rate_tip": "Das Haushaltseinkommen ist, was das Zuhause pro Spielstunde bei der Arbeit einbringt. Mehr Wohlbefinden bringt mehr." });
+
+CY.i18n.register("de", { "corner.income": "Haushaltseinkommen {n}/Std." });
+CY.i18n.asks("de", {
+  "archimedes": ["Gib mir einen Standpunkt, und ich bewege die Erde. Glaubst du mir?", "Ja, aber gib mir erst einen ausreichend langen Hebel.", "Nein. Lass uns darüber streiten.", "Gut! Zeichne mir deinen Hebel, und wir rechnen ihn Zoll für Zoll durch."],
+  "nightingale": ["Du bist schon lange beschäftigt. Wer sich um andere kümmert, muss auch schlafen.", "Gut, ich ruhe mich ein wenig aus.", "Nach dieser hektischen Phase.", "Ich halte die Lampe für dich. Geh nur."],
+  "zhuge": ["Hast du für den Haushalt einen Plan? Lass mich eine Reihenfolge festlegen.", "Bitte rate mir.", "Ich habe es im Griff. Trink einen Tee.", "Dringendes zuerst, Langsames danach, und vor allem: Reib dich nicht auf."],
+  "curie": ["Weißt du, was du jeden Tag tust? Nur wer es versteht, muss nichts fürchten.", "Ich möchte versuchen, es zu verstehen.", "Ich will es einfach hinter mich bringen.", "Dann eins nach dem anderen. Schreib auf, was du nicht verstehst."],
+  "galois": ["Gibt es etwas, das du tun willst und wofür nie Zeit war?", "Ja, und ich möchte jetzt damit anfangen.", "Ja, aber es ist nicht der richtige Zeitpunkt.", "Warte nicht. Ich meine es ernst: Warte nicht."],
+  "da_vinci": ["Hast du je genau beobachtet, wie ein Vogel zur Ruhe kommt?", "Nein, bring mir das Schauen bei.", "Ja: erst die Flügel, dann die Krallen.", "Genau! Die besten Lehrer sind die, die nichts sagen."],
+  "hippocrates": ["Sag, wo fühlst du dich heute am schlechtesten? Denk nicht an Ursachen, nur an das Gefühl.", "Ein wenig müde, und die Schultern sind schwer.", "Nichts, mir geht es gut.", "Mm. Der Körper spricht zuerst, wir hören langsam zu."],
+  "su_shi": ["Gedichte können warten, das Abendessen nicht. Was möchtest du essen?", "Eine Schüssel heiße Nudelsuppe.", "Du entscheidest, ich esse alles.", "Gut! Ich finde einen Weg, dass es besser schmeckt, als es aussieht."],
+  "li_bai": ["Der Mond ist heute Abend schön. Sag, sollen wir eine Tasse Tee trinken?", "Ja, ich setze mich ein Weilchen zu dir.", "Trink du, ich habe noch zu tun.", "Der Mond wartet auf niemanden, aber er drängt auch niemanden. Bleib ein Weilchen."],
+  "du_fu": ["Ich denke oft, wie schön es wäre, wenn jeder ein warmes Haus hätte. Was meinst du?", "Hier ist eines. Ist dir jetzt behaglich?", "Das ist zu schwer; eine Familie zu versorgen genügt.", "Ein Heim zu wärmen heißt, eine Ecke der Welt zu wärmen."],
+  "ada": ["Glaubst du, dass eine Maschine eines Tages Dichtung verstehen könnte?", "Vielleicht, wenn jemand es ihr beibrächte.", "Nein, Dichtung ist Sache der Menschen.", "Eine gute Frage. Voreilige Schlüsse wollen wir nicht ziehen, erst die Fantasie voll ausschöpfen."],
+  "pasteur": ["Nicht alles Unsichtbare ist nicht da, weißt du. Hast du dir die Hände gewaschen?", "Ja, keine Sorge.", "Ich gehe sie gleich waschen.", "Gut. Der Zufall begünstigt die Vorbereiteten, und die Gesundheit auch."],
+  "med.0": ["Hast du heute Wasser getrunken und etwas gegessen? Sorge erst für dich, dann für die anderen.", "Ja, beides.", "Noch nicht, ich gehe jetzt.", "Gut. Das ist die billigste Medizin."],
+  "med.1": ["Wie schläfst du? Schlaf ist das älteste Rezept.", "Ganz gut.", "Nicht gut, ich wache oft auf.", "Schreib es auf; heute Nacht überlegen wir uns gemeinsam etwas."],
+  "sci.0": ["Etwas beschäftigt mich: Warum werden Erwachsene weich, sobald ein Kind weint?", "Weil wir seine Traurigkeit nicht ertragen.", "Wahrscheinlich die Evolution.", "Interessant. Beide Erklärungen verdienen ein Experiment."],
+  "sci.1": ["Ist dir aufgefallen, dass die Schatten heute etwas kürzer sind als gestern?", "Jetzt, wo du es sagst, ja.", "Mir ist es nicht aufgefallen.", "Die Welt verändert sich ständig; wir sind nur zu beschäftigt hinzusehen."],
+  "art.0": ["Ein Rätsel für dich: ein Wort für deine Stimmung heute.", "Ruhig.", "Hektisch.", "Ein gutes Wort. Ich merke es mir; vielleicht landet es einmal in einem Gedicht."],
+  "art.1": ["Das Licht in deinem Haus ist wunderschön. Hast du je in der Dämmerung nichts getan und nur zugesehen?", "Manchmal.", "Nein, ich bin immer beschäftigt.", "Versuch es. Die besten Bilder und Gedichte beginnen oft im Müßiggang."],
+  "edu.0": ["Was hast du in letzter Zeit gelesen? Es muss kein Buch sein, alles zählt.", "Ein Bilderbuch für Kinder.", "Gar nichts.", "Bilderbücher zählen, und sie gehören zu den sorgfältigst geschriebenen."],
+  "edu.1": ["Lass mich fragen: Soll Lehren dazu dienen, dass man sich erinnert, oder dass man fragt?", "Dass man fragt.", "Dass man sich erinnert.", "Beide Antworten stimmen, nur die Reihenfolge ist verschieden."],
+  "pol.0": ["Ein Haushalt ist wie ein kleines Reich: einer kocht, einer fegt, einer hält den Frieden. Wer bist du?", "Von allem ein bisschen.", "Ich halte den Frieden.", "Dann hast du den schwersten Posten von allen."],
+  "pol.1": ["Erst das Ganze sehen, dann die Einzelheiten. Was ist das Ganze deines Hauses heute?", "Dass alle in Sicherheit sind.", "Darüber habe ich nicht nachgedacht.", "Sicherheit genügt. Viele jagen diesem Wort ein Leben lang nach."],
+  "trv.0": ["Fern der Heimat vermisse ich nicht die Landschaft, sondern eine Schüssel warmes Essen. Und du?", "Genauso.", "Ich vermisse die Stille.", "Jeder hat sein eigenes Heimweh. Beide sind es wert, bewahrt zu werden."],
+  "trv.1": ["Hast du je gedacht, dass dieses Haus der weiteste Weg ist, den du gegangen bist?", "Nein, aber es klingt richtig.", "Ja, ich gehe ihn jeden Tag.", "Genau. Die längsten Reisen verlassen oft nie die Tür."]
+});
