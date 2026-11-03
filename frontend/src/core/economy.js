@@ -89,7 +89,7 @@
     if (!G.canBuyBed()) return false;
     G.guestWatch && G.guestWatch();
     G.world.money -= G.bedPrice(); G.world.gbeds = G.guestBedsOwned() + 1; G.guestWatch && G.guestWatch();
-    G.logK('you', 'event', 'log.bought', { item: G.ref('shop.bed_slot', '床位') }); G.save(true); emit(); return true;
+    G.logK(G.youId(), 'event', 'log.bought', { item: G.ref('shop.bed_slot', '床位') }); G.save(true); emit(); return true;
   };
   /* 舒适度修正：买到的东西各带一份 fx，这里按人汇总。rate 是需求涨速倍数，rest_sleep 是睡觉时休息恢复倍数，mood 是心情目标加成，stages 限定哪些年龄阶段受益。
      后台计算只读这一处，不再各写各的 owned 判断；加新商品只在 SHOP 里加一行 fx */
@@ -108,7 +108,7 @@
     if (!G.canBuy(id)) return false;
     const it = G.SHOP.find(x => x.id === id);
     G.world.money -= it.price; G.world.owned = Object.assign({}, G.world.owned, { [id]: true });
-    G.logK('you', 'event', 'log.bought', { item: G.ref('shop.' + id, id) }); G.save(true); emit(); return true;
+    G.logK(G.youId(), 'event', 'log.bought', { item: G.ref('shop.' + id, id) }); G.save(true); emit(); return true;
   };
   /* 买菜：主角去超市，一趟花 cost，带回 meals 份食材，路上 minutes 游戏分钟。做饭时用掉一份，吃得更饱，桌上摆出饭菜 */
   G.groceries = () => G.world.groceries || 0;
@@ -118,7 +118,7 @@
     G.world.money -= tr.cost;
     G.world.trip = { place: tr.place, until: G.world.game_minutes + tr.minutes, meals: tr.meals };
     if (W && W.moveTo && W.PLACES[tr.place]) W.moveTo(tr.place, tr.room);
-    G.logK('you', 'event', 'me.go', { place: G.ref('loc.' + tr.place, tr.place) });
+    G.logK(G.youId(), 'event', 'me.go', { place: G.ref('loc.' + tr.place, tr.place) });
     return true;
   };
   G.tripTick = () => {
@@ -126,7 +126,7 @@
     const W = CY.world;
     G.world.groceries = (G.world.groceries || 0) + tr.meals; delete G.world.trip;
     if (W && W.moveTo) W.moveTo(W.WORK.place, W.workRoom());
-    G.logK('you', 'event', 'log.groceries', { n: tr.meals });
+    G.logK(G.youId(), 'event', 'log.groceries', { n: tr.meals });
   };
   G.GROCERY_BONUS = { hunger: -0.15, mood: 0.02, table_minutes: 90 };
   G.useGroceries = (p, a) => {

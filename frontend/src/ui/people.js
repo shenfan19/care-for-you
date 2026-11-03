@@ -8,7 +8,7 @@
   /* ---------- 角色管理：添加，编辑，归档，删除放在一起，在顶部菜单里 ---------- */
   U.peopleDialog = function () {
     const rows = G.people.map(p => `<div class="prow" data-id="${p.id}"><span class="pav">${CY.avatar(p)}</span><span class="pn"><b>${esc(p.person.name)}</b> <span class="mute">${esc(p.person.role || '')}${p.person.archived ? ' · ' + esc(t('people.archived')) : p.person.active === false ? ' · ' + esc(t('bar.away', { name: '' }).trim()) : ''}</span></span>
-      ${G.canLead(p) && p.person.active !== false ? `<button data-a="lead" ${G.protagonist() === p ? 'class="primary"' : ''}>${esc(t(G.protagonist() === p ? 'people.lead_on' : 'people.lead'))}</button>` : ''}<button data-a="edit">${esc(t('btn.edit'))}</button>${p.person.archived ? `<button data-a="restore">${esc(t('btn.restore'))}</button>` : p.person.active === false ? `<button data-a="restore">${esc(t('bar.recall'))}</button>` : `<button data-a="archive">${esc(t('btn.archive'))}</button>`}<button data-a="del" class="danger">${esc(t('btn.delete'))}</button></div>`).join('');
+      ${G.canLead(p) && p.person.active !== false ? `<button data-a="lead" ${G.protagonist() === p ? 'class="primary" disabled' : ''}>${esc(t(G.protagonist() === p ? 'people.lead_on' : 'people.lead'))}</button>` : ''}<button data-a="edit">${esc(t('btn.edit'))}</button>${p.person.archived ? `<button data-a="restore">${esc(t('btn.restore'))}</button>` : p.person.active === false ? `<button data-a="restore">${esc(t('bar.recall'))}</button>` : `<button data-a="archive">${esc(t('btn.archive'))}</button>`}<button data-a="del" class="danger">${esc(t('btn.delete'))}</button></div>`).join('');
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('people.title'))}</h2>
       <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="mute">${esc(t('people.note'))}</span><button id="pAdd" class="primary">${esc(t('btn.add'))}</button></div>
       <div class="plist">${rows || `<div class="mute">${esc(t('said.nobody'))}</div>`}</div>
@@ -17,7 +17,7 @@
     dlg.querySelector('#pAdd').onclick = () => U.addDialog(null, () => U.peopleDialog());
     dlg.querySelectorAll('.prow button').forEach(b => b.onclick = async () => {
       const id = b.closest('.prow').dataset.id, a = b.dataset.a;
-      if (a === 'lead') { G.setProtagonist(G.protagonist() && G.protagonist().id === id ? null : id); U.afterPeopleChange(); U.peopleDialog(); }
+      if (a === 'lead') { if (!(G.protagonist() && G.protagonist().id === id)) G.setProtagonist(id); U.afterPeopleChange(); U.peopleDialog(); }   /* 只能换一位，不能放弃，必须有一个能操作的人 */
       else if (a === 'edit') U.addDialog(null, () => U.peopleDialog(), id);
       else if (a === 'archive') { await G.archivePerson(id, true); U.afterPeopleChange(); U.peopleDialog(); }
       else if (a === 'restore') { await G.setActive(id, true); U.afterPeopleChange(); U.peopleDialog(); }

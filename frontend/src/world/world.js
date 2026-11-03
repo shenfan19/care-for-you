@@ -332,7 +332,7 @@
     const pl = W.player();
     if (pl.place === place) return false;
     W.moveTo(place, place === 'home' ? W.workRoom() : place === 'office' ? 'desk' : place === 'school' ? 'class' : 'ward');
-    G.logK('you', 'event', place === 'home' ? 'me.back' : 'me.go', { place: G.ref('loc.' + place, place) });
+    G.logK(G.youId(), 'event', place === 'home' ? 'me.back' : 'me.go', { place: G.ref('loc.' + place, place) });
     return true;
   };
 

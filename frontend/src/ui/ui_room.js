@@ -324,22 +324,8 @@
   };
 
   /* ---------- 主角，地点导航，角上的名单 ---------- */
-  const PLAYER = { id: 'player', species: { id: 'human' }, state: { mood: 0.7 }, person: { age: 35, appearance: { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'round', beard: false, cloth: '#4f6d8f' } } };
-  U.renderPlayer = function () {
-    const stage = $r('#stage'), W = CY.world, v = W.visual();
-    let c = stage.querySelector('.cx.player');
-    if (!c) {
-      c = doc().createElement('div'); c.className = 'cx player'; c.innerHTML = '<div class="body"></div><div class="nm"><b></b></div>';
-      c.querySelector('.body').innerHTML = CY.avatar(PLAYER); stage.appendChild(c);
-    }
-    c.querySelector('b').textContent = t('player.name');
-    const pages = U.PAGES(), show = !G.protagonist() && v.place === U.viewPlace && U.viewPlace !== 'family' && pages.length > 0 && !v.traveling;
-    c.style.display = show ? '' : 'none';
-    if (show) U.moveFig(c, v.place, v.gx, v.gy);
-    const working = show && W.atWork(), dir = c._dir || (working ? 'ne' : '');
-    c.classList.toggle('working', working && !c._dir);
-    if (c.dataset.dir !== dir) { c.dataset.dir = dir; c.querySelector('.body').innerHTML = CY.avatar(PLAYER, dir, working && !c._dir ? 'sit' : ''); }
-  };
+  /* 玩家没有自己的小人：操纵对象是家里一个真角色，画面上就是他，所以这里只清理旧版本留下的"你" */
+  U.renderPlayer = function () { const old = $r('#stage').querySelector('.cx.player'); if (old) old.remove(); };
   U.renderNav = function () {
     const nav = $r('#placeNav'); if (!nav) return;
     const W = CY.world, at = W.where(), pages = U.PAGES(), fam = U.viewPlace === 'family';

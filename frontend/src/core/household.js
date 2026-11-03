@@ -36,7 +36,14 @@
   };
   /* 上班的人在外面挣的钱，每游戏小时是在家办公时薪的一个倍数 */
   G.awayIncome = hours => G.activePeople().reduce((a, p) => { const f = G.flag(p, 'outing'); return a + (f && f.away === 'work' ? G.WAGE * (awayCfg().wage || 0) * hours : 0); }, 0);
+  /* 默认的操纵对象：爸爸，妈妈，第一个成年人，再是别的能当主角的人。只有家里没有一个人能当主角时才没有，比如只剩宠物和花草 */
+  G.defaultLead = () => {
+    const arch = p => p.person.archetype || p.person.card, live = G.activePeople().filter(G.canLead);
+    return live.find(p => arch(p) === 'dad') || live.find(p => arch(p) === 'mom') || live.find(p => G.stage(p) === 'adult') || live[0] || null;
+  };
   G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
+  /* 记事件用的角色：事件必须挂在一个真角色身上，没有一个叫"你"的角色。挂在操纵对象身上，没有操纵对象就挂在第一个人身上 */
+  G.youId = () => { const p = G.protagonist() || G.activePeople().find(G.isHuman) || G.people[0]; return p ? p.id : 'you'; };
   G.setProtagonist = id => {
     const p = id ? G.get(id) : null;
     if (id && !G.canLead(p)) return false;
@@ -45,17 +52,15 @@
     G.save(); emit(); return true;
   };
 
-  /* 操纵对象是玩家从菜单里选的家里一个真角色，不另造一个“我”。第一次有人住进来而还没有选，默认选爸爸，没有爸爸选妈妈，再没有就选第一个成年人，只选一次，以后玩家取消了不会再自己选上。
-     早先版本自动建过一个“我”，这里顺手删掉 */
+  /* 操纵对象是玩家从菜单里选的家里一个真角色，不另造一个“我”，也不允许没有：没有或当前这位不能用了就按默认顺序换一位：爸爸，妈妈，第一个成年人，再是别的能当主角的人。
+     早先版本自动建过一个“我”，这里顺手删掉。返回是不是换了人，界面据此重画 */
   G.ensurePlayer = async () => {
     const old = G.people.find(p => (p.person.archetype || p.person.card) === 'me');
-    if (old) { if (G.world.protagonist === old.id) G.world.protagonist = null; await G.deletePerson(old.id); await G.load(); G.world.player_char = false; }
-    if (G.world.player_char || !G.activePeople().length) return false;
-    G.world.player_char = true;
-    if (G.protagonist()) { G.save(); return false; }
-    const arch = p => p.person.archetype || p.person.card, live = G.activePeople().filter(G.canLead);
-    const pick = live.find(p => arch(p) === 'dad') || live.find(p => arch(p) === 'mom') || live.find(p => G.stage(p) === 'adult') || live[0];
-    if (!pick) { G.save(); return false; }
+    if (old) { if (G.world.protagonist === old.id) G.world.protagonist = null; await G.deletePerson(old.id); await G.load(); }
+    if (!G.activePeople().length) return false;
+    if (G.protagonist()) return false;
+    const pick = G.defaultLead();
+    if (!pick) return false;
     G.setProtagonist(pick.id);
     return true;
   };

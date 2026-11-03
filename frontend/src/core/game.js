@@ -223,6 +223,7 @@
   G.updatePerson = async function (pid, patch) {
     const p = G.get(pid); if (!p) return;
     const o = p.person;
+    if (patch.away && !G.activePeople().some(q => q !== p && G.canLead(q))) delete patch.away;   /* 家里要留一个能操作的人，最后一位不能改成白天离家 */
     if ('away' in patch) { if (patch.away) o.away = patch.away; else delete o.away; const f = G.flag(p, 'outing'); if (!patch.away && f && f.away) G.clearFlag(p, 'outing'); }
     if (typeof patch.name === 'string' && patch.name.trim() && patch.name.trim() !== o.name) { o.name = patch.name.trim(); delete o.name_auto; }
     if (patch.arch && patch.arch !== (o.archetype || o.card)) {
@@ -884,7 +885,7 @@
       G.startOuting(p, a);
       /* 带人出门，主角自己也一起去：去的是同一个地点，人回来了主角也回家 */
       const lead = G.protagonist(), W = CY.world;
-      if (lead && lead !== p && W && W.moveTo && W.PLACES[a.outing.place]) { W.moveTo(a.outing.place, a.outing.room); W.escort = true; G.logK('you', 'event', 'me.go', { place: G.ref('loc.' + a.outing.place, a.outing.place) }); }
+      if (lead && lead !== p && W && W.moveTo && W.PLACES[a.outing.place]) { W.moveTo(a.outing.place, a.outing.room); W.escort = true; G.logK(G.youId(), 'event', 'me.go', { place: G.ref('loc.' + a.outing.place, a.outing.place) }); }
     }
     /* 送人睡觉：睡着的人走到自己的床上躺下，睡这么多现实秒，不是效果一下子加上就算了 */
     if (a.nap && G.isHuman(p) && p !== G.protagonist()) { G.setFlag(p, 'nap', { minutes: G.realMin(a.nap) }); G.act[p.id] = G.activityOf(p); }
@@ -1033,7 +1034,7 @@
     }
     if (now >= G.nextAt) { if (G.activePeople().length) fire(); scheduleNext(); }
     const wk = G.isWorkTime();
-    if (G._wk !== undefined && G._wk !== wk && G.activePeople().length) G.logK('you', 'event', wk ? 'me.work_start' : 'me.work_end', {});
+    if (G._wk !== undefined && G._wk !== wk && G.activePeople().length) G.logK(G.youId(), 'event', wk ? 'me.work_start' : 'me.work_end', {});
     G._wk = wk;
     if (G.worldTick) G.worldTick(now);
     G.nagTick(now);

@@ -70,7 +70,7 @@
     G.world.met = Object.assign({}, G.world.met, { [id]: ((G.world.met || {})[id] || 0) + 1 });
     G.world.last_area = c.area;
     G.settleNote('settle.visit_arrive', { name: nameRef(id) });
-    G.logK('you', 'event', 'visit.log_arrive', { name: nameRef(id) });
+    G.logK(G.youId(), 'event', 'visit.log_arrive', { name: nameRef(id) });
     fire('arrive', p);
     if (!quiet) checkMeet();
     G.save();
@@ -84,7 +84,7 @@
       if (seen[m.key] || !m.ids.every(i => here.has(i))) continue;
       for (const o of V.MEETS) if (o.ids.every(i => m.ids.includes(i))) seen[o.key] = day();
       G.settleNote('meet.' + m.key, {});
-      G.logK('you', 'event', 'meet.' + m.key, {});
+      G.logK(G.youId(), 'event', 'meet.' + m.key, {});
       fire('meet', m);
       return true;
     }
@@ -178,7 +178,7 @@
     useGift();
     if (c.wants.includes(giftId)) {
       G.settleNote('settle.visit_gift', { name: nameRef(st.id), gift: giftRef(giftId) });
-      G.logK('you', 'event', 'visit.log_gift', { name: nameRef(st.id), gift: giftRef(giftId) });
+      G.logK(G.youId(), 'event', 'visit.log_gift', { name: nameRef(st.id), gift: giftRef(giftId) });
       addFav(p, G.FAV.like);
       return { ok: true, like: true, fav: st.fav, line: `visitor.${st.id}.ok_line` };
     }
