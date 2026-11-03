@@ -15,6 +15,7 @@
   W.PLACES = {
     hospital: { w: 10, h: 6, rooms: { ward: { gx: 0, gy: 0, w: 10, h: 6 } } },
     office: { w: 8, h: 6, rooms: { desk: { gx: 0, gy: 0, w: 8, h: 6 } } },
+    school: { w: 8, h: 6, rooms: { class: { gx: 0, gy: 0, w: 8, h: 6 } } },
     market: { w: 10, h: 6, rooms: { aisle: { gx: 0, gy: 0, w: 10, h: 6 } } },
     park: { w: 10, h: 6, rooms: { lawn: { gx: 0, gy: 0, w: 10, h: 6 } } },
     street: { w: 10, h: 6, rooms: { road: { gx: 0, gy: 0, w: 10, h: 6 } } },
@@ -24,7 +25,7 @@
   Object.defineProperty(W.PLACES, 'home', { enumerable: true, get: () => { const id = CY.houseId(), H = CY.house(); return homeCache[id] || (homeCache[id] = { w: H.w, h: BASE_HOME.h, rooms: Object.assign({}, BASE_HOME.rooms, H.rooms) }); } });
   W.vw = place => (place === 'home' ? CY.house().vw : 800);
   W.vh = place => (place === 'home' ? CY.house().vh : 520);
-  W.PLACE_LIST = ['home', 'market', 'park', 'street', 'hospital', 'office'];
+  W.PLACE_LIST = ['home', 'market', 'park', 'street', 'hospital', 'office', 'school'];
   W.project = (place, gx, gy) => {
     const P = W.PLACES[place], ox = W.vw(place) / 2 + (P.h - P.w) * W.TW / 4;
     return { x: ox + (gx - gy) * W.TW / 2, y: 120 + (gx + gy) * W.TH / 2 };
@@ -41,6 +42,7 @@
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
+    class: { stand: [[.5, .78], [.3, .84], [.7, .84], [.18, .7], [.82, .7]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
     desk: { stand: [[.5, .7], [.3, .8], [.7, .8]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.28, .45] },
     aisle: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.5, .86] },
     lawn: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5], [.2, .55], [.8, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
@@ -78,7 +80,7 @@
      多半看向房间的焦点，有时看向同屋最近的人，有时随意看一眼，换的结果由人的编号和时段定，同一段时间里不会来回变。
      坐在书桌前办公的人始终看向书桌 */
   W.dirOf = (dx, dy) => (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'se' : 'nw') : (dy > 0 ? 'sw' : 'ne'));
-  const FOCUS = { study: [1.5, 0.45], living: [0.3, 2.0], kitchen: [2.0, 2.4], bedroom: [1.2, 0.6], elder: [1.2, 0.6], guest: [1.2, 0.6], kids: [1.2, 0.6], toilet: [0.6, 0.5], desk: [1.9, 1.3], aisle: [2.5, 1.2] };
+  const FOCUS = { study: [1.5, 0.45], living: [0.3, 2.0], kitchen: [2.0, 2.4], bedroom: [1.2, 0.6], elder: [1.2, 0.6], guest: [1.2, 0.6], kids: [1.2, 0.6], toilet: [0.6, 0.5], desk: [1.9, 1.3], class: [3.5, 0.5], aisle: [2.5, 1.2] };
   const hash = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
   W.facing = (p, lay) => {
     if (!p || !G.isHuman(p)) return '';
@@ -100,7 +102,7 @@
   /* 谁办公：默认只有爸爸妈妈在家办公，家里没有爸爸妈妈时才轮到别的成年人。操纵对象不特别：选了谁，谁也只是照常过日子 */
   const isCouple = p => ['dad', 'mom', 'husband', 'wife'].includes(p.person.archetype || p.person.card);
   /* 谁上班挣钱：只有夫妻，姐姐妹妹哥哥弟弟朋友室友都不收入。家里一对夫妻都没有时，主角自己上班，免得完全没有收入 */
-  W.worker = p => !!p && G.isHuman(p) && G.stage(p) === 'adult' && (isCouple(p) || (p === G.protagonist() && !G.activePeople().some(q => G.isHuman(q) && G.stage(q) === 'adult' && isCouple(q))));
+  W.worker = p => !!p && G.isHuman(p) && !p.person.away && G.stage(p) === 'adult' && (isCouple(p) || (p === G.protagonist() && !G.activePeople().some(q => G.isHuman(q) && G.stage(q) === 'adult' && isCouple(q))));
   W.hasWorker = () => G.activePeople().some(W.worker);
   /* 日程：一天的默认去处，只给一个倾向，需求会盖过它。上班的人白天在书房办公，中午和傍晚去厨房，晚上在客厅看电视，夜里回卧室。
      老人早晚在院子，上午在客厅，中午和傍晚去厨房。其他人没有固定日程，按各自喜好和需求走 */
@@ -122,7 +124,7 @@
   W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
   W.driven = p => !!p && p === G.protagonist();
   /* 地点之间的路程，单位是游戏分钟 */
-  W.TRAVEL_MIN = { 'home-hospital': 30, 'home-office': 25, 'hospital-office': 45 };
+  W.TRAVEL_MIN = { 'home-hospital': 30, 'home-office': 25, 'hospital-office': 45, 'home-school': 20, 'school-office': 35, 'hospital-school': 40 };
   W.travelMin = (a, b) => W.TRAVEL_MIN[a + '-' + b] || W.TRAVEL_MIN[b + '-' + a] || 30;
   /* 去另一个地点要长按多久：和动作一样，路程的分钟开方压缩，再长一点 */
   W.travelHold = (a, b) => Math.round(Math.min(8, G.holdFor(W.travelMin(a, b)) * 1.3));
@@ -329,7 +331,7 @@
   W.travel = place => {
     const pl = W.player();
     if (pl.place === place) return false;
-    W.moveTo(place, place === 'home' ? W.workRoom() : place === 'office' ? 'desk' : 'ward');
+    W.moveTo(place, place === 'home' ? W.workRoom() : place === 'office' ? 'desk' : place === 'school' ? 'class' : 'ward');
     G.logK('you', 'event', place === 'home' ? 'me.back' : 'me.go', { place: G.ref('loc.' + place, place) });
     return true;
   };

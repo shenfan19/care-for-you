@@ -44,12 +44,12 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
     let sx = null;
-    root.addEventListener('pointerdown', e => { sx = e.target.closest('.cx') || e.target.closest('#ringLayer') || e.target.closest('#placeNav') ? null : e.clientX; });
+    root.addEventListener('pointerdown', e => { sx = e.target.closest('.cx') || e.target.closest('#ringLayer') || e.target.closest('#placeNav') || e.target.closest('.navarrow') ? null : e.clientX; });
     root.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 70) U.cyclePlace(dx < 0 ? 1 : -1); });
     /* 鼠标悬停：移到谁身上，谁的菜单就弹出，不用点 */
     root.addEventListener('pointermove', onHover);
@@ -344,14 +344,15 @@
     const nav = $r('#placeNav'); if (!nav) return;
     const W = CY.world, at = W.where(), pages = U.PAGES(), fam = U.viewPlace === 'family';
     nav.style.display = pages.length ? '' : 'none';
+    for (const id of ['#navL', '#navR']) { const b = $r(id); if (b) { b.style.display = pages.length > 1 ? '' : 'none'; b.onclick = e => { e.stopPropagation(); U.cyclePlace(id === '#navL' ? -1 : 1); }; } }
     const here = t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
-    const away = !fam && at.place !== U.viewPlace && ['hospital', 'office'].includes(U.viewPlace);
+    const away = !fam && at.place !== U.viewPlace && ['hospital', 'office', 'school'].includes(U.viewPlace);
     const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
     const sig = [U.viewPlace, here, away, min, pages.join(), CY.i18n.lang].join('|');
     if (nav.dataset.sig === sig) return;
     nav.dataset.sig = sig;
     const pn = U.viewPlace ? t('loc.' + U.viewPlace) : '';
-    nav.innerHTML = (pages.length > 1 ? `<button data-d="-1">◀</button>` : '') + `<b>${esc(pn)}</b>` + (pages.length > 1 ? `<button data-d="1">▶</button>` : '') + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
+    nav.innerHTML = `<b>${esc(pn)}</b>` + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
       (away ? `<button class="travel" id="travelBtn">${esc(t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
     nav.querySelectorAll('[data-d]').forEach(b => b.onclick = e => { e.stopPropagation(); U.cyclePlace(+b.dataset.d); });
     const tb = nav.querySelector('#travelBtn');

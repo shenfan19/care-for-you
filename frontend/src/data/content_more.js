@@ -40,13 +40,6 @@
     P('tree', 'plant', '盆栽小树', 'tree', 'plant', { coat: 'green' }),
   );
 
-  C.presets.push(
-    { id: 'trio', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }] },
-    { id: 'elder', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes', 'hypertension'] }] },
-    { id: 'baby', members: [{ arch: 'baby', name: '宝宝' }] },
-    { id: 'pet', members: [{ arch: 'cat', name: '团子' }] },
-    { id: 'plants', members: [{ arch: 'succulent', name: '多肉' }, { arch: 'flower', name: '小花' }] },
-  );
 
   /* ---------- 声线 ---------- */
   const V = C.voices;
@@ -189,17 +182,16 @@
     H('man25', '25岁男性', 25, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f7f9f' }),
     H('classmate', '同学', 16, 'teen', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#6aa08f' }),
   );
+
+  /* 开局的七个典型叙事。away 写了上班或上学的人白天离家，到点回来，主角只能是留在家里的人 */
   C.presets.push(
-    { id: 'threegen', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
-    { id: 'solo', members: [{ arch: 'cat', name: '团子' }, { arch: 'succulent', name: '多肉' }, { arch: 'orchid', name: '兰兰' }] },
-    { id: 'zoo', members: [{ arch: 'cat', name: '团子' }, { arch: 'dog', name: '豆豆' }, { arch: 'rabbit', name: '糯米' }, { arch: 'hedgehog', name: '小刺' }] },
-    { id: 'garden', members: [{ arch: 'flower', name: '小花' }, { arch: 'orchid', name: '兰兰' }, { arch: 'bamboo', name: '青青' }, { arch: 'cactus', name: '小刺球' }] },
-  );
-  C.presets.push(
-    { id: 'host', members: [{ arch: 'refugee_elder', name: '老人', conditions: ['trauma'] }, { arch: 'refugee_mother', name: '妈妈', conditions: ['depress'] }, { arch: 'refugee_child', name: '孩子' }] },
-    { id: 'selfcare', members: [{ arch: 'uncle', name: '我', age: 55, conditions: ['diabetes', 'hypertension'], lead: true }] },
-    { id: 'night', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['nocturia'] }] },
-    { id: 'bighouse', members: [{ arch: 'grandpa', name: '爷爷' }, { arch: 'grandma', name: '奶奶' }, { arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }, { arch: 'dog', name: '豆豆' }] },
+    { id: 'couple_baby', members: [{ arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
+    { id: 'dual_work', members: [{ arch: 'dad', name: '爸爸', age: 36, away: 'work' }, { arch: 'mom', name: '妈妈', age: 34, away: 'work' }, { arch: 'grandpa', name: '爷爷', conditions: ['hypertension'] }, { arch: 'grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'toddler', name: '宝宝' }] },
+    { id: 'single_parent', members: [{ arch: 'mom', name: '妈妈', age: 36, away: 'work' }, { arch: 'waipo', name: '外婆', conditions: ['arthritis'] }, { arch: 'son', name: '儿子', age: 8, away: 'school' }] },
+    { id: 'summer', members: [{ arch: 'dad', name: '爸爸', age: 40, away: 'work' }, { arch: 'mom', name: '妈妈', age: 38, away: 'work' }, { arch: 'teen', name: '哥哥', age: 15 }, { arch: 'toddler', name: '弟弟' }] },
+    { id: 'threegen', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
+    { id: 'elder_care', members: [{ arch: 'husband', name: '丈夫' }, { arch: 'wife', name: '妻子' }, { arch: 'waigong', name: '外公', conditions: ['diabetes', 'hypertension'] }] },
+    { id: 'solo_pets', members: [{ arch: 'woman25', name: '我', age: 28, lead: true }, { arch: 'cat', name: '团子' }, { arch: 'succulent', name: '多肉' }, { arch: 'orchid', name: '兰兰' }] },
   );
 
   V.partner = {

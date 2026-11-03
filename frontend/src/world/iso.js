@@ -9,8 +9,8 @@
     const to = v => clampHex(f < 1 ? v * f : v + (255 - v) * (f - 1));
     return '#' + [to(r), to(g), to(b)].map(v => v.toString(16).padStart(2, '0')).join('');
   };
-  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', kids: '#ead8b6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', aisle: '#ece6d6', desk: '#dbd7c9' };
-  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', kids: '#f2e6d2', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', aisle: '#f1ede2', desk: '#ece8dc' };
+  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', kids: '#ead8b6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', class: '#e9dfc4', aisle: '#ece6d6', desk: '#dbd7c9' };
+  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', kids: '#f2e6d2', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', class: '#f1ebd8', aisle: '#f1ede2', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
   const SPR = () => (CY.isoSprites || {}).furn || {};
   const G0 = () => CY.game;
@@ -179,6 +179,10 @@
           spr('market-shelf-end', 1, 0.5, 3.4); spr('market-freezers-standing', 0, 6.4, 0.8); spr('market-freezers-standing', 0, 7.6, 0.8);
           spr('market-display-fruit', 0, 3.2, 3.4); spr('market-display-bread', 0, 4.6, 3.4);
           spr('market-cash-register', 0, 8.3, 3.8); spr('market-shopping-basket', 0, 6.4, 3.9); spr('market-column', 0, 9.4, 2.4);
+        } else if (name === 'class') {
+          spr('bookcaseClosedWide', 0, 4.0, 0.45);
+          [1.6, 3.4, 5.2].forEach(cx => [1.7, 3.7].forEach(cy => { spr('desk', 0, cx, cy); spr('chairDesk', 2, cx, cy + 0.95); }));
+          spr('pottedPlant', 0, 7.4, 0.8);
         } else if (name === 'desk') {
           [1.7, 5.4].forEach(cx => { spr('desk', 0, cx + 0.2, 1.3); spr('computerScreen', 0, cx + 0.2, 1.2, L, cx + 1.6); spr('chairDesk', 2, cx + 0.2, 2.3); });
           spr('pottedPlant', 0, 7.4, 0.8);

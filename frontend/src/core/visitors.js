@@ -5,7 +5,7 @@
   const G = CY.game, V = CY.visitors, store = CY.store;
   const t = (k, v) => CY.t(k, v);
 
-  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
+  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, gap_hours: [5, 18], arrive_from: 8, arrive_to: 21, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
   G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
   G.visitorPeople = () => G.activePeople().filter(p => p.person.visitor);
@@ -101,18 +101,26 @@
     return pool[pool.length - 1];
   };
 
-  /* 新档第一次必到，之后每天午后看有没有空床，离开后隔最多一天 */
+  /* 新档第一次必到。之后客房有空床才会来人，而且床位空出来以后要隔几个小时才会来，不会一走一来无缝衔接；
+     客房从满到有空位（客人离开或者买了新床）的那一刻定下下一位到来的时间，到点以后在白天某个时刻到 */
+  G.guestWatch = () => {
+    const gr = G.guestRoom();
+    if (gr <= 0) { G.world.guest_full = true; return; }
+    if (G.world.guest_full) { G.world.guest_full = false; G.world.next_visit = Math.floor(G.world.game_minutes) + 60 * rint(G.DOOR.gap_hours[0], G.DOOR.gap_hours[1]); }
+  };
+  G.visitDue = () => { const h = G.dayMinutes() / 60; return !(typeof G.world.next_visit === 'number' && G.world.game_minutes < G.world.next_visit) && h >= G.DOOR.arrive_from && h < G.DOOR.arrive_to; };
   G.maybeArrive = async () => {
     if (!G.activePeople().length || !G.world.intro_done || G.world.story_pending) return false;
     if (!G.world.visit_started) { G.world.visit_started = true; return !!(await G.arrive(G.firstVisitorId())); }
-    if (!G.visitorPeople().length && Math.random() < G.DOOR.meet_chance) { const m = G.pickGroup(); if (m) return G.arriveGroup(m.ids); }
-    if (G.guestRoom() <= 0) return false;   /* 客厅的客人床和买来的床都占满了，不会有新的穿越者来 */
-    if ((G.world.visit_cd || 0) > 0) { G.world.visit_cd--; return false; }
-    if (Math.random() > G.DOOR.arrive_chance) return false;
+    G.guestWatch();
+    if (!G.visitorPeople().length && G.visitDue() && Math.random() < G.DOOR.meet_chance) { const m = G.pickGroup(); if (m) return G.arriveGroup(m.ids); }
+    if (G.guestRoom() <= 0) return false;   /* 客房的床都占满了，不会有新的穿越者来 */
+    if (!G.visitDue()) return false;
     const id = G.pickVisitor();
     return id ? !!(await G.arrive(id)) : false;
   };
-  G.on(() => { if (!G.world.visit_started) G.maybeArrive(); });
+  let arriving = false;
+  G.on(() => { if (arriving || !G.activePeople().length) return; G.guestWatch(); if (G.world.visit_started && !G.visitDue()) return; arriving = true; G.maybeArrive().finally(() => { arriving = false; }); });
   G.dayStartHooks.push(() => { G.maybeArrive(); });
 
   /* 好感度：满分五十，到三十就算满足，留下回礼，也就是纪念品。送到心仪的礼物，或者做了对方真正需要的事，一下子加很多；
@@ -184,9 +192,9 @@
     const st = p.person.visitor, c = V.cards[st.id];
     G.settleNote(st.ok ? 'settle.visit_leave_ok' : 'settle.visit_leave_miss', { name: nameRef(st.id), item: souvRef(st.id) });
     if (!st.ok && st.wrong.length && c.t.wrong_late && c.t.wrong_late['zh-CN']) G.settleNote(`visitor.${st.id}.wrong_late`, {});
-    G.world.visit_cd = rint(0, G.DOOR.cooldown_max);
     fire('leave', p);
-    G.deletePerson(p.id);
+    G.guestWatch();   /* 先记下客房是满的，人走以后才算空出来 */
+    G.deletePerson(p.id).then(() => G.guestWatch());
   };
   /* 日终：先于结算页的收口。住满了就走，没住满的第二天接着住 */
   G.dayEndHooks.unshift(() => {

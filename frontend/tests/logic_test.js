@@ -13,7 +13,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('种子里有声线、说话库、问答库、提醒库、AI 技能', G.tpl.voices.elder && G.tpl.sayLib.length > 30 && G.tpl.asks.length > 20 && G.tpl.nudges.length > 3 && G.tpl.skills.speak && G.tpl.persona);
   check('原型至少 15 种', CY.content.archetypes.length >= 15);
 
-  for (const m of CY.content.presets[0].members) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
+  for (const m of [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }]) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
   await G.load();
   let grandpa, baby, cat; const refs = () => { grandpa = G.people.find(p => p.person.name === '爷爷'); baby = G.people.find(p => p.person.name === '宝宝'); cat = G.people.find(p => p.person.name === '团子'); }; refs();
   check('推荐组合创建了三个角色', G.people.length === 3 && grandpa && baby && cat);
@@ -888,10 +888,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 
   /* 开始场景：一个人住照顾自己 */
   {
-    const pr = CY.content.presets.find(x => x.id === 'selfcare'), m = pr.members[0];
+    const pr = CY.content.presets.find(x => x.id === 'solo_pets'), m = pr.members[0];
     for (const x of G.people) x.person.active = false;
     const sid = await G.createPerson({ arch: m.arch, name: m.name, age: m.age, conditions: m.conditions }); await G.load();
-    check('一个人住照顾自己的场景：只有一个成年人，带病', pr.members.length === 1 && m.lead && m.conditions.includes('diabetes') && G.get(sid).person.age === 55);
+    check('一个人养宠物和植物的场景：只有一个成年人，是主角，另有猫和花草', pr.members.filter(x => CY.content.archOf(x.arch).species === 'human').length === 1 && m.lead && pr.members.length === 4 && G.get(sid).person.age === 28);
     check('他能当主角，也能自己照顾自己', G.setProtagonist(sid) && G.protagonist().id === sid && Object.keys(G.actionsOf(G.get(sid))).length > 0);
     G.setProtagonist(null);
     for (const x of G.people) x.person.active = true;

@@ -306,7 +306,7 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
-  F['templates/system.yaml'] = `version: 4
+  F['templates/system.yaml'] = `version: 5
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
@@ -320,6 +320,12 @@ routine:                      # 作息的节奏：每个角色按自己的类别
     hunger: { lo: 0.6, hi: 3.0, width: 1.2 }
     thirst: { lo: 0.85, hi: 1.6, width: 1.2 }
     hygiene: { lo: 0.8, hi: 4.0, width: 1.5 }
+away:                         # 白天离家：卡里写了上班或上学的人按这个时间表出门，到点回来，期间在办公室或学校，不会向家里发请求，也不能当主角
+  work: { from: 8.5, to: 18.0, place: office, room: desk }
+  school: { from: 7.8, to: 16.5, place: school, room: class }
+  spread: 0.4                 # 每个人出门和回家的时间再各加一点自己的偏差，单位小时
+  need_mult: 0.5              # 在外面的时候需求涨得慢一些，单位和学校里有饭吃有水喝有厕所
+  wage: 0.6                   # 上班的人每游戏小时给家里带来的收入，是在家办公时薪的这个倍数
 agents:
   request:
     threshold: 0.55           # 需求超过这个值的角色才会向别人发请求

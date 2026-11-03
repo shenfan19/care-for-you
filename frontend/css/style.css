@@ -214,6 +214,11 @@ button.danger { color:#b3261e; }
 .room:not(.iso) { padding-top:176px; }
 .placenav { position:absolute; left:10px; top:8px; z-index:20; display:flex; gap:6px; align-items:center; flex-wrap:wrap; font-size:13px; }
 .placenav button { padding:2px 9px; background:var(--card); }
+/* 换场景的大箭头：贴在画面左右两边，垂直居中，位置固定，可以连续点 */
+.navarrow { position:absolute; top:50%; transform:translateY(-50%); z-index:25; width:44px; height:96px; padding:0; border:0; border-radius:14px; background:var(--card); color:var(--ink); font-size:34px; line-height:1; opacity:.55; cursor:pointer; }
+.navarrow:hover, .navarrow:focus-visible { opacity:1; }
+.navarrow.l { left:4px; } .navarrow.r { right:4px; }
+@media (max-width:520px) { .navarrow { width:34px; height:80px; font-size:28px; } }
 .placenav .here { color:var(--mute); margin-left:6px; background:var(--card); border-radius:8px; padding:1px 8px; }
 .placenav .travel { position:relative; overflow:hidden; background:linear-gradient(90deg, var(--accent) calc(var(--k, 0) * 100%), var(--card) calc(var(--k, 0) * 100%)); }
 .roster { position:absolute; left:8px; bottom:8px; z-index:30; display:flex; flex-wrap:wrap; gap:5px; max-width:46%; max-height:38%; overflow-y:auto; overflow-x:hidden; padding:5px 5px 2px 5px; }   /* 呼叫时的提示用外圈光晕，不放大，所以不会撑出滚动条 */

@@ -6,7 +6,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   CY.i18n.set('zh-CN');
   await G.load();
   G.DAY.enabled = true; G.cfg.time.daynight = 'game'; delete G.cfg.time.speed;
-  for (const m of CY.content.presets[0].members) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
+  for (const m of [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }]) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
   await G.load();
   G.DAY.enabled = true;
   G.setClock(G.DAY.start); G._dayN = G.gameDate().n;
@@ -33,7 +33,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   const wait = () => new Promise(r => setTimeout(r, 80));
   {
     G.DOOR.meet_chance = 0;
-    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0; G.world.gbeds = undefined;
+    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.next_visit = undefined; G.world.guest_full = false; G.world.gbeds = undefined;
     const before = G.people.length;
     CY.i18n.set('zh-CN');
     check('第一位来客固定是南丁格尔，不分语言', (G.firstVisitorId() === 'nightingale') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
@@ -44,23 +44,23 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
     check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.nightingale, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('female') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
     check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
-    check('家里没有空床也会来第一位睡客厅，来了以后不会再来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
+    check('家里没有空床也会来第一位睡客厅，来了以后不会再来第二位', (await G.maybeArrive()) === false && G.visitorPeople().length === 1);
     check('请ta睡一会儿只对访客出现', 'invite_rest' in G.actionsOf(zhuge) && !('invite_rest' in G.actionsOf(baby)) && !('invite_rest' in G.actionsOf(grandpa)));
     check('访客不当助力，也不算家人加成', (() => { const c0 = G.capacity(), b0 = G.householdBonus(); zhuge.state.mood = 0.9; return G.capacity() === c0 && G.householdBonus() === b0; })());
     check('访客不会卧床', (zhuge.state.frailty = 1, G.bedCheck(zhuge), !G.bedridden(zhuge)));
     G.applyAction(zhuge.id, 'invite_rest');
     check('请他睡一会儿，满足并留下纪念品', zhuge.person.visitor.ok === true && G.souvenirs().nightingale > 0);
     zhuge.person.visitor.stay = 1;
-    const nd = G.gameDate().n; await endDay();
+    const nd = G.gameDate().n, tLeave0 = Math.floor(G.world.game_minutes); await endDay();
     const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText) : [];
     check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'nightingale') && !G.people.some(p => p.person.name === '弗洛伦斯·南丁格尔'));
     check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /弗洛伦斯·南丁格尔推开大门走了进来/.test(txt[0]) && /弗洛伦斯·南丁格尔睡了一觉/.test(txt[1]) && txt.some(x => x === '弗洛伦斯·南丁格尔离开了，但留下了一盏油灯作为礼物。'), txt.join(' | '));
     check('结算的那天记为没看过，点开日历后清掉', G.unread().includes(nd) && (G.markRead(nd), !G.unread().includes(nd)));
-    check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
+    check('客人走后，床位空出来要隔至少五个小时，才会再来新的客人', typeof G.world.next_visit === 'number' && G.world.next_visit >= tLeave0 + 300 && (G.world.guest_full === false));
     check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.nightingale || 0) < 40; })());
     /* 居里夫人：送错收下无反馈，送对留下纪念品，每天次数有上限 */
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
-    G.world.visit_cd = 0; G.world.vday = null;
+    G.world.next_visit = 0; G.world.vday = null;
     const cp = await G.arrive('curie');
     check('居里夫人是家里的人，需求里没有特别的疲倦', G.visitorPeople().length === 1 && cp.person.name === '玛丽·居里' && !(cp.state.needs.rest >= 0.8));
     const V0 = CY.visitors.GIFTS; G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
@@ -198,21 +198,46 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const cu = await G.arrive('curie', true), st = cu.person.visitor; G.giftInv().tea = 9; G.giftInv().lab_suit = 1; G.giftInv().aspirin = 1;
     G.world.vday = null; const r1 = G.giveGift(cu.id, 'tea');
     check('送一般的礼物，好感只加一点，不算满足', r1.like === false && st.fav === G.FAV.other && !st.ok && !G.souvenirs().curie);
-    G.world.gbeds = 3; G.world.vday = null; G.world.visit_cd = 0;
+    G.world.gbeds = 3; G.world.vday = null; G.world.next_visit = 0;
     let n = 1; while (!st.ok && n < 20) { G.world.vday = null; G.giveGift(cu.id, 'tea'); n++; }
     check('一般的礼物要送好几件才够，够了留下回礼', st.ok && n >= 6 && n <= 8 && G.souvenirs().curie > 0, 'n=' + n + ' fav=' + st.fav);
     const cu2 = await G.arrive('hippocrates', true), st2 = cu2.person.visitor; G.world.vday = null;
     const r2 = G.giveGift(cu2.id, 'aspirin'); check('送到心仪的，一下子加很多，直接达标', r2.like === true && st2.fav === G.FAV.like && st2.ok === true);
     const cu3 = await G.arrive('galois', true), st3 = cu3.person.visitor; G.visitorFav(cu3, G.FAV.ask);
     check('回答来客的问题，好感加一点', st3.fav === G.FAV.ask && !st3.ok);
+    G.world.next_visit = 1e12;   /* 删人会触发到来检查，先把到来时间推远 */
     for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
-    G.world.gbeds = undefined; G.world.visit_started = true; G.world.visit_cd = 0; G.world.meets = {};
+    G.world.gbeds = undefined; G.world.visit_started = true; G.world.next_visit = 0; G.world.guest_full = false; G.world.meets = {}; G.setClock(13 * 60);
     const rnd0 = Math.random; Math.random = () => 0.1;   /* 到来有概率，这里固定成必到 */
-    const came = G.guestRoom() === 1 && G.pickGroup() === null && (await G.maybeArrive()) === true && G.guestRoom() === 0 && (G.world.visit_cd = 0, await G.maybeArrive()) === false;
+    const came = G.guestRoom() === 1 && G.pickGroup() === null && (await G.maybeArrive()) === true && G.guestRoom() === 0 && (await G.maybeArrive()) === false;
     Math.random = rnd0;
     check('客房默认一张床：家人住满了第一位客人也会来，来了之后客房满了，不会再来，组团到来也要床位够', came);
     check('客人睡在客房的床，不占家人的床位', (() => { const g = G.visitorPeople()[0]; return g && CY.world.bedOf(g).room === 'guest' && !G.bedUsers().includes(g); })());
     G.world.gbeds = undefined;
+  }
+  /* 白天离家：上班上学的人到点出门，去办公室或学校，到点回来；主角只能是留在家里的人；家里有小孩而没人留守时谁也不出门 */
+  {
+    for (const x of G.people) x.person.active = false;
+    const mk = async (arch, o = {}) => G.createPerson(Object.assign({ arch, name: arch }, o));
+    const dad = await mk('dad', { age: 36, away: 'work' }), mom = await mk('mom', { age: 34, away: 'work' }), gma = await mk('grandma'), kid = await mk('son', { age: 8, away: 'school' }), tod = await mk('toddler');
+    await G.load(); const ids = [dad, mom, gma, kid, tod]; for (const x of G.people) x.person.active = ids.includes(x.id);
+    G.setProtagonist(null);
+    check('白天离家的人不能当主角，只剩留在家里的人', !G.canLead(G.get(dad)) && !G.canLead(G.get(kid)) && G.canLead(G.get(gma)) && (G.ensurePlayer && (await G.ensurePlayer(), G.protagonist() && G.protagonist().id === gma)));
+    for (const x of G.people) { delete (x.state.flags || {}).outing; x._away_on = false; }
+    G.setClock(11 * 60); G.awayTick(true);
+    const W = CY.world, at = id => W.locationOf(G.get(id));
+    check('上午十一点：上班的爸爸妈妈在办公室，上学的孩子在学校，奶奶和幼儿在家', at(dad).place === 'office' && at(mom).place === 'office' && at(kid).place === 'school' && at(gma).place === 'home' && at(tod).place === 'home');
+    check('在外面的人不向家里发请求，也叫不动', G.isAway(G.get(dad)) && !G.needy(G.get(dad)));
+    const m0 = G.world.money; G.economyTick(60, true);
+    check('上班的人在外面挣钱', G.world.money > m0);
+    G.advance(11 * 60, true);   /* 从十一点走到夜里 */
+    check('夜里都回到家里', ['dad', 'mom', 'son'].every((a, i) => at([dad, mom, kid][i]).place === 'home'));
+    for (const x of G.people) { delete (x.state.flags || {}).outing; x._away_on = false; }
+    G.get(gma).person.active = false;   /* 奶奶不在，家里只剩幼儿和出门的人 */
+    G.setClock(11 * 60); G.awayTick(true);
+    check('家里有幼儿而没人留守时，谁也不出门', at(dad).place === 'home' && at(mom).place === 'home');
+    G.get(gma).person.active = true;
+    for (const x of G.people) { delete (x.state.flags || {}).outing; x._away_on = false; }
   }
   /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */
   {

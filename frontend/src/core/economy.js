@@ -60,6 +60,7 @@
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
     else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();
+    if (G.awayIncome) G.world.money += G.awayIncome(hours);
     if (G.tripTick) G.tripTick();
   };
   /* 商店：买了就一直有，没有损耗，没有订阅。价格按前台一天五分钟，一个游戏日收入约 100 到 150 重标。
@@ -86,7 +87,8 @@
   G.canBuyBed = () => { const pr = G.bedPrice(); return pr !== null && G.world.money >= pr; };
   G.buyBed = () => {
     if (!G.canBuyBed()) return false;
-    G.world.money -= G.bedPrice(); G.world.gbeds = G.guestBedsOwned() + 1;
+    G.guestWatch && G.guestWatch();
+    G.world.money -= G.bedPrice(); G.world.gbeds = G.guestBedsOwned() + 1; G.guestWatch && G.guestWatch();
     G.logK('you', 'event', 'log.bought', { item: G.ref('shop.bed_slot', '床位') }); G.save(true); emit(); return true;
   };
   /* 舒适度修正：买到的东西各带一份 fx，这里按人汇总。rate 是需求涨速倍数，rest_sleep 是睡觉时休息恢复倍数，mood 是心情目标加成，stages 限定哪些年龄阶段受益。

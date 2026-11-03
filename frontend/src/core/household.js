@@ -9,7 +9,33 @@
      选了一个人做操纵对象，玩家的手就是他的手：他站在玩家所在的位置，不睡觉，不被打扰，也能照顾自己。
      老人做操纵对象，圈转得慢些。 ---------- */
   const LEAD_STAGES = ['child', 'teen', 'adult', 'elder'];
-  G.canLead = p => !!p && G.isHuman(p) && p.person.controllable !== false && LEAD_STAGES.includes(G.stage(p));
+  G.canLead = p => !!p && G.isHuman(p) && p.person.controllable !== false && !p.person.away && LEAD_STAGES.includes(G.stage(p));   /* 白天要离家的人不当主角，主角是留在家里的那位 */
+  /* ---------- 白天离家 ----------
+     人物卡上写了 away（work 上班，school 上学）的人，到点出门，去办公室或学校，到点回来。出门走的是和外出一样的标记 outing，
+     所以在外面的时候不能叫他做事，他也不向家里发请求。家里有需要看护的人（婴儿、幼儿、孩子）而没有一位留在家里的青少年、大人或老人时，谁也不出门 */
+  const awayCfg = () => (G.tpl && G.tpl.system && G.tpl.system.away) || {};
+  const hash = (id, salt) => { let h = 2166136261; for (const ch of String(id) + salt) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return h / 4294967296; };
+  G.homeCaregiver = () => G.activePeople().some(q => G.isHuman(q) && ['teen', 'adult', 'elder'].includes(G.stage(q)) && !q.person.away);
+  G.needsCaregiver = () => G.activePeople().some(q => G.isHuman(q) && !q.person.away && G.classOf(q).needs_caregiver);
+  G.awayWindow = p => { const c = awayCfg(), w = c[p.person.away]; if (!w) return null; const sp = c.spread || 0; return { from: w.from + (hash(p.id, 'af') * 2 - 1) * sp, to: w.to + (hash(p.id, 'at') * 2 - 1) * sp, w }; };
+  G.isAway = p => { const f = G.flag(p, 'outing'); return !!(f && f.away); };
+  G.awayMult = p => (G.isAway(p) ? (awayCfg().need_mult || 1) : 1);
+  G.awayTick = offline => {
+    if (!awayCfg().work) return;
+    const hr = G.dayMinutes() / 60, ok = G.homeCaregiver() || !G.needsCaregiver();
+    for (const p of G.activePeople()) {
+      if (!p.person.away || !G.isHuman(p)) continue;
+      if (G.isAway(p)) { p._away_on = true; continue; }
+      if (p._away_on) { p._away_on = false; if (!offline) G.logK(p.id, 'event', 'log.away_back', { name: p.person.name }); }
+      const w = G.awayWindow(p);
+      if (!w || !ok || p === G.protagonist() || G.flag(p, 'hospital') || G.isSleeping(p) || hr < w.from || hr >= w.to) continue;
+      G.setFlag(p, 'outing', { minutes: (w.to - hr) * 60, place: w.w.place, room: w.w.room, mode: 'stand', away: p.person.away });
+      p._away_on = true;
+      if (!offline) G.logK(p.id, 'event', 'log.away_' + p.person.away, { name: p.person.name });
+    }
+  };
+  /* 上班的人在外面挣的钱，每游戏小时是在家办公时薪的一个倍数 */
+  G.awayIncome = hours => G.activePeople().reduce((a, p) => { const f = G.flag(p, 'outing'); return a + (f && f.away === 'work' ? G.WAGE * (awayCfg().wage || 0) * hours : 0); }, 0);
   G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
   G.setProtagonist = id => {
     const p = id ? G.get(id) : null;

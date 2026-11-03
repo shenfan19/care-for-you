@@ -194,6 +194,7 @@
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
     };
     if (spec.name_auto) person.name_auto = spec.name_auto;
+    if (spec.away && human) person.away = spec.away;
     if (spec.cond_set && Object.keys(spec.cond_set).length) person.cond_set = JSON.parse(JSON.stringify(spec.cond_set));
     if (spec.arch) { person.card = spec.arch; if (Object.keys(person.lines).length) person.lines_lang = 'zh-CN'; }
     const hp = arch.help || {};
@@ -222,6 +223,7 @@
   G.updatePerson = async function (pid, patch) {
     const p = G.get(pid); if (!p) return;
     const o = p.person;
+    if ('away' in patch) { if (patch.away) o.away = patch.away; else delete o.away; const f = G.flag(p, 'outing'); if (!patch.away && f && f.away) G.clearFlag(p, 'outing'); }
     if (typeof patch.name === 'string' && patch.name.trim() && patch.name.trim() !== o.name) { o.name = patch.name.trim(); delete o.name_auto; }
     if (patch.arch && patch.arch !== (o.archetype || o.card)) {
       const a = CY.content.archOf(patch.arch);
@@ -612,6 +614,7 @@
     const hours = gmin / 60, hp = hours * G.pace();   /* 需求、虚弱、自理按配速折算的小时算，钟面小时只管几点 */
     const boost = G.freq() === 'test' && !offline ? 30 : 1;
     G.world.game_minutes += gmin;
+    if (G.awayTick) G.awayTick(offline);
     const external = ini.get(G.cfg, 'play', 'needs_source') === 'backend';
     const driven = (p, k) => external || (CY.backend && CY.backend.isDriven(p.id, k));
     for (const p of G.activePeople()) {
@@ -622,7 +625,7 @@
       for (const k in defs) {
         if (driven(p, k)) continue;
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hp * shop.rest_sleep); continue; }
-        const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1) * G.rhythm(p, k);
+        const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (G.awayMult ? G.awayMult(p) : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1) * G.rhythm(p, k);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       if (!driven(p, 'mood')) {

@@ -9,7 +9,7 @@
     p.state.flags = p.state.flags || {};
     const f = {};
     if (o.minutes) f.until = G.world.game_minutes + o.minutes;
-    for (const k of ['value', 'place', 'room', 'mode']) if (o[k] !== undefined) f[k] = o[k];
+    for (const k of ['value', 'place', 'room', 'mode', 'away']) if (o[k] !== undefined) f[k] = o[k];
     p.state.flags[n] = f;
   };
   G.clearFlag = (p, n) => { if (p.state.flags) delete p.state.flags[n]; };

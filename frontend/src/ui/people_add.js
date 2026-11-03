@@ -22,8 +22,8 @@
     /* 人数严格限定在床位：没有空床就不能再添人，婴儿睡婴儿床不占床位，动物和花草不占 */
     if (!editP && arch0.species === 'human' && C.stageOf(arch0.age) !== 'infant' && G.bedsFree() <= 0) { U.flash && U.flash(t('add.no_bed')); return; }
     const st = editP
-      ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', sev: (((editP.person.cond_set || {})[(editP.person.conditions || [])[0]]) || {}).severity || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
-      : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', sev: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };
+      ? { away: editP.person.away || '', arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', sev: (((editP.person.cond_set || {})[(editP.person.conditions || [])[0]]) || {}).severity || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
+      : { away: '', arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', sev: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const GROUPS = ['family', 'animal', 'plant'];
@@ -49,6 +49,7 @@
           <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])}</div>
           <div class="row">${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
           <div class="row">${esc(t('add.model'))} ${sel('model', ['', ...CY.charKeys], [t('add.model_auto'), ...CY.charKeys.map((k, i) => (i + 1) + (k.startsWith('female') ? ' ♀' : ' ♂'))], look.model || '')}</div>
+          ${['child', 'teen', 'adult'].includes(stage) ? `<div class="row">${esc(t('add.away'))} ${sel('away', ['', 'work', 'school'], [t('add.away_none'), t('add.away_work'), t('add.away_school')], st.away)}</div><div class="mute stagenote">${esc(t('add.away_note'))}</div>` : ''}
           <div class="row">${esc(t('add.cond'))} ${sel('cond', ['', ...Object.keys(G.tpl.conditions)], [t('add.cond_none'), ...Object.keys(G.tpl.conditions).map(c => CY.tOr('cond.' + c, G.tpl.conditions[c].label))], st.cond)}</div>${condStory()}`
         : `<div class="mute stagenote">${esc(t('kind.note.' + (arch.group === 'plant' ? 'plant' : 'animal')))}</div>`}
         ${human && !['infant', 'toddler'].includes(stage) ? `<label class="row"><input type="checkbox" id="ahelper" ${st.helper ? 'checked' : ''}> ${esc(t('add.helper'))}</label>` : ''}
@@ -66,7 +67,7 @@
       dlg.querySelectorAll('.sw').forEach(s => s.onclick = () => { st.look[s.dataset.k] = s.dataset.k === 'skin' ? +s.dataset.v : s.dataset.v; render(); });
       dlg.querySelectorAll('select[data-s]').forEach(s => s.onchange = () => {
         const k = s.dataset.s;
-        if (k === 'pronoun' || k === 'cond' || k === 'sev') { st[k] = s.value; if (k === 'cond') st.sev = ''; } else st.look[k] = s.value;
+        if (k === 'pronoun' || k === 'cond' || k === 'sev' || k === 'away') { st[k] = s.value; if (k === 'cond') st.sev = ''; } else st.look[k] = s.value;
         render();
       });
       const hp = dlg.querySelector('#ahelper'); if (hp) hp.onchange = () => { st.helper = hp.checked; };
@@ -78,12 +79,12 @@
           let conds = (editP.person.conditions || []).slice();
           if (st.cond !== first) { conds = conds.filter(c => c !== first); if (st.cond) conds.unshift(st.cond); }
           const cs = Object.assign({}, editP.person.cond_set); delete cs[first]; if (st.cond && st.sev) cs[st.cond] = { severity: st.sev };
-          await G.updatePerson(editP.id, { arch: st.arch !== arch0.id ? st.arch : undefined, name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, cond_set: cs, helper: st.helper });
+          await G.updatePerson(editP.id, { arch: st.arch !== arch0.id ? st.arch : undefined, name: st.name, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: conds, cond_set: cs, helper: st.helper, away: st.away });
           U.closeDialog(); U.afterPeopleChange(); done && done(true);
           return;
         }
         const a = C.archOf(st.arch), role = U.archName(a.id);
-        await G.createPerson({ arch: a.id, name: st.name.trim() || role, name_auto: st.name.trim() && st.name.trim() !== role ? undefined : a.id, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], cond_set: st.cond && st.sev ? { [st.cond]: { severity: st.sev } } : undefined, helper: st.helper });
+        await G.createPerson({ away: st.away || undefined, arch: a.id, name: st.name.trim() || role, name_auto: st.name.trim() && st.name.trim() !== role ? undefined : a.id, roleText: role, pronoun: st.pronoun, age: st.age, look: st.look, traits: st.traits, conditions: st.cond ? [st.cond] : [], cond_set: st.cond && st.sev ? { [st.cond]: { severity: st.sev } } : undefined, helper: st.helper });
         await G.load(); U.closeDialog(); U.afterPeopleChange(); done && done(true);
       };
     }
@@ -104,7 +105,7 @@
 
   /* ---------- 引导：家里还是空的时候 ----------
      第一屏只有一排场景和三个按钮，放得进一屏；想自己搭就进第二屏，按家人、动物、植物分页。 */
-  const TOP = ['trio', 'selfcare', 'elder', 'baby', 'threegen', 'pet', 'zoo', 'garden'];
+  const TOP = ['couple_baby', 'dual_work', 'single_parent', 'summer', 'threegen', 'elder_care', 'solo_pets'];
   const COND_BY_STAGE = { elder: ['diabetes', 'hypertension', 'arthritis', 'heart', 'nocturia', 'forgetful', 'parkinson'], adult: ['depress', 'hypertension', 'asthma', 'allergy'], child: ['asthma', 'eczema', 'allergy', 'cold'] };
   const rnd = a => a[Math.floor(Math.random() * a.length)];
   const shuffle = a => a.map(x => [Math.random(), x]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
@@ -128,7 +129,7 @@
   };
   /* 家里没有爸爸妈妈也没有指定主角的开局，补一个在家办公的成年人当主角，男女随机。没有他，就没有人坐在书桌前，也就没有工作和打断 */
   U.withWorker = function (members) {
-    if (members.some(m => m.lead)) return members;
+    if (members.some(m => m.lead || m.away)) return members;   /* 有人白天离家的模板自己写全了成员，不再补人 */
     const kids = members.some(m => { const a = C.archOf(m.arch); return a && a.species === 'human' && ['infant', 'toddler', 'child', 'teen'].includes(C.stageOf(a.age)); });
     const hasPeople = members.some(m => { const a = C.archOf(m.arch); return a && a.species === 'human'; });
     const mk = (arch, lead) => ({ arch, name: CY.tOr('preset.name.' + arch, U.archName(arch)), age: arch === 'dad' || arch === 'mom' ? 32 + Math.floor(Math.random() * 10) : 26 + Math.floor(Math.random() * 15), lead, name_key: arch });
@@ -144,7 +145,7 @@
   };
   U.createMembers = async function (members) {
     let lead = null;
-    for (const m of members) { const id = await G.createPerson({ arch: m.arch, name: m.name, name_auto: m.name_key || (m.lead ? 'self' : m.arch), roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
+    for (const m of members) { const id = await G.createPerson({ away: m.away, arch: m.arch, name: m.name, name_auto: m.name_key || (m.lead ? 'self' : m.arch), roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
     await G.load();
     if (lead) G.setProtagonist(lead);
   };
@@ -161,12 +162,11 @@
     const wireGo = dlg => { dlg.querySelector('#obgo').onclick = () => { U.closeDialog(); U.afterPeopleChange(); if (G.people.length) U.maybeIntro(); }; };
     function render() { return page === 'custom' ? renderCustom() : renderMain(); }
     function renderMain() {
-      const more = C.presets.filter(p => !TOP.includes(p.id));
       const dlg = U.dialog(`<div class="obhead"><h2 style="margin:0">${esc(t('ob.title'))}</h2>${langSel()}</div>
         <div class="mute" style="margin:6px 0 10px">${esc(t('ob.sub'))}</div>
         <div class="tiles">${TOP.map(tile).join('')}</div>
         <div class="row" style="margin-top:10px"><button id="obrand">🎲 ${esc(t('ob.random'))}</button><button id="obcustom">${esc(t('ob.custom'))}</button></div>
-        <details class="adv"><summary>${esc(t('ob.more'))}</summary><div class="tiles" style="margin-top:6px">${more.map(p => tile(p.id)).join('')}</div></details>${footer()}`, true);
+${footer()}`, true);
       wireLang(dlg); wireTiles(dlg); wireGo(dlg);
       dlg.querySelector('#obrand').onclick = () => start(U.withWorker(U.randomHousehold()));
       dlg.querySelector('#obcustom').onclick = () => { page = 'custom'; render(); };
