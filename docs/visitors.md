@@ -5,29 +5,31 @@ This page explains the daily rhythm, the visitors who come through the time door
 ## A day
 
 - A play day runs from 14:00 to midnight and takes about five real minutes. There is no speed button.
-- At midnight the game stops and shows a short summary of the day: three to five sentences built from what happened. Turn the page to continue. The night and the morning are played by the engine, and the next day starts at 14:00.
-- Every day is kept in the calendar, which you can browse at any time. The summaries are stored as text keys, so they switch language with the interface.
+- At midnight the game stops and shows a short, plain account of the day, one thing per sentence. Visitors come first, in the order things happened, then what the family did. For example: "Zhuge Liang stepped out of the time door. Zhuge Liang had a good sleep. Zhuge Liang left, but left a feather fan behind as a gift." Turn the page to continue. The night and the morning are played by the engine, and the next day starts at 14:00.
+- Every day is kept in the calendar. Open it from the time at the top right of the game window. The summaries are stored as text keys, so they switch language with the interface.
 - If you leave the page for more than three hours, the game catches up when you return: one day per three hours away, at most three days. Needs rise slowly while you are away and nothing pops up.
 - Needs follow the real-second rhythm, not the clock face. Compressing a day into five minutes does not make people need more care per minute.
 
 ## The time door and visitors
 
-- Every home has a time door. Guests step through it, stay for a few days and go back. A guest needs a free guest bed, and there is one at the start. The bigger house adds another.
+- The time door is a piece of furniture on the right of the yard. Guests step out of it and then move around the house like anyone else.
+- A guest is a temporary member of the household. They have needs, and you look after them with the usual actions. One extra action only appears for guests: invite them to rest. They do not help around the house and do not add to the family bonus.
+- A guest stays one to three days and may leave at random. They leave whether or not they are content. The ones who left unsatisfied may come back later.
+- A guest needs a free guest bed. There is one at the start, and the bigger house adds another.
 - The first guest arrives on the first afternoon and is chosen by the interface language. Everyone else arrives at random, and guests you have not yet satisfied come more often than ones you already have.
-- A guest stays for the number of days written on their card. They do not always leave content. If they leave unsatisfied they may come back later.
-- Visitors are simple cards. They have no body model, no diagnosis and no needs bars. Each card holds one or two real needs and a pair of gifts that would help.
 - Visitors are fictionalised short visits. They go back through the door afterwards and history is not changed. All they leave behind is a harmless keepsake.
 
 ## Gifts and the cabinet
 
-- Talk to a guest to hear hints. Some guests only need a night's rest. Others need a specific gift that you can buy in the gift shop on the door screen.
-- You can care for guests or give gifts twice a day in total.
-- A gift only works if it matches what the guest needs. A wrong gift is accepted and used up, and nothing is said about it at the time. A line at the end of their stay can tell you what they would really have liked.
-- When a guest is content they leave a keepsake, which goes into the cabinet on the door screen.
+- The gift button at the top right of the game window is always lit. It opens your bag: click an item to give it to the guest. With more than one guest you choose who gets it. The same window has the gift shop and the cabinet.
+- Guests drop hints in what they say now and then. Some only need a rest. Others need a specific gift.
+- A gift only works if it matches what the guest needs. A wrong gift is accepted and used up, and nothing is said about it at the time. A line in the day's account can tell you what they would really have liked.
+- You can give two gifts a day.
+- When a guest is content they leave a keepsake, which goes into the cabinet.
 
 ## Writing a visitor card
 
-Official cards live in `frontend/src/data/visitors.js` and `frontend/src/data/visitors_cards.js`. You can add your own cards without changing any code by putting YAML files in the data folder under `templates/visitors/`. Cards you add yourself are marked as unofficial in the game, are never uploaded and are not hosted by this project.
+Official cards live in `frontend/src/data/visitors.js` and `frontend/src/data/visitors_cards.js`. You can add your own cards without changing any code by putting YAML files in the data folder under `templates/visitors/`. Cards you add yourself are marked as unofficial in the game, are never uploaded and are not hosted by this project. A card with `care: invite_rest` is satisfied by inviting the guest to rest, and `tired: 0.85` makes them arrive exhausted.
 
 ```yaml
 cards:
