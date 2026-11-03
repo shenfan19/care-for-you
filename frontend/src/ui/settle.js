@@ -8,22 +8,26 @@
   const dateLine = n => { const d = G.dateOf(n); return t('cal.md', { m: d.month, d: d.day }) + ' ' + t(WD[d.weekday]); };
   const body = rec => rec.lines.map(l => `<p class="settle-line">${esc(G.settleText(l))}</p>`).join('') + (rec.money ? `<p class="mute">${esc(t('settle.money', { n: rec.money }))}</p>` : '');
 
-  U.settleDialog = rec => {
-    G.holdTick = true;
-    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(dateLine(rec.n))}</h2>${body(rec)}
-      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="stCal">${esc(t('settle.calendar'))}</button>${U.shareDayCard ? `<button id="stShare">${esc(t('settle.share'))}</button>` : ''}<button id="stGo" class="primary">${esc(t('settle.next'))}</button></div>`);
-    const done = () => { G.holdTick = false; G.lastTick = Date.now(); U.closeDialog(); };
-    dlg.querySelector('#stGo').onclick = done;
-    dlg.querySelector('#stCal').onclick = () => U.calendarDialog(rec.n, done);
-    const sh = dlg.querySelector('#stShare'); if (sh) sh.onclick = () => U.shareDayCard(rec);
-    $modalClose(done);
+  /* 弹出的提示和对话气泡一样：不挡住游戏，倒计时走完自己消失，没点开的留在日历里。
+     鼠标停在上面时暂停倒计时。点一下打开日历，停在对应的那天 */
+  U.notice = ({ title, lines, secs = 20, onclick }) => {
+    const old = document.getElementById('dayNote'); if (old) old.remove();
+    clearTimeout(U._noteT);
+    const el = document.createElement('div'); el.id = 'dayNote'; el.className = 'daynote';
+    el.innerHTML = `<div class="dn-t">${esc(title)}</div>${lines.map(l => `<p>${esc(l)}</p>`).join('')}<div class="dn-tap mute">${esc(t('cal.tap'))}</div><div class="dn-bar"><i style="animation-duration:${secs}s"></i></div>`;
+    document.body.appendChild(el);
+    const bar = el.querySelector('i'), end = () => { el.remove(); };
+    bar.addEventListener('animationend', end);
+    el.onmouseenter = () => { bar.style.animationPlayState = 'paused'; };
+    el.onmouseleave = () => { bar.style.animationPlayState = 'running'; };
+    el.onclick = () => { end(); if (onclick) onclick(); };
   };
-  /* 点遮罩也算翻页 */
-  const $modalClose = done => { const m = document.getElementById('modal'); m.onclick = e => { if (e.target === m) done(); }; };
+  U.dayNotice = rec => U.notice({ title: dateLine(rec.n), lines: rec.lines.map(l => G.settleText(l)), onclick: () => U.calendarDialog(rec.n) });
 
   U.calendarDialog = (focus, back) => {
     const days = G.cal.days, first = days.length ? days[0].n : G.gameDate().n, last = Math.max(G.gameDate().n, days.length ? days[days.length - 1].n : 0);
     let sel = focus || (days.length ? days[days.length - 1].n : null);
+    if (sel) G.markRead(sel);
     const f = G.dateOf(sel || last);
     let ym = { y: +f.iso.slice(0, 4), m: f.month };
     const draw = () => {
@@ -32,7 +36,7 @@
       for (let i = 0; i < pad; i++) cells += '<span></span>';
       for (let d = 1; d <= dim; d++) {
         const iso = ym.y + '-' + String(ym.m).padStart(2, '0') + '-' + String(d).padStart(2, '0'), r = recs.get(iso);
-        cells += r ? `<button class="calday ${r.n === sel ? 'on' : ''}" data-n="${r.n}">${d}</button>` : `<span class="calday off">${d}</span>`;
+        cells += r ? `<button class="calday ${r.n === sel ? 'on' : ''} ${G.unread().includes(r.n) ? 'unread' : ''}" data-n="${r.n}">${d}</button>` : `<span class="calday off">${d}</span>`;
       }
       const rec = sel && G.dayRecord(sel);
       const wd = [0, 1, 2, 3, 4, 5, 6].map(i => `<span class="mute">${esc(t(WD[i]))}</span>`).join('');
@@ -40,20 +44,21 @@
         <div class="timeset">${U.timeSettingsHtml()}</div>
         <div class="row" style="justify-content:space-between"><button id="cPrev" aria-label="${esc(t('cal.prev'))}">‹</button><strong>${esc(t('cal.ym', { y: ym.y, m: ym.m }))}</strong><button id="cNext" aria-label="${esc(t('cal.next'))}">›</button></div>
         <div class="calgrid">${wd}${cells}</div>
-        <div class="calbody">${days.length ? (rec ? `<h3>${esc(dateLine(rec.n))}</h3>${body(rec)}` : `<p class="mute">${esc(t('cal.empty'))}</p>`) : `<p class="mute">${esc(t('cal.none'))}</p>`}</div>
+        <div class="calbody">${days.length ? (rec ? `<h3>${esc(dateLine(rec.n))}</h3>${body(rec)}${U.shareDayCard ? `<div class="row" style="justify-content:flex-end"><button id="cShare">${esc(t('settle.share'))}</button></div>` : ''}` : `<p class="mute">${esc(t('cal.empty'))}</p>`) : `<p class="mute">${esc(t('cal.none'))}</p>`}</div>
         <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="cClose" class="primary">${esc(t('cal.close'))}</button></div>`, true);
       U.wireTimeSettings(dlg, draw);
       dlg.querySelector('#cPrev').onclick = () => { ym = ym.m === 1 ? { y: ym.y - 1, m: 12 } : { y: ym.y, m: ym.m - 1 }; draw(); };
       dlg.querySelector('#cNext').onclick = () => { ym = ym.m === 12 ? { y: ym.y + 1, m: 1 } : { y: ym.y, m: ym.m + 1 }; draw(); };
-      dlg.querySelectorAll('.calday[data-n]').forEach(b => b.onclick = () => { sel = +b.dataset.n; draw(); });
+      dlg.querySelectorAll('.calday[data-n]').forEach(b => b.onclick = () => { sel = +b.dataset.n; G.markRead(sel); draw(); U.renderClock && U.renderClock(); });
+      const sh = dlg.querySelector('#cShare'); if (sh) sh.onclick = () => U.shareDayCard(rec);
       dlg.querySelector('#cClose').onclick = () => { if (back) back(); else U.closeDialog(); };
       const m = document.getElementById('modal'); m.onclick = e => { if (e.target === m) { if (back) back(); else U.closeDialog(); } };
     };
     draw();
   };
 
-  /* 午夜：世界停住，先显示这一天 */
-  G.dayEndHooks.push(info => { if (!info.offline && G.lastSettled && typeof document !== 'undefined') U.settleDialog(G.lastSettled); });
+  /* 午夜：不停世界，弹一张到时间自己消失的总结 */
+  G.dayEndHooks.push(info => { if (!info.offline && G.lastSettled && typeof document !== 'undefined') U.dayNotice(G.lastSettled); if (U.renderClock) U.renderClock(); });
   /* 回来时若追算了几天，打开日历停在最新一天 */
-  U.afterStart = () => { if (G.lastCatchUp > 0) U.calendarDialog(); };
+  U.afterStart = () => { if (G.lastCatchUp > 0) U.notice({ title: t('cal.title'), lines: [t('cal.away', { n: G.lastCatchUp })], onclick: () => U.calendarDialog() }); U.renderClock && U.renderClock(); };
 })(globalThis.CY = globalThis.CY || {});

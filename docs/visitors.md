@@ -5,7 +5,7 @@ This page explains the daily rhythm, the visitors who come through the time door
 ## A day
 
 - A play day runs from 14:00 to midnight and takes about five real minutes. There is no speed button.
-- At midnight the game stops and shows a short, plain account of the day, one thing per sentence. Visitors come first, in the order things happened, then what the family did. For example: "Zhuge Liang stepped out of the time door. Zhuge Liang had a good sleep. Zhuge Liang left, but left a feather fan behind as a gift." Turn the page to continue. The night and the morning are played by the engine, and the next day starts at 14:00.
+- At midnight a small card slides in with a short, plain account of the day, one thing per sentence. It does not pause the game; it fades after a countdown, and unread days are marked in the calendar and on the time bar. Visitors come first, in the order things happened, then what the family did. For example: "Zhuge Liang stepped out of the time door. Zhuge Liang had a good sleep. Zhuge Liang left, but left a feather fan behind as a gift." The night and the morning are played by the engine, and the next day starts at 14:00.
 - Every day is kept in the calendar. Open it from the time at the top right of the game window. The summaries are stored as text keys, so they switch language with the interface.
 - If you leave the page for more than three hours, the game catches up when you return: one day per three hours away, at most three days. Needs rise slowly while you are away and nothing pops up.
 - Needs follow the real-second rhythm, not the clock face. Compressing a day into five minutes does not make people need more care per minute.

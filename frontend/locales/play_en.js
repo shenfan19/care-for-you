@@ -11,7 +11,7 @@ CY.i18n.register('en', {
   'settle.end_mid.0': 'Night came, and the house was much as usual.', 'settle.end_mid.1': 'It got late and the lights went out one by one.',
   'settle.end_low.0': 'At night someone still had something on their mind.',
   'settle.away.0': 'While you were away, life at home went on as usual.', 'settle.away.1': 'You were not here today, and the house got along quietly without you.',
-  'settle.title': 'Today', 'settle.money': 'Earned today: {n}', 'settle.next': 'Continue', 'settle.calendar': 'Calendar', 'settle.share': 'Share',
+  'settle.title': 'Today', 'settle.money': 'Earned today: {n}', 'cal.tap': 'Tap to open the calendar', 'cal.away': 'The {n} days you were away are in the calendar.', 'settle.share': 'Share',
   'cal.title': 'Calendar', 'cal.empty': 'Nothing was recorded on this day.', 'cal.none': 'Nothing yet. The first day will appear once it is over.', 'cal.md': '{m}/{d}',
   'cal.wd0': 'Sun', 'cal.wd1': 'Mon', 'cal.wd2': 'Tue', 'cal.wd3': 'Wed', 'cal.wd4': 'Thu', 'cal.wd5': 'Fri', 'cal.wd6': 'Sat',
   'cal.ym': '{m}/{y}', 'cal.prev': 'Previous month', 'cal.next': 'Next month', 'cal.close': 'Close',

@@ -951,7 +951,6 @@
   G.tick = function () {
     const now = Date.now(), dt = Math.min((now - G.lastTick) / 1000, 5);
     G.lastTick = now;
-    if (G.holdTick) return;   /* 结算页开着时世界停在午夜，翻页后再走 */
     advance(gameMinutes(dt), false);
     G.dayRoll();
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);

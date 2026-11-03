@@ -11,7 +11,7 @@ CY.i18n.register('zh-CN', {
   'settle.end_mid.0': '夜里，家里平平常常。', 'settle.end_mid.1': '夜深了，灯一盏盏灭了。',
   'settle.end_low.0': '夜里，有人心里还惦记着事。',
   'settle.away.0': '你不在的时候，家里的日子照常过。', 'settle.away.1': '这一天你没来，家里自己过得安稳。',
-  'settle.title': '今天', 'settle.money': '今日收入 {n}', 'settle.next': '继续', 'settle.calendar': '日历', 'settle.share': '分享',
+  'settle.title': '今天', 'settle.money': '今日收入 {n}', 'cal.tap': '点一下看日历', 'cal.away': '你不在的这 {n} 天，日历里都记着。', 'settle.share': '分享',
   'cal.title': '日历', 'cal.empty': '这一天没有记录', 'cal.none': '还没有任何记录，过完第一天就会出现。', 'cal.md': '{m}月{d}日',
   'cal.wd0': '周日', 'cal.wd1': '周一', 'cal.wd2': '周二', 'cal.wd3': '周三', 'cal.wd4': '周四', 'cal.wd5': '周五', 'cal.wd6': '周六',
   'cal.ym': '{y}年{m}月', 'cal.prev': '上个月', 'cal.next': '下个月', 'cal.close': '关闭',

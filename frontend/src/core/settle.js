@@ -91,6 +91,7 @@
     G._calDirty = true;
     G.world.today = blank(G.gameDate().n);
     G.lastSettled = rec;
+    G.world.unread = (G.world.unread || []).filter(x => x !== rec.n).concat(rec.n);
     return rec;
   };
   G.dayEndHooks.unshift(G.closeDay);
@@ -101,5 +102,8 @@
   G.computeSig = () => { let h = 5381; for (const c of `${Math.floor(G.world.money || 0)}|${Object.keys(G.world.souv || {}).length}|${G.cal.days.length}|care`) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0; return h.toString(16); };
   G.beforeSave = () => { G.world.sig = G.computeSig(); };
   G.afterLoad = () => { if (G.world.sig && G.world.sig !== G.computeSig()) G.world.edited = true; };
+  /* 没点开看过的日子：总结弹出几秒就消失，挂机回来也不会错过，时间条上亮一个点，日历里标出来 */
+  G.unread = () => G.world.unread || [];
+  G.markRead = n => { G.world.unread = G.unread().filter(x => x !== n); };
   G.dayRecord = n => G.cal.days.find(x => x.n === n) || null;
 })(globalThis.CY = globalThis.CY || {});

@@ -53,6 +53,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText) : [];
     check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'zhuge') && !G.people.some(p => p.person.name === '诸葛亮'));
     check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /诸葛亮从时空门里走了出来/.test(txt[0]) && /诸葛亮睡了一觉/.test(txt[1]) && txt.some(x => x === '诸葛亮离开了，但留下了一把羽扇作为礼物。'), txt.join(' | '));
+    check('结算的那天记为没看过，点开日历后清掉', G.unread().includes(nd) && (G.markRead(nd), !G.unread().includes(nd)));
     check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
     check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < (c.nightingale || 0) && (c.zhuge || 0) < 120; })());
     /* 居里夫人：送错收下无反馈，送对留下纪念品，每天次数有上限 */

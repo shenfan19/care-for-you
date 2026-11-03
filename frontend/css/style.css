@@ -351,6 +351,14 @@ header .tagline { flex:1; margin:0 0 0 18px; color:var(--mute); font-size:14px; 
 .calgrid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin:10px 0; text-align:center; }
 .calday { padding:6px 0; border-radius:8px; border:1px solid transparent; background:var(--card); color:var(--ink); }
 .calday.off { opacity:.35; }
+.calday.unread { position:relative; } .calday.unread::after, button.corner.unread::after { content:''; position:absolute; top:3px; right:4px; width:7px; height:7px; border-radius:50%; background:#ff8a5c; animation:dnpulse 1.6s ease-in-out infinite; }
+button.corner.unread { position:relative; }
+@keyframes dnpulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.5); opacity:.6; } }
+.daynote { position:fixed; z-index:30; right:16px; top:96px; width:min(320px, calc(100vw - 32px)); padding:12px 14px 14px; background:var(--card); color:var(--ink); border:1px solid var(--line, #0003); border-radius:12px; box-shadow:0 6px 24px #0005; cursor:pointer; }
+.daynote .dn-t { font-weight:600; margin-bottom:6px; } .daynote p { margin:4px 0; } .daynote .dn-tap { font-size:.82em; margin-top:6px; }
+.daynote .dn-bar { height:3px; background:#0002; border-radius:2px; margin-top:8px; overflow:hidden; }
+.daynote .dn-bar i { display:block; height:100%; background:var(--accent); width:100%; transform-origin:left; animation-name:dnbar; animation-timing-function:linear; animation-fill-mode:forwards; }
+@keyframes dnbar { from { transform:scaleX(1); } to { transform:scaleX(0); } }
 .calday.on { border-color:var(--accent); font-weight:600; }
 .calbody { min-height:5em; }
 .vcard { display:flex; gap:12px; margin:10px 0; align-items:flex-start; }

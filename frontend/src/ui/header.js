@@ -55,7 +55,7 @@
     const c = G.clock();
     const gd = G.gameDate();
     tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes);
-    tm.title = '';
+    tm.title = ''; tm.classList.toggle('unread', G.unread().length > 0);
     tm.style.cursor = 'pointer';
     tm.onclick = e => { e.stopPropagation(); U.calendarDialog(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
