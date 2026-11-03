@@ -25,7 +25,7 @@ This page explains the daily rhythm, the visitors who come through the time door
 
 ## Gifts and the display cabinet
 
-- Giving is one of the actions in the ring around a guest. Press and hold "give a gift" until the circle fills and a window with the gift list opens, then click an item. A gift you do not have in stock is bought on the spot at the listed price. There is no separate gift menu or shop.
+- Giving is one of the actions in the ring around a guest. Press and hold "give a gift" until the circle fills and a window with the gift list opens, then click an item. Only gifts in your bag can be given. Buy them in the gift section of the shop, which opens when you tap the money counter.
 - Guests drop hints in what they say now and then. Some only need a rest. Others need a specific gift.
 - A gift only works if it matches what the guest needs. A wrong gift is accepted and used up, and nothing is said about it at the time. A line in the day's account can tell you what they would really have liked.
 - You can give two gifts a day.

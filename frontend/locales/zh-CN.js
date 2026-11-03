@@ -50,7 +50,7 @@ CY.i18n.register('zh-CN', {
   'sec.interrupt': '打扰', 'sec.time': '时间', 'sec.player': '称呼', 'sec.interaction': '互动', 'sec.ui': '界面', 'sec.privacy': '隐私', 'sec.account': '账号', 'sec.ai': 'AI 接入',
   'set.title': '设置', 'set.look': '外观与语言', 'set.theme': '明暗', 'set.bg': '背景', 'set.lang': '语言',
   'set.data': '数据位置', 'set.data_note': '{where}。所有数据都是明文文件，选文件夹时请确认它不会被同步到别人能看到的地方。',
-  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'ob.more': '更多场景', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'corner.speed_tip': '时间 ×{speed}。点击切换：×1，×6，×24（现实一小时过一天），×60。几点在设置里调。', 'set.clock': '游戏时钟', 'set.clock_note': '游戏里现在是几点。它按上面的速度自己走；改它不影响陪伴天数和任何计时。新档开局对齐你的系统时间。', 'set.clock_set': '设为这个时间', 'set.clock_sync': '对齐系统时间', 'corner.money_tip': '钱。点开可以请保姆', 'corner.music_tip': '音乐。点一下开或关', 'help.title': '家里的帮手', 'help.income': '工作时段在书桌前会赚钱，每小时 {n}；你操纵的老人领固定的退休金，每小时 {p}。钱只用来请保姆。', 'nanny.title': '保姆', 'nanny.note': '白天帮你照顾家里的人，每天 {n}，从钱里自动付。钱不够的那天保姆休息，不会欠账。', 'nanny.status': '保姆在白天帮你照顾家里的人，每天 {n}。', 'nanny.hire': '请保姆', 'nanny.dismiss': '不请了', 'nanny.name': '保姆', 'log.nanny_hired': '请了一位保姆。', 'log.nanny_paid': '付了今天保姆的钱，{n}。', 'log.nanny_rest': '钱不够，今天保姆休息。', 'log.nanny_end': '保姆不来了。', 'arch.nanny': '保姆', 'set.figure': '人物造型', 'figure.dressed': '穿衣小豆', 'figure.plain': '素色小豆', 'figure.dumpling': '团子', 'sec.audio': '声音', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
+  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'ob.more': '更多场景', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'corner.speed_tip': '时间 ×{speed}。点击切换：×1，×6，×24（现实一小时过一天），×60。几点在设置里调。', 'set.clock': '游戏时钟', 'set.clock_note': '游戏里现在是几点。它按上面的速度自己走；改它不影响陪伴天数和任何计时。新档开局对齐你的系统时间。', 'set.clock_set': '设为这个时间', 'set.clock_sync': '对齐系统时间', 'corner.money_tip': '钱。点开可以请保姆', 'corner.music_tip': '音乐。点一下开或关', 'set.figure': '人物造型', 'figure.dressed': '穿衣小豆', 'figure.plain': '素色小豆', 'figure.dumpling': '团子', 'sec.audio': '声音', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
   'set.wipe': '删除全部本地数据', 'set.folder_had': '已切换到该文件夹里已有的数据', 'set.folder_copied': '已把当前数据复制到该文件夹', 'set.restored': '补回了 {n} 个文件',
   'wipe.title': '删除全部本地数据', 'wipe.body': '这会清除这台设备上的所有角色、记录和设置，无法恢复。建议先下载一份存档。',
   'wipe.save_first': '先下载存档', 'wipe.sure': '我知道删除后无法恢复', 'wipe.go': '删除',
@@ -188,8 +188,6 @@ CY.i18n.register("zh-CN", {
  "home.note": "按谁最需要你排列，由类别和当下的需求自然决定，不需要自己排优先级。",
  "home.urgency": "紧迫程度",
  "home.self": "自理 {n}%",
- "home.nanny": "请保姆",
- "home.nanny_note": "保姆只在工作时段在场，每游戏小时 {cost}。在场时需求涨得慢六成，但情绪上不如你在身边，也不会有心意。钱花光保姆会先走。",
  "intro.title": "照顾是有代价的",
  "intro.p1": "你正在居家办公，同时家里还有人要照顾。每一次照顾，都要从别的地方挤出来。",
  "intro.p2": "长按会打断你现实里正在做的事，点击会花掉游戏里的时间，那段时间里你赚不了钱。选一种体验：",
@@ -268,7 +266,6 @@ CY.i18n.register("zh-CN", {
  "mood.bad": "很难受",
  "status.age": "{n} 岁",
  "status.crying": "正在哭闹",
- "status.nanny": "有保姆",
  "status.mood": "心情",
  "status.frailty": "虚弱",
  "status.needs": "需求",
@@ -352,8 +349,8 @@ CY.i18n.register("zh-CN", {"card.title": "角色卡", "card.note": "这一类角
 CY.i18n.register("zh-CN", {"badge.help": "去帮忙"});
 
 CY.i18n.register("zh-CN", {"social.pets": "{a}和{b}追着玩了一阵。"});
-CY.i18n.register("zh-CN", {"nanny.st_here": "现在：保姆在家里。", "nanny.st_wait": "现在：保姆不在。每天 {from} 上班，到点才来，来的时候收 {n}。", "nanny.st_rest": "现在：钱不够 {n}，保姆今天休息，明天钱够了再来。", "log.nanny_wait": "保姆接下了活，{from} 上班时间到了就来。"});
-CY.i18n.register("zh-CN", {"log.nanny_arrive": "保姆到了，朝家里人点点头，开始忙。", "log.nanny_tea": "保姆在你手边放了一杯茶，没说话，转身去忙了。", "log.nanny_leave": "保姆下班了，留了张条：今天都照看过了。"});
+CY.i18n.register("zh-CN", {});
+CY.i18n.register("zh-CN", {});
 CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天", "share.note": "只在你的设备上生成一张图，放什么内容由你勾选，名字也由你决定。游戏不会上传，也不推荐你分享。", "brand.name": "照顾你", "wd.0": "周日", "wd.1": "周一", "wd.2": "周二", "wd.3": "周三", "wd.4": "周四", "wd.5": "周五", "wd.6": "周六", "tag.1": "手停一停，照看一下家里人。", "tag.2": "没有什么急事，只是有人想让你抬抬头。", "tag.3": "给自己一个离开工作五分钟的小借口。", "tag.4": "没有分数，没人记你做得怎么样。", "tag.5": "你照看他们，他们也在悄悄照看你。", "tag.6": "慢一点，他们会等你。", "app.title": "照顾你 · Care for You"});
 CY.i18n.register("zh-CN", {"corner.day": "第 {m} 个月 第 {d} 天"});
 CY.i18n.register("zh-CN", {"lbl.interrupt.countdown_seconds": "提醒倒计时，秒", "lbl.economy.work_hours": "工作时段", "lbl.audio.music_volume": "背景音乐", "lbl.audio.sfx_volume": "音效", "set.clock_note": "改它不改变陪伴天数和任何计时。"});
@@ -366,8 +363,8 @@ CY.i18n.register("zh-CN", {"cred.p3": "家具图：Kenney 的 Furniture Kit（CC
 CY.i18n.register("zh-CN", {"add.model": "形象", "add.model_auto": "自动"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit 和 Mini Characters（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色在游戏里按玩家的选择重着色。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动物，花草，动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
 CY.i18n.register("zh-CN", {"corner.eff_tip": "现在的工作效率是 {n}%，你的心情好，收入就多；工作和家里有人没人管会让心情下降，照顾，被关心会让它回升。"});
-CY.i18n.register("zh-CN", {"nanny.mood": "她现在的心情：{n}%。心情好，帮忙的效果好一点；在岗慢慢下降，下班后回升。", "nanny.tip": "给奖金 {n}", "nanny.tip_done": "今天已经给过了", "nanny.tip_wait": "要等她在岗时才能给", "log.nanny_tip": "保姆收下奖金，笑着说了声谢谢，干活更起劲了。"});
-CY.i18n.register("zh-CN", {"shop.open": "商店", "shop.title": "商店", "shop.note": "买了就一直有，没有限时，没有折扣，不买也能完整地玩。", "shop.owned": "已有", "shop.locked": "先买上一档", "shop.toy": "玩具", "shop.toy_fx": "婴儿和幼儿玩耍的需求涨得慢四分之一，客厅里多一只小熊。", "shop.bed": "好一点的床", "shop.bed_fx": "睡觉时休息恢复得快三成，卧室多一个床头柜和灯。", "shop.stroller": "婴儿车", "shop.stroller_fx": "带婴儿和幼儿出门时，他们更开心。", "shop.wheelchair": "轮椅", "shop.wheelchair_fx": "老人行动的需求涨得慢三成，老人房里多一把轮椅。", "shop.decor1": "装饰一档", "shop.decor1_fx": "客厅里多一盆植物，大家的心情目标加 0.02。", "shop.decor2": "装饰二档", "shop.decor2_fx": "再加地毯和落地灯，心情目标再加 0.02。", "shop.decor3": "装饰三档", "shop.decor3_fx": "再加收音机和绿植，心情目标再加 0.02。", "shop.house2": "中等屋子", "shop.house2_fx": "搬进更大的房子：多一间客房，三张床位，家里更宽敞，心情目标加 0.03。", "shop.bed2": "床品升级", "shop.bed2_fx": "再换上好床品，睡觉时休息恢复再快一些，老人房多一盏夜灯。", "shop.books": "书架", "shop.books_fx": "客厅里多一个书架，玩耍的需求涨得慢一些，心情目标加 0.01。", "shop.fruit": "果盘", "shop.fruit_fx": "餐桌上常备水果和面包，饥饿涨得慢一成。", "arc.diabetes.first": "{name}说这几天血糖的数字比平时高一点，想让你以后多留意。", "arc.diabetes.habit": "{name}把药盒自己摆到了桌上显眼的地方，说这样不会忘。", "arc.diabetes.checkup": "{name}去复查回来了，医生说控制得不错，{name}心情很好。", "log.bought": "买了{item}。"});
+CY.i18n.register("zh-CN", {});
+CY.i18n.register("zh-CN", {"shop.title": "商店", "shop.note": "买了就一直有，没有限时，没有折扣，不买也能完整地玩。", "shop.owned": "已有", "shop.locked": "先买上一档", "shop.toy": "玩具", "shop.toy_fx": "婴儿和幼儿玩耍的需求涨得慢四分之一，客厅里多一只小熊。", "shop.bed": "好一点的床", "shop.bed_fx": "睡觉时休息恢复得快三成，卧室多一个床头柜和灯。", "shop.stroller": "婴儿车", "shop.stroller_fx": "带婴儿和幼儿出门时，他们更开心。", "shop.wheelchair": "轮椅", "shop.wheelchair_fx": "老人行动的需求涨得慢三成，老人房里多一把轮椅。", "shop.decor1": "装饰一档", "shop.decor1_fx": "客厅里多一盆植物，大家的心情目标加 0.02。", "shop.decor2": "装饰二档", "shop.decor2_fx": "再加地毯和落地灯，心情目标再加 0.02。", "shop.decor3": "装饰三档", "shop.decor3_fx": "再加收音机和绿植，心情目标再加 0.02。", "shop.house2": "中等屋子", "shop.house2_fx": "搬进更大的房子：多一间客房，三张床位，家里更宽敞，心情目标加 0.03。", "shop.bed2": "床品升级", "shop.bed2_fx": "再换上好床品，睡觉时休息恢复再快一些，老人房多一盏夜灯。", "shop.books": "书架", "shop.books_fx": "客厅里多一个书架，玩耍的需求涨得慢一些，心情目标加 0.01。", "shop.fruit": "果盘", "shop.fruit_fx": "餐桌上常备水果和面包，饥饿涨得慢一成。", "arc.diabetes.first": "{name}说这几天血糖的数字比平时高一点，想让你以后多留意。", "arc.diabetes.habit": "{name}把药盒自己摆到了桌上显眼的地方，说这样不会忘。", "arc.diabetes.checkup": "{name}去复查回来了，医生说控制得不错，{name}心情很好。", "log.bought": "买了{item}。"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit，Mini Characters 和 Cube Pets（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit，Mini Characters，Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
 CY.i18n.register("zh-CN", {"figure.sprite": "方块小人"});

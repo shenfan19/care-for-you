@@ -25,5 +25,5 @@ CY.i18n.register('zh-CN', {
   'shop.cabinet': '展柜', 'shop.cabinet_fx': '放在客厅里，客人留下的纪念品会摆在里面。鼠标停在纪念品上能看到是谁留的。',
 });
 CY.i18n.register("zh-CN", { "title.uncle": "叔叔", "title.aunt": "阿姨" });
-CY.i18n.register("zh-CN", { "corner.rate_tip": "家庭总收入是工作时每游戏小时的进账，舒适度越高越多。" });
-CY.i18n.register("zh-CN", { "corner.income": "家庭总收入 {n}/小时" });
+CY.i18n.register("zh-CN", { "corner.rate_tip": "+ 后面是家庭总收入，工作时每游戏小时的进账，舒适度越高越多。" });
+CY.i18n.register("zh-CN", { "shop.sec_home": "家里的东西", "shop.sec_gifts": "送客人的礼物", "shop.gift_note": "礼物只有送到对方真正需要的时候才算数，每样最多备三件。送的时候，在客人身上的行动圈里长按「送礼」。", "gift.empty": "背包是空的。点钱的格子，去商店的礼物区买。" });

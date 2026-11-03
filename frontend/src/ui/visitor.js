@@ -1,5 +1,4 @@
-/* 送礼：在客人身上的行动圈里长按「送礼」，做完后弹出这个选择窗，点一件就送。
-   背包里有的直接送，没有的按目录价当场买下送出，所以没有单独的商店和背包页。展柜是客厅里买来的家具，不在菜单里。 */
+/* 送礼：在客人身上的行动圈里长按「送礼」，做完后弹出这个选择窗，点一件背包里的礼物就送。礼物在商店的礼物区买，点钱的格子打开商店。展柜是客厅里买来的家具。 */
 (function (CY) {
   const G = CY.game, V = CY.visitors, U = CY.ui = CY.ui || {};
   const t = (k, v) => CY.t(k, v);
@@ -12,9 +11,9 @@
     const p = G.get(pid);
     if (!p || !p.person.visitor) return;
     const inv = G.giftInv(), money = G.world.money || 0;
-    const ids = Object.keys(V.GIFTS).sort((a, b) => (inv[b] > 0) - (inv[a] > 0) || V.GIFTS[a].price - V.GIFTS[b].price);
-    const grid = ids.map(g => `<button class="gift pick" data-item="${g}"><div>${V.GIFTS[g].icon}</div><div>${esc(giftName(g))}</div><div class="mute">${inv[g] > 0 ? esc(t('gift.have', { n: inv[g] })) : '💰 ' + V.GIFTS[g].price}</div></button>`).join('');
-    const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${note ? `<p class="settle-line">${esc(note)}</p>` : ''}<div class="giftgrid vbody">${grid}</div>
+    const ids = Object.keys(V.GIFTS).filter(g => inv[g] > 0).sort((a, b) => V.GIFTS[a].price - V.GIFTS[b].price);
+    const grid = ids.map(g => `<button class="gift pick" data-item="${g}"><div>${V.GIFTS[g].icon}</div><div>${esc(giftName(g))}</div><div class="mute">${esc(t('gift.have', { n: inv[g] }))}</div></button>`).join('');
+    const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${note ? `<p class="settle-line">${esc(note)}</p>` : ''}${grid ? `<div class="giftgrid vbody">${grid}</div>` : `<p class="mute">${esc(t('gift.empty'))}</p>`}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="vClose" class="primary">${esc(t('cal.close'))}</button></div>`, true);
     note = '';
     dlg.querySelector('#vClose').onclick = () => U.closeDialog();

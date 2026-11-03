@@ -140,9 +140,8 @@ CY.i18n.said("fr", {
   sor_juana: ["Je n'étudie pas pour en savoir plus, mais pour en ignorer moins."],
   kahlo: ["Je peins ma propre réalité."]
 });
-CY.i18n.register("fr", { "corner.rate_tip": "Le revenu du foyer est ce que la maison rapporte par heure de jeu pendant le travail. Plus de confort rapporte plus." });
+CY.i18n.register("fr", { "corner.rate_tip": "Le chiffre précédé de + est le revenu du foyer par heure de jeu pendant le travail. Plus de confort rapporte plus." });
 
-CY.i18n.register("fr", { "corner.income": "Revenu du foyer {n}/h" });
 CY.i18n.asks("fr", {
   "archimedes": ["Donne-moi un point d'appui et je soulèverai la Terre. Me crois-tu ?", "Oui, mais donne-moi d'abord un levier assez long.", "Non. Discutons-en.", "Bien ! Dessine-moi ton levier et nous le calculerons pouce par pouce."],
   "nightingale": ["Tu es occupé depuis longtemps. Ceux qui prennent soin des autres doivent aussi dormir.", "D'accord, je me repose un moment.", "Après cette période chargée.", "Je garde la lampe pour toi. Va."],
@@ -169,3 +168,4 @@ CY.i18n.asks("fr", {
   "trv.0": ["Loin de chez moi, ce n'est pas le paysage qui me manque, mais un bol de nourriture chaude. Et toi ?", "Pareil.", "Le calme me manque.", "Chacun a sa propre nostalgie. Les deux valent la peine d'être gardées."],
   "trv.1": ["As-tu déjà pensé que cette maison est le plus long chemin que tu aies parcouru ?", "Non, mais cela semble juste.", "Oui, je le parcours chaque jour.", "Tout à fait. Les plus longs voyages ne passent souvent pas la porte."]
 });
+CY.i18n.register("fr", { "shop.sec_home": "Pour la maison", "shop.sec_gifts": "Cadeaux pour les visiteurs", "shop.gift_note": "Un cadeau ne compte que s'il correspond à ce dont le visiteur a vraiment besoin. Trois de chaque au maximum. Pour l'offrir, maintiens « Offrir un cadeau » dans le cercle du visiteur.", "gift.empty": "Le sac est vide. Touche le compteur d'argent et passe à la section cadeaux de la boutique." });

@@ -317,8 +317,7 @@ agents:
     go_rate_per_hour: 6       # 有位置愿望的角色每游戏小时发邀请的次数
     scale: 1.0                # 发请求的整体倍率，调低让玩家有更多自己操作的余地，0 为不发
     max_open: 6               # 同时在路上的请求最多几个
-  role_weight:                # 挑接收者时的权重，卡里 help.role 为 nanny 的优先级最高，help.proactive 的家人其次
-    nanny: 4
+  role_weight:                # 挑接收者时的权重，help.proactive 的家人优先
     helper: 1.5
     self: 0.7                 # 发给自己，要自己的卡里有这个需求能自己做的动作
     other: 0                  # 其他人不接请求
@@ -959,14 +958,6 @@ rules:
     toddler4: { lines: { request: { hunger: ['{title}，我要吃饭，我自己吃。'] } } },
     woman25: { lines: { thanks: { default: ['谢啦。'] } } },
     popo: { health: { score: 0.6 } },
-    nanny: { health: { score: 0.95 }, help: { proactive: true, role: 'nanny', efficiency: 0.6, interval: [60, 120], threshold: 0.5 },
-      /* 保姆专属台词：专业，克制，话少，不拿自己的事打扰人 */
-      lines: {
-        glance: ['{ta}在一旁收拾着，见你看过来，点了点头。', '{ta}抱着一摞叠好的衣服从走廊经过。', '{ta}看了看大家，又低头去擦桌子。', '{ta}在厨房里忙着，锅里传来轻轻的响声。', '{ta}看了一眼钟，把水壶放上了炉子。', '{ta}蹲下身，帮孩子系好了鞋带。', '{ta}把窗帘拉开一点，让屋里透透气。'],
-        cares_back: ['{ta}把一杯温水放在你手边，轻声说：别忘了喝。', '{ta}把你的外套挂好，没多说什么。', '{ta}说：今天的菜多放了点汤，你尝尝。', '{ta}悄悄把窗户关小了一点，怕你着凉。', '{ta}把你桌上的杯子洗干净，放回原处。'],
-        reveal: '{ta}说：孩子和老人我都看着，您忙您的，放心。',
-        thanks: { default: ['这是我该做的。', '不客气。', '应该的。'] },
-      } },
   };
   let cardCache = null;
   const cardFiles = () => {

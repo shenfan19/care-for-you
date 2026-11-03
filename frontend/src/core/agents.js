@@ -69,8 +69,8 @@
     if (e.kind === 'self') return R.self === undefined ? 0.5 : R.self;
     if (e.kind === 'go' && e.to === e.from) return (cfg().want || {}).respond_alone === undefined ? 0.6 : cfg().want.respond_alone;
     if (G.maxNeed(to) > (R.own_need_block || 0.8)) return 0;
-    const mw = R.mood_weight === undefined ? 0.6 : R.mood_weight, role = (to.person.help || {}).role;
-    return clamp((R.base === undefined ? 0.7 : R.base) * (1 - mw / 2 + mw * to.state.mood) * (role === 'nanny' ? 1.3 : 1), 0, 1);
+    const mw = R.mood_weight === undefined ? 0.6 : R.mood_weight;
+    return clamp((R.base === undefined ? 0.7 : R.base) * (1 - mw / 2 + mw * to.state.mood), 0, 1);
   }
   const cooldown = e => S.declined.push({ from: e.from, to: e.to, key: e.need || e.action, until: Date.now() + ((cfg().respond || {}).decline_cooldown_seconds || 90) * 1000 });
   /* 走过去：不在同一个房间就先走到对方那里 */
@@ -86,7 +86,7 @@
     const from = G.get(e.from), to = G.get(e.to);
     if ((from.state.needs[e.need] || 0) < 0.35) return true;
     const a = careAction(from, e.need); if (!a) return true;
-    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5) * ((to.person.help || {}).role === 'nanny' ? G.nannyEfficiency() : 1));
+    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5));
     from.state.mood = clamp(from.state.mood + 0.03);
     const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label });
     G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); G.playFx(from.id, a.id);

@@ -140,9 +140,8 @@ CY.i18n.said("de", {
   sor_juana: ["Ich studiere nicht, um mehr zu wissen, sondern um weniger zu ignorieren."],
   kahlo: ["Ich male meine eigene Wirklichkeit."]
 });
-CY.i18n.register("de", { "corner.rate_tip": "Das Haushaltseinkommen ist, was das Zuhause pro Spielstunde bei der Arbeit einbringt. Mehr Wohlbefinden bringt mehr." });
+CY.i18n.register("de", { "corner.rate_tip": "Die +-Zahl ist das Haushaltseinkommen pro Spielstunde bei der Arbeit. Mehr Wohlbefinden bringt mehr." });
 
-CY.i18n.register("de", { "corner.income": "Haushaltseinkommen {n}/Std." });
 CY.i18n.asks("de", {
   "archimedes": ["Gib mir einen Standpunkt, und ich bewege die Erde. Glaubst du mir?", "Ja, aber gib mir erst einen ausreichend langen Hebel.", "Nein. Lass uns darüber streiten.", "Gut! Zeichne mir deinen Hebel, und wir rechnen ihn Zoll für Zoll durch."],
   "nightingale": ["Du bist schon lange beschäftigt. Wer sich um andere kümmert, muss auch schlafen.", "Gut, ich ruhe mich ein wenig aus.", "Nach dieser hektischen Phase.", "Ich halte die Lampe für dich. Geh nur."],
@@ -169,3 +168,4 @@ CY.i18n.asks("de", {
   "trv.0": ["Fern der Heimat vermisse ich nicht die Landschaft, sondern eine Schüssel warmes Essen. Und du?", "Genauso.", "Ich vermisse die Stille.", "Jeder hat sein eigenes Heimweh. Beide sind es wert, bewahrt zu werden."],
   "trv.1": ["Hast du je gedacht, dass dieses Haus der weiteste Weg ist, den du gegangen bist?", "Nein, aber es klingt richtig.", "Ja, ich gehe ihn jeden Tag.", "Genau. Die längsten Reisen verlassen oft nie die Tür."]
 });
+CY.i18n.register("de", { "shop.sec_home": "Fürs Zuhause", "shop.sec_gifts": "Geschenke für Besucher", "shop.gift_note": "Ein Geschenk zählt nur, wenn es das ist, was der Besucher wirklich braucht. Höchstens drei von jeder Sorte. Zum Schenken im Aktionskreis des Besuchers „Beschenken“ gedrückt halten.", "gift.empty": "Der Rucksack ist leer. Tippe auf die Geldanzeige und schau im Geschenkbereich des Ladens vorbei." });

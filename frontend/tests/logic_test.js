@@ -73,7 +73,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   for (const f of Object.keys(CY.seed.files()).filter(f => /^templates\/(species|conditions)\//.test(f))) { const o = ctx.jsyaml.load(CY.seed.files()[f]); Object.keys(o.needs || {}).forEach(k => needKeys0.add(k)); Object.keys(o.actions || {}).forEach(k => actKeys0.add(k)); if (o.label && /conditions/.test(f)) condKeys0.add(o.id); }
   
   /* 玩法新增的文字（locales/play_*.js）八种语言都有，这里只把它们从界面键检查里排除，齐全性在 play_test 里查 */
-  const playKeys = new Set(); for (const f of fs.readdirSync(path.join(root, 'locales')).filter(f => /^play_/.test(f))) vm.runInNewContext(fs.readFileSync(path.join(root, 'locales', f), 'utf8'), { CY: { i18n: { register: (l, d) => Object.keys(d).forEach(k => playKeys.add(k)), cards: (l, tpl, rows) => Object.keys(rows).forEach(id => playKeys.add('visitor.' + id + '.name')), said: () => {} } } });
+  const playKeys = new Set(); for (const f of fs.readdirSync(path.join(root, 'locales')).filter(f => /^play_/.test(f))) vm.runInNewContext(fs.readFileSync(path.join(root, 'locales', f), 'utf8'), { CY: { i18n: { register: (l, d) => Object.keys(d).forEach(k => playKeys.add(k)), cards: (l, tpl, rows) => Object.keys(rows).forEach(id => playKeys.add('visitor.' + id + '.name')), said: () => {}, asks: () => {} } } });
   for (const lang of ['zh-TW', 'fr', 'ja', 'ko', 'es', 'de']) {
     const pk = ctx.CY.i18n.packs[lang] || {};
     const miss = [...used].filter(k => !playKeys.has(k)).filter(k => !(k in pk && pk[k] !== undefined)).concat([...needKeys0].filter(k => !(('need.' + k) in pk)).map(k => 'need.' + k), [...actKeys0].filter(k => !(('act.' + k) in pk)).map(k => 'act.' + k), [...condKeys0].filter(k => !(('cond.' + k) in pk)).map(k => 'cond.' + k));
@@ -840,12 +840,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       for (const s of r.strategies.filter(x => x.from === bab.id)) { n++; if (s.to === bab.id) toSelf++; else if (s.to === mom3.id) toMom++; else toOther++; }
     }
     check('宝宝的请求从不发给自己，也不发给不能帮忙的人', n > 20 && toSelf === 0 && toOther === 0 && toMom === n, n + ' ' + toSelf + ' ' + toOther);
-    /* 保姆优先级最高：同一个人的请求，多数发给保姆 */
-    const nid = (await mk('mom', '保姆')).id; [bab, mom3, dg, el] = ids4.map(i => G.get(i)); for (const x of G.people) x.person.active = ids4.includes(x.id) || x.id === nid; const nan = G.get(nid); nan.person.help = Object.assign({}, nan.person.help, { role: 'nanny' }); G.act[nan.id] = 'awake';
-    let toNan = 0, tot = 0;
-    for (let i = 0; i < 400; i++) { bab.state.needs.hunger = 0.9; const r = CY.backend.plan(Object.assign(CY.backend.buildPlan({ minutes: 600 }), {})); for (const s of r.strategies.filter(x => x.from === bab.id)) { tot++; if (s.to === nan.id) toNan++; } }
-    check('保姆的权重最高', tot > 20 && toNan / tot > 0.55, toNan + '/' + tot);
-    nan.person.active = false;
     /* 调低请求倍率为 0 就不再发请求 */
     G.tpl.system.agents.request.scale = 0;
     const r0 = CY.backend.plan(snap());
@@ -902,7 +896,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = true;
   }
 
-  /* 金钱：工作时段赚钱，请保姆，没有欠账 */
+  /* 金钱：工作时段赚钱，没有欠账 */
   {
     const atHour = h => { G.cfg.time.daynight = 'game'; G.world.clock_shift = ((h * 60 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; };
     CY.world.enforce = false; G.cfg.economy.work_hours = '09:00-18:00'; G.setProtagonist(null);
@@ -910,18 +904,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('工作时段每小时赚 G.WAGE', Math.abs(G.world.money - (100 + G.WAGE)) < 0.01, G.world.money);
     atHour(22); G.economyTick(60, false);
     check('不是工作时段不赚钱', Math.abs(G.world.money - (100 + G.WAGE)) < 0.01);
-    check('保姆不出现在可添加的角色里', !CY.content.archetypes.filter(a => !a.hidden).some(a => a.id === 'nanny'));
-    G.world.money = 50; await G.hireNanny(); atHour(10);
-    const nn = G.nanny();
-    check('请了保姆：一个真实的角色，没有自己的需求', !!nn && nn.person.help.role === 'nanny' && Object.keys(G.needsOf(nn)).length === 0 && G.nannyOn());
-    G.economyTick(0, false);
-    check('钱不够的那天保姆休息，不欠账也不扣钱', G.world.money === 50 && !!G.flag(nn, 'offduty'), G.world.money);
-    G.world.money = 500; G.world.game_minutes += 1440; atHour(10); G.economyTick(0, false);
-    check('钱够了的一天自动付 G.NANNY_DAILY，保姆白天上班', G.world.money === 500 - G.NANNY_DAILY && !G.flag(nn, 'offduty'), G.world.money);
-    atHour(22); G.economyTick(0, false);
-    check('晚上保姆下班', !!G.flag(nn, 'offduty'));
-    await G.dismissNanny();
-    check('不请了：保姆不再来，钱不变', !G.nannyOn() && nn.person.active === false || G.get(nn.id).person.active === false);
     const pen = (() => { const e = G.people.find(p => p.person.kind === 'human' && G.stage(p) === 'elder'); return e; })();
     if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，每小时 G.PENSION', Math.abs(G.world.money - m1 - G.PENSION) < 0.01); G.setProtagonist(null); }
     for (const x of G.people) x.person.active = true;
@@ -983,18 +965,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('玩家改过的名字不再跟语言变', G.get(idb).person.name === '阿婆' && !G.get(idb).person.name_auto);
     CY.i18n.set('zh-CN'); await G.refreshAutoNames();
     check('切回中文名字回到中文', G.get(ida).person.name === '爷爷');
-    G.world.money = 500; G.world.game_minutes = 0; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined;
-    G.setClock(7 * 60); check('上班时间前保姆状态是等待', G.nannyState() === 'wait');
-    G.setClock(10 * 60); G.economyTick(0, true); check('上班时间到了保姆来并收费', G.nannyState() === 'here' && G.world.money === 500 - G.NANNY_DAILY, G.world.money);
-    G.world.nanny_on = false;
-  }
-  {
-    G.world.money = 500; G.world.game_minutes = 5 * 1440; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined; G.world.nanny_hi_day = G.world.nanny_tea_day = G.world.nanny_bye_day = undefined;
-    G.setClock(10 * 60); G.economyTick(0, false); const n0 = G.log ? 0 : 0;
-    G.setClock(15 * 60); G.economyTick(0, false); G.setClock(20 * 60); G.economyTick(0, false);
-    const d5 = Math.floor(G.world.game_minutes / 1440);
-    check('保姆每天只招呼一次、放一杯茶、留一次条', G.world.nanny_hi_day === d5 && G.world.nanny_tea_day === d5 && G.world.nanny_bye_day === d5);
-    G.world.nanny_on = false;
   }
   {
     const W = CY.world;
@@ -1070,14 +1040,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = true;
   }
   {
-    G.world.money = 500; G.world.game_minutes = 8 * 1440; G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined; G.world.nanny_tip_day = undefined;
-    if (!G.nanny()) { await G.hireNanny(); }
-    G.world.nanny_on = true; const nn = G.nanny(); G.setClock(10 * 60); G.economyTick(0, true);
-    nn.state.mood = 0.5; const m0 = G.world.money; const ok1 = G.tipNanny();
-    check('给保姆奖金：花 40，心情加 0.15，一天一次', ok1 && Math.abs(G.world.money - (m0 - 40)) < 1e-6 && Math.abs(nn.state.mood - 0.65) < 1e-6 && !G.tipNanny());
-    const m1 = nn.state.mood; G.economyTick(60, false);
-    check('保姆在岗心情慢慢降，效果不低于八成', nn.state.mood < m1 && G.nannyEfficiency() >= 0.8 - 1e-9);
-    G.world.nanny_on = false;
   }
   {
     G.world.owned = {}; G.world.money = 100;

@@ -1,5 +1,5 @@
-/* 工作时段和钱。钱只有两件事：在工作时段坐在书桌前赚，拿去请保姆。
-   没有欠账，没有惩罚：钱不够的那天保姆休息，下一天钱够了再来。 */
+/* 工作时段和钱。钱只有两件事：在工作时段坐在书桌前赚，拿去买家里的东西和送客人的礼物。
+   没有欠账，没有惩罚，攒钱慢，慢慢买。 */
 (function (CY) {
   const G = CY.game, ini = CY.ini;
   const t = (k, v) => CY.t(k, v);
@@ -12,20 +12,18 @@
 
   G.WAGE = 20;             /* 工作时段在书桌前，每游戏小时。前台一天五分钟，攒钱要慢：一个游戏日约 120，买东西要攒几天，挂机和前台玩都不会被钱追着跑 */
   G.PENSION = 2;           /* 老人主角的退休金，每游戏小时，固定，不用到书桌前 */
-  G.NANNY_DAILY = 60;      /* 保姆每天 */
   G.START_MONEY = 200;     /* 开局背景会改写起始金额，见 G.BACKGROUNDS */
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
   /* 收益效率由负荷决定，不看心情平均：负荷是每个人没被照顾到的程度（1 减心情）乘依赖度，加总后除以主角能顾及的容量。
      依赖度按年龄阶段，卧床加倍，动物低，花草几乎为零，所以堆花草堆不出效率；每多一个依赖者负荷就多一份，人多自然更累。
-     成年家人和在岗的保姆是助力，抬高容量，所以一个人带孩子最累，有人分担就轻松，不是人越少越好。效率不低于四成，不会越穷越没法挣。
+     成年家人是助力，抬高容量，所以一个人带孩子最累，有人分担就轻松，不是人越少越好。效率不低于四成，不会越穷越没法挣。
      家人的满意度另算：每个心情不低的家人给收入加一点，线性叠加，有封顶，花草和动物不算 */
   G.MOOD = { eff_min: 0.4 };
   G.LOAD = {
     weight: { infant: 1, toddler: 0.8, child: 0.4, teen: 0.15, adult: 0.1, elder: 0.4 }, bedridden: 2, animal: 0.15, plant: 0.03, self: 0.3,
-    capacity: 1, helper: 0.3, nanny_helper: 0.5, helper_mood: 0.5, bonus_each: 0.08, bonus_cap: 0.6, bonus_mood: 0.6,
+    capacity: 1, helper: 0.3, helper_mood: 0.5, bonus_each: 0.08, bonus_cap: 0.6, bonus_mood: 0.6,
   };
-  const isNanny = p => !!(p.person.help && p.person.help.role === 'nanny');
   const loadWeight = (p, lead) => {
     const L = G.LOAD;
     if (p === lead) return L.self;
@@ -33,13 +31,12 @@
     if (p.person.kind !== 'human') return L.animal;
     return (L.weight[G.stage(p)] || 0.1) * (G.bedridden(p) ? L.bedridden : 1);
   };
-  G.burden = () => { const lead = G.protagonist(); return G.activePeople().filter(p => !isNanny(p)).reduce((a, p) => a + loadWeight(p, lead) * (1 - p.state.mood), 0); };
+  G.burden = () => { const lead = G.protagonist(); return G.activePeople().reduce((a, p) => a + loadWeight(p, lead) * (1 - p.state.mood), 0); };
   G.capacity = () => {
     const L = G.LOAD, lead = G.protagonist();
     let c = L.capacity;
     for (const p of G.activePeople()) {
       if (p === lead || G.flag(p, 'hospital')) continue;
-      if (isNanny(p)) { if (G.nannyState() === 'here') c += L.nanny_helper; continue; }
       if (p.person.kind === 'human' && !p.person.visitor && ['teen', 'adult'].includes(G.stage(p)) && !G.bedridden(p) && p.state.mood >= L.helper_mood) c += L.helper;
     }
     return c;
@@ -47,7 +44,7 @@
   G.householdBonus = () => {
     const L = G.LOAD, lead = G.protagonist();
     if (!lead) return 1;
-    const n = G.activePeople().filter(p => p !== lead && !isNanny(p) && p.person.kind === 'human' && !p.person.visitor && p.state.mood >= L.bonus_mood).length;
+    const n = G.activePeople().filter(p => p !== lead && p.person.kind === 'human' && !p.person.visitor && p.state.mood >= L.bonus_mood).length;
     return 1 + Math.min(L.bonus_cap, L.bonus_each * n);
   };
   G.efficiency = () => {
@@ -55,42 +52,16 @@
     const share = Math.min(1, G.burden() / G.capacity());
     return G.MOOD.eff_min + (1 - G.MOOD.eff_min) * (1 - share);
   };
-  G.nanny = () => G.people.find(p => p.person.help && p.person.help.role === 'nanny') || null;
-  G.nannyOn = () => !!G.world.nanny_on;
-  const setDuty = (n, on) => {
-    const off = !!G.flag(n, 'offduty');
-    if (on && off) G.clearFlag(n, 'offduty');
-    else if (!on && !off) G.setFlag(n, 'offduty', { place: 'street', room: 'road', mode: 'stand' });
-  };
-
   /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
   G.incomeRate = () => { const lead = G.protagonist(); return lead && G.stage(lead) === 'elder' ? G.PENSION : G.WAGE * G.efficiency() * G.householdBonus(); };
-  /* 每次时间推进：赚钱，保姆按天付工资，保姆上下班 */
+  /* 每次时间推进：赚钱 */
   G.economyTick = (gmin, offline) => {
     const hours = gmin / 60, W = CY.world, lead = G.protagonist();
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
     else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();
     if (G.tripTick) G.tripTick();
-    const n = G.nanny();
-    if (!n) return;
-    if (!G.nannyOn()) { return; }
-    const d = today(), work = G.isWorkTime();
-    if (work && G.world.nanny_paid_day !== d && G.world.nanny_rest_day !== d) {
-      if (G.world.money >= G.NANNY_DAILY) { G.world.money -= G.NANNY_DAILY; G.world.nanny_paid_day = d; if (!offline) G.logK('you', 'event', 'log.nanny_paid', { n: G.NANNY_DAILY }); }
-      else { G.world.nanny_rest_day = d; if (!offline) G.logK('you', 'event', 'log.nanny_rest', {}); }
-    }
-    const here = G.world.nanny_paid_day === d && work;
-    setDuty(n, here);
-    /* 保姆的心情：在岗每小时降 0.003，慢，不在岗每小时回 0.02；奖金只会加。心情决定她帮忙的效果，最低八成 */
-    n.state.mood = Math.min(1, Math.max(0, n.state.mood + (here ? -G.NANNY_MOOD.drain : G.NANNY_MOOD.recover) * hours));
-    if (offline) return;
-    /* 不用互动的礼貌：到了打个招呼，下午放一杯茶，下班留一句话。只进日志，不弹窗，不要回应 */
-    if (here && G.world.nanny_hi_day !== d) { G.world.nanny_hi_day = d; G.logK('you', 'event', 'log.nanny_arrive', {}); }
-    if (here && G.world.nanny_tea_day !== d && G.dayMinutes() >= 14 * 60) { G.world.nanny_tea_day = d; G.logK('you', 'event', 'log.nanny_tea', {}); }
-    if (!work && G.world.nanny_paid_day === d && G.world.nanny_bye_day !== d) { G.world.nanny_bye_day = d; G.logK('you', 'event', 'log.nanny_leave', {}); }
   };
-  /* 保姆现在的状态：here 在岗，wait 还没到上班时间或已下班，rest 今天钱不够休息，off 没请 */
   /* 商店：买了就一直有，没有损耗，没有订阅。价格按前台一天五分钟、一个游戏日实际收入约 250 重标：
      玩具不到半天，好床一天半，婴儿车一天半，轮椅两天半，装饰按档位一天一档，大房子八天左右。decor 是装饰的档位，买一档加一档 */
   G.SHOP = [
@@ -159,41 +130,4 @@
   G.usingWheelchair = p => G.owned('wheelchair') && G.bedridden(p) && !!G.flag(p, 'outing');
   G.itemAway = id => G.activePeople().some(p => id === 'stroller' ? G.usingStroller(p) : id === 'wheelchair' ? G.usingWheelchair(p) : false);
   G.decorLevel = () => (G.owned('decor1') ? 1 : 0) + (G.owned('decor2') ? 1 : 0) + (G.owned('decor3') ? 1 : 0);
-  G.NANNY_MOOD = { drain: 0.003, recover: 0.02, tip_cost: 40, tip_gain: 0.15, eff_floor: 0.8 };
-  G.nannyEfficiency = () => { const n = G.nanny(); return n ? G.NANNY_MOOD.eff_floor + (1 - G.NANNY_MOOD.eff_floor) * n.state.mood : 1; };
-  /* 奖金：每天一次，她在岗时才能给，只有加分，没有批评，克扣，加班这类操作 */
-  G.canTip = () => G.nannyState() === 'here' && G.world.nanny_tip_day !== today() && G.world.money >= G.NANNY_MOOD.tip_cost;
-  G.tipNanny = () => {
-    const n = G.nanny(); if (!n || !G.canTip()) return false;
-    G.world.money -= G.NANNY_MOOD.tip_cost; G.world.nanny_tip_day = today(); n.state.mood = Math.min(1, n.state.mood + G.NANNY_MOOD.tip_gain);
-    G.logK('you', 'event', 'log.nanny_tip', {}); G.save(true); emit(); return true;
-  };
-  G.nannyState = () => {
-    if (!G.nannyOn()) return 'off';
-    const d = today();
-    if (G.isWorkTime() && G.world.nanny_paid_day === d) return 'here';
-    if (G.world.nanny_rest_day === d) return 'rest';
-    return 'wait';
-  };
-
-  G.hireNanny = async () => {
-    if (G.nannyOn()) return false;
-    let n = G.nanny();
-    G.world.nanny_on = true; G.world.nanny_paid_day = undefined; G.world.nanny_rest_day = undefined;
-    if (!n) {
-      await G.createPerson({ arch: 'nanny', name: t('nanny.name'), roleText: t('nanny.name') });
-      const keep = { money: G.world.money, nanny_on: true };
-      await G.load(); Object.assign(G.world, keep); n = G.nanny();
-    } else await G.setActive(n.id, true);
-    G.logK('you', 'event', 'log.nanny_hired', {});
-    G.economyTick(0, true);
-    if (G.nannyState() === 'wait') G.logK('you', 'event', 'log.nanny_wait', { from: ini.get(G.cfg, 'economy', 'work_hours').split('-')[0] });
-    G.save(true); emit();
-    return true;
-  };
-  G.dismissNanny = async () => {
-    const n = G.nanny(); G.world.nanny_on = false;
-    if (n) { G.clearFlag(n, 'offduty'); await G.setActive(n.id, false); }
-    G.logK('you', 'event', 'log.nanny_end', {}); G.save(true); emit();
-  };
 })(globalThis.CY = globalThis.CY || {});

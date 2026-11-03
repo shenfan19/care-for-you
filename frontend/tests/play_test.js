@@ -66,7 +66,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const V0 = CY.visitors.GIFTS; G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
     check('买礼物扣钱，背包里有', G.world.money === 2000 - V0.tea.price - V0.lab_suit.price - V0.kite.price && G.giftInv().tea === 1 && G.giftInv().lab_suit === 1);
     check('每样最多三件', (() => { for (let i = 0; i < 5; i++) G.buyGift('seeds'); return G.giftInv().seeds === 3; })());
-    check('背包没有的礼物，送出时按目录价当场买下；钱不够不送', (() => { const m = G.world.money, v = G.world.vday; G.world.money = 10; G.world.vday = null; const a = G.giveGift(cp.id, 'clock'); G.world.money = m; G.world.vday = v; return a.error === 'money'; })());
+    check('背包里没有的礼物送不出去，礼物在商店里买', (() => { const v = G.world.vday; G.world.vday = null; const a = G.giveGift(cp.id, 'clock'); G.world.vday = v; return a.error === 'nogift'; })());
     const bad = G.giveGift(cp.id, 'tea');
     check('送错了对方收下，当场没有反馈，礼物不退，没满足', bad.ok === false && !bad.error && !G.giftInv().tea && !cp.person.visitor.ok && cp.person.visitor.wrong[0] === 'tea');
     const good = G.giveGift(cp.id, 'lab_suit');
@@ -178,6 +178,16 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.world.money += 5000; G.afterLoad();
     check('手动改了钱，载入时标记已编辑，且一直保留', G.world.edited === true && (G.beforeSave(), G.afterLoad(), G.world.edited === true));
     check('签名不进卡片文字，只由数字算出', typeof sig === 'string' && sig.length >= 4);
+  }
+  /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */
+  {
+    const id = await G.createPerson({ name: '保姆', roleText: '保姆' }), f = `people/${id}/person.yaml`, y = await CY.store.readYaml(f);
+    y.help = { role: 'nanny', proactive: true }; await CY.store.writeYaml(f, y); G.world.nanny_on = true;
+    await G.load();
+    check('旧存档里的保姆载入时被拿掉', !G.people.some(q => q.id === id) && !G.world.nanny_on && !G.nanny && !G.hireNanny);
+    const fs = require('fs'), path = require('path'), life = fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'life.js'), 'utf8'), head = fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'header.js'), 'utf8');
+    check('商店有家里的东西和礼物两块，点钱的格子直接打开商店，没有保姆入口', /shop\.sec_gifts/.test(life) && /shop\.sec_home/.test(life) && /mn\.onclick = \(\) => U\.shopDialog\(\)/.test(head) && !/helpDialog|nnhire/.test(life + head));
+    check('钱的格子写成 钱 加 每小时收入', /' \+' \+ rate \+ '\/h'/.test(head));
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);

@@ -1,6 +1,6 @@
 # State bars, work efficiency and money
 
-This page explains the bar under every character, how it relates to your income, and what the nanny and the shop do.
+This page explains the bar under every character, how it relates to your income, and what the shop sells.
 
 ## The bar under each character
 
@@ -11,32 +11,25 @@ This page explains the bar under every character, how it relates to your income,
 ## Work efficiency
 
 - Efficiency depends on how much care is waiting, not on the average mood. Each person adds a load: how unmet their needs are (one minus the mood) times how much they depend on others. A baby counts 1, a toddler 0.8, a child 0.4, a teenager 0.15, an adult 0.1, an elder 0.4 (double when bedridden), an animal 0.15, a plant 0.03, and you yourself 0.3.
-- The load is divided by your capacity, which starts at 1. Each adult or teenager at home who is in a decent mood and not in bed adds 0.3, and a nanny on duty adds 0.5. Efficiency is 40% plus 60% of the share of capacity that is not used up, and never below 40%.
+- The load is divided by your capacity, which starts at 1. Each adult or teenager at home who is in a decent mood and not in bed adds 0.3. Efficiency is 40% plus 60% of the share of capacity that is not used up, and never below 40%.
 - So more people and more dependents mean more load and lower efficiency, while helpers lift capacity. Plants cannot be stacked to raise income.
-- The household also adds a small bonus: each family member other than you whose mood is at least 0.6 adds 0.08 to the multiplier, up to a total of 0.6. Plants, animals and the nanny do not count.
-- Efficiency is shown in the small block at the top right of the game window, for example "60%". The nanny's own mood is separate, see below.
+- The household also adds a small bonus: each family member other than you whose mood is at least 0.6 adds 0.08 to the multiplier, up to a total of 0.6. Plants and animals do not count.
+- Efficiency is shown in the small block at the top right of the game window, for example "60%". The money counter next to it shows your money and the household income per game hour, for example "301 +13.8/h". Tap the money counter to open the shop.
 
 ## Money
 
 - Money comes from work. Only a couple in the household earns, or you do if there is no couple.
-- Pay is 40 per game hour multiplied by the efficiency and the family bonus, and only while you are sitting at the desk during work hours. Time spent caring for someone away from the desk, or on an outing, does not earn.
-- An elder you play receives a fixed pension of 4 per game hour.
-- Money has no penalty. There are no debts and no deadlines.
-
-## The nanny
-
-- Hiring costs 120 per day, paid when she arrives. If there is not enough money she rests that day and comes back when there is.
-- She helps the family during work hours, does not interrupt you with questions, and leaves a few quiet lines in the log.
-- She has her own mood. It drops slowly while she works and recovers when she is off duty. It makes her help a little less effective, never below 80%.
-- You can give a bonus once a day while she is on duty. It costs 40 and lifts her mood. There is no way to criticise or squeeze her, and she never leaves because of a low mood.
+- Pay is 20 per game hour multiplied by the efficiency and the family bonus, and only while you are sitting at the desk during work hours. Time spent caring for someone away from the desk, or on an outing, does not earn.
+- An elder you play receives a fixed pension of 2 per game hour.
+- Money has no penalty. There are no debts and no deadlines. Saving is meant to be slow, so the game works as well for a few focused minutes as for leaving it open.
 
 ## The shop
 
 - Items are bought once and stay: a toy, a better bed, a stroller, a wheelchair and three tiers of decoration. Prices follow a play day of about five minutes: a toy 80, fruit 200, a better bed 350, better bedding 700, a bookshelf 400, a stroller 400, a wheelchair 600, decoration 160, 350 and 550, a bigger house 2000. You start with 200, or more or less depending on how the story begins.
-- Gifts for visitors are bought on the time door screen, see [visitors.md](visitors.md).
+- The shop has two parts. The first is for the home. The second is gifts for visitors, 27 small and curious things from a cup of tea to a microscope; you can keep up to three of each in your bag, and give one by pressing and holding "give a gift" in a guest's ring, see [visitors.md](visitors.md).
 - They change a few numbers in a small way and add things to the house. Where each item appears is a table per house, `frontend/src/data/houses.js`, so a different house can place the same items in its own spots. No time limits, no discounts, and the game is complete without buying anything.
 
 ## Where it is defined
 
-- `G.efficiency`, `G.burden`, `G.capacity`, `G.householdBonus`, the nanny and shop tables are in `frontend/src/core/economy.js`.
+- `G.efficiency`, `G.burden`, `G.capacity`, `G.householdBonus`, and the shop table are in `frontend/src/core/economy.js`.
 - The tests are in `frontend/tests/logic_test.js`.

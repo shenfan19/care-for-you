@@ -187,7 +187,6 @@
     H('child12', '12岁孩子', 12, 'child', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
     H('woman25', '25岁女性', 25, 'sibling', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c58a8f' }),
     H('man25', '25岁男性', 25, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f7f9f' }),
-    Object.assign(H('nanny', '保姆', 40, 'parent', '她', { skin: 2, hair_style: 'bun', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#6a9aa8' }), { hidden: true }),
     H('classmate', '同学', 16, 'teen', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#6aa08f' }),
   );
   C.presets.push(

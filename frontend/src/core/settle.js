@@ -74,7 +74,7 @@
       if (s) line('self', { name: s[0] });
     }
     if (d.bought.length) line('bought', { item: d.bought[0] });
-    const people = G.activePeople().filter(p => p.person.kind === 'human' && !(p.person.help && p.person.help.role === 'nanny'));
+    const people = G.activePeople().filter(p => p.person.kind === 'human');
     const mood = people.length ? people.reduce((a, p) => a + p.state.mood, 0) / people.length : 0.6;
     if (!L.length) line('quiet');
     if (L.length < 6) line(mood >= 0.7 ? 'end_good' : mood < 0.45 ? 'end_low' : 'end_mid');

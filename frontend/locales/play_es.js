@@ -140,9 +140,8 @@ CY.i18n.said("es", {
   sor_juana: ["No estudio para saber más, sino para ignorar menos."],
   kahlo: ["Pinto mi propia realidad."]
 });
-CY.i18n.register("es", { "corner.rate_tip": "Los ingresos del hogar son lo que gana la casa por hora de juego mientras se trabaja. Más bienestar rinde más." });
+CY.i18n.register("es", { "corner.rate_tip": "La cifra con + son los ingresos del hogar por hora de juego mientras se trabaja. Más bienestar rinde más." });
 
-CY.i18n.register("es", { "corner.income": "Ingresos del hogar {n}/h" });
 CY.i18n.asks("es", {
   "archimedes": ["Dame un punto de apoyo y moveré la Tierra. ¿Me crees?", "Sí, pero primero dame una palanca lo bastante larga.", "No. Debatámoslo.", "¡Bien! Dibújame tu palanca y la calcularemos pulgada a pulgada."],
   "nightingale": ["Llevas mucho tiempo ocupado. Quien cuida de otros también debe dormir.", "Está bien, descansaré un rato.", "Cuando pase este tramo de trabajo.", "Yo guardo la lámpara por ti. Ve."],
@@ -169,3 +168,4 @@ CY.i18n.asks("es", {
   "trv.0": ["Lejos de casa, no echo de menos el paisaje, sino un plato de comida caliente. ¿Y tú?", "Lo mismo.", "Yo echo de menos el silencio.", "Cada uno tiene su propia añoranza. Las dos merecen guardarse."],
   "trv.1": ["¿Has pensado alguna vez que esta casa es el camino más largo que has recorrido?", "No, pero suena acertado.", "Sí, lo recorro cada día.", "Así es. Los viajes más largos a menudo no salen de la puerta."]
 });
+CY.i18n.register("es", { "shop.sec_home": "Para la casa", "shop.sec_gifts": "Regalos para los visitantes", "shop.gift_note": "Un regalo solo cuenta si es lo que el visitante necesita de verdad. Hasta tres de cada uno. Para dárselo, mantén pulsado «Hacer un regalo» en el círculo del visitante.", "gift.empty": "La bolsa está vacía. Toca el contador de dinero y visita la sección de regalos de la tienda." });

@@ -155,7 +155,7 @@
     G.tpl.system = (await store.readYaml('templates/system.yaml')) || {};
     G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
     G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
-    delete G.world.inv; delete G.world.nanny;   /* 旧版的物品和保姆，新版只留钱和 nanny_on */
+    delete G.world.inv; delete G.world.nanny; delete G.world.nanny_on;   /* 旧版的物品和保姆，保姆已经取消 */
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY || 200;
     delete G.world.tasks;
     if (G.loadCalendar) await G.loadCalendar();
@@ -168,6 +168,8 @@
     G.journal.you = {};
     for (const f of files.filter(f => f.startsWith('me/journal/'))) { const j = await store.readYaml(f); G.journal.you[f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || []; }
     await loadContent(files);
+    /* 保姆已经取消：旧存档里请过的保姆，整个人从家里拿掉 */
+    for (const p of G.people.filter(x => x.person.help && x.person.help.role === 'nanny')) await G.deletePerson(p.id);
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
 
@@ -293,7 +295,6 @@
   const rateOf = (d, stage) => (typeof d.rate === 'number' ? d.rate : (d.rate && (d.rate[stage] !== undefined ? d.rate[stage] : d.rate.default)) || 0.05);
   G.needsOf = p => {
     const out = {};
-    if (p.person.help && p.person.help.role === 'nanny') return out;   /* 保姆来上班，自己没有需求 */
     const add = (defs) => { for (const k in defs || {}) { const d = defs[k]; if ((!d.stages || d.stages.includes(G.stage(p))) && !(d.min_age && G.age(p) < d.min_age)) out[k] = Object.assign({}, d, { rateNow: rateOf(d, G.stage(p)) }); } };
     add(p.species.needs);
     for (const c of p.person.conditions || []) add((G.tpl.conditions[c] || {}).needs);
@@ -603,7 +604,7 @@
         const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
-      if (!driven(p, 'mood') && !(p.person.help && p.person.help.role === 'nanny')) {
+      if (!driven(p, 'mood')) {
         let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset + shop.mood;
         s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * 0.5));
       }
@@ -707,7 +708,7 @@
 
   function fire() {
     const awake = p => !G.isSleeping(p);
-    const free = G.activePeople().filter(p => !p.person.visitor && !G.req[p.id] && awake(p) && p !== G.protagonist() && !(p.person.help && p.person.help.role === 'nanny'));
+    const free = G.activePeople().filter(p => !p.person.visitor && !G.req[p.id] && awake(p) && p !== G.protagonist());
     if (!free.length) return;
     const needy = free.filter(p => G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
     if (needy.length && Math.random() < 0.65) {

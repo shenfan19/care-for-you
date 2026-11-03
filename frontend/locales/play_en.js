@@ -25,5 +25,5 @@ CY.i18n.register('en', {
   'shop.cabinet': 'Display cabinet', 'shop.cabinet_fx': 'Stands in the living room and holds the keepsakes guests leave behind. Hover over a keepsake to see who left it.',
 });
 CY.i18n.register("en", { "title.uncle": "Uncle", "title.aunt": "Aunt" });
-CY.i18n.register("en", { "corner.rate_tip": "Household income is what the home earns per game hour while working. A higher comfort level earns more." });
-CY.i18n.register("en", { "corner.income": "Household income {n}/h" });
+CY.i18n.register("en", { "corner.rate_tip": "The + figure is household income per game hour while working. A higher comfort level earns more." });
+CY.i18n.register("en", { "shop.sec_home": "For the home", "shop.sec_gifts": "Gifts for guests", "shop.gift_note": "A gift only counts when it is what the guest truly needs. Keep up to three of each. To give one, press and hold Give a gift in the guest's ring.", "gift.empty": "Your bag is empty. Tap the money counter and visit the gift section of the shop." });
