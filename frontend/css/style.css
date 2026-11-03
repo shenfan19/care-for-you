@@ -296,7 +296,8 @@ header { align-items:center; }
 /* 减少动态效果：不要慢慢滑动和起伏 */
 @media (prefers-reduced-motion: reduce) {
   .room.iso .cx, .room.iso .cx.lead, .room.iso .cx.player { transition:none; }
-  .room.iso .cx.walking .body, .scene svg .leaf, { animation:none; }
+  .room.iso .cx.walking .body, .scene svg .leaf { animation:none; }
+  *, *::before, *::after { animation:none !important; }   /* 系统要求减少动态时，所有循环动画都停：风丝，叶子，呼吸，眼泪，红点 */
 }
 
 .cardtext { max-height:55vh; overflow:auto; background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:8px 10px; font-size:12px; line-height:1.45; white-space:pre-wrap; margin:0; }

@@ -143,6 +143,17 @@ const FAMILIES = {
   console.log('- 发生的事按类型：' + Object.entries(types).map(([k, v]) => k + ' ' + v).join('，'));
   if (process.env.CARE_SIM_REQS) console.log('- 打扰明细：' + Object.entries(reqBy).sort((a, b) => b[1] - a[1]).slice(0, 14).map(([k, v]) => k + ' ' + v).join('，'));
   console.log('- 不变量：' + (bad.length ? '失败 ' + bad.slice(0, 6).join('，') : '通过'));
+  /* 阈值：急需占比目标 20%（评估表 N8，原建议 10%；内置后端家庭场景下不同种子在 16% 到 37% 之间，所以只提醒），每游戏小时被打扰不超过 4 次（E10）。
+     每游戏小时的次数是每小时次数除以倍速。360 倍下玩家每 90 秒才看一眼，相当于九个游戏小时不管，急需占比没有意义，只查不变量（T9）。CARE_CHECK=1 时不达标就以非零状态退出 */
+  {
+    const spd = +process.env.CARE_SPEED || 1, urgent = stat.urgentTicks / Math.max(1, stat.awakePersonTicks), perGameHour = stat.reqs / hours / spd;
+    const fails = [];
+    const warn = kind === 'family' && spd <= 24 && urgent > 0.2 ? '；急需占比 ' + pct(urgent) + ' 高于 20%，只提醒不判失败，不同种子下在 16% 到 37% 之间波动，评估表建议的 10% 还没有达到' : '';
+    if (spd <= 24 && perGameHour > 4) fails.push('每游戏小时被打扰 ' + perGameHour.toFixed(1) + ' 次超过 4 次');
+    if (bad.length) fails.push('不变量失败');
+    console.log('- 阈值：' + (fails.length ? '不达标 ' + fails.join('，') : '达标') + `（每游戏小时被打扰 ${perGameHour.toFixed(1)} 次）` + warn);
+    if (process.env.CARE_CHECK === '1' && fails.length) process.exitCode = 1;
+  }
   console.log('- 各人的平均最高需求：' + Object.keys(needSum).map(n => n + ' ' + (needSum[n] / needN[n]).toFixed(2)).join('，'));
   const n = Math.max(1, stat.awakePersonTicks);
   console.log(`- 清醒时平均心情 ${(stat.moodSum / n).toFixed(3)}，平均虚弱度 ${(stat.frailSum / n).toFixed(3)}，平均需求 ${(stat.needMeanSum / n).toFixed(3)}`);

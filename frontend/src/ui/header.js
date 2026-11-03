@@ -43,6 +43,8 @@
     m.onclick = e => { if (e.target === m) U.closeDialog(); };
     return m.firstChild;
   };
+  /* 键盘：Esc 关掉当前弹窗，回到游戏 */
+  if (typeof document !== 'undefined') document.addEventListener('keydown', e => { if (e.key === 'Escape') { const m = $('modal'); if (m && m.style.display !== 'none' && m.innerHTML) { e.preventDefault(); U.closeDialog(); } } });
   U.closeDialog = function () { const m = $('modal'); m.style.display = 'none'; m.innerHTML = ''; };
 
   /* ---------- 顶栏：经历了多少时间，现在是几点 ---------- */

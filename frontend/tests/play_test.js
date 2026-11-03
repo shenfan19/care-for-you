@@ -242,6 +242,32 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.toastGapUntil = 0; for (const id in G.toast) G.toast[id].until = 0; G.toastTick();
     check('前一个说完后排队的冒出来', G.toastQ.length < ps.length - 1);
   }
+
+  /* 存档被手改过：导入时能看出来 */
+  {
+    G.world.money = 321; G._calDirty = true; G.save(true); await new Promise(r => setTimeout(r, 80));
+    const A = CY.archive, ok = await A.exportSave(), good = await A.inspect(await ok.blob.arrayBuffer());
+    check('导出的存档里每个文件导入时都被接受', good.rejected.length === 0, good.rejected.join()); check('没改过的存档导入时不提示已编辑', good.ok && !good.edited, JSON.stringify([G.world.sig, G.computeSig(), good.files['world.yaml'].match(/sig: .*/), good.files['world.yaml'].match(/money: .*/), (good.files['calendar.yaml'] || '').length, G.cal.days.length]));
+    const files = Object.assign({}, good.files); files['world.yaml'] = files['world.yaml'].replace(/money: .*/, 'money: 999999');
+    const enc = new TextEncoder(), blob = CY.store.zip(Object.keys(files).map(n => ({ name: 'careforyou-data/' + n, data: enc.encode(files[n]) })));
+    const bad = await A.inspect(await blob.arrayBuffer());
+    check('手改了钱的存档导入时提示已编辑', bad.ok && bad.edited === true);
+  }
+
+  /* 帮忙概率表：奶奶身体好帮宝宝 60%，不好 20%，爸妈 80%，心情只小幅修正 */
+  {
+    const ids = {}; for (const a of ['grandma', 'grandpa', 'mom']) ids[a] = await G.createPerson({ arch: a, name: a });
+    const babyArch = CY.content.archetypes.find(a => a.species === 'human' && a.age < 1); ids.baby = await G.createPerson({ arch: babyArch.id, name: 'b2' });
+    await G.load(); const by = a => G.people.find(p => p.id === ids[a]), baby2 = by('baby');
+    for (const a in ids) { const h = by(a); h.state.mood = 0.5; h.state.needs = {}; h.state.frailty = 0.2; }
+    const ch = (a, from) => G.respondChance({ kind: 'care', from: from.id, to: by(a).id });
+    check('奶奶身体好时帮宝宝约六成', Math.abs(ch('grandma', baby2) - 0.6) < 0.02, ch('grandma', baby2).toFixed(3));
+    by('grandma').state.frailty = 0.7;
+    check('奶奶身体不好时帮宝宝约两成', Math.abs(ch('grandma', baby2) - 0.2) < 0.02, ch('grandma', baby2).toFixed(3));
+    check('妈妈在家帮宝宝约八成', Math.abs(ch('mom', baby2) - 0.8) < 0.02, ch('mom', baby2).toFixed(3));
+    by('mom').state.needs.hunger = 0.7;
+    check('自己有急需时算身体不好', Math.abs(ch('mom', baby2) - 0.4) < 0.02, ch('mom', baby2).toFixed(3));
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

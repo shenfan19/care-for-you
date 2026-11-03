@@ -671,7 +671,9 @@
   /* 说话气泡不能太密：画面上说话气泡加打开的请求气泡合计不超过上限，超出的排队，前一个出现或消失后隔几秒再冒出来。哭闹和揭示这类要紧的不排队 */
   const bub = () => (G.tpl && G.tpl.system && G.tpl.system.bubbles) || {};
   const liveToasts = () => Object.values(G.toast).filter(x => x.kind !== 'cry').length;
-  const openReqs = () => Math.min(2, Object.values(G.req).filter(r => !r.folded).length);
+  const narrow = () => typeof document !== 'undefined' && !!(CY.ui && CY.ui.room && CY.ui.room.clientWidth && CY.ui.room.clientWidth < 560);   /* 窄屏上界面只开一个请求气泡，说话气泡的上限也只有一个 */
+  const cap = () => Math.max(0, (narrow() ? 1 : bub().total || 2) - openReqs());
+  const openReqs = () => Math.min(narrow() ? 1 : 2, Object.values(G.req).filter(r => !r.folded).length);
   const showToast = (p, text, kind) => { G.toast[p.id] = { text, kind, until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : kind === 'self' ? 7000 : 9000) }; };
   const gapMs = () => { const g = bub().gap_seconds || [1.5, 3.5]; return (g[0] + Math.random() * (g[1] - g[0])) * 1000; };
   G.toastQ = []; G.toastGapUntil = 0;
@@ -679,13 +681,13 @@
     kind = kind || 'soft';
     if (kind === 'cry' || kind === 'reveal' || !bub().total) { showToast(p, text, kind); return; }
     const now = Date.now();
-    if (liveToasts() < Math.max(1, bub().total - openReqs()) && now >= G.toastGapUntil && !G.toastQ.length) { showToast(p, text, kind); G.toastGapUntil = now + gapMs(); return; }
+    if (liveToasts() < cap() && now >= G.toastGapUntil && !G.toastQ.length) { showToast(p, text, kind); G.toastGapUntil = now + gapMs(); return; }
     G.toastQ = G.toastQ.filter(x => x.p !== p); G.toastQ.push({ p, text, kind, at: now });
   };
   G.toastTick = () => {
     const now = Date.now(), ttl = (bub().queue_seconds || 25) * 1000;
     G.toastQ = G.toastQ.filter(x => now - x.at < ttl && G.get(x.p.id) && x.p.person.active !== false);
-    while (G.toastQ.length && liveToasts() < Math.max(1, (bub().total || 2) - openReqs()) && now >= G.toastGapUntil) {
+    while (G.toastQ.length && liveToasts() < cap() && now >= G.toastGapUntil) {
       const x = G.toastQ.shift(); showToast(x.p, x.text, x.kind); G.toastGapUntil = now + gapMs();
     }
   };

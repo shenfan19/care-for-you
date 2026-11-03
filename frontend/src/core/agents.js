@@ -63,15 +63,25 @@
   }
 
   /* ---------- 对方此刻愿不愿意：看自己的状态 ---------- */
+  /* 帮忙概率表：帮手是谁（卡片或年龄阶段），被帮的是谁（宝宝，宠物，其他），帮手身体好不好，查 system.yaml 里的表；表里没有的组合用 base */
+  const targetKind = p => (!G.isHuman(p) ? 'pet' : ['infant', 'toddler'].includes(G.stage(p)) ? 'baby' : 'other');
+  G.helpRow = (helper, target) => {
+    const tk = targetKind(target), arch = helper.person.archetype || helper.person.card || '', st = G.stage(helper);
+    return (((cfg().respond || {}).table) || []).find(r => r.target === tk && ((r.helper.arch && r.helper.arch.includes(arch)) || (r.helper.stage && r.helper.stage.includes(st)))) || null;
+  };
+  G.helpWell = p => { const R = cfg().respond || {}; return p.state.frailty < (R.well_frailty === undefined ? 0.5 : R.well_frailty) && G.maxNeed(p) <= (R.well_need === undefined ? 0.6 : R.well_need); };
   function respondChance(e) {
     const R = cfg().respond || {}, to = G.get(e.to);
     if (!eligibleTo(to)) return 0;
     if (e.kind === 'self') return R.self === undefined ? 0.5 : R.self;
     if (e.kind === 'go' && e.to === e.from) return (cfg().want || {}).respond_alone === undefined ? 0.6 : cfg().want.respond_alone;
     if (G.maxNeed(to) > (R.own_need_block || 0.8)) return 0;
-    const mw = R.mood_weight === undefined ? 0.6 : R.mood_weight;
-    return clamp((R.base === undefined ? 0.7 : R.base) * (1 - mw / 2 + mw * to.state.mood), 0, 1);
+    const row = e.kind === 'care' && G.get(e.from) ? G.helpRow(to, G.get(e.from)) : null;
+    const mw = row ? (R.mood_weight_table === undefined ? 0.3 : R.mood_weight_table) : (R.mood_weight === undefined ? 0.6 : R.mood_weight);
+    const base = row ? (G.helpWell(to) ? row.well : row.poor) : (R.base === undefined ? 0.7 : R.base);
+    return clamp(base * (1 - mw / 2 + mw * to.state.mood), 0, 1);
   }
+  G.respondChance = respondChance;
   const cooldown = e => S.declined.push({ from: e.from, to: e.to, key: e.need || e.action, until: Date.now() + ((cfg().respond || {}).decline_cooldown_seconds || 90) * 1000 });
   /* 走过去：不在同一个房间就先走到对方那里 */
   function approach(e) {

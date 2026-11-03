@@ -146,9 +146,9 @@ CY.i18n.register("zh-TW", {
   "start.next": "繼續",
   "start.house_title": "來到老屋",
   "start.house_p1": "你回到了老屋。屋裡住著你想照顧的人，你在家裡工作，也在家裡照看他們。",
-  "start.house_p2": "院子裡有一道發光的門，不知什麼時候出現的。門輕輕一響，{name}走了出來，手裡提著一盞油燈。",
+  "start.house_p2": "院子的大門輕輕一響，{name}走了進來，手裡提著一盞油燈。",
   "start.house_say": "“這裡真是個有趣的地方。我只是借住一會兒，很快就會離開。”",
-  "start.house_p3": "往後，還會有人從這道門裡走出來，在家裡住一兩天。",
+  "start.house_p3": "往後，還會有人從這道大門走進來，在家裡住一兩天。",
   "shop.sec_bed": "床位",
   "shop.bed_note": "床位決定家裡最多住幾個人，家人和穿越者都佔一張，很貴，要慢慢攢。嬰兒睡嬰兒床，不佔床位。",
   "shop.bed_slot": "加一張床位",
@@ -912,3 +912,5 @@ CY.i18n.register("zh-TW", {
   "visitor.sun_simiao.hint.2": "人命至重，有貴千金，一方濟之，德逾於此。",
   "visitor.galen.hint.2": "最好的醫生，也是哲學家。"
 });
+CY.i18n.register("zh-TW", {"import.edited": "這份存檔裡的數字和存檔時記下的校驗對不上，說明被手動改過。可以匯入，之後分享卡片上會標出「已編輯」。"});
+CY.i18n.register("zh-TW", {"lbl.play.condition_models": "疾病模型積分"});

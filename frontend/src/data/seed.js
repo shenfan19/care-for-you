@@ -306,7 +306,7 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
-  F['templates/system.yaml'] = `version: 3
+  F['templates/system.yaml'] = `version: 4
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
@@ -336,6 +336,16 @@ agents:
     base: 0.7                 # 接收者响应的基础几率
     mood_weight: 0.6          # 心情的影响，几率乘 (1 - 0.3 + 0.6 × 心情)，心情好更愿意
     own_need_block: 0.8       # 自己的需求超过这个值就不响应别人
+    mood_weight_table: 0.3    # 用帮忙概率表时，心情只做小幅修正
+    well_frailty: 0.5         # 虚弱度低于这个值，并且自己没有急需，算身体好
+    well_need: 0.6            # 自己最急的需求不超过这个值才算没有急需
+    table:                    # 帮忙概率表：帮手的身份，被帮的对象，身体好和不好时愿意帮的几率，从上到下第一行匹配的生效，没有匹配的用 base
+      - { helper: { arch: [grandma] }, target: baby, well: 0.6, poor: 0.2 }
+      - { helper: { arch: [grandpa] }, target: baby, well: 0.5, poor: 0.15 }
+      - { helper: { arch: [dad, mom, husband, wife, man25, woman25] }, target: baby, well: 0.8, poor: 0.4 }
+      - { helper: { stage: [teen] }, target: baby, well: 0.3, poor: 0.15 }
+      - { helper: { stage: [elder] }, target: pet, well: 0.4, poor: 0.15 }
+      - { helper: { stage: [teen, adult] }, target: pet, well: 0.5, poor: 0.25 }
     self: 0.5                 # 发给自己时的响应几率
     ttl_seconds: 120          # 请求多久没响应就作废
     decline_cooldown_seconds: 90   # 被拒绝后，同一对人多久内不再发同一个请求

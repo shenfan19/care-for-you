@@ -125,6 +125,7 @@
       const m = info.manifest;
       out.innerHTML = `<div class="card"><div>${esc(t('import.found', { n: info.people.length, names: info.people.map(p => p.name).join(t('sep.list')) || '-' }))}</div>
         ${m ? `<div class="mute">${esc(t('import.manifest', { v: m.version, at: (m.created || '').slice(0, 16).replace('T', ' ') }))}</div>` : ''}
+        ${info.edited ? `<div class="warn">${esc(t('import.edited'))}</div>` : ''}
         ${info.rejected.length ? `<div class="warn">${esc(t('import.rejected', { n: info.rejected.length }))}</div>` : ''}
         <div class="row" style="margin-top:6px"><label><input type="radio" name="imode" value="merge" checked> ${esc(t('import.merge'))}</label><label><input type="radio" name="imode" value="replace"> ${esc(t('import.replace'))}</label></div>
         <label class="row"><input type="checkbox" id="ibak" checked> ${esc(t('import.backup'))}</label>

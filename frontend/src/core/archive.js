@@ -12,7 +12,7 @@
     'src/core/meta.js', 'src/core/i18n.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js', 'src/data/content.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'src/data/seed.js', 'src/data/lm_seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/arcs.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/household.js', 'src/core/agents.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/local_plan.js', 'src/backend/http.js', 'src/backend/lm.js', 'src/backend/index.js', 'src/backend/api.js', 'src/world/avatar.js', 'src/world/world.js', 'assets/iso/manifest.js', 'src/data/houses.js', 'src/world/iso.js', 'src/world/scenes.js', 'src/ui/ui_room.js', 'src/ui/header.js', 'src/ui/feed.js', 'src/ui/people_add.js', 'src/ui/people.js', 'src/ui/life.js', 'src/ui/dialogs.js', 'src/ui/share.js', 'src/ui/sound.js', 'src/ui/main.js',
     'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js'];
 
-  const DATA_OK = /^(people\/[^/]+\/(person|state|story|sayings)\.yaml|people\/[^/]+\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|world\.yaml|README\.txt)$/;
+  const DATA_OK = /^(people\/[^/]+\/(person|state|story|sayings)\.yaml|(people\/[^/]+|me)\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|world\.yaml|calendar\.yaml|README\.txt)$/;
   const ROOT = 'careforyou-data/';
   const stamp = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`; };
 
@@ -86,7 +86,13 @@
       let name = id; try { name = jsyaml.load(files[`people/${id}/person.yaml`] || '').name || id; } catch (x) {}
       return { id, name };
     });
-    return { ok: true, files, rejected, manifest, people };
+    /* 存档里的关键数字和存盘时写下的校验对不上，说明被手改过：导入时提醒，分享卡片上会标「已编辑」 */
+    let edited = false;
+    try {
+      const w = jsyaml.load(files['world.yaml'] || '') || {}, c = jsyaml.load(files['calendar.yaml'] || '') || {};
+      if (w.sig && w.sig !== CY.game.sigOf(w.money, Object.keys(w.souv || {}).length, (c.days || []).length)) edited = true;
+    } catch (x) {}
+    return { ok: true, files, rejected, manifest, people, edited };
   };
 
   /* mode: replace 用存档整体替换当前数据；merge 只加入当前没有的角色 */
