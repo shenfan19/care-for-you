@@ -9,6 +9,7 @@
   const typeName = k => (TYPES.includes(k) ? t('type.' + k) : k);
   U.typeName = typeName;
   const fmtT = ts => { const d = new Date(ts); return t('fmt.datetime', { m: d.getMonth() + 1, d: d.getDate(), hh: String(d.getHours()).padStart(2, '0'), mm: String(d.getMinutes()).padStart(2, '0') }); };
+  const fmtC = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');   /* 游戏里的几点 */
   const view = { who: '', more: 40, quiet: false, tab: 'events', cwho: '', off: {} };
   const SERIES_COLORS = ['#c8794a', '#4f9bb3', '#7aa05a', '#b36ab0', '#d1a23b', '#6f7fc4', '#c4566b', '#4aa08a', '#8a7a66', '#e0864f'];
   const QUIET_HIDES = ['event', 'self'];
@@ -69,7 +70,7 @@
       return;
     }
     root.innerHTML = (curvesOn() ? tabs : `<h2>${esc(t('feed.title'))}</h2>`) + `<div class="chips">${chips}<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button></div>${stat}` +
-      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${esc(G.entryText(x.e))}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
+      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${esc(G.entryText(x.e))}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
       (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div>';
     root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });

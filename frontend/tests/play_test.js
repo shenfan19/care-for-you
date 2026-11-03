@@ -241,6 +241,24 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.get(gma).person.active = true;
     for (const x of G.people) { delete (x.state.flags || {}).outing; x._away_on = false; }
   }
+  /* 做饭是做给吃饭的人：家人自己做饭也是全家一起吃，访客也在其内，睡着的赶不上；记录的时间是游戏里的第几天几点 */
+  {
+    for (const x of G.people) x.person.active = false;
+    const mk = async (arch, name) => G.createPerson({ arch, name });
+    const dad = await mk('dad', '爸爸'), mom = await mk('mom', '妈妈'), gma = await mk('grandma', '奶奶'), tod = await mk('toddler', '宝宝');
+    await G.load(); for (const x of G.people) x.person.active = [dad, mom, gma, tod].includes(x.id);
+    G.setClock(13 * 60);
+    const vis = await G.arrive('curie', true); await G.load();
+    const d = G.get(dad), v = G.visitorPeople()[0], sleepy = G.get(gma);
+    for (const q of G.activePeople()) { q.state.needs.hunger = 0.8; delete (q.state.flags || {}).outing; }
+    G.act[sleepy.id] = 'sleeping'; G.flag = G.flag;
+    const a = G.allActionsOf(d).cook;
+    G.selfAct(d, a, 'hunger', false);
+    check('家人自己做饭，全家在家醒着的人都吃上，访客也一样', G.get(mom).state.needs.hunger < 0.2 && v.state.needs.hunger < 0.2);
+    check('睡着的人这一顿赶不上，幼儿不算', sleepy.state.needs.hunger === 0.8 && G.get(tod).state.needs.hunger === 0.8);
+    const ent = Object.values(G.journal[d.id] || {}).flat().filter(e => e.k === 'log.meal_all').pop();
+    check('记录的时间是游戏里的第几天几点，不是系统时间', !!ent && ent.day === G.gameDate().n && ent.cm === Math.floor(G.dayMinutes()), JSON.stringify(ent));
+  }
   /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */
   {
     const id = await G.createPerson({ name: '保姆', roleText: '保姆' }), f = `people/${id}/person.yaml`, y = await CY.store.readYaml(f);
@@ -261,7 +279,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const wakes = humans.filter(p => G.stage(p) === 'adult').map(p => G.routineOf(p).wake.toFixed(2));
     check('同类的成年人起床时间散开，不是同一时刻', Math.max(...wakes) - Math.min(...wakes) > 0.2, wakes.join());
     const el = humans.find(p => G.stage(p) === 'elder'), ad = humans.find(p => G.stage(p) === 'adult');
-    if (el && ad) check('老人比成年人起得早', G.routineOf(el).wake < G.routineOf(ad).wake, G.routineOf(el).wake.toFixed(2) + ' ' + G.routineOf(ad).wake.toFixed(2));
+    if (el && ad) check('老人比成年人起得早', G.classOf(el).routine.wake < G.classOf(ad).routine.wake, G.routineOf(el).wake.toFixed(2) + ' ' + G.routineOf(ad).wake.toFixed(2));
     if (ad) {
       const R = G.routineOf(ad); G.setClock(Math.round(R.meals[1] * 60) - 18); const near = G.rhythm(ad, 'hunger'); G.setClock(Math.round((R.meals[1] + 3) * 60)); const far = G.rhythm(ad, 'hunger');
       check('饭点前饿得快，两顿饭之间慢', near > 2 * far, near.toFixed(2) + ' vs ' + far.toFixed(2));

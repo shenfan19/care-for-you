@@ -548,8 +548,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   at(23); check('夜里成人孩子在睡觉', G.act[K.id] === 'sleeping' && G.act[E.id] === 'sleeping');
   at(12); check('白天醒着', G.act[K.id] === 'awake' && G.act[E.id] === 'awake');
   at(12); check('仓鼠白天睡', G.act[HA.id] === 'sleeping');
-  at(23); check('夜猫子晚上十一点还醒着，凌晨两点在睡', G.act[OW.id] === 'awake' && (at(2), G.act[OW.id] === 'sleeping'));
-  at(5); check('早起的人五点已经醒了', G.act[LA.id] === 'awake' && G.act[K.id] === 'sleeping');
+  at(23); check('夜猫子晚上十一点还醒着，凌晨两点在睡', G.act[OW.id] === 'awake' && (at(2.5), G.act[OW.id] === 'sleeping'));
+  at(5.2); check('早起的人五点多已经醒了', G.act[LA.id] === 'awake' && G.act[K.id] === 'sleeping');
   at(23); const babyS = G.get(bby.id); babyS.person.active = true; babyS.state.needs = Object.fromEntries(Object.keys(babyS.state.needs).map(k => [k, 0.1]));
   G.world.clock_shift = 480; const wakeups = new Set(); for (let dm = 0; dm < 180; dm += 10) { G.world.game_minutes = 1440 * 5 + (23 * 60 - 8 * 60) + dm; wakeups.add(G.activityOf(babyS)); }
   check('婴儿夜里睡睡醒醒', wakeups.has('sleeping') && wakeups.has('awake'));

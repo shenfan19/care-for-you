@@ -495,7 +495,8 @@
   G.log = function (pid, type, text, meta) {
     const d = new Date(), mk = monthKey(d);
     const arr = ((G.journal[pid] = G.journal[pid] || {})[mk] = G.journal[pid][mk] || []);
-    arr.push(Object.assign({ t: d.toISOString(), day: G.clock().d + 1, type, text }, meta ? { k: meta.k, a: meta.a } : {}));
+    /* t 是现实时间，只用来排先后；day 和 cm 是游戏里的第几天和几点几分，界面显示这两个 */
+    arr.push(Object.assign({ t: d.toISOString(), day: G.gameDate().n, cm: Math.floor(G.dayMinutes()), type, text }, meta ? { k: meta.k, a: meta.a } : {}));
     G.dirty.add(`j|${pid}|${mk}`);
     if (type === 'event' && G.get(pid)) G.pop(pid, 'event', '✨');
     G.save();
@@ -575,6 +576,7 @@
   /* 角色自己动手：效果打折，行动记进日志 */
   function selfAct(p, a, need, offline) {
     applyEffects(p, a, 0.7);
+    if (a.household && !offline) G.shareMeal(p, a, 1);   /* 家人自己做饭，也是全家一起吃 */
     p.state.mood = clamp(p.state.mood + 0.02);
     p.story.self_total = (p.story.self_total || 0) + 1;
     const lk = CY.i18n.hasOwn('selfact.' + a.id) ? 'selfact.' + a.id : 'log.self_did', la = { name: p.person.name, label: G.refAct(a, p) };
@@ -882,6 +884,19 @@
   }
 
   /* ---------- 玩家动作：现实模式长按立刻生效，故事模式点击要花掉游戏里的时间 ---------- */
+  /* 做饭是做给吃饭的人：在家的、醒着的、吃得了饭的人都吃上，访客也在其内，婴儿幼儿不算，睡着的人这一顿赶不上。
+     玩家做饭和家人自己做饭走同一处，家人自己做饭也是全家一起吃，不是只有做饭的人吃饱。返回有几位别人吃上了 */
+  G.shareMeal = (cook, a, scale) => {
+    const W0 = CY.world;
+    let n = 0;
+    for (const q of G.activePeople()) {
+      if (q === cook || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;
+      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v * scale);
+      n++;
+    }
+    G.logK(cook.id, 'event', 'log.meal_all', {});
+    return n;
+  };
   function applyAction(pid, actionId) {
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
     if (!a) return false;
@@ -889,16 +904,7 @@
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
     if (G.arcCare) G.arcCare(p, a);
-    if (a.household) {
-      /* 动作带 household：效果落到全家，在家的，醒着的，吃得了饭的人都一样，婴儿幼儿不算；做饭就是这样，不论给别人做还是自己做 */
-      const W0 = CY.world;
-      for (const q of G.activePeople()) {
-        if (q === p || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;
-        for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v);
-      }
-      G.logK(p.id, 'event', 'log.meal_all', {});
-      if (G.useGroceries) G.useGroceries(p, a);
-    }
+    if (a.household) { G.shareMeal(p, a, 1); if (G.useGroceries) G.useGroceries(p, a); }
     if (a.trip && G.startTrip) G.startTrip(a);
     if (a.at && p === G.protagonist() && CY.world && CY.world.doAt) CY.world.doAt(a);   /* 自己做的动作：去那个房间做，摆那个姿势 */
     if (a.outing && G.startOuting) {
