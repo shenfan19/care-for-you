@@ -375,6 +375,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('没有离线追算，也没有跳过夜里的函数', G.catchUp === undefined && G.skipToAfternoon === undefined);
     G.dayEndHooks.length = 0; G.dayStartHooks.pop();
   }
+  check('状态历史：每十五游戏分钟给每个人记一点，只在内存里，普通玩家看不到曲线', (() => { G.hist = {}; G._histB = undefined; const p0 = G.activePeople()[0]; G.advance(60, false); const h = G.hist[p0.id]; return !!h && h.length >= 1 && 'mood' in h[0] && 'needs' in h[0] && G.DEVTOOLS === false; })());
+  check('没有离线推进，也没有暂停', G.catchUp === undefined && G.isPaused() === false);
   G.DAY.enabled = false;   /* 其余测试按连续时间写，不走日终跳过 */
   check('倍速写坏了按 1，旧设置 real 也按 1', (G.cfg.time.speed = 'abc', G.speed() === 1) && (G.cfg.time.speed = 'real', G.speed() === 1 && G.daySource() === 'game'));
   { /* 切倍速不动时钟；校准和自己设几点只改钟点，不动陪伴天数 */

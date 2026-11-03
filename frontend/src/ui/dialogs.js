@@ -161,4 +161,45 @@
     dlg.querySelectorAll('.chip').forEach(b => b.onclick = () => U.aboutDialog(b.dataset.t));
     dlg.querySelector('#aclose').onclick = U.closeDialog;
   };
+
+  /* ---------- 开发者面板：只在开发者模式（网址带 ?devtools）里出现，调金钱，改时间，请来客，测试新功能 ----------
+     只给开发和评审用，文字不进语言包，直接写中文 */
+  U.devDialog = function () {
+    const V = CY.visitors, hh = () => { const m = G.dayMinutes(); return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(Math.floor(m % 60)).padStart(2, '0'); };
+    const cards = V ? V.order.map(id => `<option value="${id}">${esc(t('visitor.' + id + '.name'))}</option>`).join('') : '';
+    const dlg = U.dialog(`<h2 style="margin-top:0">开发者面板</h2><div class="mute">只在开发者模式里出现，普通玩家看不到。</div>
+      <h3>金钱　<span class="mute" id="dmNow"></span></h3>
+      <div class="row"><input id="dmv" type="number" step="10" style="width:100px"> <button data-d="money-set">设为</button><button data-d="money+100">+100</button><button data-d="money+1000">+1000</button><button data-d="money-100">−100</button></div>
+      <h3>时间　<span class="mute" id="dtNow"></span></h3>
+      <div class="row"><input id="dth" type="number" min="0" max="23.99" step="0.5" value="12" style="width:80px"> 点 <button data-d="clock-set">设为这个钟点</button><button data-d="ff1">快进 1 小时</button><button data-d="ff6">快进 6 小时</button><button data-d="ffmid">快进到午夜结算</button></div>
+      <div class="row">流速每现实分钟 <input id="dsp" type="number" min="1" step="10" style="width:80px"> 游戏分钟 <button data-d="speed">应用</button><button data-d="speed-reset">恢复默认</button></div>
+      <h3>穿越者</h3>
+      <div class="row"><select id="dvc">${cards}</select><button data-d="visit">让他现在来</button><button data-d="visit-next">客房空位立刻可来新客人</button><button data-d="visit-clear">送走所有来客</button></div>
+      <h3>角色</h3>
+      <div class="row"><button data-d="needs-low">全部需求设为 0.1</button><button data-d="needs-high">全部需求设为 0.8</button><button data-d="flags-clear">清除外出和住院标记</button><button data-d="afford">所有商品和床位可买</button></div>
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="dclose" class="primary">关闭</button></div>`, true);
+    const refresh = () => { dlg.querySelector('#dmNow').textContent = Math.round(G.world.money || 0); dlg.querySelector('#dtNow').textContent = '第' + G.gameDate().n + '天 ' + hh() + '，流速 ' + Math.round(G.speed()); dlg.querySelector('#dsp').placeholder = Math.round(G.speed()); };
+    const redraw = () => { refresh(); G.save(true); U.renderRoom(true); U.renderClock(); U.renderBar(); U.renderFeed(true); U.renderLife && U.renderLife(); };
+    const ff = async minutes => { let left = minutes; while (left > 0) { const c = Math.min(30, left); G.advanceDay(c, false); left -= c; } G.dayRoll(); };
+    refresh();
+    dlg.querySelectorAll('[data-d]').forEach(b => b.onclick = async () => {
+      const a = b.dataset.d, num = id => parseFloat(dlg.querySelector(id).value);
+      if (a === 'money-set') { const v = num('#dmv'); if (isFinite(v)) G.world.money = v; }
+      else if (a.startsWith('money')) G.world.money = (G.world.money || 0) + (a === 'money-100' ? -100 : a === 'money+1000' ? 1000 : 100);
+      else if (a === 'clock-set') { const v = num('#dth'); if (isFinite(v)) { G.setClock(Math.round(v * 60)); G._dayN = G.gameDate().n; } }
+      else if (a === 'ff1') await ff(60);
+      else if (a === 'ff6') await ff(360);
+      else if (a === 'ffmid') await ff(1440 - G.dayMinutes() + 1);
+      else if (a === 'speed') { const v = num('#dsp'); if (isFinite(v) && v > 0) { G.cfg.time = G.cfg.time || {}; G.cfg.time.speed = String(v); await G.saveCfg(); } }
+      else if (a === 'speed-reset') { if (G.cfg.time) delete G.cfg.time.speed; await G.saveCfg(); }
+      else if (a === 'visit') { await G.arrive(dlg.querySelector('#dvc').value, true); await G.load(); U.afterPeopleChange(); }
+      else if (a === 'visit-next') { G.world.next_visit = 0; G.world.guest_full = false; G.maybeArrive(); }
+      else if (a === 'visit-clear') { for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id); U.afterPeopleChange(); }
+      else if (a === 'needs-low' || a === 'needs-high') { for (const p of G.activePeople()) for (const k in p.state.needs) p.state.needs[k] = a === 'needs-low' ? 0.1 : 0.8; }
+      else if (a === 'flags-clear') { for (const p of G.activePeople()) { G.clearFlag(p, 'outing'); G.clearFlag(p, 'hospital'); } }
+      else if (a === 'afford') G.world.money = Math.max(G.world.money || 0, 5000);
+      redraw();
+    });
+    dlg.querySelector('#dclose').onclick = U.closeDialog;
+  };
 })(globalThis.CY = globalThis.CY || {});

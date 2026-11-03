@@ -611,6 +611,18 @@
     G.bedCheck(p);
   };
 
+  /* 状态曲线用的历史：每 15 游戏分钟给每个人记一点需求、心情、虚弱度，只存在内存里，每人最多留 600 点，约六天半 */
+  G.HIST = { step: 15, keep: 600 }; G.hist = {};
+  function sampleHist() {
+    const gm = Math.floor(G.world.game_minutes), b = Math.floor(gm / G.HIST.step);
+    if (G._histB === b) return;
+    G._histB = b;
+    for (const p of G.activePeople()) {
+      const h = G.hist[p.id] = G.hist[p.id] || [];
+      h.push({ t: gm, mood: p.state.mood, frailty: p.state.frailty, needs: Object.assign({}, p.state.needs) });
+      if (h.length > G.HIST.keep) h.shift();
+    }
+  }
   function advance(gmin, offline) {
     if (gmin <= 0) return;
     const hours = gmin / 60, hp = hours * G.pace();   /* 需求、虚弱、自理按配速折算的小时算，钟面小时只管几点 */
@@ -651,6 +663,7 @@
         G.frailCross(p, was);
       }
     }
+    if (!offline) sampleHist();
     if (G.economyTick) G.economyTick(gmin, offline);
     if (!offline && G.arcTick) G.arcTick();
     if (!offline) G.driveTick(gmin);

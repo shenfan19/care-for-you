@@ -11,6 +11,8 @@
   G.dayRealMinutes = () => { const v = parseFloat((G.cfg.time || {}).day_minutes); return isFinite(v) && v > 0 ? v : G.DAY.minutes; };
   /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */
   G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
+  /* 开发者模式：网址带 ?devtools，或者带 ?dev= 的内部测试入口，界面上多出开发面板和状态曲线，普通玩家看不到 */
+  Object.defineProperty(G, 'DEVTOOLS', { get: () => { try { return G.DEV > 0 || /[?&]devtools/.test(globalThis.location && location.search || ''); } catch (e) { return false; } } });
   G.speed = () => { if (G.DEV) return G.DEV; const raw = (G.cfg.time || {}).speed; if (raw === undefined || raw === '') return (G.DAY.end - G.DAY.start) / G.dayRealMinutes(); const v = parseFloat(raw); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; };
   /* 游戏日历：新存档从现实当天开始，每过一个游戏日加一天；第几天，星期，节日都按它算 */
   G.gameDate = () => {
