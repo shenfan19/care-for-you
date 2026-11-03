@@ -47,7 +47,8 @@
       }).join('');
       svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;display:block;margin-top:8px;color:var(--ink)">${g}${lines}</svg>`;
     }
-    return `<div class="chips" style="margin-top:8px">${pchips}</div><div class="chips" style="margin-top:6px">${schips}</div>${svg}`;
+    const allBtns = `<button class="chip" data-call="1">${esc(t('curves.all'))}</button><button class="chip" data-call="0">${esc(t('curves.none'))}</button>`;
+    return `<div class="chips" style="margin-top:8px">${pchips}</div><div class="chips" style="margin-top:6px">${allBtns}${schips}</div>${svg}`;
   }
   U.renderFeed = function (force) {
     const all = entries(), list = all.filter(x => (!view.who || x.pid === view.who) && !(view.quiet && QUIET_HIDES.includes(x.e.type)));
@@ -66,6 +67,7 @@
       root.innerHTML = tabs + renderCurves(root);
       root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
       root.querySelectorAll('[data-cw]').forEach(b => b.onclick = () => { view.cwho = b.dataset.cw; U.renderFeed(true); });
+      root.querySelectorAll('[data-call]').forEach(b => b.onclick = () => { const p = G.get(view.cwho); const ks = p ? Object.keys(G.needsOf(p)).concat(['mood', 'frailty']) : []; for (const k of ks) view.off[k] = b.dataset.call === '0'; U.renderFeed(true); });
       root.querySelectorAll('[data-ck]').forEach(b => b.onclick = () => { view.off[b.dataset.ck] = !view.off[b.dataset.ck]; U.renderFeed(true); });
       return;
     }
