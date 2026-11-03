@@ -201,10 +201,10 @@
       const dir = fam ? '' : c._dir || (working ? 'ne' : face);
       c.classList.toggle('working', working && !c._dir);
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; }
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, G.isSleeping(p) && c._dir ? 'awake' : working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
-      c.classList.toggle('sleeping', G.isSleeping(p));
+      c.classList.toggle('sleeping', G.isSleeping(p) && !c._dir);
       c.classList.toggle('top', topId === p.id);
       c.classList.toggle('needy', G.needy(p));
       c.classList.toggle('sel', U.sel === p.id);
