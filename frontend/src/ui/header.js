@@ -57,7 +57,7 @@
     tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes);
     tm.title = '';
     tm.style.cursor = 'pointer';
-    tm.onclick = e => { e.stopPropagation(); U.timePopover(tm); };
+    tm.onclick = e => { e.stopPropagation(); U.calendarDialog(); };
     mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip');
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
     if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
@@ -97,37 +97,30 @@
       box.querySelectorAll('input').forEach(i => { i.oninput = save; i.onchange = save; });
     });
   };
-  /* 时间：现在几点，时间倍率，工作起止，二十四小时制或十二小时制。时刻用下拉选，十二小时制也看得懂，不依赖系统的区域设置 */
+  /* 时间：二十四小时制或十二小时制，工作时段。钟面只到小时，不显示分钟；工作时段只选小时。十二小时制也看得懂，不依赖系统的区域设置 */
   U.is12h = () => ini.bool(G.cfg, 'ui', 'clock_12h');
   U.fmtTime = mins => {
-    const h = Math.floor(mins / 60) % 24, m = mins % 60, mm = String(m).padStart(2, '0');
-    if (!U.is12h()) return String(h).padStart(2, '0') + ':' + mm;
-    return (h % 12 || 12) + ':' + mm + ' ' + (h < 12 ? t('pop.am') : t('pop.pm'));
+    const h = Math.floor(mins / 60) % 24;
+    if (!U.is12h()) return String(h).padStart(2, '0') + ':00';
+    return (h % 12 || 12) + ':00 ' + (h < 12 ? t('pop.am') : t('pop.pm'));
   };
   const opt = (v, label, cur) => '<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + label + '</option>';
-  const timeSel = (id, mins, step) => {
-    const h = Math.floor(mins / 60), m = mins % 60, h12 = U.is12h(), ms = [];
-    for (let i = 0; i < 60; i += step) ms.push(i); if (!ms.includes(m)) ms.push(m); ms.sort((x, y) => x - y);
+  const hourSel = (id, mins) => {
+    const h = Math.floor(mins / 60) % 24, h12 = U.is12h();
     const hours = h12 ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(v => opt(v, v, h % 12 || 12)).join('') : Array.from({ length: 24 }, (_, v) => opt(v, String(v).padStart(2, '0'), h)).join('');
-    return '<span class="tsel"><select id="' + id + 'h">' + hours + '</select>:<select id="' + id + 'm">' + ms.map(v => opt(v, String(v).padStart(2, '0'), m)).join('') + '</select>' + (h12 ? '<select id="' + id + 'p">' + opt(0, t('pop.am'), h < 12 ? 0 : 1) + opt(1, t('pop.pm'), h < 12 ? 0 : 1) + '</select>' : '') + '</span>';
+    return '<span class="tsel"><select id="' + id + 'h">' + hours + '</select>' + (h12 ? '<select id="' + id + 'p">' + opt(0, t('pop.am'), h < 12 ? 0 : 1) + opt(1, t('pop.pm'), h < 12 ? 0 : 1) + '</select>' : '') + '</span>';
   };
-  const readTime = (box, id) => { const h = +box.querySelector('#' + id + 'h').value, m = +box.querySelector('#' + id + 'm').value, pe = box.querySelector('#' + id + 'p'); return (pe ? (h % 12) + 12 * +pe.value : h) * 60 + m; };
-  U.timePopover = function (anchor) {
-    const wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-').map(x => { const q = x.split(':'); return +q[0] * 60 + +q[1]; });
-    U.popover(anchor, `<div class="prow2">${esc(t('pop.clock'))}${timeSel('pc', G.dayMinutes(), 1)}</div>
-      <div class="prow2">${esc(t('pop.work'))}<span>${timeSel('pf', wh[0], 5)} – ${timeSel('pt', wh[1], 5)}</span></div>
-      <div class="prow2"><button id="psync">${esc(t('pop.sync'))}</button></div>
-      <div class="prow2"><button id="pcal">📅 ${esc(t('cal.title'))}</button></div>
-      <div class="prow2">${esc(t('pop.format'))}<span class="seg"><button data-f="24" class="${U.is12h() ? '' : 'on'}">24</button><button data-f="12" class="${U.is12h() ? 'on' : ''}">12</button></span></div>`, box => {
-      /* 手动设了几点，就改用游戏里的时钟，否则昼夜一直跟着系统时间，设了也不生效 */
-      const clk = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.setClock(readTime(box, 'pc')); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); };
-      box.querySelectorAll('#pch, #pcm, #pcp').forEach(e => { e.onchange = clk; });
-      box.querySelector('#pcal').onclick = () => { U.closePopover(); U.calendarDialog(); };
-      box.querySelector('#psync').onclick = async () => { G.cfg.time = G.cfg.time || {}; G.cfg.time.daynight = 'game'; G.alignClock(); await G.saveCfg(); G.save(true); U.renderClock(); if (U.renderRoom) U.renderRoom(true); U.closePopover(); };
-      const wsave = async () => { const f = readTime(box, 'pf'), to = readTime(box, 'pt'); if (f < to) { G.cfg.economy = G.cfg.economy || {}; const z = v => String(Math.floor(v / 60)).padStart(2, '0') + ':' + String(v % 60).padStart(2, '0'); G.cfg.economy.work_hours = z(f) + '-' + z(to); await G.saveCfg(); } };
-      box.querySelectorAll('#pfh, #pfm, #pfp, #pth, #ptm, #ptp').forEach(e => { e.onchange = wsave; });
-      box.querySelectorAll('[data-f]').forEach(b => b.onclick = async () => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.clock_12h = b.dataset.f === '12' ? 'true' : 'false'; await G.saveCfg(); U.renderClock(); U.closePopover(); U.timePopover(anchor); });
-    });
+  const readHour = (box, id) => { const h = +box.querySelector('#' + id + 'h').value, pe = box.querySelector('#' + id + 'p'); return (pe ? (h % 12) + 12 * +pe.value : h) * 60; };
+  /* 点时间条打开日历，时间制式和工作时段的设置放在日历最上面 */
+  U.timeSettingsHtml = () => {
+    const wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-').map(x => +x.split(':')[0] * 60);
+    return `<div class="prow2">${esc(t('pop.format'))}<span class="seg"><button data-f="24" class="${U.is12h() ? '' : 'on'}">24</button><button data-f="12" class="${U.is12h() ? 'on' : ''}">12</button></span></div>
+      <div class="prow2">${esc(t('pop.work'))}<span>${hourSel('pf', wh[0])} – ${hourSel('pt', wh[1])}</span></div>`;
+  };
+  U.wireTimeSettings = (box, redraw) => {
+    const wsave = async () => { const f = readHour(box, 'pf'), to = readHour(box, 'pt'); if (f < to) { G.cfg.economy = G.cfg.economy || {}; const z = v => String(Math.floor(v / 60)).padStart(2, '0') + ':00'; G.cfg.economy.work_hours = z(f) + '-' + z(to); await G.saveCfg(); } };
+    box.querySelectorAll('#pfh, #pfp, #pth, #ptp').forEach(e => { e.onchange = wsave; });
+    box.querySelectorAll('[data-f]').forEach(b => b.onclick = async () => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.clock_12h = b.dataset.f === '12' ? 'true' : 'false'; await G.saveCfg(); U.renderClock(); redraw(); });
   };
 
   /* 房间下方的条不要了：添加，编辑，归档，删除，叫回离开的人，都在顶栏的角色里 */

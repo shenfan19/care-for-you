@@ -37,10 +37,12 @@
       const rec = sel && G.dayRecord(sel);
       const wd = [0, 1, 2, 3, 4, 5, 6].map(i => `<span class="mute">${esc(t(WD[i]))}</span>`).join('');
       const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('cal.title'))}</h2>
+        <div class="timeset">${U.timeSettingsHtml()}</div>
         <div class="row" style="justify-content:space-between"><button id="cPrev" aria-label="${esc(t('cal.prev'))}">‹</button><strong>${esc(t('cal.ym', { y: ym.y, m: ym.m }))}</strong><button id="cNext" aria-label="${esc(t('cal.next'))}">›</button></div>
         <div class="calgrid">${wd}${cells}</div>
         <div class="calbody">${days.length ? (rec ? `<h3>${esc(dateLine(rec.n))}</h3>${body(rec)}` : `<p class="mute">${esc(t('cal.empty'))}</p>`) : `<p class="mute">${esc(t('cal.none'))}</p>`}</div>
         <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="cClose" class="primary">${esc(t('cal.close'))}</button></div>`, true);
+      U.wireTimeSettings(dlg, draw);
       dlg.querySelector('#cPrev').onclick = () => { ym = ym.m === 1 ? { y: ym.y - 1, m: 12 } : { y: ym.y, m: ym.m - 1 }; draw(); };
       dlg.querySelector('#cNext').onclick = () => { ym = ym.m === 12 ? { y: ym.y + 1, m: 1 } : { y: ym.y, m: ym.m + 1 }; draw(); };
       dlg.querySelectorAll('.calday[data-n]').forEach(b => b.onclick = () => { sel = +b.dataset.n; draw(); });
