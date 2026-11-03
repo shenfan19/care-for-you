@@ -7,7 +7,7 @@
 
   G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
-  G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
+  G.PICK = { field: { med: 1.5, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
   G.guestBeds = () => 1 + (G.owned && G.owned('house2') ? 1 : 0);
   G.visitorPeople = () => G.activePeople().filter(p => p.person.visitor);
   G.souvenirs = () => (G.world.souv = G.world.souv || {});

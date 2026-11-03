@@ -105,7 +105,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('卡片编号和纪念品编号不重复', new Set(ids).size === ids.length && new Set(ids.map(i => V.cards[i].souvenir.id)).size === ids.length);
     check('每个礼物至少被一张卡片需要', Object.keys(V.GIFTS).filter(g => !ids.some(i => V.cards[i].wants.includes(g))).length <= 6, Object.keys(V.GIFTS).filter(g => !ids.some(i => V.cards[i].wants.includes(g))).join());
     check('同一件礼物不会被太多卡片需要，猜起来才有区分', Math.max(...Object.keys(V.GIFTS).map(g => ids.filter(i => V.cards[i].wants.includes(g)).length)) <= 8);
-    check('官方卡片五十张，地区和行业标签齐全', ids.filter(i => V.cards[i].official).length === 50 && ids.every(i => V.AREAS.includes(V.cards[i].area) && V.FIELDS.includes(V.cards[i].field)));
+    check('官方卡片不少于五十张，地区和行业标签齐全', ids.filter(i => V.cards[i].official).length >= 50 && ids.every(i => V.AREAS.includes(V.cards[i].area) && V.FIELDS.includes(V.cards[i].field)));
     {
       const cnt = k => ids.reduce((m, i) => (m[V.cards[i][k]] = (m[V.cards[i][k]] || 0) + 1, m), {});
       const ar = cnt('area'), fd = cnt('field');

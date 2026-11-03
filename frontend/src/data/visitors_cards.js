@@ -356,4 +356,55 @@
   GASK("pol.1", ["凡事先看大局，再看细节。你家今天的大局是什么？", "大家都平安。", "我还没想过。", "平安就够了。多少人一辈子都在追这两个字。"], ["See the whole first, then the details. What is the whole of your home today?", "That everyone is safe.", "I have not thought about it.", "Safe is enough. Many chase those two words all their lives."]);
   GASK("trv.0", ["出门在外，我最想念的不是风景，是一碗热饭。你呢？", "我也是。", "我想念安静。", "各有各的乡愁，都值得好好收着。"], ["Away from home, what I miss is not the scenery but a bowl of hot food. And you?", "The same.", "I miss quiet.", "Each has their own homesickness. Both are worth keeping."]);
   GASK("trv.1", ["你有没有想过，这间屋子是你走过的最远的一段路？", "没有，但听起来有道理。", "想过，我每天都在走。", "对，最长的旅程，往往不出门。"], ["Have you ever thought that this house is the farthest road you have walked?", "No, but it sounds right.", "Yes, I walk it every day.", "Quite so. The longest journeys often never leave the door."]);
+
+  /* ---------- 第四批：各个文明的医疗先驱，医疗是这个游戏的主题和背景 ---------- */
+  const OK4 = "2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯";
+  P("sun_simiao", ["孙思邈", "Sun Simiao"], ["唐代，中国", "Tang dynasty, China"], "China", 75, "他", ["c", "white", "bald", "none", "#7f9a8a"], [2, 3], ["seeds", "soup"],
+    [["他说看病不分贫富贵贱，来的都是病人，一视同仁。", "He said a healer should not tell rich from poor; everyone who comes is a patient, and all are treated alike."], ["他喜欢进山采药，说好药常常长在没人注意的地方。", "He liked to gather herbs in the hills and said the best medicines often grow where nobody looks."]],
+    ["🌿", "一页药方的复印件", "A copy of a page of prescriptions"], ["药不在贵，对症就好。", "A remedy need not be costly, only right for the illness."], "Encyclopaedia Britannica, Sun Simiao; Beiji Qianjin Yaofang (c. 652), and the essay on the sincerity of great physicians.",
+    ["他把种子在手心里掂了掂，说这一把能救不少人。", "He weighed the seeds in his palm and said this handful could help many people."], OK4);
+  P("heo_jun", ["许浚", "Heo Jun"], ["十六至十七世纪，朝鲜", "16th-17th century, Joseon Korea"], "Korea", 55, "他", ["c", "black", "short", "none", "#6f8aa0"], [2, 3], ["seeds", "blanket"],
+    [["他说药材要让普通人也认得出来，所以给每一味药都标上了本地的叫法。", "He said medicinal plants should be recognisable to ordinary people, so he gave each one its local name."], ["他说治病不如防病，平时把身体照顾好，才是最好的药。", "He said preventing illness beats curing it, and looking after the body every day is the best medicine."]],
+    ["📗", "一页药草图的复印件", "A copy of a page of herb drawings"], ["能让百姓看懂的医书，才是好医书。", "A medical book that ordinary people can read is a good one."], "Encyclopaedia Britannica and UNESCO Memory of the World, Heo Jun; Donguibogam (1613).",
+    ["他把毯子盖在膝上，点点头说，这样就暖和了。", "He laid the blanket over his knees and nodded; now it was warm."], OK4);
+  P("hanaoka", ["华冈青洲", "Hanaoka Seishu"], ["江户时代，日本", "Edo period, Japan"], "Japan", 55, "他", ["c", "black", "short", "none", "#8a7a6a"], [1, 2], ["gloves", "aspirin"],
+    [["他说他花了许多年配一种让人睡着的药，要先确认安全，才敢用在病人身上。", "He said he spent many years preparing a draught that lets a patient sleep, and would only use it once it was safe."], ["他说动手之前，先要让病人不害怕。", "He said that before the hands begin, the patient must first stop being afraid."]],
+    ["📝", "一页配方笔记的复印件", "A copy of a page of formula notes"], ["让人不疼，是医者的第一份心意。", "To spare a person pain is a healer's first kindness."], "Encyclopaedia Britannica, Hanaoka Seishu; general anaesthesia used in surgery in 1804.",
+    ["他戴上看了看，说手指暖了，心就稳了。", "He put them on and said that once the fingers are warm, the mind is steady."], OK4);
+  P("charaka", ["遮罗迦", "Charaka"], ["古印度，传统上被认为是《遮罗迦本集》的作者", "Ancient India, traditionally the author of the Charaka Samhita"], "India", 55, "他", ["e", "gray", "short", "none", "#d1b25a"], [2, 3], ["soup", "blanket"],
+    [["他说医生要常常问病人：吃了什么，睡得怎么样，心里想些什么。", "He said a physician should ask patients again and again: what have you eaten, how have you slept, what is on your mind."], ["他说好医生要像朋友一样陪在病人身边。", "He said a good physician stays beside the patient like a friend."]],
+    ["📜", "一页问诊要点的复印件", "A copy of a page of consultation notes"], ["多问一句，胜过多开一方。", "One more question is worth more than one more prescription."], "Encyclopaedia Britannica, Charaka; the Charaka Samhita. Dates and authorship are debated, so the card only states what the text is traditionally known for.",
+    ["他捧着热汤，说先暖了身子，才好说话。", "He held the hot soup and said one should warm up before talking."], "2026-11-02 AI初核通过，待用户终审：年代与作者有争议，卡片只写传统说法");
+  P("razi", ["拉齐", "Al-Razi"], ["九至十世纪，波斯与巴格达", "9th-10th century, Persia and Baghdad"], "Persia", 55, "他", ["d", "gray", "short", "none", "#7a6a9a"], [2, 3], ["microscope", "spectacles"],
+    [["他说他把每个病人的情况都写下来，一个病例胜过一本书。", "He said he wrote down every patient's case, and one case is worth more than a book."], ["他说面对病人，要信自己的观察，而不是只信古书。", "He said that at the bedside you trust your own observation, not only the old books."]],
+    ["📒", "一页病例记录的复印件", "A copy of a page of case records"], ["看得多，记得清，才敢说话。", "Look often, record carefully, and only then speak."], "Encyclopaedia Britannica, al-Razi (Rhazes); clinical case records, the distinction between smallpox and measles.",
+    ["他架起来凑近看，半天没有说话。", "He leaned in close and said nothing for a long while."], OK4);
+  P("zahrawi", ["宰赫拉维", "Al-Zahrawi"], ["十至十一世纪，安达卢斯", "10th-11th century, Al-Andalus"], "Al-Andalus", 50, "他", ["d", "black", "short", "none", "#6a8f7a"], [2, 3], ["gloves", "clock"],
+    [["他把用过的手术器具一件件画下来，说一幅图胜过千句话。", "He drew each surgical instrument he used and said one picture is worth a thousand words."], ["他说医生的手要稳，心要细，器具要干净。", "He said a surgeon's hands must be steady, his mind careful and his tools clean."]],
+    ["📜", "一页器具图谱的复印件", "A copy of a page of instrument drawings"], ["手艺要一代一代画下来，才不会失传。", "A craft must be drawn down generation by generation, or it is lost."], "Encyclopaedia Britannica, al-Zahrawi (Abulcasis); the illustrated surgical chapter of Kitab al-Tasrif.",
+    ["他把东西摆在桌上，对着钟看了看时辰，说准点最要紧。", "He laid it on the table, glanced at the clock, and said punctuality matters most."], OK4);
+  P("galen", ["盖伦", "Galen"], ["二世纪，帕加马与罗马", "2nd century, Pergamon and Rome"], "Greece / Rome", 62, "他", ["b", "gray", "curly", "none", "#c9c0a0"], [2, 3], ["book", "scarf"],
+    [["他说医生也该是哲学家，先要学会观察，再要学会思考。", "He said a physician should also be a philosopher: first learn to observe, then to think."], ["他说好医生要亲手摸过脉，才有资格谈病。", "He said a good physician earns the right to speak of illness only after he has felt the pulse with his own hand."]],
+    ["📝", "一页观察笔记的复印件", "A copy of a page of observation notes"], ["多看，多想，再下结论。", "Look much, think much, then conclude."], "Encyclopaedia Britannica, Galen of Pergamum; the treatise That the Best Physician Is Also a Philosopher.",
+    ["他把围巾搭在肩上，翻开了书。", "He draped the scarf over his shoulders and opened the book."], OK4);
+  P("vesalius", ["维萨里", "Andreas Vesalius"], ["十六世纪，佛兰德", "16th century, Flanders"], "Belgium", 40, "他", ["b", "brown", "short", "none", "#7a5a4a"], [1, 2], ["paints", "brush"],
+    [["他说书上画的和他亲眼看到的不一样，所以要亲手核对。", "He said what the books showed did not match what he saw, so he checked everything with his own eyes."], ["他说要看懂身体，就得把它的结构一处一处画下来。", "He said that to understand the body you must draw its structure, one part after another."]],
+    ["📖", "一页解剖图的复印件", "A copy of a page of an anatomical plate"], ["相信眼睛，也相信画下来的线条。", "Trust your eyes, and trust the lines you draw."], "Encyclopaedia Britannica, Andreas Vesalius; De humani corporis fabrica (1543).",
+    ["他调了调颜色，说这一笔要画得很准。", "He mixed a colour and said this stroke had to be very exact."], OK4);
+  P("jenner", ["詹纳", "Edward Jenner"], ["十八至十九世纪，英国", "18th-19th century, Britain"], "Britain", 50, "他", ["b", "gray", "short", "none", "#6a7f9a"], [1, 2], ["umbrella", "shoes"],
+    [["他说他留意到，挤牛奶的姑娘很少得天花，这值得好好琢磨。", "He said he had noticed that milkmaids rarely caught smallpox, and that this deserved careful thought."], ["他说好办法常常就藏在日常的观察里。", "He said good answers are often hidden in everyday observation."]],
+    ["🐄", "一幅奶牛的素描", "A sketch of a cow"], ["先看，再想，最后才动手。", "First watch, then think, and only at last act."], "Encyclopaedia Britannica, Edward Jenner; the 1796 smallpox vaccination.",
+    ["他换上鞋，说要去乡间走一走，看看牛。", "He put on the shoes and said he would walk through the countryside to look at the cows."], OK4);
+  P("blackwell", ["伊丽莎白·布莱克威尔", "Elizabeth Blackwell"], ["十九世纪，英国与美国", "19th century, Britain and the United States"], "United States / Britain", 40, "她", ["b", "brown", "bun", "none", "#6a6a8a"], [1, 2], ["spectacles", "coat"],
+    [["她说她被许多学校拒绝过，最后有一所肯收她。", "She said many schools turned her away, and at last one agreed to take her."], ["她说女子也能当好医生，只要有人肯给她一个机会。", "She said women can make good physicians, if only someone will give them a chance."]],
+    ["🎓", "一张入学通知书的复印件", "A copy of an admission letter"], ["门打开一次，后面的人就都进得来。", "Once a door is opened, those behind can come through."], "Encyclopaedia Britannica, Elizabeth Blackwell; the first woman to receive a medical degree in the United States, 1849.",
+    ["她披上外套，眼睛亮了一下，说今晚要读到很晚。", "She put on the coat, her eyes brightened, and she said she would read late tonight."], OK4);
+  P("chagas", ["卡洛斯·沙加斯", "Carlos Chagas"], ["十九至二十世纪，巴西", "19th-20th century, Brazil"], "Brazil", 45, "他", ["c", "black", "short", "round", "#8aa07a"], [2, 3], ["microscope", "umbrella"],
+    [["他说他在一个小村子里，把一只小虫和一种病联系了起来。", "He said that in a small village he linked a little insect to an illness."], ["他说要弄懂一种病，就得同时弄懂虫、人和房子。", "He said to understand an illness you must understand the insect, the people and the houses together."]],
+    ["🔬", "一页显微镜下的素描", "A page of sketches seen through a microscope"], ["病是在日子里长出来的，要到日子里去找。", "Illness grows out of daily life, so go and look for it there."], "Encyclopaedia Britannica, Carlos Chagas; described Chagas disease in 1909.",
+    ["他撑开伞挡住日头，凑在镜前看了很久。", "He opened the umbrella against the sun and bent over the lens for a long time."], OK4);
+  Object.assign(TAGS, { sun_simiao: ["ea", "med"], heo_jun: ["ea", "med"], hanaoka: ["ea", "med"], charaka: ["sa", "med"], razi: ["wa", "med"], zahrawi: ["wa", "med"], galen: ["eu", "med"], vesalius: ["eu", "med"], jenner: ["eu", "med"], blackwell: ["am", "med"], chagas: ["am", "med"] });
+  for (const id of ["sun_simiao", "heo_jun", "hanaoka", "charaka", "razi", "zahrawi", "galen", "vesalius", "jenner", "blackwell", "chagas"]) { const c = V.cards[id]; c.area = TAGS[id][0]; c.field = TAGS[id][1]; }
+  V.said("sun_simiao", "人命至重，有贵千金，一方济之，德逾于此。", "A human life is worth more than a thousand pieces of gold; a prescription that helps one person does more good than gold.");
+  V.said("galen", "最好的医生，也是哲学家。", "The best physician is also a philosopher.");
 })(globalThis.CY = globalThis.CY || {});
