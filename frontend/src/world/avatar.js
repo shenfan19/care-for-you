@@ -405,7 +405,7 @@ function beanDraw(o, V) {
     const M = (CY.isoSprites || {}).pet; if (!M || typeof document === 'undefined') return null;
     const m = M[p.species.id]; if (!m) return null;
     const pose = !asleep && dir && m.walk ? 'walk' : 'stand', rot = ROT[dir || ''] || 0, e = m[pose] && m[pose][rot]; if (!e) return null;
-    const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 1.65;
+    const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 1.1;   /* 宠物比人小，原来和人同样的 1.65 太大 */
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${Math.max(10, e.w * k * 0.4).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
   };
   /* Blocky Characters：十八个像素风的角色，按编号固定挑一个，不能改颜色，只用来比较效果 */

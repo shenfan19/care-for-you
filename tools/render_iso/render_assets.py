@@ -1,6 +1,6 @@
 """把 Kenney 的 CC0 三维模型渲染成斜视的 PNG 精灵。
 用法：python render_assets.py furniture|characters
-需要：playwright，以及 three.js 的 build 和 examples/jsm 放在 THREE_DIR 里（默认临时目录 r3，见 THREE_URL）。
+需要：playwright，以及 three.js 的 build 和 examples/jsm 放在 three_dir 里。各套素材的路径写在 render_paths.ini，见 render_paths.example.ini。
 输出：frontend/assets/iso/<类别>/<名字>_<朝向>.png，和 manifest.json（每张图的像素锚点和模型尺寸）。
 朝向 0 到 3：面朝 gy 增加，gx 增加，gy 减少，gx 减少，也就是屏幕上的左下，右下，右上，左上。"""
 import base64, http.server, json, os, socketserver, sys, threading
@@ -9,15 +9,28 @@ from playwright.sync_api import sync_playwright
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 OUT = os.path.join(ROOT, 'frontend', 'assets', 'iso')
-THREE_DIR = os.environ.get('THREE_DIR', os.path.join(os.environ.get('TEMP', '/tmp'), 'r3'))
-FURN = os.environ.get('KENNEY_FURNITURE', 'C:/fight/kenney_furniture-kit/Models/GLTF format')
-CHAR = os.environ.get('KENNEY_CHARS', 'C:/fight/kenney_mini-characters/Models/GLB format')
-PETS = os.environ.get('KENNEY_PETS', 'C:/fight/kenney_cube-pets/Models/GLB format')
-CARS = os.environ.get('KENNEY_CARS', 'C:/fight/kenney_car-kit/Models/GLB format')
-BLOCKY = os.environ.get('KENNEY_BLOCKY', 'C:/fight/kenney_blocky-characters_20/Models/GLB format')
-CITY = os.environ.get('KENNEY_CITY', 'C:/fight/kenney_city-kit-commercial_2.1/Models/GLB format')
-MARKET = os.environ.get('KENNEY_MARKET', 'C:/fight/kenney_mini-market/Models/GLB format')
-FOOD = os.environ.get('KENNEY_FOOD', 'C:/fight/kenney_food-kit/Models/GLB format')
+import configparser
+
+# 素材路径放在设置文件 render_paths.ini 里（同目录，不进 git，样例见 render_paths.example.ini），环境变量同名大写可以覆盖。
+# 没有默认路径：缺哪一项就停下来，说明要填什么。
+_cfg = configparser.ConfigParser()
+_cfg.read(os.path.join(HERE, 'render_paths.ini'), encoding='utf8')
+
+def _path(key, env):
+    v = os.environ.get(env) or _cfg.get('paths', key, fallback='')
+    if not v:
+        sys.exit(f'缺少路径设置 {key}：请在 {os.path.join(HERE, "render_paths.ini")} 的 [paths] 里填写，或设置环境变量 {env}。样例见 render_paths.example.ini')
+    return v
+
+THREE_DIR = _path('three_dir', 'THREE_DIR')
+FURN = _path('furniture', 'KENNEY_FURNITURE')
+CHAR = _path('chars', 'KENNEY_CHARS')
+PETS = _path('pets', 'KENNEY_PETS')
+CARS = _path('cars', 'KENNEY_CARS')
+BLOCKY = _path('blocky', 'KENNEY_BLOCKY')
+CITY = _path('city', 'KENNEY_CITY')
+MARKET = _path('market', 'KENNEY_MARKET')
+FOOD = _path('food', 'KENNEY_FOOD')
 MAP = {'/food/': FOOD, '/market/': MARKET, '/blocky/': BLOCKY, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
 
 class H(http.server.SimpleHTTPRequestHandler):

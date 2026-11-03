@@ -78,7 +78,7 @@ python frontend/tests/backend_compare.py 1 3
 
 ## Status
 
-Early version, currently 0.65. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
+Early version, currently 0.69. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
 
 ## Not a health product
 
