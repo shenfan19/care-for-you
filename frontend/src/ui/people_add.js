@@ -13,6 +13,8 @@
     const O = CY.avatarOptions;
     const editP = editPid && G.get(editPid);
     const arch0 = (editP && C.archOf(editP.person.archetype)) || C.archOf(archId) || C.archetypes[0];
+    /* 人数严格限定在床位：没有空床就不能再添人，婴儿睡婴儿床不占床位，动物和花草不占 */
+    if (!editP && arch0.species === 'human' && C.stageOf(arch0.age) !== 'infant' && G.bedsFree() <= 0) { U.flash && U.flash(t('add.no_bed')); return; }
     const st = editP
       ? { arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', sev: (((editP.person.cond_set || {})[(editP.person.conditions || [])[0]]) || {}).severity || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
       : { arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', sev: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };

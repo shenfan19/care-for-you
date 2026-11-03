@@ -170,6 +170,8 @@
     await loadContent(files);
     /* 保姆已经取消：旧存档里请过的保姆，整个人从家里拿掉 */
     for (const p of G.people.filter(x => x.person.help && x.person.help.role === 'nanny')) await G.deletePerson(p.id);
+    /* 床位数：开局阶段跟着人数走，当前人数加一张空床，最少四张；开局完成以后固定，只能去商店买 */
+    if (typeof G.world.beds !== 'number' || !G.world.intro_done) G.world.beds = Math.max(4, G.bedUsers().length + 1);
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
 
@@ -907,6 +909,7 @@
     G.say(pid, 'you', text, req.askId, custom !== undefined && custom !== null ? 'custom' : idx);
     G.logK(pid, 'talk', 'log.talk', { q: req.text, a: text });
     p.story.care_total++; p.state.mood = clamp(p.state.mood + 0.1);
+    if (p.person.visitor && G.visitorFav) G.visitorFav(p, G.FAV.ask);   /* 回答来客的问题，好感加一点 */
     /* 来客自己带着回答：卡片里写的一句，选了劝你歇一歇的那个回答，主角的休息需求就降一点 */
     const rp = req.reply || G.sayLine(p, 'reply', custom !== undefined && custom !== null ? 'custom' : 'a' + idx);
     if (req.rest !== undefined && req.rest === idx) { const lead = G.protagonist(); if (lead && lead.state.needs.rest !== undefined) lead.state.needs.rest = Math.max(0, lead.state.needs.rest - 0.12); }

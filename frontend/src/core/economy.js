@@ -62,19 +62,30 @@
     else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();
     if (G.tripTick) G.tripTick();
   };
-  /* 商店：买了就一直有，没有损耗，没有订阅。价格按前台一天五分钟、一个游戏日实际收入约 250 重标：
-     玩具不到半天，好床一天半，婴儿车一天半，轮椅两天半，装饰按档位一天一档，大房子八天左右。decor 是装饰的档位，买一档加一档 */
+  /* 商店：买了就一直有，没有损耗，没有订阅。价格按前台一天五分钟，一个游戏日收入约 100 到 150 重标。
+     cat 是分类：daily 日用品有一点数值效果；decor 装饰纯粹是观感，没有任何数值效果。decor 一档一档买。
+     床位另算，不在这张表里，见 G.bedsOwned：床位决定家里最多住几个人，家人和穿越者都占床位。 */
   G.SHOP = [
-    { id: 'toy', price: 80, icon: '🧸', fx: { rate: { play: 0.75 }, stages: ['infant', 'toddler'] } },
-    { id: 'fruit', price: 200, icon: '🍎', fx: { rate: { hunger: 0.9 } } },
-    { id: 'bed', price: 350, icon: '🛏', fx: { rest_sleep: 1.3 } },
-    { id: 'bed2', price: 700, icon: '🛏', needs: 'bed', fx: { rest_sleep: 1.15 } },
-    { id: 'books', price: 400, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
-    { id: 'cabinet', price: 300, icon: '🏺' },
-    { id: 'stroller', price: 400, icon: '👶' }, { id: 'wheelchair', price: 600, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
-    { id: 'decor1', price: 160, icon: '🪴', fx: { mood: 0.02 } }, { id: 'decor2', price: 350, icon: '🪴', needs: 'decor1', fx: { mood: 0.02 } }, { id: 'decor3', price: 550, icon: '🪴', needs: 'decor2', fx: { mood: 0.02 } },
-    { id: 'house2', price: 2000, icon: '🏠', fx: { mood: 0.03 } },
+    { id: 'toy', cat: 'daily', price: 80, icon: '🧸', fx: { rate: { play: 0.75 }, stages: ['infant', 'toddler'] } },
+    { id: 'fruit', cat: 'daily', price: 200, icon: '🍎', fx: { rate: { hunger: 0.9 } } },
+    { id: 'books', cat: 'daily', price: 400, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
+    { id: 'stroller', cat: 'daily', price: 400, icon: '👶' },
+    { id: 'wheelchair', cat: 'daily', price: 600, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
+    { id: 'cabinet', cat: 'decor', price: 300, icon: '🏺' },
+    { id: 'decor1', cat: 'decor', price: 160, icon: '🪴' }, { id: 'decor2', cat: 'decor', price: 350, icon: '🛋', needs: 'decor1' }, { id: 'decor3', cat: 'decor', price: 550, icon: '📻', needs: 'decor2' },
   ];
+  /* 床位：开局按家里的人数加一张空床，最少四张，最多八张。每买一张，家里就能多住一个人，也能多留一位穿越者；床位用完了就不能再添人，也不会有新的穿越者来 */
+  G.BED_MAX = 8; G.BED_PRICE = { 4: 600, 5: 900, 6: 1300, 7: 1800 };
+  G.bedUsers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
+  G.bedsOwned = () => (typeof G.world.beds === 'number' ? G.world.beds : Math.max(4, G.bedUsers().length + 1));
+  G.bedsFree = () => G.bedsOwned() - G.bedUsers().length;
+  G.bedPrice = () => (G.bedsOwned() >= G.BED_MAX ? null : G.BED_PRICE[G.bedsOwned()] || 600);
+  G.canBuyBed = () => { const pr = G.bedPrice(); return pr !== null && G.world.money >= pr; };
+  G.buyBed = () => {
+    if (!G.canBuyBed()) return false;
+    G.world.money -= G.bedPrice(); G.world.beds = G.bedsOwned() + 1;
+    G.logK('you', 'event', 'log.bought', { item: G.ref('shop.bed_slot', '床位') }); G.save(true); emit(); return true;
+  };
   /* 舒适度修正：买到的东西各带一份 fx，这里按人汇总。rate 是需求涨速倍数，rest_sleep 是睡觉时休息恢复倍数，mood 是心情目标加成，stages 限定哪些年龄阶段受益。
      后台计算只读这一处，不再各写各的 owned 判断；加新商品只在 SHOP 里加一行 fx */
   G.shopFx = p => {

@@ -25,9 +25,14 @@ This page explains the bar under every character, how it relates to your income,
 
 ## The shop
 
-- Items are bought once and stay: a toy, a better bed, a stroller, a wheelchair and three tiers of decoration. Prices follow a play day of about five minutes: a toy 80, fruit 200, a better bed 350, better bedding 700, a bookshelf 400, a stroller 400, a wheelchair 600, decoration 160, 350 and 550, a bigger house 2000. You start with 200, or more or less depending on how the story begins.
-- The shop has two parts. The first is for the home. The second is gifts for visitors, 27 small and curious things from a cup of tea to a microscope; you can keep up to three of each in your bag, and give one by pressing and holding "give a gift" in a guest's ring, see [visitors.md](visitors.md).
-- They change a few numbers in a small way and add things to the house. Where each item appears is a table per house, `frontend/src/data/houses.js`, so a different house can place the same items in its own spots. No time limits, no discounts, and the game is complete without buying anything.
+Tap the money counter to open it. Everything looks the same: an icon, a name, a price, and a hover text that explains it. There are four groups.
+
+- Beds: beds decide how many people can live at home. Each family member and each visitor takes one; babies sleep in cradles, and animals and plants take none. You start with a spare bed, at least four in all, and can buy up to eight, each more expensive than the last: 600, 900, 1300 and 1800. When the beds are used up you cannot add people and no new visitor comes.
+- Everyday things: a toy, fruit, a bookshelf, a stroller and a wheelchair. They change a few numbers in a small way.
+- Decoration: a display cabinet and three tiers of decoration. They are purely for looks and have no effect on any number.
+- Gifts for visitors: 27 small and curious things, kept in your bag, up to three of each, see [visitors.md](visitors.md).
+
+Prices follow a play day of about five minutes: a toy 80, fruit 200, a bookshelf 400, a stroller 400, a wheelchair 600, decoration 160, 350 and 550, a display cabinet 300. You start with 200. There is only one house. No time limits, no discounts, and the game is complete without buying anything.
 
 ## Where it is defined
 

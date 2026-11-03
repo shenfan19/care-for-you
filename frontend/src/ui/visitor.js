@@ -13,7 +13,10 @@
     const inv = G.giftInv(), money = G.world.money || 0;
     const ids = Object.keys(V.GIFTS).filter(g => inv[g] > 0).sort((a, b) => V.GIFTS[a].price - V.GIFTS[b].price);
     const grid = ids.map(g => `<button class="gift pick" data-item="${g}"><div>${V.GIFTS[g].icon}</div><div>${esc(giftName(g))}</div><div class="mute">${esc(t('gift.have', { n: inv[g] }))}</div></button>`).join('');
-    const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${note ? `<p class="settle-line">${esc(note)}</p>` : ''}${grid ? `<div class="giftgrid vbody">${grid}</div>` : `<p class="mute">${esc(t('gift.empty'))}</p>`}
+    const vc = G.visitorCard(p), st = p.person.visitor, hearts = Math.round((st.fav || 0) / G.FAV.max * 10);
+    const profile = vc ? `${t('visitor.' + vc.id + '.era')} · ${t('field.' + vc.field)}` : '';
+    const favLine = `${'❤'.repeat(hearts)}${'♡'.repeat(10 - hearts)} ${t('gift.fav', { n: st.fav || 0, m: G.FAV.ok })}${st.ok ? ' · ' + t('gift.fav_ok') : ''}`;
+    const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><div class="mute">${esc(p.person.name)} · ${esc(profile)}</div><div style="margin:4px 0">${esc(favLine)}</div><p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${note ? `<p class="settle-line">${esc(note)}</p>` : ''}${grid ? `<div class="giftgrid vbody">${grid}</div>` : `<p class="mute">${esc(t('gift.empty'))}</p>`}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="vClose" class="primary">${esc(t('cal.close'))}</button></div>`, true);
     note = '';
     dlg.querySelector('#vClose').onclick = () => U.closeDialog();
@@ -21,7 +24,7 @@
       const r = G.giveGift(pid, b.dataset.item);
       if (r.error === 'limit' || r.error === 'done' || r.error === 'money') { note = r.error === 'limit' ? t('gift.limit') : r.error === 'done' ? t('gift.done', { name: p.person.name }) : t('gift.money'); return U.giftDialog(pid); }
       U.closeDialog();
-      if (U.flash) U.flash(r.ok ? t(r.line) : t('gift.thanks', { name: p.person.name }));
+      if (U.flash) U.flash(r.like ? t(r.line) : t('gift.mild', { name: p.person.name }));
       U.renderClock && U.renderClock();
     });
   };
@@ -29,7 +32,7 @@
   /* 访客到来时提醒一下 */
   G.visitHooks.push((type, p) => {
     if (typeof document === 'undefined') return;
-    if (type === 'arrive' && U.flash) U.flash(t('visit.arrive_toast', { name: p.person.name }) + (G.visitorCard(p) && !G.visitorCard(p).official ? ' · ' + t('visit.unofficial') : ''));
+    if (type === 'arrive' && U.flash) U.flash(t('visit.arrive_toast', { name: p.person.name }) + (G.visitorCard(p) ? ' · ' + t('visitor.' + G.visitorCard(p).id + '.era') : '') + (G.visitorCard(p) && !G.visitorCard(p).official ? ' · ' + t('visit.unofficial') : ''));
     if (U.renderClock) U.renderClock();
   });
 })(globalThis.CY = globalThis.CY || {});

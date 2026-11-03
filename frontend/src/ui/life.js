@@ -7,25 +7,31 @@
   const $ = id => document.getElementById(id);
   U.renderLife = function () {};
 
-  /* 商店：点钱的格子打开。上面是家里的东西，买了就一直有；下面是送客人的礼物，放进背包，每样最多备三件。没有限时，没有折扣 */
+  /* 商店：点钱的格子直接打开。所有东西一个样子：图标，名字，价格，鼠标停上去显示说明。分四块：床位，日用品，装饰，送客人的礼物。
+     床位决定家里最多住几个人，家人和穿越者都占，很贵，一张一张买；装饰纯粹是观感，没有数值；礼物买了进背包，每样最多备三件。没有限时，没有折扣 */
   U.shopDialog = function () {
-    const V = CY.visitors, inv = G.giftInv(), money = G.world.money || 0;
-    const homeRows = G.SHOP.map(it => {
+    const V = CY.visitors, inv = G.giftInv(), money = G.world.money || 0, old = document.querySelector('#modal .box'), keep = old ? old.scrollTop : 0;
+    const tile = (icon, name, desc, label, attrs, extra) => `<div class="gift shoptile" title="${esc(desc)}"><div>${icon}</div><div>${esc(name)}</div><div class="mute">${extra || '&nbsp;'}</div>${label}</div>`;
+    const item = it => {
       const own = G.owned(it.id), can = G.canBuy(it.id), locked = it.needs && !G.owned(it.needs);
-      return `<div class="srow" style="align-items:center"><span class="k" style="font-size:20px">${it.icon}</span><span style="flex:1"><b>${esc(t('shop.' + it.id))}</b><br><span class="mute">${esc(t('shop.' + it.id + '_fx'))}</span></span>${own ? `<span class="mute">${esc(t('shop.owned'))}</span>` : `<button data-b="${it.id}" ${can ? '' : 'disabled'}>${locked ? esc(t('shop.locked')) : '💰 ' + it.price}</button>`}</div>`;
-    }).join('');
-    const giftRows = V ? Object.values(V.GIFTS).sort((a, b) => a.price - b.price).map(g => `<div class="gift"><div>${g.icon}</div><div>${esc(t('gift.' + g.id))}</div><div class="mute">${inv[g.id] ? esc(t('gift.have', { n: inv[g.id] })) : '&nbsp;'}</div><button data-g="${g.id}" ${money < g.price || (inv[g.id] || 0) >= G.DOOR.gift_max ? 'disabled' : ''}>💰 ${g.price}</button></div>`).join('') : '';
+      return tile(it.icon, t('shop.' + it.id), t('shop.' + it.id + '_fx') + (locked ? ' ' + t('shop.locked') : ''), own ? `<button disabled>${esc(t('shop.owned'))}</button>` : `<button data-b="${it.id}" ${can ? '' : 'disabled'}>💰 ${it.price}</button>`);
+    };
+    const bp = G.bedPrice();
+    const bed = tile('🛏', t('shop.bed_slot'), t('shop.bed_slot_fx') + ' ' + t('shop.beds_now', { n: G.bedsOwned(), m: G.BED_MAX, u: G.bedUsers().length }), bp === null ? `<button disabled>${esc(t('shop.full'))}</button>` : `<button data-bed="1" ${G.canBuyBed() ? '' : 'disabled'}>💰 ${bp}</button>`, '', t('shop.beds_now', { n: G.bedsOwned(), m: G.BED_MAX, u: G.bedUsers().length }));
+    const giftTile = g => tile(g.icon, t('gift.' + g.id), t('gift.' + g.id), `<button data-g="${g.id}" ${money < g.price || (inv[g.id] || 0) >= G.DOOR.gift_max ? 'disabled' : ''}>💰 ${g.price}</button>`, '', inv[g.id] ? esc(t('gift.have', { n: inv[g.id] })) : '');
+    const gifts = V ? Object.values(V.GIFTS).sort((a, b) => a.price - b.price).map(giftTile).join('') : '';
+    const sec = (key, note, body) => `<h3>${esc(t(key))}</h3>${note ? `<div class="mute" style="margin-bottom:6px">${esc(t(note))}</div>` : ''}<div class="giftgrid">${body}</div>`;
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('shop.title'))}</h2><div class="money big">💰 ${Math.floor(money)}</div><div class="mute" style="margin:6px 0">${esc(t('shop.note'))}</div>
-      <h3>${esc(t('shop.sec_home'))}</h3><div class="sform">${homeRows}</div>
-      <h3>${esc(t('shop.sec_gifts'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('shop.gift_note'))}</div><div class="giftgrid">${giftRows}</div>
+      ${sec('shop.sec_bed', 'shop.bed_note', bed)}${sec('shop.sec_daily', '', G.SHOP.filter(i => i.cat === 'daily').map(item).join(''))}${sec('shop.sec_decor', 'shop.decor_note', G.SHOP.filter(i => i.cat === 'decor').map(item).join(''))}${sec('shop.sec_gifts', 'shop.gift_note', gifts)}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="shclose" class="primary">${esc(t('btn.close'))}</button></div>`, true);
-    const keep = dlg.scrollTop;
+    dlg.scrollTop = keep;
     dlg.querySelectorAll('[data-b]').forEach(b => b.onclick = () => { if (G.buy(b.dataset.b)) { U.renderRoom(true); U.renderClock(); U.shopDialog(); } });
     dlg.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { if (G.buyGift(b.dataset.g)) { U.renderClock(); U.shopDialog(); } });
+    dlg.querySelectorAll('[data-bed]').forEach(b => b.onclick = () => { if (G.buyBed()) { U.renderRoom(true); U.renderClock(); U.shopDialog(); } });
     dlg.querySelector('#shclose').onclick = U.closeDialog;
   };
 
-  /* 第一次有了角色之后，讲清楚照顾的代价 */
+  /* 第一次有了角色之后，走开局的后两步 */
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
   /* 开局第二步和第三步：先选你是谁，再是来到老屋，南丁格尔走出来。第一步是选家庭配置，在 U.onboard。
      选好之前第一位来客不来；故事读完才记下开局完成，南丁格尔随后从时空门走进院子 */

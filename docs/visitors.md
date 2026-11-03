@@ -15,7 +15,7 @@ This page explains the daily rhythm, the visitors who come through the time door
 - The time door is a piece of furniture on the right of the yard. Guests step out of it and then move around the house like anyone else.
 - A guest is a temporary member of the household. They have needs, and you look after them with the usual actions. One extra action only appears for guests: invite them to rest. They do not help around the house and do not add to the family bonus.
 - A guest stays one to three days and may leave at random. They leave whether or not they are content. The ones who left unsatisfied may come back later.
-- A guest needs a free guest bed. There is one at the start, and the bigger house adds another.
+- Every guest, like every family member, needs a bed. When the beds are used up, no new guest comes. Buy beds in the shop.
 - The first guest is always Florence Nightingale. She steps out of the time door in the opening story, says it is an interesting place and that she will leave soon. Everyone else arrives at random, and guests you have not yet satisfied come more often than ones you already have.
 - All texts, including the cards, are available in the eight interface languages: Simplified and Traditional Chinese, English, Japanese, Korean, German, French and Spanish. The translations are machine-assisted and not proofread by native speakers, so corrections are welcome.
 - There are sixty-one official cards, 23 of them medical pioneers from many civilisations. Each card carries a region and a field. Every region has the same total chance of being picked, so a region with more cards does not come more often. Medicine is favoured, politics and the military slightly less. The interface language adds a small lean towards its home region; nothing is guessed from your location.
@@ -25,7 +25,7 @@ This page explains the daily rhythm, the visitors who come through the time door
 
 ## Gifts and the display cabinet
 
-- Giving is one of the actions in the ring around a guest. Press and hold "give a gift" until the circle fills and a window with the gift list opens, then click an item. Only gifts in your bag can be given. Buy them in the gift section of the shop, which opens when you tap the money counter.
+- Giving is one of the actions in the ring around a guest. Press and hold "give a gift" until the circle fills and a window with the gift list opens, then click an item. Only gifts in your bag can be given. Every guest has a fondness meter out of one hundred: a gift they love adds a lot, an ordinary gift adds only a little, and answering a question they ask adds some. At fifty they are content and leave a keepsake in return. The gift window shows who the guest is (era, region, field) but not what they like, so you can search for them yourself. Buy them in the gift section of the shop, which opens when you tap the money counter.
 - Guests drop hints in what they say now and then. Some only need a rest. Others need a specific gift.
 - A gift only works if it matches what the guest needs. A wrong gift is accepted and used up, and nothing is said about it at the time. A line in the day's account can tell you what they would really have liked.
 - You can give two gifts a day.

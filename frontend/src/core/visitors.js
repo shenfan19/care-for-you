@@ -7,8 +7,7 @@
 
   G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, cooldown_max: 1, arrive_chance: 0.8, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
-  G.PICK = { field: { med: 1.5, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
-  G.guestBeds = () => 1 + (G.owned && G.owned('house2') ? 1 : 0);
+  G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
   G.visitorPeople = () => G.activePeople().filter(p => p.person.visitor);
   G.souvenirs = () => (G.world.souv = G.world.souv || {});
   G.giftInv = () => (G.world.gifts = G.world.gifts || {});
@@ -62,7 +61,7 @@
     const pid = await G.createPerson({ arch: c.age >= 60 ? 'neighbor' : 'friend', name: t(`visitor.${id}.name`), age: c.age, pronoun: c.pronoun, look: G.lookOf(c) });
     const p = await G.loadOnePerson(pid, []);
     if (!p) return null;
-    p.person.visitor = { id, since: day(), stay: rint(G.DOOR.stay_min, G.DOOR.stay_max), day_in: 0, ok: false, wrong: [], talk: 0 };
+    p.person.visitor = { id, since: day(), stay: rint(G.DOOR.stay_min, G.DOOR.stay_max), day_in: 0, ok: false, fav: 0, wrong: [], talk: 0 };
     if (c.tired) p.state.needs.rest = c.tired;
     p.state.mood = 0.55;
     await saveVisitor(p);
@@ -90,10 +89,10 @@
     }
     return false;
   };
-  /* 组团到来：不看客床，因为是结伴来的；平时很少发生，还没遇见过的组合优先 */
+  /* 组团到来：几位结伴来，床位要够几位；平时很少发生，还没遇见过的组合优先 */
   G.arriveGroup = async ids => { for (const id of ids) if (!G.visitorPeople().some(p => p.person.visitor.id === id)) await G.arrive(id, true); return checkMeet(); };
   G.pickGroup = () => {
-    const seen = G.world.meets || {}, pool = V.MEETS.filter(m => !seen[m.key]);
+    const seen = G.world.meets || {}, pool = V.MEETS.filter(m => !seen[m.key] && G.bedsFree() >= m.ids.length);
     if (!pool.length) return null;
     const w = m => (m.ids.length === 3 ? 0.5 : 1);
     let r = Math.random() * pool.reduce((a, m) => a + w(m), 0);
@@ -106,7 +105,7 @@
     if (!G.activePeople().length || !G.world.intro_done || G.world.story_pending) return false;
     if (!G.world.visit_started) { G.world.visit_started = true; return !!(await G.arrive(G.firstVisitorId())); }
     if (!G.visitorPeople().length && Math.random() < G.DOOR.meet_chance) { const m = G.pickGroup(); if (m) return G.arriveGroup(m.ids); }
-    if (G.visitorPeople().length >= G.guestBeds()) return false;
+    if (G.bedsFree() <= 0) return false;   /* 床位用完了，不会有新的穿越者来 */
     if ((G.world.visit_cd || 0) > 0) { G.world.visit_cd--; return false; }
     if (Math.random() > G.DOOR.arrive_chance) return false;
     const id = G.pickVisitor();
@@ -115,6 +114,9 @@
   G.on(() => { if (!G.world.visit_started) G.maybeArrive(); });
   G.dayStartHooks.push(() => { G.maybeArrive(); });
 
+  /* 好感度：满分一百，到五十就算满足，留下回礼，也就是纪念品。送到心仪的礼物，或者做了对方真正需要的事，一下子加很多；
+     送一般的礼物加得不多，要送好几件才够；回答他向你提的问题也加一点。这样不是只有猜中才行，而是更有弹性 */
+  G.FAV = { ok: 50, max: 100, like: 60, other: 8, care: 60, ask: 12 };
   const satisfy = p => {
     const st = p.person.visitor;
     if (st.ok) return;
@@ -122,6 +124,13 @@
     G.souvenirs()[st.id] = day();
     saveVisitor(p); fire('ok', p); G.save();
   };
+  const addFav = (p, n) => {
+    const st = p.person.visitor; if (!st) return;
+    st.fav = Math.min(G.FAV.max, (st.fav || 0) + n);
+    if (!st.ok && st.fav >= G.FAV.ok) satisfy(p); else { saveVisitor(p); G.save(); }
+    fire('fav', p);
+  };
+  G.visitorFav = addFav;
 
   /* 照料：卡片的 care 是动作编号，对访客做了这个动作就算满足 */
   const log0 = G.log;
@@ -131,7 +140,7 @@
       const p = G.get(pid);
       if (type === 'care' && p && p.person.visitor && meta && meta.k === 'log.care') {
         const c = V.cards[p.person.visitor.id], id = G.actIdOf(meta);
-        if (c && c.care && id === c.care) satisfy(p);
+        if (c && c.care && id === c.care) addFav(p, G.FAV.care);
       }
     } catch (e) { /* 不能影响游戏 */ }
     return r;
@@ -160,12 +169,13 @@
     useGift();
     if (c.wants.includes(giftId)) {
       G.settleNote('settle.visit_gift', { name: nameRef(st.id), gift: giftRef(giftId) });
-      satisfy(p);
       G.logK('you', 'event', 'visit.log_gift', { name: nameRef(st.id), gift: giftRef(giftId) });
-      return { ok: true, line: `visitor.${st.id}.ok_line` };
+      addFav(p, G.FAV.like);
+      return { ok: true, like: true, fav: st.fav, line: `visitor.${st.id}.ok_line` };
     }
-    st.wrong.push(giftId); saveVisitor(p); G.save();
-    return { ok: false };
+    st.wrong.push(giftId);
+    addFav(p, G.FAV.other);
+    return { ok: st.ok, like: false, fav: st.fav, line: st.ok ? `visitor.${st.id}.ok_line` : '' };
   };
 
   /* 离开：留言进当天的小结，人从家里消失；满足了才有纪念品 */

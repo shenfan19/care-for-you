@@ -33,7 +33,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   const wait = () => new Promise(r => setTimeout(r, 80));
   {
     G.DOOR.meet_chance = 0;
-    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0;
+    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0; G.world.beds = G.bedUsers().length + 1;
     const before = G.people.length;
     CY.i18n.set('zh-CN');
     check('第一位来客固定是南丁格尔，不分语言', (G.firstVisitorId() === 'nightingale') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
@@ -44,7 +44,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
     check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.nightingale, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('female') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
     check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
-    check('只有一张客床，不会来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
+    check('只剩一张空床，来了一位以后不会再来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
     check('请ta睡一会儿只对访客出现', 'invite_rest' in G.actionsOf(zhuge) && !('invite_rest' in G.actionsOf(baby)) && !('invite_rest' in G.actionsOf(grandpa)));
     check('访客不当助力，也不算家人加成', (() => { const c0 = G.capacity(), b0 = G.householdBonus(); zhuge.state.mood = 0.9; return G.capacity() === c0 && G.householdBonus() === b0; })());
     check('访客不会卧床', (zhuge.state.frailty = 1, G.bedCheck(zhuge), !G.bedridden(zhuge)));
@@ -82,7 +82,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('没满足就离开，只写离开了，留言带延迟反馈，没有礼物', txt2.includes('玛丽·居里离开了。') && txt2.some(x => /更需要能护住双手/.test(x)) && !txt2.some(x => /留下了/.test(x)), txt2.join(' | '));
     check('家人的日常也平铺直叙', (() => { const rr = G.composeDay({ n: 9, care: { 爷爷: 3 }, fam: { 爷爷: { street: 2, meal: 1 } }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false).map(G.settleText); return rr[0] === '今天爷爷去街上逛了逛。' || /爷爷/.test(rr[0]); })());
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
-    check('客床数量：默认一张，买大房子两张', G.guestBeds() === 1 && (G.world.owned = Object.assign({}, G.world.owned, { house2: true }), G.guestBeds() === 2));
+    check('床位：人数严格不超过床位，买一张多一个空位，价格一张比一张贵，最多八张', (() => { G.world.money = 99999; G.world.beds = 4; const n0 = G.bedsOwned(), f0 = G.bedsFree(), p0 = G.bedPrice(); const ok = G.buyBed(); const p1 = G.bedPrice(); const r = ok && G.bedsOwned() === n0 + 1 && G.bedsFree() === f0 + 1 && p1 > p0; for (let k = 0; k < 10 && G.bedPrice() !== null; k++) G.buyBed(); return r && G.bedsOwned() === G.BED_MAX && !G.canBuyBed() && G.bedPrice() === null; })());
     check('英文下访客的名字和纪念品换成英文', (CY.i18n.set('en'), CY.t('visitor.curie.name') === 'Marie Curie' && CY.t('visitor.nightingale.souvenir') === 'An oil lamp' && CY.t('gift.lab_suit') === 'Protective suit') && (CY.i18n.set('zh-CN'), true));
   }
   /* 卡片完整性 */
@@ -115,7 +115,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       const byArea = {}, byField = {}; let n = 0;
       for (let i = 0; i < 6000; i++) { const id = G.pickVisitor(); G.world.last_area = null; const c = V.cards[id]; byArea[c.area] = (byArea[c.area] || 0) + 1; byField[c.field] = (byField[c.field] || 0) + 1; n++; }
       check('英文下六个地区被抽到的比例接近相等，没有偏向', V.AREAS.every(a => Math.abs(byArea[a] / n - 1 / 6) < 0.03), JSON.stringify(byArea));
-      check('政治军事少，医疗每张被抽到的机会略高', (byField.pol || 0) / fd.pol < (byField.sci || 0) / fd.sci && (byField.med || 0) / fd.med > (byField.sci || 0) / fd.sci);
+      check('政治军事每张被抽到的机会比科学少；医疗占被抽到的三到四成，不是压倒多数', (byField.pol || 0) / fd.pol < (byField.sci || 0) / fd.sci && (byField.med || 0) / n > 0.25 && (byField.med || 0) / n < 0.45, String((byField.med || 0) / n));
       CY.i18n.set('zh-CN');
       const h = { ea: 0, other: 0 }; for (let i = 0; i < 4000; i++) { G.world.last_area = null; const a = V.cards[G.pickVisitor()].area; h[a === 'ea' ? 'ea' : 'other']++; }
       check('中文下东亚略多一点，但没有压倒', h.ea / 4000 > 1 / 6 && h.ea / 4000 < 0.28, String(h.ea / 4000));
@@ -130,7 +130,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       G.world.meets = {}; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
     }
     {
-      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.|corner\.)/.test(k)), miss = {};
+      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.|corner\.|field\.|add\.no_bed)/.test(k)), miss = {};
       for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) { const m = want.filter(k => P.en[k] !== '' && !(P[l] && P[l][k])); if (m.length) miss[l] = m.slice(0, 5).join(); }
       check('八种语言的玩法文字和卡片文字齐全', Object.keys(miss).length === 0, JSON.stringify(miss));
       const ph = [], hold = s => [...new Set(String(s).match(/\{[a-z_]+\}/g) || [])].sort().join();
@@ -192,6 +192,24 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.clearFlag(gp, 'nap'); check('小睡到点自己醒', G.activityOf(gp) !== 'sleeping' || G.dayMinutes() < 6.5 * 60 || G.dayMinutes() >= 22 * 60);
     const doc = CY.protocol && CY.protocol.person ? G.actionsOf(gp).doctor : null; check('看医生只由玩家带去，不进家人自己想去的清单', !doc || doc.manual === true);
   }
+  /* 好感度：送到心仪的加很多，一般的加得不多，到五十就留下回礼；回答来客的问题也加一点；没有空床就不来 */
+  {
+    CY.i18n.set('zh-CN'); G.world.beds = 8; G.world.souv = {}; for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+    const cu = await G.arrive('curie', true), st = cu.person.visitor; G.giftInv().tea = 9; G.giftInv().lab_suit = 1; G.giftInv().aspirin = 1;
+    G.world.vday = null; const r1 = G.giveGift(cu.id, 'tea');
+    check('送一般的礼物，好感只加一点，不算满足', r1.like === false && st.fav === G.FAV.other && !st.ok && !G.souvenirs().curie);
+    G.world.beds = 8; G.world.vday = null; G.world.visit_cd = 0;
+    let n = 1; while (!st.ok && n < 20) { G.world.vday = null; G.giveGift(cu.id, 'tea'); n++; }
+    check('一般的礼物要送好几件才够，够了留下回礼', st.ok && n >= 6 && n <= 8 && G.souvenirs().curie > 0, 'n=' + n + ' fav=' + st.fav);
+    const cu2 = await G.arrive('hippocrates', true), st2 = cu2.person.visitor; G.world.vday = null;
+    const r2 = G.giveGift(cu2.id, 'aspirin'); check('送到心仪的，一下子加很多，直接达标', r2.like === true && st2.fav === G.FAV.like && st2.ok === true);
+    const cu3 = await G.arrive('galois', true), st3 = cu3.person.visitor; G.visitorFav(cu3, G.FAV.ask);
+    check('回答来客的问题，好感加一点', st3.fav === G.FAV.ask && !st3.ok);
+    for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+    G.world.beds = G.bedUsers().length; G.world.visit_started = true; G.world.visit_cd = 0; G.world.meets = {};
+    check('床位用完了，不会有新的穿越者来，组团到来也要床位够', G.bedsFree() === 0 && (await G.maybeArrive()) === false && G.pickGroup() === null);
+    G.world.beds = undefined;
+  }
   /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */
   {
     const id = await G.createPerson({ name: '保姆', roleText: '保姆' }), f = `people/${id}/person.yaml`, y = await CY.store.readYaml(f);
@@ -199,7 +217,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     await G.load();
     check('旧存档里的保姆载入时被拿掉', !G.people.some(q => q.id === id) && !G.world.nanny_on && !G.nanny && !G.hireNanny);
     const fs = require('fs'), path = require('path'), life = fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'life.js'), 'utf8'), head = fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'header.js'), 'utf8');
-    check('商店有家里的东西和礼物两块，点钱的格子直接打开商店，没有保姆入口', /shop\.sec_gifts/.test(life) && /shop\.sec_home/.test(life) && /mn\.onclick = \(\) => U\.shopDialog\(\)/.test(head) && !/helpDialog|nnhire/.test(life + head));
+    check('商店有家里的东西和礼物两块，点钱的格子直接打开商店，没有保姆入口', /shop\.sec_gifts/.test(life) && /shop\.sec_bed/.test(life) && /shop\.sec_decor/.test(life) && /mn\.onclick = \(\) => U\.shopDialog\(\)/.test(head) && !/helpDialog|nnhire/.test(life + head));
+    check('界面里被调用的开局和商店函数都有定义', ['maybeIntro', 'introDialog', 'shopDialog'].every(f => new RegExp('U\.' + f + ' = ').test(life)) && /U\.giftDialog = /.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'visitor.js'), 'utf8')) && /U\.onboard = /.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'people_add.js'), 'utf8')));
     check('钱的格子写成 钱 加 每小时收入', /' \+' \+ rate \+ '\/h'/.test(head));
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
