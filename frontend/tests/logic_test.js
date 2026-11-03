@@ -73,7 +73,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   for (const f of Object.keys(CY.seed.files()).filter(f => /^templates\/(species|conditions)\//.test(f))) { const o = ctx.jsyaml.load(CY.seed.files()[f]); Object.keys(o.needs || {}).forEach(k => needKeys0.add(k)); Object.keys(o.actions || {}).forEach(k => actKeys0.add(k)); if (o.label && /conditions/.test(f)) condKeys0.add(o.id); }
   
   /* 玩法新增的文字（locales/play_*.js）八种语言都有，这里只把它们从界面键检查里排除，齐全性在 play_test 里查 */
-  const playKeys = new Set(); for (const f of fs.readdirSync(path.join(root, 'locales')).filter(f => /^play_/.test(f))) vm.runInNewContext(fs.readFileSync(path.join(root, 'locales', f), 'utf8'), { CY: { i18n: { register: (l, d) => Object.keys(d).forEach(k => playKeys.add(k)), cards: (l, tpl, rows) => Object.keys(rows).forEach(id => playKeys.add('visitor.' + id + '.name')) } } });
+  const playKeys = new Set(); for (const f of fs.readdirSync(path.join(root, 'locales')).filter(f => /^play_/.test(f))) vm.runInNewContext(fs.readFileSync(path.join(root, 'locales', f), 'utf8'), { CY: { i18n: { register: (l, d) => Object.keys(d).forEach(k => playKeys.add(k)), cards: (l, tpl, rows) => Object.keys(rows).forEach(id => playKeys.add('visitor.' + id + '.name')), said: () => {} } } });
   for (const lang of ['zh-TW', 'fr', 'ja', 'ko', 'es', 'de']) {
     const pk = ctx.CY.i18n.packs[lang] || {};
     const miss = [...used].filter(k => !playKeys.has(k)).filter(k => !(k in pk && pk[k] !== undefined)).concat([...needKeys0].filter(k => !(('need.' + k) in pk)).map(k => 'need.' + k), [...actKeys0].filter(k => !(('act.' + k) in pk)).map(k => 'act.' + k), [...condKeys0].filter(k => !(('cond.' + k) in pk)).map(k => 'cond.' + k));

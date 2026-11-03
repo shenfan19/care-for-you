@@ -108,3 +108,35 @@ CY.i18n.cards("es", {
   sequoyah: ["Sequoyah", "Siglos XVIII y XIX, cheroqui", "Una copia de una página de una tabla de sílabas", "Tu propia lengua merece sus propias letras.", "Dijo que quería crear un sistema de escritura para su propia lengua, que lo había intentado durante años cambiándolo símbolo a símbolo.", "Llevaba un montón de papel lleno de símbolos y dijo que aún tenía que revisarlos una vez más.", "Acercó la lámpara y fue comprobando los símbolos uno a uno."],
   tupaia: ["Tupaia", "Siglo XVIII, Islas de la Sociedad", "Una copia de una carta marina", "En el mar no hay caminos, solo direcciones que recuerdas.", "No necesitaba carta estelar: por la dirección en que salen las estrellas, sabía decir dónde estaba cada isla.", "Dibujó en papel una carta del mar, con más de setenta islas.", "La desplegó y recorrió con el dedo las islas lejanas."]
 });
+
+CY.i18n.register("es", { "title.uncle": "tío", "title.aunt": "tía",
+  "visit.fam.med.peer": "{guest} habló con {who} de las medicinas que toma cada uno a diario, y se recordaron que debían tomarlas a su hora.", "visit.fam.sci.peer": "{guest} se puso junto a {who} en la ventana, y los dos se preguntaron si llovería mañana.", "visit.fam.art.peer": "{guest} recitó un verso antiguo a {who}, y los dos asintieron.", "visit.fam.edu.peer": "{guest} habló con {who} de los libros viejos que había leído cada uno.", "visit.fam.pol.peer": "{guest} sirvió una taza de té a {who}, y los dos se sentaron uno al lado del otro sin decir mucho.", "visit.fam.trv.peer": "{guest} habló con {who} del tiempo y de la comida de sus tierras." });
+CY.i18n.said("es", {
+  nightingale: ["El primer requisito de un hospital es que no haga daño a los enfermos."],
+  zhuge: ["Sin sencillez no hay claridad de propósito; sin quietud, no se llega lejos."],
+  curie: ["Nada en la vida debe temerse, solo comprenderse."],
+  galois: ["No tengo tiempo… No tengo tiempo."],
+  mozart: ["No hago caso de los elogios ni de las censuras de nadie. Simplemente sigo mis propios sentimientos."],
+  beethoven: ["Todos los hombres serán hermanos."],
+  da_vinci: ["Aprender nunca agota la mente."],
+  li_bai: ["El cielo me dio talentos, y han de servir para algo; gasta mil monedas de oro y volverán."],
+  du_fu: ["¡Ojalá tuviera diez mil casas espaciosas para cobijar a todos los pobres letrados bajo el cielo, todos sonrientes!"],
+  su_shi: ["El verdadero sabor de este mundo es una alegría sencilla y tranquila."],
+  zhang_heng: ["El cielo es como un huevo, y la tierra es la yema que hay dentro."],
+  archimedes: ["¡Eureka! ¡Lo he encontrado!"],
+  ibn_sina: ["Para conocer de verdad una cosa, hay que conocer sus causas."],
+  ada: ["La imaginación es la facultad de descubrir. Penetra en los mundos invisibles que nos rodean."],
+  tagore: ["Que tu vida baile ligera al borde del Tiempo como el rocío en la punta de una hoja."],
+  hokusai: ["A los setenta y tres años aprendí algo de la verdadera estructura de animales, plantas, árboles, aves, peces e insectos."],
+  basho: ["Un viejo estanque: salta una rana, el sonido del agua."],
+  austen: ["No hay nada como quedarse en casa para tener verdadera comodidad."],
+  pasteur: ["En el campo de la observación, la casualidad solo favorece a la mente preparada."],
+  dickinson: ["¡No soy nadie! ¿Quién eres tú?"],
+  wang_xizhi: ["Al mirar arriba veo lo vasto que es el universo; al mirar abajo, lo rica que es la multitud de cosas."],
+  zhang_zhongjing: ["Busca con diligencia las enseñanzas antiguas y reúne ampliamente todas las recetas."],
+  euler: ["Nada ocurre en el mundo cuyo sentido no sea el de algún máximo o mínimo."],
+  hippocrates: ["La vida es breve, el arte es largo."],
+  scheherazade: ["Y eso solo era el comienzo de la historia."],
+  sor_juana: ["No estudio para saber más, sino para ignorar menos."],
+  kahlo: ["Pinto mi propia realidad."]
+});

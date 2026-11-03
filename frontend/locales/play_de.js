@@ -108,3 +108,35 @@ CY.i18n.cards("de", {
   sequoyah: ["Sequoyah", "18. und 19. Jahrhundert, Cherokee", "Eine Kopie einer Seite einer Silbentabelle", "Die eigene Sprache verdient eigene Buchstaben.", "Er sagte, er wolle für seine eigene Sprache ein Schriftsystem schaffen, habe es jahrelang versucht und Zeichen für Zeichen geändert.", "Er trug einen Stapel Papier voller Zeichen bei sich und sagte, er müsse sie noch einmal prüfen.", "Er rückte die Lampe näher und prüfte die Zeichen eines nach dem anderen."],
   tupaia: ["Tupaia", "18. Jahrhundert, Gesellschaftsinseln", "Eine Kopie einer Seekarte", "Auf dem Meer gibt es keine Straßen, nur Richtungen, an die man sich erinnert.", "Er brauchte keine Sternkarte: An der Richtung, in der die Sterne aufgehen, konnte er sagen, wo jede Insel lag.", "Er zeichnete eine Karte des Meeres auf Papier, mit mehr als siebzig Inseln darauf.", "Er breitete sie aus und zeichnete mit dem Finger die fernen Inseln nach."]
 });
+
+CY.i18n.register("de", { "title.uncle": "Onkel", "title.aunt": "Tante",
+  "visit.fam.med.peer": "{guest} sprach mit {who} über die Medizin, die beide täglich nehmen, und sie erinnerten einander, sie pünktlich zu nehmen.", "visit.fam.sci.peer": "{guest} stand neben {who} am Fenster, und beide fragten sich, ob es morgen regnen werde.", "visit.fam.art.peer": "{guest} trug {who} eine alte Verszeile vor, und beide nickten.", "visit.fam.edu.peer": "{guest} sprach mit {who} über die alten Bücher, die beide gelesen hatten.", "visit.fam.pol.peer": "{guest} schenkte {who} eine Tasse Tee ein, und die beiden saßen nebeneinander, ohne viel zu sagen.", "visit.fam.trv.peer": "{guest} sprach mit {who} über das Wetter und das Essen in ihren Heimatorten." });
+CY.i18n.said("de", {
+  nightingale: ["Die allererste Forderung an ein Krankenhaus ist, dass es den Kranken keinen Schaden zufügt."],
+  zhuge: ["Ohne Schlichtheit gibt es keine Klarheit des Ziels, ohne Stille kein Weitkommen."],
+  curie: ["Nichts im Leben ist zu fürchten, es muss nur verstanden werden."],
+  galois: ["Ich habe keine Zeit … Ich habe keine Zeit."],
+  mozart: ["Lob und Tadel anderer beachte ich nicht. Ich folge einfach meinem eigenen Gefühl."],
+  beethoven: ["Alle Menschen werden Brüder."],
+  da_vinci: ["Lernen erschöpft den Geist nie."],
+  li_bai: ["Der Himmel gab mir Talente, und sie müssen zu etwas taugen; gib tausend Goldstücke aus, sie kommen wieder."],
+  du_fu: ["Hätte ich nur zehntausend geräumige Häuser, um alle armen Gelehrten unter dem Himmel zu schützen, alle lächelnd!"],
+  su_shi: ["Der wahre Geschmack dieser Welt ist eine schlichte, stille Freude."],
+  zhang_heng: ["Der Himmel ist wie ein Ei, und die Erde ist das Eigelb darin."],
+  archimedes: ["Heureka! Ich hab's gefunden!"],
+  ibn_sina: ["Um eine Sache wirklich zu kennen, muss man ihre Ursachen kennen."],
+  ada: ["Die Fantasie ist die Fähigkeit zu entdecken. Sie dringt in die unsichtbaren Welten um uns vor."],
+  tagore: ["Möge dein Leben leicht tanzen am Rande der Zeit wie Tau auf der Spitze eines Blattes."],
+  hokusai: ["Mit dreiundsiebzig begriff ich ein wenig vom wahren Bau der Tiere, Pflanzen, Bäume, Vögel, Fische und Insekten."],
+  basho: ["Ein alter Teich: Ein Frosch springt hinein, das Geräusch des Wassers."],
+  austen: ["Nichts geht über das Zuhausebleiben, wenn man echten Komfort will."],
+  pasteur: ["Im Feld der Beobachtung begünstigt der Zufall nur den vorbereiteten Geist."],
+  dickinson: ["Ich bin Niemand! Wer bist du?"],
+  wang_xizhi: ["Blicke ich auf, sehe ich, wie weit das Universum ist; blicke ich hinab, wie reich die Dinge."],
+  zhang_zhongjing: ["Suche eifrig die alten Lehren und sammle weithin alle Rezepte."],
+  euler: ["In der Welt geschieht nichts, dessen Sinn nicht der eines Maximums oder Minimums wäre."],
+  hippocrates: ["Das Leben ist kurz, die Kunst ist lang."],
+  scheherazade: ["Und das war erst der Anfang der Geschichte."],
+  sor_juana: ["Ich studiere nicht, um mehr zu wissen, sondern um weniger zu ignorieren."],
+  kahlo: ["Ich male meine eigene Wirklichkeit."]
+});

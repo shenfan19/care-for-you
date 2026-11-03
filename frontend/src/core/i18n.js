@@ -18,6 +18,12 @@
     }
     I.register(lang, d);
   };
+  /* 来客自己的话：每人一两句名言，接在需求暗示后面，编号从 2 开始 */
+  I.said = (lang, rows) => {
+    const d = {};
+    for (const id in rows) rows[id].forEach((x, i) => { d[`visitor.${id}.hint.${2 + i}`] = x; });
+    I.register(lang, d);
+  };
   I.detect = pref => {
     if (pref && pref !== 'auto' && I.packs[pref]) return pref;
     const low = (typeof navigator !== 'undefined' && navigator.language || 'zh-CN').toLowerCase();

@@ -335,13 +335,22 @@
   /* 长按多久：动作本身的时长，乘以主角的年纪。老人手慢，圈转得慢些 */
   const ACTOR_SLOW = { elder: 1.6 };
   G.holdSeconds = a => { if (G.DEV) return 0; const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; return +((typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k).toFixed(1); };
+  /* 对主角的称呼：家里的孩子按主角的名字叫，那是孩子的视角。外甥女，侄子，逃难来的孩子不是主角的孩子，主角是爸爸就叫叔叔，是妈妈就叫阿姨，是姑姑舅舅这类就照名字叫 */
+  const NOT_MINE = ['niece', 'nephew', 'refugee_child'];
+  G.titleFor = p => {
+    const pr = G.protagonist();
+    if (!pr) return t('player.title');
+    const spk = p && p.person ? (p.person.archetype || p.person.card || '') : '', role = pr.person.archetype || pr.person.card || '';
+    if (NOT_MINE.includes(spk) && (role === 'dad' || role === 'mom')) return t(role === 'dad' ? 'title.uncle' : 'title.aunt');
+    return pr.person.name;
+  };
   /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
   G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
   G.fmt = (s, p) => {
     const w = G.pronounWord(p), cap = /^[a-zà-ÿ]/.test(w) && CY.i18n.lang !== 'zh-CN' && CY.i18n.lang !== 'zh-TW';
     /* 称呼和名字：有主角就用主角的名字，没有就用当前语言的默认叫法 */
     const pr = G.protagonist();
-    let out = String(s).replace(/\{title\}/g, pr ? pr.person.name : t('player.title')).replace(/\{name\}/g, p ? p.person.name : pr ? pr.person.name : t('player.name'));
+    let out = String(s).replace(/\{title\}/g, G.titleFor(p)).replace(/\{name\}/g, p ? p.person.name : pr ? pr.person.name : t('player.name'));
     out = out.replace(/(^|[.!?]\s+|[。！？]\s*)\{ta\}/g, (m, pre) => pre + (cap ? w.charAt(0).toUpperCase() + w.slice(1) : w));
     return out.replace(/\{ta\}/g, w);
   };
@@ -655,11 +664,16 @@
     return Object.assign({ since: Date.now(), deadline: Date.now() + ini.num(G.cfg, 'interrupt', 'countdown_seconds') * 1000 }, o);
   };
 
+  /* 台词和问答的适用关系：谁会说（arch），主角是谁（to），成对的（pairs，说话的人和主角）；没有主角时不卡 to */
+  G.related = (q, p) => {
+    const archOf = x => (x && x.person ? x.person.archetype || x.person.card || '' : ''), spk = archOf(p), lead = G.protagonist(), role = archOf(lead);
+    return (!q.arch || q.arch.includes(spk)) && (!q.to || !lead || q.to.includes(role)) && (!q.pairs || !!(lead && q.pairs.some(([a, b]) => a === spk && b === role)));
+  };
   /* 候选的“说过的话”：同声线、还没选过的 */
   G.pickOptions = (p, n = 3) => {
     const taken = new Set((G.sayings[p.id] || []).map(s => s.lib).filter(Boolean));
     const v = p.person.voice || DEFAULT_VOICE[p.person.species] || 'sibling';
-    const pool = G.tpl.sayLib.filter(x => x.voice === v && !taken.has(x.id));
+    const pool = G.tpl.sayLib.filter(x => x.voice === v && !taken.has(x.id) && G.related(x, p));
     const out = [];
     while (out.length < n && pool.length) out.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
     return out;
@@ -672,7 +686,7 @@
     const sens = ini.bool(G.cfg, 'interaction', 'sensitive_topics');
     const recent = new Set(p.state.asked || []);
     const fits = (arr, val) => !arr || arr.includes(val);
-    let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
+    let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && G.related(q, p) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
     const mine = ((p.person.lines || {}).ask || []).filter(q => q && q.say).map((q, i) => ({ id: `own${i}`, say: q.say, answers: q.answers || [] }));
     pool = pool.concat(mine);
     const fresh = pool.filter(q => !recent.has(q.id));
@@ -693,7 +707,7 @@
 
   function fire() {
     const awake = p => !G.isSleeping(p);
-    const free = G.activePeople().filter(p => !G.req[p.id] && awake(p) && p !== G.protagonist() && !(p.person.help && p.person.help.role === 'nanny'));
+    const free = G.activePeople().filter(p => !p.person.visitor && !G.req[p.id] && awake(p) && p !== G.protagonist() && !(p.person.help && p.person.help.role === 'nanny'));
     if (!free.length) return;
     const needy = free.filter(p => G.maxNeed(p) > (p.person.kind === 'plant' ? 0.7 : 0.55));
     if (needy.length && Math.random() < 0.65) {
@@ -868,7 +882,7 @@
 
   /* 闲谈：不用你做什么，隔一阵有人随口说一句。说什么由后端按房间，时段，旧事挑 */
   function ambientChat() {
-    const cands = G.activePeople().filter(p => !G.toast[p.id] && !G.req[p.id] && p !== G.protagonist());
+    const cands = G.activePeople().filter(p => !p.person.visitor && !G.toast[p.id] && !G.req[p.id] && p !== G.protagonist());
     if (!cands.length) return;
     const p = pick(cands), loc = CY.world ? CY.world.locationOf(p) : { room: 'living' };
     const hr = G.dayMinutes() / 60, band = hr < 6 || hr >= 22 ? 'night' : hr < 11 ? 'morning' : hr < 17 ? 'noon' : 'evening';

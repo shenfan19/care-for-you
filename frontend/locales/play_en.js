@@ -24,3 +24,4 @@ CY.i18n.register('en', {
   'gift.pick': 'What would you like to give {name}? You can give {n} more today.', 'gift.money': 'Not enough money.', 'gift.have': '{n} in stock',
   'shop.cabinet': 'Display cabinet', 'shop.cabinet_fx': 'Stands in the living room and holds the keepsakes guests leave behind. Hover over a keepsake to see who left it.',
 });
+CY.i18n.register("en", { "title.uncle": "Uncle", "title.aunt": "Aunt" });

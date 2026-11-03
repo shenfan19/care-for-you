@@ -266,4 +266,60 @@
     CY.i18n.register("zh-CN", { [`visit.fam.${f}.${g}`]: "{guest}" + FAM[f][g][0] + "。" });
     CY.i18n.register("en", { [`visit.fam.${f}.${g}`]: "{guest} " + FAM[f][g][1] + "." });
   }
+
+  /* ---------- 年龄：按大众印象里的样子，白胡子的老先生就是老先生，年轻的天才就是年轻的 ---------- */
+  const AGES = { nightingale: 38, zhuge: 48, curie: 45, du_fu: 58, su_shi: 52, li_shizhen: 60, da_vinci: 62, tagore: 70, euler: 62, hippocrates: 70, archimedes: 60, pasteur: 60, machado: 60, ibn_sina: 55, zhang_zhongjing: 55, dickinson: 35 };
+  for (const id in AGES) if (V.cards[id]) V.cards[id].age = AGES[id];
+
+  /* ---------- 自己的话：广为流传的名言，来客隔一阵念叨一句，满足以后也还会念叨。排在需求暗示后面 ---------- */
+  V.NEED_HINTS = 2;
+  V.said = (id, zh, en) => {
+    const c = V.cards[id]; if (!c) return;
+    const n = c.t.hint.length;
+    c.t.hint.push({ "zh-CN": zh, en });
+    CY.i18n.register("zh-CN", { [`visitor.${id}.hint.${n}`]: zh });
+    CY.i18n.register("en", { [`visitor.${id}.hint.${n}`]: en });
+  };
+  V.said("nightingale", "医院的第一条要求，是不能伤害病人。", "The very first requirement in a hospital is that it should do the sick no harm.");
+  V.said("zhuge", "非淡泊无以明志，非宁静无以致远。", "Without simplicity there is no clarity of purpose; without stillness, no reaching far.");
+  V.said("curie", "生活中没有什么可怕的东西，只有需要理解的东西。", "Nothing in life is to be feared, it is only to be understood.");
+  V.said("galois", "我没有时间了……我没有时间了。", "I have no time... I have no time.");
+  V.said("mozart", "我从不理会别人的称赞或责备，只听我自己的感觉。", "I pay no attention to anyone's praise or blame. I simply follow my own feelings.");
+  V.said("beethoven", "所有的人，都将成为兄弟。", "All men shall become brothers.");
+  V.said("da_vinci", "学习从不会让头脑疲惫。", "Learning never exhausts the mind.");
+  V.said("li_bai", "天生我材必有用，千金散尽还复来。", "Heaven made me with talents, and they must be of use; spend a thousand in gold and it will come again.");
+  V.said("du_fu", "安得广厦千万间，大庇天下寒士俱欢颜。", "If only I had ten thousand spacious houses to shelter every poor scholar under heaven, all smiling.");
+  V.said("su_shi", "人间有味是清欢。", "The truest taste in this world is a simple, quiet joy.");
+  V.said("zhang_heng", "浑天如鸡子，地如鸡子中黄。", "The heavens are like an egg, and the earth is the yolk inside it.");
+  V.said("archimedes", "尤里卡！我找到了！", "Eureka! I have found it!");
+  V.said("ibn_sina", "要真正了解一件事，就得知道它的缘由。", "To truly know a thing, you must know its causes.");
+  V.said("ada", "想象力是发现的能力，它能穿透我们周围看不见的世界。", "Imagination is the discovering faculty. It penetrates the unseen worlds around us.");
+  V.said("tagore", "愿你的生命像露珠，在时间的叶尖上轻轻起舞。", "Let your life lightly dance on the edges of Time like dew on the tip of a leaf.");
+  V.said("hokusai", "七十三岁，我才对鸟兽草木鱼虫的真正结构略有所悟。", "At seventy-three I learned a little about the real structure of animals, plants, trees, birds, fishes and insects.");
+  V.said("basho", "古池塘，青蛙跳进去，水声响。", "An old pond: a frog jumps in, the sound of water.");
+  V.said("austen", "要说真正的舒适，没有什么比待在家里更好。", "There is nothing like staying at home for real comfort.");
+  V.said("pasteur", "在观察的领域里，机遇只偏爱有准备的头脑。", "In the fields of observation, chance favors only the prepared mind.");
+  V.said("dickinson", "我是无名小卒！你是谁？", "I'm nobody! Who are you?");
+  V.said("wang_xizhi", "仰观宇宙之大，俯察品类之盛。", "Looking up, I see how vast the universe is; looking down, how rich the myriad things.");
+  V.said("zhang_zhongjing", "勤求古训，博采众方。", "Seek the old teachings diligently, and gather every prescription widely.");
+  V.said("euler", "世上没有哪件事，不带着某种最大或最小的道理。", "Nothing takes place in the world whose meaning is not that of some maximum or minimum.");
+  V.said("hippocrates", "生命短暂，技艺长久。", "Life is short, the art is long.");
+  V.said("scheherazade", "这还只是故事的开头。", "And that was only the beginning of the story.");
+  V.said("sor_juana", "我读书，不是为了知道得更多，而是为了少一些无知。", "I do not study to know more, but to ignore less.");
+  V.said("kahlo", "我画的，是我自己的现实。", "I paint my own reality.");
+
+  /* 同辈的老人：来客自己也上了年纪时，和家里的老人是平辈，不是去听对方讲从前 */
+  const PEER = {
+    med: ["和{who}说起各自常吃的药，互相提醒要按时服用", "compared notes with {who} on their daily medicine and reminded each other to take it on time"],
+    sci: ["和{who}并排站在窗前，说起明天会不会下雨", "stood beside {who} at the window and wondered whether it would rain tomorrow"],
+    art: ["给{who}念了一句老诗，两个人都点了点头", "recited an old line of verse to {who}, and both of them nodded"],
+    edu: ["和{who}聊起各自读过的旧书", "talked with {who} about the old books each had read"],
+    pol: ["给{who}倒了杯茶，两个人并排坐着，没怎么说话", "poured {who} a cup of tea, and the two sat side by side without saying much"],
+    trv: ["和{who}说起各自家乡的天气和吃食", "talked with {who} about the weather and food back in their home towns"],
+  };
+  V.FAMPEER = PEER; V.SENIOR_AGE = 50;
+  for (const f in PEER) {
+    CY.i18n.register("zh-CN", { [`visit.fam.${f}.peer`]: "{guest}" + PEER[f][0] + "。" });
+    CY.i18n.register("en", { [`visit.fam.${f}.peer`]: "{guest} " + PEER[f][1] + "." });
+  }
 })(globalThis.CY = globalThis.CY || {});

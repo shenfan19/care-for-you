@@ -197,11 +197,13 @@
     const now = Date.now();
     for (const p of G.visitorPeople()) {
       const st = p.person.visitor, c = V.cards[st.id], n = c && c.t.hint ? c.t.hint.length : 0;
-      if (st.ok || !n || G.isSleeping(p) || G.toast[p.id]) continue;
+      /* 没满足时轮流说需求暗示和自己的话，满足以后只剩自己的话 */
+      const from = st.ok ? V.NEED_HINTS : 0, pool = n > from ? n - from : 0;
+      if (!pool || G.isSleeping(p) || G.toast[p.id]) continue;
       if (nextHint[p.id] === undefined) nextHint[p.id] = now + 8000;
       if (now < nextHint[p.id]) continue;
       nextHint[p.id] = now + 1000 * rint(G.DOOR.hint_gap[0], G.DOOR.hint_gap[1]);
-      const text = t(`visitor.${st.id}.hint.${st.talk % n}`); st.talk++;
+      const text = t(`visitor.${st.id}.hint.${from + (st.talk % pool)}`); st.talk++;
       if (G.toastFor) G.toastFor(p, text, 'soft');
     }
   });
@@ -220,7 +222,7 @@
       if (st.fam_day === day()) continue;
       const kin = G.activePeople().filter(q => !q.person.visitor && G.isHuman(q) && GROUP[G.stage(q)]);
       if (!kin.length) continue;
-      const q = kin[Math.floor(Math.random() * kin.length)], key = `visit.fam.${c.field}.${GROUP[G.stage(q)]}`;
+      const q = kin[Math.floor(Math.random() * kin.length)], grp = GROUP[G.stage(q)], key = `visit.fam.${c.field}.${grp === 'elder' && c.age >= V.SENIOR_AGE ? 'peer' : grp}`;
       st.fam_day = day();
       G.settleNote(key, { guest: nameRef(st.id), who: q.person.name });
       if (G.toastFor) G.toastFor(p, t(key, { guest: p.person.name, who: q.person.name }), 'soft');

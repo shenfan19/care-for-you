@@ -130,14 +130,34 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       G.world.meets = {}; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
     }
     {
-      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.)/.test(k)), miss = {};
+      const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.)/.test(k)), miss = {};
       for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) { const m = want.filter(k => P.en[k] !== '' && !(P[l] && P[l][k])); if (m.length) miss[l] = m.slice(0, 5).join(); }
       check('八种语言的玩法文字和卡片文字齐全', Object.keys(miss).length === 0, JSON.stringify(miss));
       const ph = [], hold = s => [...new Set(String(s).match(/\{[a-z_]+\}/g) || [])].sort().join();
       for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) for (const k of want) if (P[l] && P[l][k] && hold(P[l][k]) !== hold(P.en[k])) ph.push(l + ':' + k);
       check('各语言译文里的占位符和英文一致', ph.length === 0, ph.slice(0, 6).join());
     }
-    check('文字里没有死亡和战争的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
+    /* 对话关系：来客不参与家人的闲聊和问答，外甥女不叫主角妈妈，邻居老人不讲"你小时候"，来客有自己的名言 */
+    {
+      for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+      await G.createPerson({ arch: 'dad', name: '爸爸' }); await G.createPerson({ arch: 'mom', name: '妈妈' }); await G.createPerson({ arch: 'aunt', name: '姑姑' }); await G.createPerson({ arch: 'uncle', name: '舅舅' }); const nid = await G.createPerson({ arch: 'niece', name: '外甥女' }), gid = await G.createPerson({ arch: 'neighbor', name: '邻居老人' }), kid = await G.createPerson({ arch: 'grandpa', name: '外公' });
+      await G.load(); G.DAY.enabled = true;
+      const niece = G.get(nid), neighbor = G.get(gid), kin = G.get(kid), mom = G.people.find(q => q.person.archetype === 'mom'), dad = G.people.find(q => q.person.archetype === 'dad');
+      check('测试里有爸爸妈妈', !!mom && !!dad);
+      if (mom) { G.setProtagonist(mom.id); check('外甥女不叫主角妈妈，叫阿姨', G.titleFor(niece) === '阿姨' && G.fmt('{title}，我饿了', niece) === '阿姨，我饿了' && G.titleFor(baby) === mom.person.name); }
+      if (dad) { G.setProtagonist(dad.id); check('主角是爸爸时外甥女叫叔叔', G.titleFor(niece) === '叔叔'); G.world.last_area = null;
+        check('亲外公会问小时候的事，邻居老人不会', G.askBank(kin).some(x => x.id === 'ask_e01') && !G.askBank(neighbor).some(x => /^ask_(e01|e06|e08|e10|x20)$/.test(x.id)));
+        check('姑姑只对爸爸讲你小时候，舅舅只对妈妈讲', (() => { const au = G.people.find(q => q.person.archetype === 'aunt'), un = G.people.find(q => q.person.archetype === 'uncle'); if (!au || !un) return true; const r1 = G.askBank(au).some(x => x.id === 'ask_a02') && !G.askBank(un).some(x => x.id === 'ask_a02'); G.setProtagonist(mom.id); const r2 = G.askBank(un).some(x => x.id === 'ask_a02') && !G.askBank(au).some(x => x.id === 'ask_a02'); G.setProtagonist(dad.id); return r1 && r2; })()); }
+      if (dad && mom) { G.setProtagonist(dad.id); check('妈妈不对做配偶的爸爸说"钱够不够用"，对成年的孩子才说', !G.pickOptions(mom, 99).some(x => x.id === 'parent04')); }
+      await G.arrive('galois', true); const gv = G.visitorPeople()[0];
+      for (let i = 0; i < 300; i++) { for (const k in G.req) delete G.req[k]; G.fire(); }
+      check('来客不参与家人的闲聊和问答', !gv || !G.req[gv.id]);
+      const V = CY.visitors, said = ids => ids.every(i => V.cards[i].t.hint.length > V.NEED_HINTS);
+      check('有名言的来客，名言排在需求暗示后面', said(['galois', 'archimedes', 'li_bai', 'hippocrates', 'kahlo']) && V.cards.galois.t.hint[V.NEED_HINTS]['zh-CN'].includes('我没有时间了'));
+      check('老年来客对家里老人是平辈，不是听对方讲从前', V.FAMPEER && CY.i18n.has('visit.fam.art.peer') && V.SENIOR_AGE === 50 && V.cards.hippocrates.age >= 60 && V.cards.galois.age < 30);
+      for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+    }
+    check('文字里没有死亡，战争，恋爱和性的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
   }
   /* 存档被改过的标记 */
   {

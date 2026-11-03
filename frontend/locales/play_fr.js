@@ -108,3 +108,35 @@ CY.i18n.cards("fr", {
   sequoyah: ["Sequoyah", "XVIIIe et XIXe siècles, Cherokee", "Une copie d'une page d'un tableau de syllabes", "Ta propre langue mérite ses propres lettres.", "Il dit qu'il voulait créer un système d'écriture pour sa propre langue, qu'il avait essayé pendant des années en modifiant symbole après symbole.", "Il portait une pile de papier couverte de symboles et dit qu'il devait encore les vérifier une fois.", "Il approcha la lampe et vérifia les symboles un à un."],
   tupaia: ["Tupaia", "XVIIIe siècle, îles de la Société", "Une copie d'une carte marine", "En mer, il n'y a pas de routes, seulement des directions dont on se souvient.", "Il n'avait pas besoin de carte du ciel : à la direction où se lèvent les étoiles, il savait dire où se trouvait chaque île.", "Il dessina sur le papier une carte de la mer, avec plus de soixante-dix îles.", "Il la déplia et suivit du doigt les îles lointaines."]
 });
+
+CY.i18n.register("fr", { "title.uncle": "Tonton", "title.aunt": "Tata",
+  "visit.fam.med.peer": "{guest} parla avec {who} des médicaments que chacun prend chaque jour, et ils se rappelèrent de les prendre à l'heure.", "visit.fam.sci.peer": "{guest} se tint à côté de {who} à la fenêtre, et tous deux se demandèrent s'il pleuvrait demain.", "visit.fam.art.peer": "{guest} récita un vieux vers à {who}, et tous deux hochèrent la tête.", "visit.fam.edu.peer": "{guest} parla avec {who} des vieux livres que chacun avait lus.", "visit.fam.pol.peer": "{guest} versa une tasse de thé à {who}, et les deux restèrent assis côte à côte sans dire grand-chose.", "visit.fam.trv.peer": "{guest} parla avec {who} du temps et de la cuisine de leurs pays." });
+CY.i18n.said("fr", {
+  nightingale: ["La toute première exigence d'un hôpital est de ne pas nuire aux malades."],
+  zhuge: ["Sans simplicité, pas de clarté de dessein ; sans calme, pas d'horizon lointain."],
+  curie: ["Rien dans la vie n'est à craindre, tout est à comprendre."],
+  galois: ["Je n'ai pas le temps… Je n'ai pas le temps."],
+  mozart: ["Je ne prête aucune attention aux louanges ni aux blâmes de personne. Je suis simplement mes propres sentiments."],
+  beethoven: ["Tous les hommes deviendront frères."],
+  da_vinci: ["Apprendre n'épuise jamais l'esprit."],
+  li_bai: ["Le ciel m'a donné des talents, et ils doivent servir ; dépense mille pièces d'or, elles reviendront."],
+  du_fu: ["Si seulement j'avais dix mille vastes maisons pour abriter tous les lettrés pauvres sous le ciel, tous souriants !"],
+  su_shi: ["La vraie saveur de ce monde est une joie simple et tranquille."],
+  zhang_heng: ["Le ciel est comme un œuf, et la terre est le jaune qu'il contient."],
+  archimedes: ["Eurêka ! J'ai trouvé !"],
+  ibn_sina: ["Pour vraiment connaître une chose, il faut en connaître les causes."],
+  ada: ["L'imagination est la faculté de découvrir. Elle pénètre les mondes invisibles qui nous entourent."],
+  tagore: ["Que ta vie danse légèrement au bord du Temps, comme la rosée au bout d'une feuille."],
+  hokusai: ["À soixante-treize ans, j'ai appris un peu de la vraie structure des animaux, des plantes, des arbres, des oiseaux, des poissons et des insectes."],
+  basho: ["Un vieil étang : une grenouille y saute, le bruit de l'eau."],
+  austen: ["Rien ne vaut de rester chez soi pour un vrai confort."],
+  pasteur: ["Dans le champ de l'observation, le hasard ne favorise que l'esprit préparé."],
+  dickinson: ["Je ne suis personne ! Et toi, qui es-tu ?"],
+  wang_xizhi: ["En levant les yeux, je vois combien l'univers est vaste ; en les baissant, combien les choses sont riches."],
+  zhang_zhongjing: ["Cherche avec ardeur les enseignements anciens et rassemble largement toutes les recettes."],
+  euler: ["Rien ne se produit dans le monde dont le sens ne soit celui d'un maximum ou d'un minimum."],
+  hippocrates: ["La vie est brève, l'art est long."],
+  scheherazade: ["Et ce n'était que le début de l'histoire."],
+  sor_juana: ["Je n'étudie pas pour en savoir plus, mais pour en ignorer moins."],
+  kahlo: ["Je peins ma propre réalité."]
+});

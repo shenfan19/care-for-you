@@ -146,5 +146,25 @@
     cat: { outing_back: [['{ta}好奇地嗅着你身上带回来的外面的味道。', '{ta} sniffed curiously at the outdoor smell you brought back.']] },
   };
   for (const v in EXTRA) for (const key in EXTRA[v]) addKeyed(v, 'life', key, EXTRA[v][key]);
+
+  /* 问答的适用对象：台词里的“你小时候”“我背过你”“你妈”这类话，只在说话的人和主角真有这层关系时才问。
+     arch 是谁会问，to 是主角是谁，pairs 是成对的（说话的人，主角）。没写就不限。
+     邻居老人，逃难来的老人和访客不是家里的长辈，不讲“你小时候”；孩子的父母问“有空回家吃饭吗”，主角得是他们的孩子。 */
+  const KIN_ELDER = ['grandpa', 'grandma', 'waigong', 'waipo', 'gongong', 'popo', 'elder', 'wheelchair'];
+  const DOWN = ['dad', 'mom', 'aunt', 'uncle', 'brother', 'sister', 'man25', 'woman25', 'younger_brother', 'younger_sister', 'husband', 'wife', 'son', 'daughter', 'teen', 'niece', 'nephew', 'grandson', 'granddaughter', 'child12'];
+  const CHILDISH = ['son', 'daughter', 'teen', 'man25', 'woman25', 'brother', 'sister', 'younger_brother', 'younger_sister', 'child12', 'niece', 'nephew', 'grandson', 'granddaughter'];
+  const SIBLINGS = ['brother', 'sister', 'younger_brother', 'younger_sister'];
+  const KIN_PAIRS = [['aunt', 'dad'], ['uncle', 'mom']], INLAW_PAIRS = [['aunt', 'mom'], ['uncle', 'dad']];
+  const RULES = {
+    ask_e01: { arch: KIN_ELDER, to: DOWN }, ask_e06: { arch: KIN_ELDER, to: DOWN }, ask_e08: { arch: KIN_ELDER, to: DOWN }, ask_e10: { arch: KIN_ELDER, to: DOWN }, ask_x20: { arch: KIN_ELDER, to: DOWN },
+    ask_p04: { arch: ['dad', 'mom'], to: CHILDISH }, ask_p05: { arch: ['dad', 'mom'], to: CHILDISH }, ask_p06: { arch: ['dad', 'mom'], to: CHILDISH }, ask_x19: { arch: ['dad', 'mom'], to: CHILDISH },
+    ask_a02: { pairs: KIN_PAIRS }, ask_x03: { pairs: KIN_PAIRS }, ask_x04: { pairs: INLAW_PAIRS }, ask_x02: { arch: ['aunt'] },
+    ask_a04: { arch: ['aunt', 'uncle'], to: ['brother', 'sister', 'man25', 'woman25', 'younger_brother', 'younger_sister', 'teen', 'son', 'daughter', 'nephew', 'niece'] },
+    ask_s01: { arch: SIBLINGS }, ask_x22: { arch: SIBLINGS }, ask_s07: { arch: SIBLINGS },
+  };
+  for (const list of [C.asks].concat(Object.values(C.packs || {}).map(x => x && x.asks).filter(Boolean))) for (const q of list) if (RULES[q.id]) Object.assign(q, RULES[q.id]);
+  /* 平时会说的话也一样：父母对孩子说的“钱够不够用”“到家说一声”，不对配偶说；姑姑说“你小时候啊，可皮了”，只对她的侄子侄女的父亲说 */
+  const SAY_RULES = { parent03: { arch: ['dad', 'mom'], to: CHILDISH }, parent04: { arch: ['dad', 'mom'], to: CHILDISH }, parent05: { arch: ['dad', 'mom'], to: CHILDISH }, parent08: { arch: ['dad', 'mom'], to: CHILDISH }, aunt04: { pairs: KIN_PAIRS } };
+  for (const list of [C.sayings].concat(Object.values(C.packs || {}).map(x => x && x.sayings).filter(Boolean))) for (const q of list || []) if (SAY_RULES[q.id]) Object.assign(q, SAY_RULES[q.id]);
   C.LIFE_KEYS = Object.keys(LIFE).concat('outing_back');
 })(globalThis.CY = globalThis.CY || {});
