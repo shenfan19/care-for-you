@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner gift" id="cornerGift">🎁</button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -393,7 +393,7 @@
     groom: '✨', vet: '🏥', clean: '🧹', train: '🎓', teach: '🗣', warm: '🔥', veggie: '🥬', mist: '💦', sun: '☀', fertilize: '🌱', prune: '✂', repot: '🪴',
     medicine: '💊', sugar: '🩸', bp: '🫀', heat: '♨', massage: '💆', fever: '🌡', cool: '🧊', inhaler: '💨', air: '🌬', remind: '☝', album: '📷',
     restsit: '💺', steady: '✋', listen: '👂', walkout: '🌳', lead: '🚽', nightlight: '💡', ointment: '🧴', trimnails: '💅', painkill: '🩹', support: '🤲', rehab: '🏃',
-    stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
+    gift: '🎁', stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
   };
   U.actIcon = (p, a) => {
     if (ACT_ICON[a.id]) return ACT_ICON[a.id];
@@ -472,7 +472,12 @@
     h.win.cancelAnimationFrame(h.raf);
     CY.world.holding = false; CY.world.lastActive = Date.now();
     const el = $r('#hold'); if (el) el.style.display = 'none';
-    if (done) { G.perform(h.pid, h.a.id); U.closeRing(); }
+    if (done) {
+      U.closeRing();
+      /* 送礼不是一次照料：长按做完后弹出礼物选择窗，选了才送 */
+      if (h.a.id === 'gift') { U.renderRoom(true); U.giftDialog(h.pid); return; }
+      G.perform(h.pid, h.a.id);
+    }
     U.renderRoom(true);
   };
 

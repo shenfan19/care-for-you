@@ -34,6 +34,7 @@ actions:
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: -0.6 }, mood: 0.1, stages: [teen, adult, elder] }
   rest: { label: 扶去休息, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
   invite_rest: { label: 请ta睡一会儿, visitor_only: true, hold: 6, min: 15, effect: { rest: -0.9 }, mood: 0.05, stages: [child, teen, adult, elder] }
+  gift: { label: 送礼, visitor_only: true, hold: 3, min: 0, effect: {}, stages: [child, teen, adult, elder] }
   walk: { label: 搀着散步, walks: true, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
   park: { label: 带去公园, walks: true, item_for: { infant: stroller }, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, minutes: 8, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
   street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, hold: 6, min: 30, away: true, outing: { place: street, room: road, minutes: 6, group: true }, effect: { company: -0.3, play: -0.3 }, mood: 0.1, stages: [toddler, child, elder] }

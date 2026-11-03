@@ -62,7 +62,7 @@
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
     if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
     mn.onclick = () => U.helpDialog();
-    for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()], ['cornerGift', 'gift.tip', () => U.giftDialog && U.giftDialog()]]) {
+    for (const [id, k, fn] of [['cornerPeople', 'hdr.people_tip', () => U.peopleDialog()]]) {
       const b = root.querySelector('#' + id); if (b) { b.title = t(k); b.setAttribute('aria-label', t(k)); b.onclick = fn; }
     }
     const ms = root.querySelector('#cornerMusic');

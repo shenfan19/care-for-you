@@ -97,6 +97,7 @@
     { id: 'bed', price: 350, icon: '🛏', fx: { rest_sleep: 1.3 } },
     { id: 'bed2', price: 700, icon: '🛏', needs: 'bed', fx: { rest_sleep: 1.15 } },
     { id: 'books', price: 400, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
+    { id: 'cabinet', price: 300, icon: '🏺' },
     { id: 'stroller', price: 400, icon: '👶' }, { id: 'wheelchair', price: 600, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
     { id: 'decor1', price: 160, icon: '🪴', fx: { mood: 0.02 } }, { id: 'decor2', price: 350, icon: '🪴', needs: 'decor1', fx: { mood: 0.02 } }, { id: 'decor3', price: 550, icon: '🪴', needs: 'decor2', fx: { mood: 0.02 } },
     { id: 'house2', price: 2000, icon: '🏠', fx: { mood: 0.03 } },

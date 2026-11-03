@@ -155,6 +155,15 @@
           spr('pottedPlant', 0, 7.4, 0.8);
         }
         for (const id in CY.house().items) if (G0().owned(id) && !G0().itemAway(id)) for (const e of CY.house().items[id]) if (e.room === name) spr(e.s, e.rot || 0, e.x, e.y, e.lift || 0, e.key);
+        /* 展柜里摆着客人留下的纪念品：按拿到的先后排，鼠标停上去显示是谁留的 */
+        if (name === 'living' && G0().owned('cabinet') && G0().souvenirs && CY.visitors) {
+          const sv = G0().souvenirs(), V = CY.visitors, esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]), ids = V.order.filter(id => sv[id]).sort((a2, b2) => sv[a2] - sv[b2]).slice(0, 18);
+          const cells = ids.map((id, i) => {
+            const [sx, sy] = pt(x + 1.7 - 0.5 + (i % 6) * 0.2, y + 0.62, [13, 37, 60][Math.floor(i / 6)]).split(',');
+            return `<text x="${sx}" y="${sy}" font-size="12" text-anchor="middle"><title>${esc(CY.t('visitor.' + id + '.souvenir'))} · ${esc(CY.t('visitor.' + id + '.name'))}</title>${V.cards[id].souvenir.icon}</text>`;
+          });
+          if (cells.length) q.push({ k: 99, s: cells.join('') });
+        }
         q.sort((a2, b2) => a2.k - b2.k).forEach(it => out.push(it.s));
         /* 房间名，淡淡的 */
         const [lx, ly] = pt(x + w * 0.08, y + h * 0.96, 0).split(',');

@@ -196,3 +196,4 @@ CY.i18n.register("de", {"selfact.sleep": "{name} ist schlafen gegangen"});
 CY.i18n.register("de", {"cond.sev": "Schweregrad", "cond.sev_mild": "Leicht", "cond.sev_moderate": "Mittel", "cond.sev_advanced": "Fortgeschritten", "obs.title": "Beobachtung", "obs.measure": "Mach einmal „{act}“, um es zu sehen", "obs.none": "Noch nicht sichtbar", "selfact.selfsugar": "{name} hat den Blutzucker gemessen", "act.selfsugar": "Blutzucker allein messen"});
 CY.i18n.register("de", {"import.pack": "Krankheitspaket: {names}, {n} Dateien. Sie kommen in den Vorlagenordner, niemand in deinem Spielstand wird verändert."});
 CY.i18n.register('de', {'act.invite_rest': 'Zum Ausruhen einladen'});
+CY.i18n.register('de', {'act.gift': 'Beschenken'});

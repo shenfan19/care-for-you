@@ -19,13 +19,13 @@ This page explains the daily rhythm, the visitors who come through the time door
 - The first guest arrives on the first afternoon and is chosen by the interface language. Everyone else arrives at random, and guests you have not yet satisfied come more often than ones you already have.
 - Visitors are fictionalised short visits. They go back through the door afterwards and history is not changed. All they leave behind is a harmless keepsake.
 
-## Gifts and the cabinet
+## Gifts and the display cabinet
 
-- The gift button at the top right of the game window is always lit. It opens your bag: click an item to give it to the guest. With more than one guest you choose who gets it. The same window has the gift shop and the cabinet.
+- Giving is one of the actions in the ring around a guest. Press and hold "give a gift" until the circle fills and a window with the gift list opens, then click an item. A gift you do not have in stock is bought on the spot at the listed price. There is no separate gift menu or shop.
 - Guests drop hints in what they say now and then. Some only need a rest. Others need a specific gift.
 - A gift only works if it matches what the guest needs. A wrong gift is accepted and used up, and nothing is said about it at the time. A line in the day's account can tell you what they would really have liked.
 - You can give two gifts a day.
-- When a guest is content they leave a keepsake, which goes into the cabinet.
+- When a guest is content they leave a keepsake. The display cabinet is a piece of furniture you buy in the shop; it stands in the living room and shows the keepsakes you have collected, up to eighteen. Hover over one to see who left it.
 
 ## Writing a visitor card
 

@@ -112,8 +112,11 @@
     if (!p || !p.person.visitor) return { error: 'none' };
     const st = p.person.visitor, c = V.cards[st.id];
     if (st.ok) return { error: 'done' };
-    if (!(inv[giftId] > 0)) return { error: 'nogift' };
+    const g = V.GIFTS[giftId];
+    if (!g) return { error: 'nogift' };
     if (G.giftsLeft() <= 0) return { error: 'limit' };
+    /* 背包里没有就当场按目录价买下送出 */
+    if (!(inv[giftId] > 0)) { if ((G.world.money || 0) < g.price) return { error: 'money' }; G.world.money -= g.price; inv[giftId] = 1; }
     inv[giftId]--; if (!inv[giftId]) delete inv[giftId];
     useGift();
     if (c.wants.includes(giftId)) {

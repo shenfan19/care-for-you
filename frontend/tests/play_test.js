@@ -63,10 +63,13 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
     check('买礼物扣钱，背包里有', G.world.money === 2000 - 30 - 500 - 70 && G.giftInv().tea === 1 && G.giftInv().lab_suit === 1);
     check('每样最多三件', (() => { for (let i = 0; i < 5; i++) G.buyGift('seeds'); return G.giftInv().seeds === 3; })());
+    check('背包没有的礼物，送出时按目录价当场买下；钱不够不送', (() => { const m = G.world.money, v = G.world.vday; G.world.money = 10; G.world.vday = null; const a = G.giveGift(cp.id, 'clock'); G.world.money = m; G.world.vday = v; return a.error === 'money'; })());
     const bad = G.giveGift(cp.id, 'tea');
     check('送错了对方收下，当场没有反馈，礼物不退，没满足', bad.ok === false && !bad.error && !G.giftInv().tea && !cp.person.visitor.ok && cp.person.visitor.wrong[0] === 'tea');
     const good = G.giveGift(cp.id, 'lab_suit');
     check('送对了满足并留下纪念品', good.ok === true && cp.person.visitor.ok && G.souvenirs().curie > 0 && !G.giftInv().lab_suit);
+    check('送礼是行动圈里的一个动作，只对访客出现', 'gift' in G.actionsOf(cp) && !('gift' in G.actionsOf(baby)) && !('gift' in G.actionsOf(grandpa)));
+    check('展柜是商店里的家具，买了才摆进屋里', (() => { G.world.money = 1000; const a = G.canBuy('cabinet'); G.buy('cabinet'); return a && G.owned('cabinet') && CY.house().items.cabinet.length > 0; })());
     check('已满足后再送被拒；每天只能送两次', G.giveGift(cp.id, 'kite').error === 'done' && G.giftsLeft() === 0);
     /* 满足之前离开且送过错礼物，留言带延迟反馈，只有"离开了" */
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
