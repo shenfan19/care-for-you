@@ -111,7 +111,7 @@
     ['🔬', '一页实验记录的复印件', 'A copy of a page of lab records'], ['看得见的是结果，看不见的是原因。', 'What you see is the result, what you cannot see is the cause.'], 'Encyclopaedia Britannica, Louis Pasteur.',
     ['他凑近东西，屏住呼吸看了起来。', 'He leaned close and watched, holding his breath.']);
   P('seacole', ['玛丽·西科尔', 'Mary Seacole'], ['十九世纪，牙买加与英国', '19th century, Jamaica and Britain'], 'Jamaica / Britain', 50, '她', ['f', 'black', 'bun', 'none', '#e7a6a1'], [2, 3], ['medkit', 'soup'],
-    [['她提着一个自己配的草药包，说走到哪里都带着。', 'She carried a bag of herbs she had mixed herself, saying she took it everywhere.'], ['她说一碗热汤有时比药更管用。', 'She said a bowl of hot soup sometimes works better than medicine.']],
+    [['她提着一个自己配的草药包，说走到哪里都带着。', 'She carried a bag of herbs she had mixed herself, saying she took it everywhere.'], ['她说，遇到不舒服的人，她总是先端上一碗热汤。', 'She said that when someone felt unwell, she always began with a bowl of hot soup.']],
     ['🌿', '一小包草药', 'A small pouch of herbs'], ['哪里有人需要，哪里就是我的地方。', 'Wherever someone needs me, that is my place.'], 'Encyclopaedia Britannica, Mary Seacole; Wonderful Adventures of Mrs. Seacole in Many Lands (1857).',
     ['她点点头，把东西收进了自己的包里。', 'She nodded and put it into her own bag.']);
   P('dickinson', ['艾米莉·狄金森', 'Emily Dickinson'], ['十九世纪，美国', '19th century, United States'], 'United States', 40, '她', ['a', 'brown', 'bun', 'none', '#f0f0f0'], [1, 2], ['lamp', 'notebook'],

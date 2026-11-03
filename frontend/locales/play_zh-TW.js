@@ -425,7 +425,7 @@ CY.i18n.register("zh-TW", {
   "visitor.seacole.era": "十九世紀，牙買加與英國",
   "visitor.seacole.souvenir": "一小包草藥",
   "visitor.seacole.hint.0": "她提著一個自己配的草藥包，說走到哪裡都帶著。",
-  "visitor.seacole.hint.1": "她說一碗熱湯有時比藥更管用。",
+  "visitor.seacole.hint.1": "她說，遇到不舒服的人，她總是先端上一碗熱湯。",
   "visitor.seacole.arrive_note": "瑪麗·西科爾推開大門走了進來，說想在這裡住幾天。",
   "visitor.seacole.ok_line": "她點點頭，把東西收進了自己的包裡。",
   "visitor.seacole.leave_ok": "瑪麗·西科爾臨走前留下一小包草藥，說：哪裡有人需要，哪裡就是我的地方。",
@@ -914,3 +914,5 @@ CY.i18n.register("zh-TW", {
 });
 CY.i18n.register("zh-TW", {"import.edited": "這份存檔裡的數字和存檔時記下的校驗對不上，說明被手動改過。可以匯入，之後分享卡片上會標出「已編輯」。"});
 CY.i18n.register("zh-TW", {"lbl.play.condition_models": "疾病模型積分"});
+CY.i18n.register("zh-TW", {"corner.money_tip": "錢。點開打開商店", "home.title": "家人", "life.household": "家人"});
+CY.i18n.register("zh-TW", {"cred.p3":"畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。 可選的方塊角色來自 Kenney 的 Blocky Characters，街道背景的樓來自 City Kit Commercial，同為 CC0 1.0。 食物和購物場景的小物件來自 Kenney 的 Food Kit 和 Mini Market，同為 CC0 1.0。"});

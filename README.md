@@ -12,10 +12,10 @@ It is meant to sit in a tab beside your work. Nothing is urgent, nothing is puni
 
 ## Features
 
-- A household you build: more than 40 kinds of people (babies to grandparents, relatives, friends, a nanny), 16 kinds of animals and 6 kinds of plants, with 14 health conditions and 20 personality traits that change how they behave and talk.
+- A household you build: more than 40 kinds of people (babies to grandparents, relatives, friends), 16 kinds of animals and 6 kinds of plants, with 14 health conditions and 20 personality traits that change how they behave and talk.
 - Every character is a small agent. They move between rooms on a daily routine, eat at mealtimes, sleep at night, and help each other. Needs push them off their routine.
 - Care is done by pressing and holding an action. There are no countdown penalties and no failure states.
-- A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a nanny you can hire with the money you earn at the desk.
+- A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a shop where the money you earn at the desk buys beds, daily goods, decorations and gifts for visitors.
 - A front door in the house: historical and literary visitors stay for a few days, you try to work out what they need, and they leave a keepsake for the cabinet. A short summary of every day goes into a calendar you can browse. See [docs/visitors.md](docs/visitors.md).
 - Eight interface languages, with dialogue in each: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch.
 - Everything is data. Characters, rules, probabilities and lines are plain YAML files you can open and edit. Saves are plain files too.
@@ -96,10 +96,12 @@ Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen.
 | Rendering tool | [three.js](https://threejs.org) | MIT | Used only by the rendering tool, not shipped with the game. |
 | Optional blocky characters | [Kenney, Blocky Characters](https://kenney.nl) | CC0 1.0 | An alternative set of figures chosen in the settings. |
 | Street backdrop | [Kenney, City Kit Commercial](https://kenney.nl) | CC0 1.0 | Small buildings behind the street. |
+| Food items | [Kenney, Food Kit](https://kenney.nl/assets/food-kit) | CC0 1.0 | Food on the kitchen table and in the shop, rendered the same way. |
+| Shopping props | [Kenney, Mini Market](https://kenney.nl/assets/mini-market) | CC0 1.0 | Shopping cart and market props, rendered the same way. |
 | Vehicles | [Kenney, Car Kit](https://kenney.nl/assets/car-kit) | CC0 1.0 | Street scene cars, rendered the same way. |
 | Animals | [Kenney, Cube Pets](https://kenney.nl/assets/cube-pets) | CC0 1.0 | Rendered the same way. Species without an exact match use the closest-looking model. |
 | Plants | Kenney, Furniture Kit | CC0 1.0 | Plant models enlarged. |
 | Animations, text | This project | MIT | Original. |
-| Visitor cards | This project | CC BY 4.0 | The official visitor cards and their texts, with sources listed on each card. |
+| Visitor cards | This project | MIT | The official visitor cards and their texts, with sources listed on each card. |
 
 CC0 does not require attribution, and the sources are listed anyway. AI-assisted tools were used during development.

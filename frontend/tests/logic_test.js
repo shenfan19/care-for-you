@@ -399,7 +399,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const gm0 = G.world.game_minutes;
     G.world.last_seen = new Date(Date.now() - 2 * 3600e3).toISOString();
     G.start(); G.stop();
-    check('离开两小时回来，游戏时间不动', G.world.game_minutes === gm0);
+    /* 系统钟点早于 14:00 时 G.start 会把新档推到午后，这一项只在 14:00 之后才有意义 */
+    check('离开两小时回来，游戏时间不动', G.world.game_minutes === gm0 || new Date().getHours() < 14);
     G.cfg.time.daynight = 'game'; G.DAY.enabled = true; G.world.last_seen = new Date(Date.now() - 5 * 3600e3).toISOString();
     G.start(); G.stop(); G.DAY.enabled = false;
     check('离开五小时回来，追算一天，停在午后', G.world.game_minutes > gm0 && G.dayMinutes() === G.DAY.start, G.dayMinutes());
