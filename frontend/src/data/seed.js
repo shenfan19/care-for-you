@@ -962,8 +962,8 @@ rules:
   const CARD_V = 5;
   /* 各类角色在各个房间的喜好权重，卡里的 prefs.rooms 写了就以卡为准。需求会另外把人推向厨房、卧室这些地方 */
   const PREFS = {
-    elder: { living: 3, yard: 2, kitchen: 1.5 }, adult: { living: 3, kitchen: 1.5, yard: 1, study: 0.6 }, teen: { bedroom: 3, living: 1.5, study: 1.5, kitchen: 0.6 },
-    child: { living: 3, yard: 2, kitchen: 1, bedroom: 0.8 }, toddler: { living: 4, yard: 1, kitchen: 0.6 },
+    elder: { living: 3, yard: 2, kitchen: 1.5 }, adult: { living: 3, kitchen: 1.5, yard: 1, study: 0.6 }, teen: { kids: 3, living: 1.5, study: 1.5, kitchen: 0.6 },
+    child: { living: 3, yard: 2, kitchen: 1, kids: 0.8 }, toddler: { living: 4, yard: 1, kitchen: 0.6 },
     cat: { living: 3, bedroom: 2, kitchen: 1, yard: 1, study: 0.5 }, dog: { living: 3, yard: 3, kitchen: 1 },
     rabbit: { living: 3, yard: 1.5 }, guineapig: { living: 3, yard: 1 }, ferret: { living: 3, bedroom: 1 }, hedgehog: { living: 2, yard: 2 }, duck: { yard: 3, living: 1 }, chicken: { yard: 4, living: 0.5 },
   };

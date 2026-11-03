@@ -974,7 +974,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const ids = [await mkp('grandpa'), await mkp('grandma'), await mkp('dad'), await mkp('mom'), await mkp('toddler'), await mkp('daughter'), await mkp('baby')];
     await G.load(); for (const x of G.people) x.person.active = ids.includes(x.id);
     const plan = W.bedPlan(), humans = G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant').length;
-    const placed = plan.bedroom.length + plan.elder.length + plan.guest.length + plan.living.length;
+    const placed = plan.bedroom.length + plan.kids.length + plan.elder.length + plan.guest.length + plan.living.length;
     check('每个不是婴儿的人都有床位，床位够所以没人睡客厅', placed === humans && plan.living.length === 0, placed + '/' + humans);
     check('老人睡老人房，床位不超上限', plan.elder.length >= 2 && plan.bedroom.length <= W.BED_CAP.bedroom && plan.elder.length <= W.BED_CAP.elder, JSON.stringify(plan));
     const seen = new Set(); let dup = false;
@@ -989,7 +989,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const lead = G.activePeople().find(p => W.worker(p)) || G.activePeople().find(p => G.isHuman(p) && G.stage(p) === 'adult');
     if (lead) {
       G.setProtagonist(lead.id); const wk = W.worker(lead);
-      check('上班的人白天去书房，中午去厨房，晚上去客厅，夜里去卧室', !wk || (W.routineRoom(lead, 10) === 'study' && W.routineRoom(lead, 12.5) === 'kitchen' && W.routineRoom(lead, 20) === 'living' && W.routineRoom(lead, 23) === 'bedroom'));
+      check('上班的人白天去书房，中午去厨房，晚上去客厅，夜里去卧室', !wk || (W.routineRoom(lead, 10) === 'study' && W.routineRoom(lead, 12.5) === 'kitchen' && W.routineRoom(lead, 20) === 'living' && W.routineRoom(lead, 23) === (W.bedOf(lead) || { room: 'bedroom' }).room));
       G.setClock(10 * 60); check('白天主角默认在书桌前工作的房间', !wk || W.workRoom() === 'study');
       G.setClock(20 * 60); check('傍晚主角默认在客厅', W.workRoom() === 'living');
     }
@@ -1099,15 +1099,15 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     /* 中等屋子：多一间客房，三张床位，睡不下卧室和老人房的人睡客房 */
     const W = CY.world;
     G.world.owned = {};
-    check('只有一座房子，客房一直在；床位由买到的数目分到各间，最多八张', !!W.PLACES.home.rooms.guest && W.PLACES.home.w === 16 && W.vw('home') === 900 && W.vw('park') === 800);
-    G.world.beds = 4; check('四张床：卧室两张，老人房两张，客房没有', JSON.stringify(W.BED_CAP) === JSON.stringify({ bedroom: 2, elder: 2, guest: 0 }), JSON.stringify(W.BED_CAP));
-    G.world.beds = 8; check('八张床：卧室二，老人房二，客房四', JSON.stringify(W.BED_CAP) === JSON.stringify({ bedroom: 2, elder: 2, guest: 4 }));
-    const pj = W.project('home', 15, 7);
-    check('最远的格子仍在画面里', pj.x > 0 && pj.x < 900 && pj.y > 0 && pj.y < 600, JSON.stringify(pj));
+    check('只有一座房子，客房一直在，三间卧室各两张床', !!W.PLACES.home.rooms.guest && !!W.PLACES.home.rooms.kids && W.PLACES.home.w === 18 && W.vw('home') === 980 && W.vw('park') === 800);
+    G.world.gbeds = undefined; check('开局：卧室二，儿童房二，老人房二，客房一张', JSON.stringify(W.BED_CAP) === JSON.stringify({ bedroom: 2, kids: 2, elder: 2, guest: 1 }), JSON.stringify(W.BED_CAP));
+    G.world.gbeds = 3; check('客房最多三张', W.BED_CAP.guest === 3); G.world.gbeds = 9; check('客房床位被封顶在三张', G.guestBedsOwned() === 3); G.world.gbeds = undefined;
+    const pj = W.project('home', 17, 7);
+    check('最远的格子仍在画面里', pj.x > 0 && pj.x < 980 && pj.y > 0 && pj.y < 640, JSON.stringify(pj));
     check('床位计划里有客房', Array.isArray(W.bedPlan().guest));
     check('装饰纯粹是观感：商店里装饰类没有任何数值效果', G.SHOP.filter(i => i.cat === 'decor').every(i => !i.fx) && G.SHOP.filter(i => i.cat === 'decor').length === 4);
-    check('商店里没有房子可买，也没有床品，床位另有价格', !G.SHOP.some(i => /house|^bed/.test(i.id)) && G.bedPrice() === null);
-    G.world.beds = undefined;
+    check('商店里没有房子可买，也没有床品，床位另有价格', !G.SHOP.some(i => /house|^bed/.test(i.id)) && G.bedPrice() === 600);
+    G.world.gbeds = undefined;
     G.world.owned = {}; G.world.money = 200;
   }
   {

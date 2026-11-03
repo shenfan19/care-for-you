@@ -17,7 +17,7 @@
       return tile(it.icon, t('shop.' + it.id), t('shop.' + it.id + '_fx') + (locked ? ' ' + t('shop.locked') : ''), own ? `<button disabled>${esc(t('shop.owned'))}</button>` : `<button data-b="${it.id}" ${can ? '' : 'disabled'}>💰 ${it.price}</button>`);
     };
     const bp = G.bedPrice();
-    const bed = tile('🛏', t('shop.bed_slot'), t('shop.bed_slot_fx') + ' ' + t('shop.beds_now', { n: G.bedsOwned(), m: G.BED_MAX, u: G.bedUsers().length }), bp === null ? `<button disabled>${esc(t('shop.full'))}</button>` : `<button data-bed="1" ${G.canBuyBed() ? '' : 'disabled'}>💰 ${bp}</button>`, '', t('shop.beds_now', { n: G.bedsOwned(), m: G.BED_MAX, u: G.bedUsers().length }));
+    const bed = tile('🛏', t('shop.bed_slot'), t('shop.bed_slot_fx') + ' ' + t('shop.beds_now', { n: G.guestBedsOwned(), m: G.GUEST_BED_MAX, u: G.guestBedsOwned() - G.guestRoom() }), bp === null ? `<button disabled>${esc(t('shop.full'))}</button>` : `<button data-bed="1" ${G.canBuyBed() ? '' : 'disabled'}>💰 ${bp}</button>`, '', t('shop.beds_now', { n: G.guestBedsOwned(), m: G.GUEST_BED_MAX, u: G.guestBedsOwned() - G.guestRoom() }));
     const giftTile = g => tile(g.icon, t('gift.' + g.id), t('gift.' + g.id), `<button data-g="${g.id}" ${money < g.price || (inv[g.id] || 0) >= G.DOOR.gift_max ? 'disabled' : ''}>💰 ${g.price}</button>`, '', inv[g.id] ? esc(t('gift.have', { n: inv[g.id] })) : '');
     const gifts = V ? Object.values(V.GIFTS).sort((a, b) => a.price - b.price).map(giftTile).join('') : '';
     const sec = (key, note, body) => `<h3>${esc(t(key))}</h3>${note ? `<div class="mute" style="margin-bottom:6px">${esc(t(note))}</div>` : ''}<div class="giftgrid">${body}</div>`;

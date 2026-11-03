@@ -8,9 +8,9 @@
 
   /* ---------- 格子布局：一格是一块斜视的菱形地砖 ---------- */
   W.TW = 72; W.TH = 36; W.VW = 800; W.VH = 520;
-  const BASE_HOME = { w: 12, h: 8, rooms: {
-      bedroom: { gx: 0, gy: 0, w: 4, h: 4 }, elder: { gx: 4, gy: 0, w: 3, h: 4 }, toilet: { gx: 7, gy: 0, w: 2, h: 4 }, study: { gx: 9, gy: 0, w: 3, h: 4 },
-      living: { gx: 0, gy: 4, w: 4, h: 4 }, kitchen: { gx: 4, gy: 4, w: 4, h: 4 }, yard: { gx: 8, gy: 4, w: 4, h: 4 },
+  const BASE_HOME = { w: 14, h: 8, rooms: {
+      bedroom: { gx: 0, gy: 0, w: 3, h: 4 }, kids: { gx: 3, gy: 0, w: 3, h: 4 }, elder: { gx: 6, gy: 0, w: 3, h: 4 }, toilet: { gx: 9, gy: 0, w: 2, h: 4 }, study: { gx: 11, gy: 0, w: 3, h: 4 },
+      living: { gx: 0, gy: 4, w: 4, h: 4 }, kitchen: { gx: 4, gy: 4, w: 4, h: 4 }, yard: { gx: 8, gy: 4, w: 6, h: 4 },
   } };
   W.PLACES = {
     hospital: { w: 10, h: 6, rooms: { ward: { gx: 0, gy: 0, w: 10, h: 6 } } },
@@ -32,11 +32,12 @@
   /* 各房间里站人的位置，用房间宽高的比例表示。sleep 是床位，cradle 是婴儿床，player 是操纵对象的位置，书房和办公室里是坐在桌前椅子的位置 */
   const SLOTS = {
     bedroom: { stand: [[.55, .74], [.3, .82], [.82, .7]], sleep: [[.3, .38], [.42, .55]], cradle: [[.88, .8]], player: [.18, .9] },
+    kids: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     elder: { stand: [[.5, .74], [.25, .84], [.75, .84]], sleep: [[.25, .4], [.75, .4]], cradle: [[.5, .5]], player: [.5, .92] },
     toilet: { stand: [[.5, .62], [.5, .8], [.5, .45]], sleep: [[.5, .5]], cradle: [[.5, .5]], player: [.5, .9] },
     study: { stand: [[.5, .8], [.2, .88], [.82, .88]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.52, .37], seat: [[.52, .37], [.78, .5]] },
     guest: { stand: [[.5, .7], [.25, .8], [.75, .8], [.5, .9]], sleep: [[.3, .2], [.5, .2], [.7, .2]], cradle: [[.5, .5]], player: [.5, .92] },
-    living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.35, .82]], cradle: [[.5, .6]], player: [.9, .9] },
+    living: { mat: [[.5, .56]], stand: [[.78, .62], [.22, .66], [.5, .9], [.14, .88], [.86, .88], [.5, .36]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     kitchen: { stand: [[.5, .84], [.22, .7], [.8, .74], [.5, .52]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.1, .9] },
     yard: { stand: [[.5, .66], [.26, .8], [.74, .8], [.5, .9], [.3, .45], [.7, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     ward: { stand: [[.5, .78], [.3, .72], [.7, .72], [.15, .6], [.85, .6]], sleep: [[.17, .27], [.37, .27], [.57, .27], [.77, .27]], cradle: [[.5, .5]], player: [.5, .93] },
@@ -45,24 +46,24 @@
     lawn: { stand: [[.5, .7], [.3, .76], [.7, .76], [.5, .5], [.2, .55], [.8, .55]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
     road: { stand: [[.5, .56], [.3, .6], [.7, .6], [.4, .4], [.6, .4], [.2, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
   };
-  /* 床位：每个住家的人（婴儿睡婴儿床，不占床位）有自己的床，床位数是买来的，见 G.bedsOwned，人数严格不超过它。
-     开局的四张在卧室和老人房，之后买的床都摆进右侧客房里预留的床位，客房四张，所以最多八张。老人先去老人房，其余先去卧室，住不下的去另一间。
+  /* 床位：三间卧室各两张，夫妻住卧室，孩子住儿童房，老人住老人房，住不下的去另一间；客房的床只给穿越者，一开始一张，最多三张。
      顺序按角色编号，位置固定，不会因为谁醒了而挪动 */
-  const BED_ORDER = ['bedroom', 'elder', 'bedroom', 'elder', 'guest', 'guest', 'guest', 'guest'];
-  Object.defineProperty(W, 'BED_CAP', { get: () => { const cap = { bedroom: 0, elder: 0, guest: 0 }, n = G.bedsOwned ? G.bedsOwned() : 4; for (let i = 0; i < Math.min(n, BED_ORDER.length); i++) cap[BED_ORDER[i]]++; return cap; } });
+  const ROOM_OF = { elder: ['elder', 'bedroom', 'kids'], toddler: ['kids', 'bedroom', 'elder'], child: ['kids', 'bedroom', 'elder'], teen: ['kids', 'bedroom', 'elder'], adult: ['bedroom', 'kids', 'elder'] };
+  W.ownRoom = p => (ROOM_OF[G.stage(p)] || ROOM_OF.adult)[0];   /* 这个年龄的人自己的卧室 */
+  Object.defineProperty(W, 'BED_CAP', { get: () => ({ bedroom: 2, kids: 2, elder: 2, guest: G.guestBedsOwned ? G.guestBedsOwned() : 1 }) });
   W.bedPlan = () => {
-    const plan = { bedroom: [], elder: [], guest: [], living: [] }, cap = W.BED_CAP;
-    const lg = G.livingGuest(), sleepers = G.bedUsers().sort((a, b) => (a.id < b.id ? -1 : 1));
-    if (lg) plan.living.push(lg.id);   /* 客厅的客人床 */
+    const plan = { bedroom: [], kids: [], elder: [], guest: [], living: [] }, cap = W.BED_CAP;
+    const byId = (a, b) => (a.id < b.id ? -1 : 1), sleepers = G.sleepers().sort(byId);
     const put = (p, order) => { for (const r of order) if (r === 'living' || plan[r].length < (cap[r] || 0)) { plan[r].push(p.id); return; } };
-    for (const p of sleepers) if (G.stage(p) === 'elder') put(p, ['elder', 'bedroom', 'guest', 'living']);
-    for (const p of sleepers) if (G.stage(p) !== 'elder') put(p, ['bedroom', 'elder', 'guest', 'living']);
+    for (const p of sleepers) if (p.person.visitor) put(p, ['guest', 'living']);
+    for (const p of sleepers) if (!p.person.visitor && G.stage(p) === 'elder') put(p, ROOM_OF.elder.concat('living'));
+    for (const p of sleepers) if (!p.person.visitor && G.stage(p) !== 'elder') put(p, (ROOM_OF[G.stage(p)] || ROOM_OF.adult).concat('living'));
     return plan;
   };
   /* 画床用：这个房间摆几张床，就是买到的床位分到这间的数目 */
   W.guestBed = i => ({ x: 1.0 + (i % 2) * 1.9, y: 1.2 + Math.floor(i / 2) * 2.3 });
   W.bedCount = room => W.BED_CAP[room] || 0;
-  W.bedKey = () => W.bedCount('bedroom') + ',' + W.bedCount('elder') + ',' + W.bedCount('guest') + ',' + CY.houseId();
+  W.bedKey = () => W.bedCount('guest') + ',' + CY.houseId();
   W.bedOf = p => { const plan = W.bedPlan(); for (const r in plan) { const i = plan[r].indexOf(p.id); if (i >= 0) return { room: r, i }; } return null; };
   W.slotPoint = (place, room, kind, i) => {
     if (kind === 'sleep' && room === 'guest') { const r0 = W.PLACES[place].rooms.guest; return { gx: r0.gx + W.guestBed(i).x, gy: r0.gy + W.guestBed(i).y + 0.1 }; }   /* 客房的预留床位两列两排 */
@@ -77,7 +78,7 @@
      多半看向房间的焦点，有时看向同屋最近的人，有时随意看一眼，换的结果由人的编号和时段定，同一段时间里不会来回变。
      坐在书桌前办公的人始终看向书桌 */
   W.dirOf = (dx, dy) => (Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 'se' : 'nw') : (dy > 0 ? 'sw' : 'ne'));
-  const FOCUS = { study: [1.5, 0.45], living: [0.3, 2.0], kitchen: [2.0, 2.4], bedroom: [1.2, 0.6], elder: [1.2, 0.6], guest: [1.2, 0.6], toilet: [0.6, 0.5], desk: [1.9, 1.3], aisle: [2.5, 1.2] };
+  const FOCUS = { study: [1.5, 0.45], living: [0.3, 2.0], kitchen: [2.0, 2.4], bedroom: [1.2, 0.6], elder: [1.2, 0.6], guest: [1.2, 0.6], kids: [1.2, 0.6], toilet: [0.6, 0.5], desk: [1.9, 1.3], aisle: [2.5, 1.2] };
   const hash = s => { let h = 7; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
   W.facing = (p, lay) => {
     if (!p || !G.isHuman(p)) return '';
@@ -108,7 +109,7 @@
     if (!p || !G.isHuman(p)) return null;
     if (hr === undefined) hr = G.dayMinutes() / 60;
     const st = G.stage(p);
-    if (hr >= 22 || hr < 7) return st === 'elder' ? 'elder' : 'bedroom';
+    if (hr >= 22 || hr < 7) return (W.bedOf(p) || { room: W.ownRoom(p) }).room;
     if (inH(hr, 19, 22)) return W.immobile(p) ? null : 'living';
     if (W.worker(p)) return inH(hr, 7, 8.5) || inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : inH(hr, 9, 12) || inH(hr, 13, 18) ? 'study' : null;
     if (st === 'elder') return inH(hr, 8, 10) || inH(hr, 15, 17.5) ? 'yard' : inH(hr, 10, 12) ? 'living' : inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : null;
@@ -157,7 +158,7 @@
     const hi = k => Math.max(0, (n[k] || 0) - 0.45) * 2;
     if (room === 'kitchen') w += (hi('hunger') + hi('thirst')) * 5 + (human && st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19)) ? 2.5 : 0) + (human && W.isMealTime() ? 3 : 0);
     if (room === 'toilet') w += hi('toilet') * 6 + hi('hygiene') * 2;
-    if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += hi('rest') * 4 + (hr >= 20.5 || hr < 6.5 ? 2 : 0);
+    if (room === W.ownRoom(p)) w += hi('rest') * 4 + (hr >= 20.5 || hr < 6.5 ? 2 : 0);
     if (room === 'living') w += hi('company') * 2 + hi('play') * 1.5;
     if (room === 'study') w += hi('company') * 2.5;
     /* 爸爸妈妈白天在书桌前办公，爷爷奶奶白天遛弯，下午晒晒太阳 */
@@ -165,7 +166,7 @@
     if (human && st === 'elder' && room === 'yard' && ((hr >= 8 && hr < 10.5) || (hr >= 15 && hr < 17.5))) w += 2;
     if (room === 'yard') w += hi('play') * 2 + hi('mobility') * 2 + (hr >= 9 && hr < 17 ? 0.6 : -0.6);
     /* 心情低落的人想独处，躲回自己的房间；心情好的人愿意待在客厅 */
-    if (human && p.state.mood < 0.35) { if (room === (st === 'elder' ? 'elder' : 'bedroom')) w += 2; if (room === 'living') w *= 0.6; }
+    if (human && p.state.mood < 0.35) { if (room === W.ownRoom(p)) w += 2; if (room === 'living') w *= 0.6; }
     else if (human && p.state.mood > 0.75 && room === 'living') w += 0.8;
     /* 看得见谁在叫：宝宝或幼儿很需要人，大人和老人往那个孩子在的房间去 */
     if (human && ['adult', 'elder', 'teen'].includes(st)) {
@@ -185,7 +186,7 @@
     return w;
   };
   W.chooseRoom = (p, cur) => {
-    const human = G.isHuman(p), rooms = ['living', 'kitchen', 'yard', 'study', 'toilet', human && G.stage(p) === 'elder' ? 'elder' : 'bedroom'].concat(human && G.stage(p) !== 'elder' ? [] : []);
+    const human = G.isHuman(p), rooms = ['living', 'kitchen', 'yard', 'study', 'toilet', human ? W.ownRoom(p) : 'bedroom'];
     const ws = rooms.map(r => Math.max(0, W.scoreRoom(p, r) * (r === cur ? 0.5 : 1))), sum = ws.reduce((a, b) => a + b, 0);
     if (sum <= 0) return 'living';
     let x = Math.random() * sum;
@@ -227,7 +228,7 @@
     }
     const st = G.stage(p), sleeping = G.isSleeping(p);
     if (G.bedridden(p)) { const b = W.bedOf(p); return { place: 'home', room: b ? b.room : 'elder', mode: 'sleep' }; }   /* 卧床的人一直躺在自己的床上 */
-    if (sleeping) { if (st === 'infant') return { place: 'home', room: 'bedroom', mode: 'cradle' }; const b = W.bedOf(p); return { place: 'home', room: b ? b.room : st === 'elder' ? 'elder' : 'bedroom', mode: 'sleep' }; }
+    if (sleeping) { if (st === 'infant') return { place: 'home', room: 'bedroom', mode: 'cradle' }; const b = W.bedOf(p); return { place: 'home', room: b ? b.room : W.ownRoom(p), mode: 'sleep' }; }
     /* 宝宝困了在婴儿床，醒着就在玩具垫上，自己不会走 */
     if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
     if (st === 'toddler' && G.age(p) < 2.5) return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
@@ -292,7 +293,7 @@
     const lead = G.protagonist(); if (!lead) return false;
     if (W.actPose() === 'sleep') return true;
     const pl = W.player(), hr = G.dayMinutes() / 60;
-    return (hr >= 22 || hr < 7) && pl.place === 'home' && pl.room === (G.stage(lead) === 'elder' ? 'elder' : 'bedroom') && !W.holding && Date.now() - W.lastActive > W.IDLE_MS;
+    return (hr >= 22 || hr < 7) && pl.place === 'home' && pl.room === (W.bedOf(lead) || { room: W.ownRoom(lead) }).room && !W.holding && Date.now() - W.lastActive > W.IDLE_MS;
   };
   /* 睡着时站在自己的床位上 */
   W.toBed = () => { const lead = G.protagonist(), b = lead && W.bedOf(lead); if (!b) return; const pl = W.player(), pt = W.slotPoint('home', b.room, 'sleep', b.i); Object.assign(pl, { place: 'home', room: b.room, gx: pt.gx, gy: pt.gy, bed: true }); };

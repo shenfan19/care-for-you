@@ -33,3 +33,4 @@ CY.i18n.register("zh-CN", {"import.edited": "这份存档里的数字和存盘�
 CY.i18n.register("zh-CN", {"lbl.play.condition_models": "疾病模型积分"});
 CY.i18n.register("zh-CN", {"corner.money_tip": "钱。点开打开商店", "home.title": "家人", "life.household": "家人"});
 CY.i18n.register("zh-CN", {"cred.p3":"画面素材：Kenney 的 Furniture Kit，Mini Characters，Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。 可选的方块角色来自 Kenney 的 Blocky Characters，街道背景的楼来自 City Kit Commercial，同为 CC0 1.0。 食物和购物场景的小物件来自 Kenney 的 Food Kit 和 Mini Market，同为 CC0 1.0。"});
+CY.i18n.register("zh-CN", {"loc.kids": "儿童房", "shop.bed_slot": "加一张客房床", "shop.bed_note": "家里有三间卧室，夫妻、孩子、老人各两张床，是家人的床，不用买，家人最多六位。客房一开始有一张床，留给穿越者，最多三张，可以再买两张。婴儿睡婴儿床，不占床位。", "shop.bed_slot_fx": "多一张客房床，就能多留一位穿越者。", "shop.beds_now": "客房床位 {n}/{m}，已住 {u}", "add.no_bed": "家里六张家人的床都有人了，没法再添人。"});

@@ -74,21 +74,19 @@
     { id: 'cabinet', cat: 'decor', price: 300, icon: '🏺' },
     { id: 'decor1', cat: 'decor', price: 160, icon: '🪴' }, { id: 'decor2', cat: 'decor', price: 350, icon: '🛋', needs: 'decor1' }, { id: 'decor3', cat: 'decor', price: 550, icon: '📻', needs: 'decor2' },
   ];
-  /* 床位：开局按家里的人数加一张空床，最少四张，最多八张。每买一张，家里就能多住一个人，也能多留一位穿越者；床位用完了就不能再添人，也不会有新的穿越者来 */
-  G.BED_MAX = 8; G.BED_PRICE = { 4: 600, 5: 900, 6: 1300, 7: 1800 };
-  /* 客厅里一开始就有一张客人床，只给穿越者睡，不占买来的床位，也不让家人用，不然床位被家人占满就永远没有客人来。
-     客厅这张床上的客人是编号最小的那位穿越者，其余的客人才占买来的床 */
+  /* 床位：家里三间卧室，夫妻、孩子、老人各两张，一共六张，是家人的床，不用买，家人最多六位，婴儿睡婴儿床不占床位。
+     客房一开始就有一张床，只给穿越者睡，最多三张，另外两张在商店买。家人和客人的床分开，家人住满了也有床留给第一位客人，不然就永远没有客人来 */
+  G.FAMILY_BEDS = 6; G.GUEST_BED_MAX = 3; G.BED_PRICE = { 1: 600, 2: 900 };
   G.sleepers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
-  G.livingGuest = () => G.sleepers().filter(p => p.person.visitor).sort((a, b) => (a.id < b.id ? -1 : 1))[0] || null;
-  G.bedUsers = () => { const g = G.livingGuest(); return G.sleepers().filter(p => p !== g); };
-  G.guestRoom = () => (G.livingGuest() ? G.bedsFree() : G.bedsFree() + 1);   /* 还能接待几位客人 */
-  G.bedsOwned = () => (typeof G.world.beds === 'number' ? G.world.beds : Math.max(4, G.bedUsers().length + 1));
-  G.bedsFree = () => G.bedsOwned() - G.bedUsers().length;
-  G.bedPrice = () => (G.bedsOwned() >= G.BED_MAX ? null : G.BED_PRICE[G.bedsOwned()] || 600);
+  G.bedUsers = () => G.sleepers().filter(p => !p.person.visitor);
+  G.guestBedsOwned = () => Math.min(G.GUEST_BED_MAX, Math.max(1, G.world.gbeds || 1));
+  G.bedsFree = () => G.FAMILY_BEDS - G.bedUsers().length;
+  G.guestRoom = () => G.guestBedsOwned() - G.sleepers().filter(p => p.person.visitor).length;   /* 客房还能接待几位客人 */
+  G.bedPrice = () => (G.guestBedsOwned() >= G.GUEST_BED_MAX ? null : G.BED_PRICE[G.guestBedsOwned()] || 600);
   G.canBuyBed = () => { const pr = G.bedPrice(); return pr !== null && G.world.money >= pr; };
   G.buyBed = () => {
     if (!G.canBuyBed()) return false;
-    G.world.money -= G.bedPrice(); G.world.beds = G.bedsOwned() + 1;
+    G.world.money -= G.bedPrice(); G.world.gbeds = G.guestBedsOwned() + 1;
     G.logK('you', 'event', 'log.bought', { item: G.ref('shop.bed_slot', '床位') }); G.save(true); emit(); return true;
   };
   /* 舒适度修正：买到的东西各带一份 fx，这里按人汇总。rate 是需求涨速倍数，rest_sleep 是睡觉时休息恢复倍数，mood 是心情目标加成，stages 限定哪些年龄阶段受益。

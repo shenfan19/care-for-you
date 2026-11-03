@@ -33,7 +33,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   const wait = () => new Promise(r => setTimeout(r, 80));
   {
     G.DOOR.meet_chance = 0;
-    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0; G.world.beds = G.bedUsers().length;
+    G.world.visit_started = false; G.world.souv = {}; G.world.met = {}; G.world.gifts = {}; G.world.intro_done = true; G.world.money = 1000; G.world.vday = null; G.world.visit_cd = 0; G.world.gbeds = undefined;
     const before = G.people.length;
     CY.i18n.set('zh-CN');
     check('第一位来客固定是南丁格尔，不分语言', (G.firstVisitorId() === 'nightingale') && (CY.i18n.set('en'), G.firstVisitorId() === 'nightingale') && (CY.i18n.set('zh-CN'), true));
@@ -82,7 +82,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('没满足就离开，只写离开了，留言带延迟反馈，没有礼物', txt2.includes('玛丽·居里离开了。') && txt2.some(x => /更需要能护住双手/.test(x)) && !txt2.some(x => /留下了/.test(x)), txt2.join(' | '));
     check('家人的日常也平铺直叙', (() => { const rr = G.composeDay({ n: 9, care: { 爷爷: 3 }, fam: { 爷爷: { street: 2, meal: 1 } }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false).map(G.settleText); return rr[0] === '今天爷爷去街上逛了逛。' || /爷爷/.test(rr[0]); })());
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
-    check('床位：人数严格不超过床位，买一张多一个空位，价格一张比一张贵，最多八张', (() => { G.world.money = 99999; G.world.beds = 4; const n0 = G.bedsOwned(), f0 = G.bedsFree(), p0 = G.bedPrice(); const ok = G.buyBed(); const p1 = G.bedPrice(); const r = ok && G.bedsOwned() === n0 + 1 && G.bedsFree() === f0 + 1 && p1 > p0; for (let k = 0; k < 10 && G.bedPrice() !== null; k++) G.buyBed(); return r && G.bedsOwned() === G.BED_MAX && !G.canBuyBed() && G.bedPrice() === null; })());
+    check('床位：家人最多六位；客房默认一张，最多三张，买一张价格一张比一张贵', (() => { G.world.money = 99999; G.world.gbeds = undefined; const n0 = G.guestBedsOwned(), p0 = G.bedPrice(); const ok = G.buyBed(); const p1 = G.bedPrice(); const r = n0 === 1 && ok && G.guestBedsOwned() === 2 && p1 > p0; for (let k = 0; k < 5 && G.bedPrice() !== null; k++) G.buyBed(); const top = G.guestBedsOwned() === G.GUEST_BED_MAX && !G.canBuyBed() && G.bedPrice() === null; G.world.gbeds = undefined; return r && top && G.FAMILY_BEDS === 6; })());
     check('英文下访客的名字和纪念品换成英文', (CY.i18n.set('en'), CY.t('visitor.curie.name') === 'Marie Curie' && CY.t('visitor.nightingale.souvenir') === 'An oil lamp' && CY.t('gift.lab_suit') === 'Protective suit') && (CY.i18n.set('zh-CN'), true));
   }
   /* 卡片完整性 */
@@ -127,7 +127,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       check('三位同时到来：算遇见，小组也一并记为遇见过', got === true && G.visitorPeople().length === 3 && G.world.meets.poets3 && G.world.meets.friends2);
       check('遇见的话进当天小结，同一组合不重复触发', G.world.today.notes.some(x => x.k === 'meet.poets3') && (await G.arriveGroup(['li_bai', 'du_fu', 'basho'])) === false);
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
-      G.world.meets = {}; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
+      G.world.meets = {}; G.world.gbeds = 3; const gs = G.pickGroup(); check('还没遇见的组合才会被抽到', !!gs && gs.ids.length >= 2);
     }
     {
       const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.|corner\.|field\.|add\.no_bed)/.test(k)), miss = {};
@@ -194,11 +194,11 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   }
   /* 好感度：送到心仪的加很多，一般的加得不多，到五十就留下回礼；回答来客的问题也加一点；没有空床就不来 */
   {
-    CY.i18n.set('zh-CN'); G.world.beds = 8; G.world.souv = {}; for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
+    CY.i18n.set('zh-CN'); G.world.gbeds = 3; G.world.souv = {}; for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
     const cu = await G.arrive('curie', true), st = cu.person.visitor; G.giftInv().tea = 9; G.giftInv().lab_suit = 1; G.giftInv().aspirin = 1;
     G.world.vday = null; const r1 = G.giveGift(cu.id, 'tea');
     check('送一般的礼物，好感只加一点，不算满足', r1.like === false && st.fav === G.FAV.other && !st.ok && !G.souvenirs().curie);
-    G.world.beds = 8; G.world.vday = null; G.world.visit_cd = 0;
+    G.world.gbeds = 3; G.world.vday = null; G.world.visit_cd = 0;
     let n = 1; while (!st.ok && n < 20) { G.world.vday = null; G.giveGift(cu.id, 'tea'); n++; }
     check('一般的礼物要送好几件才够，够了留下回礼', st.ok && n >= 6 && n <= 8 && G.souvenirs().curie > 0, 'n=' + n + ' fav=' + st.fav);
     const cu2 = await G.arrive('hippocrates', true), st2 = cu2.person.visitor; G.world.vday = null;
@@ -206,10 +206,13 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const cu3 = await G.arrive('galois', true), st3 = cu3.person.visitor; G.visitorFav(cu3, G.FAV.ask);
     check('回答来客的问题，好感加一点', st3.fav === G.FAV.ask && !st3.ok);
     for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
-    G.world.beds = G.bedUsers().length; G.world.visit_started = true; G.world.visit_cd = 0; G.world.meets = {};
-    check('买来的床用完了，客厅的客人床仍可接待一位，之后不会再来，组团到来也要床位够', G.bedsFree() === 0 && G.pickGroup() === null && (await G.maybeArrive()) === true && G.guestRoom() === 0 && (G.world.visit_cd = 0, await G.maybeArrive()) === false);
-    check('客人睡在客厅的客人床，不占买来的床位', (() => { const g = G.livingGuest(); return g && CY.world.bedOf(g).room === 'living' && CY.world.bedPlan().living[0] === g.id && !G.bedUsers().includes(g); })());
-    G.world.beds = undefined;
+    G.world.gbeds = undefined; G.world.visit_started = true; G.world.visit_cd = 0; G.world.meets = {};
+    const rnd0 = Math.random; Math.random = () => 0.1;   /* 到来有概率，这里固定成必到 */
+    const came = G.guestRoom() === 1 && G.pickGroup() === null && (await G.maybeArrive()) === true && G.guestRoom() === 0 && (G.world.visit_cd = 0, await G.maybeArrive()) === false;
+    Math.random = rnd0;
+    check('客房默认一张床：家人住满了第一位客人也会来，来了之后客房满了，不会再来，组团到来也要床位够', came);
+    check('客人睡在客房的床，不占家人的床位', (() => { const g = G.visitorPeople()[0]; return g && CY.world.bedOf(g).room === 'guest' && !G.bedUsers().includes(g); })());
+    G.world.gbeds = undefined;
   }
   /* 保姆已经取消：旧存档里请过的保姆，载入时从家里拿掉；商店里有家里的东西和礼物两块，点钱的格子打开 */
   {

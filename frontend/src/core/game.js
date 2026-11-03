@@ -170,8 +170,6 @@
     await loadContent(files);
     /* 保姆已经取消：旧存档里请过的保姆，整个人从家里拿掉 */
     for (const p of G.people.filter(x => x.person.help && x.person.help.role === 'nanny')) await G.deletePerson(p.id);
-    /* 床位数：开局阶段跟着人数走，当前人数加一张空床，最少四张；开局完成以后固定，只能去商店买 */
-    if (typeof G.world.beds !== 'number' || !G.world.intro_done) G.world.beds = Math.max(4, G.bedUsers().length + 1);
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
 

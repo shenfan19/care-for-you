@@ -9,8 +9,8 @@
     const to = v => clampHex(f < 1 ? v * f : v + (255 - v) * (f - 1));
     return '#' + [to(r), to(g), to(b)].map(v => v.toString(16).padStart(2, '0')).join('');
   };
-  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', aisle: '#ece6d6', desk: '#dbd7c9' };
-  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', aisle: '#f1ede2', desk: '#ece8dc' };
+  const FLOOR = { bedroom: '#e8d2ae', guest: '#e6d0ac', elder: '#e3cba6', kids: '#ead8b6', toilet: '#cfe3e6', study: '#dcc59f', living: '#ebd7b4', kitchen: '#ece4d2', yard: '#a3cc8e', lawn: '#9fcc86', road: '#8f8f96', ward: '#e2ebed', aisle: '#ece6d6', desk: '#dbd7c9' };
+  const WALL = { bedroom: '#f3e6d0', guest: '#f1e4cd', elder: '#efe2cb', kids: '#f2e6d2', toilet: '#e3f0f2', study: '#ecdcc0', living: '#f4e8d3', kitchen: '#f2ece0', ward: '#eef4f5', aisle: '#f1ede2', desk: '#ece8dc' };
   const WH = 72, LOW = 14;
   const SPR = () => (CY.isoSprites || {}).furn || {};
   const G0 = () => CY.game;
@@ -42,6 +42,24 @@
       poly([pt(0, P.h, 0), pt(P.w, P.h, 0), pt(P.w, P.h, -16), pt(0, P.h, -16)], '#b79f82');
       poly([pt(P.w, 0, 0), pt(P.w, P.h, 0), pt(P.w, P.h, -16), pt(P.w, 0, -16)], '#9c8668');
 
+      /* 院子：草地上的树和花坛。按房间的前后顺序画，不是最后统一盖上去，不然高的树会盖住前面客房里的家具 */
+      const drawYard = () => {
+        const r = P.rooms.yard;
+        box(r.gx + 0.3, r.gy + 0.4, 1.8, 0.5, 8, '#7a5538');
+        box(r.gx + 5.0, r.gy + 0.55, 0.3, 0.3, 30, '#8a5a3a'); ball(r.gx + 5.15, r.gy + 0.7, 52, 34, 26, '#5f9a58'); ball(r.gx + 4.85, r.gy + 0.7, 60, 22, 18, '#74ad68');
+        for (let i = 0; i < 5; i++) ball(r.gx + 0.5 + i * 0.36, r.gy + 0.55, 14, 4, 4, ['#e8707e', '#f2c14e', '#fff', '#c58ae0', '#f2c14e'][i]);
+        box(r.gx + 3.15, r.gy + 0.55, 0.3, 0.3, 30, '#8a5a3a'); ball(r.gx + 3.3, r.gy + 0.7, 52, 34, 26, '#5f9a58'); ball(r.gx + 3.0, r.gy + 0.7, 60, 22, 18, '#74ad68');
+        box(r.gx + 0.1, r.gy + 3.7, 1.2, 0.12, 14, '#d9c9a8'); box(r.gx + 2.7, r.gy + 3.7, 3.2, 0.12, 14, '#d9c9a8');   /* 前面的矮墙中间留出大门的位置 */
+        /* 大门：开在院子前面矮墙的中间，两根门柱立在地上，门板落在地面，访客从这里走进来，是家里一直在的东西 */
+        {
+          const Y = r.gy + 3.76, X0 = r.gx + 1.3, X1 = r.gx + 2.7, Z = 62;
+          box(X0 - 0.1, Y - 0.1, 0.2, 0.32, Z + 6, '#6b4a30'); box(X1 - 0.1, Y - 0.1, 0.2, 0.32, Z + 6, '#6b4a30');
+          poly([pt(X0 + 0.1, Y, 0), pt(X1 - 0.1, Y, 0), pt(X1 - 0.1, Y, Z), pt(X0 + 0.1, Y, Z)], '#b98a5a');
+          poly([pt(X0 + 0.22, Y, 6), pt(X1 - 0.22, Y, 6), pt(X1 - 0.22, Y, Z - 8), pt(X0 + 0.22, Y, Z - 8)], '#c99b69');
+          const [dx, dy] = pt(X1 - 0.3, Y, Z / 2).split(',');
+          out.push(`<circle cx="${dx}" cy="${dy}" r="3" fill="#f2d27a"/>`);
+        }
+      };
       const rooms = Object.entries(P.rooms).sort((a, b) => (a[1].gx + a[1].gy) - (b[1].gx + b[1].gy));
       for (const [name, r] of rooms) {
         const x = r.gx, y = r.gy, w = r.w, h = r.h;
@@ -72,7 +90,7 @@
           out.push(`<text x="${lx}" y="${ly}" font-size="14" fill="#3a4a38" opacity=".6" font-family="system-ui,sans-serif">${t('loc.' + name)}</text>`);
           continue;
         }
-        if (name === 'yard') continue;
+        if (name === 'yard') { drawYard(); continue; }
         const tallBack = y === 0, tallLeft = x === 0;
         const wc = WALL[name];
         /* 后墙（右边那面）和左墙：外墙高，房间之间的矮墙 */
@@ -116,7 +134,7 @@
           spr('lampRoundFloor', 0, 3.7, 0.4);
         } else if (name === 'guest') {
           const ng = W.bedCount('guest');
-          for (let i = 0; i < 4; i++) {
+          for (let i = 0; i < 3; i++) {
             const g = W.guestBed(i);
             if (i < ng) spr('bedSingle', 0, g.x, g.y);
             else {   /* 预留的床位：还没买，只画一个虚线框和加号 */
@@ -126,6 +144,10 @@
           }
           spr('rugRound', 0, 2.0, 6.1, 0, -9); spr('sideTableDrawers', 0, 3.6, 0.35); spr('lampRoundTable', 0, 3.6, 0.35, 22, 3.96);
           spr('bookcaseClosedWide', 1, 0.3, 6.0); spr('pottedPlant', 0, 3.6, 7.4);
+        } else if (name === 'kids') {
+          for (let i = 0; i < W.bedCount('kids'); i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
+          spr('sideTableDrawers', 0, 2.5, 0.35); spr('lampRoundTable', 0, 2.5, 0.35, 22, 2.86);
+          spr('rugRound', 0, 1.5, 3.1, 0, -9); spr('bookcaseClosedWide', 1, 0.3, 3.0);
         } else if (name === 'elder') {
           const ne = W.bedCount('elder');
           for (let i = 0; i < ne; i++) spr('bedSingle', 0, 0.7 + i * 1.1, 1.2);
@@ -143,7 +165,7 @@
           spr('rugRound', 0, 1.9, 2.0, 0, -9);
           spr('cabinetTelevision', 1, 0.3, 2.0); spr('televisionModern', 1, 0.3, 2.0, 22, 2.31);
           spr('loungeSofaLong', 3, 3.35, 2.0); spr('tableCoffee', 1, 1.9, 2.0);
-          spr('bedSingle', 0, 1.4, 3.2); spr('pottedPlant', 0, 3.6, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);   /* 客人床 */
+          spr('pottedPlant', 0, 0.35, 3.6); spr('lampRoundFloor', 0, 3.6, 0.5);
         } else if (name === 'kitchen') {
           spr('kitchenFridge', 0, 0.5, 0.45); spr('kitchenCabinet', 0, 1.35, 0.45); spr('kitchenSink', 0, 2.2, 0.45); spr('kitchenStove', 0, 3.05, 0.45);
           spr('table', 0, 2.0, 2.4); spr('chair', 0, 1.5, 1.75); spr('chair', 0, 2.5, 1.75); spr('chair', 2, 1.5, 3.05); spr('chair', 2, 2.5, 3.05);
@@ -175,23 +197,6 @@
         /* 房间名，淡淡的 */
         const [lx, ly] = pt(x + w * 0.08, y + h * 0.96, 0).split(',');
         out.push(`<text x="${lx}" y="${ly}" font-size="14" fill="#5a4a38" opacity=".6" font-family="system-ui,sans-serif">${t('loc.' + name)}</text>`);
-      }
-      /* 院子：草地上的树和花坛，画在最后，高的东西在前面 */
-      if (P.rooms.yard) {
-        const r = P.rooms.yard;
-        box(r.gx + 0.3, r.gy + 0.4, 1.8, 0.5, 8, '#7a5538');
-        for (let i = 0; i < 5; i++) ball(r.gx + 0.5 + i * 0.36, r.gy + 0.55, 14, 4, 4, ['#e8707e', '#f2c14e', '#fff', '#c58ae0', '#f2c14e'][i]);
-        box(r.gx + 3.15, r.gy + 0.55, 0.3, 0.3, 30, '#8a5a3a'); ball(r.gx + 3.3, r.gy + 0.7, 52, 34, 26, '#5f9a58'); ball(r.gx + 3.0, r.gy + 0.7, 60, 22, 18, '#74ad68');
-        box(r.gx + 0.1, r.gy + 3.7, 1.2, 0.12, 14, '#d9c9a8'); box(r.gx + 2.7, r.gy + 3.7, 1.2, 0.12, 14, '#d9c9a8');   /* 前面的矮墙中间留出大门的位置 */
-        /* 大门：开在院子前面矮墙的中间，两根门柱立在地上，门板落在地面，访客从这里走进来，是家里一直在的东西 */
-        {
-          const Y = r.gy + 3.76, X0 = r.gx + 1.3, X1 = r.gx + 2.7, Z = 62;
-          box(X0 - 0.1, Y - 0.1, 0.2, 0.32, Z + 6, '#6b4a30'); box(X1 - 0.1, Y - 0.1, 0.2, 0.32, Z + 6, '#6b4a30');
-          poly([pt(X0 + 0.1, Y, 0), pt(X1 - 0.1, Y, 0), pt(X1 - 0.1, Y, Z), pt(X0 + 0.1, Y, Z)], '#b98a5a');
-          poly([pt(X0 + 0.22, Y, 6), pt(X1 - 0.22, Y, 6), pt(X1 - 0.22, Y, Z - 8), pt(X0 + 0.22, Y, Z - 8)], '#c99b69');
-          const [dx, dy] = pt(X1 - 0.3, Y, Z / 2).split(',');
-          out.push(`<circle cx="${dx}" cy="${dy}" r="3" fill="#f2d27a"/>`);
-        }
       }
       return `<svg viewBox="0 0 ${W.vw(place)} ${W.vh(place)}" preserveAspectRatio="xMidYMid meet">${out.join('')}</svg>`;
     },

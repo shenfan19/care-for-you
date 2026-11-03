@@ -5,7 +5,7 @@
   /* w 是家的格子宽度，vw 和 vh 是画面大小，rooms 是比基础户型多出来的房间 */
   CY.houses = {
     flat: {
-      w: 16, vw: 900, vh: 600, rooms: { guest: { gx: 12, gy: 0, w: 4, h: 8 } },
+      w: 18, vw: 980, vh: 640, rooms: { guest: { gx: 14, gy: 0, w: 4, h: 8 } },
       items: {
         toy: [{ s: 'bear', room: 'living', x: 2.9, y: 3.3 }],
         books: [{ s: 'bookcaseOpen', room: 'living', x: 2.6, y: 0.4 }],

@@ -128,11 +128,19 @@
   };
   /* 家里没有爸爸妈妈也没有指定主角的开局，补一个在家办公的成年人当主角，男女随机。没有他，就没有人坐在书桌前，也就没有工作和打断 */
   U.withWorker = function (members) {
-    if (members.some(m => m.lead || ['dad', 'mom', 'wife', 'husband'].includes(m.arch))) return members;
+    if (members.some(m => m.lead)) return members;
     const kids = members.some(m => { const a = C.archOf(m.arch); return a && a.species === 'human' && ['infant', 'toddler', 'child', 'teen'].includes(C.stageOf(a.age)); });
     const hasPeople = members.some(m => { const a = C.archOf(m.arch); return a && a.species === 'human'; });
-    const pool = kids ? ['dad', 'mom'] : hasPeople ? ['husband', 'wife'] : ['man25', 'woman25'], arch = rnd(pool);
-    return [{ arch, name: CY.tOr('preset.name.' + arch, U.archName(arch)), age: arch === 'dad' || arch === 'mom' ? 32 + Math.floor(Math.random() * 10) : 26 + Math.floor(Math.random() * 15), lead: true, name_key: arch }].concat(members);
+    const mk = (arch, lead) => ({ arch, name: CY.tOr('preset.name.' + arch, U.archName(arch)), age: arch === 'dad' || arch === 'mom' ? 32 + Math.floor(Math.random() * 10) : 26 + Math.floor(Math.random() * 15), lead, name_key: arch });
+    /* 有孩子的家，爸爸妈妈两位都在，主角可以选其中任何一位，默认随机一位 */
+    if (kids) {
+      const first = rnd(['dad', 'mom']), have = a => members.some(m => m.arch === a);
+      const add = ['dad', 'mom'].filter(a => !have(a)).map(a => mk(a, a === first));
+      if (have(first)) return add.concat(members.map(m => (m.arch === first ? Object.assign({}, m, { lead: true, name_key: first }) : m)));
+      return add.concat(members);
+    }
+    if (members.some(m => ['dad', 'mom', 'wife', 'husband'].includes(m.arch))) return members;
+    return [mk(rnd(hasPeople ? ['husband', 'wife'] : ['man25', 'woman25']), true)].concat(members);
   };
   U.createMembers = async function (members) {
     let lead = null;
