@@ -9,7 +9,7 @@
      选了一个人做操纵对象，玩家的手就是他的手：他站在玩家所在的位置，不睡觉，不被打扰，也能照顾自己。
      老人做操纵对象，圈转得慢些。 ---------- */
   const LEAD_STAGES = ['child', 'teen', 'adult', 'elder'];
-  G.canLead = p => !!p && G.isHuman(p) && LEAD_STAGES.includes(G.stage(p));
+  G.canLead = p => !!p && G.isHuman(p) && p.person.controllable !== false && LEAD_STAGES.includes(G.stage(p));
   G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
   G.setProtagonist = id => {
     const p = id ? G.get(id) : null;

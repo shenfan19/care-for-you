@@ -34,7 +34,7 @@
   /* 第一次有了角色之后，走开局的后两步 */
   U.maybeIntro = function () { if (!G.world.intro_done) U.introDialog(); };
   /* 开局第二步和第三步：先选你是谁，再是来到老屋，南丁格尔走出来。第一步是选家庭配置，在 U.onboard。
-     选好之前第一位来客不来；故事读完才记下开局完成，南丁格尔随后从时空门走进院子 */
+     选好之前第一位来客不来；故事读完才记下开局完成，南丁格尔随后从大门走进院子 */
   U.introDialog = function () {
     G.world.story_pending = true;
     const finish = () => { G.world.intro_done = true; G.world.story_pending = false; G.save(true); U.closeDialog(); U.renderLife(); U.renderControls(); U.renderRoom(true); G.maybeArrive(); };

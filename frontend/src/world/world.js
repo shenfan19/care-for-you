@@ -46,9 +46,9 @@
     road: { stand: [[.5, .56], [.3, .6], [.7, .6], [.4, .4], [.6, .4], [.2, .45]], sleep: [[.5, .6]], cradle: [[.5, .6]], player: [.9, .9] },
   };
   /* 床位：每个住家的人（婴儿睡婴儿床，不占床位）有自己的床，床位数是买来的，见 G.bedsOwned，人数严格不超过它。
-     买到的床按这个顺序摆进房间：卧室，老人房，卧室，老人房，卧室，再是客房三张，所以最多八张。老人先去老人房，其余先去卧室，住不下的去另一间。
+     开局的四张在卧室和老人房，之后买的床都摆进右侧客房里预留的床位，客房四张，所以最多八张。老人先去老人房，其余先去卧室，住不下的去另一间。
      顺序按角色编号，位置固定，不会因为谁醒了而挪动 */
-  const BED_ORDER = ['bedroom', 'elder', 'bedroom', 'elder', 'bedroom', 'guest', 'guest', 'guest'];
+  const BED_ORDER = ['bedroom', 'elder', 'bedroom', 'elder', 'guest', 'guest', 'guest', 'guest'];
   Object.defineProperty(W, 'BED_CAP', { get: () => { const cap = { bedroom: 0, elder: 0, guest: 0 }, n = G.bedsOwned ? G.bedsOwned() : 4; for (let i = 0; i < Math.min(n, BED_ORDER.length); i++) cap[BED_ORDER[i]]++; return cap; } });
   W.bedPlan = () => {
     const plan = { bedroom: [], elder: [], guest: [], living: [] }, cap = W.BED_CAP;
@@ -59,10 +59,12 @@
     return plan;
   };
   /* 画床用：这个房间摆几张床，就是买到的床位分到这间的数目 */
+  W.guestBed = i => ({ x: 1.0 + (i % 2) * 1.9, y: 1.2 + Math.floor(i / 2) * 2.3 });
   W.bedCount = room => W.BED_CAP[room] || 0;
   W.bedKey = () => W.bedCount('bedroom') + ',' + W.bedCount('elder') + ',' + W.bedCount('guest') + ',' + CY.houseId();
   W.bedOf = p => { const plan = W.bedPlan(); for (const r in plan) { const i = plan[r].indexOf(p.id); if (i >= 0) return { room: r, i }; } return null; };
   W.slotPoint = (place, room, kind, i) => {
+    if (kind === 'sleep' && room === 'guest') { const r0 = W.PLACES[place].rooms.guest; return { gx: r0.gx + W.guestBed(i).x, gy: r0.gy + W.guestBed(i).y + 0.1 }; }   /* 客房的预留床位两列两排 */
     if (kind === 'sleep' && room !== 'living' && W.BED_CAP[room] !== undefined) { const r0 = W.PLACES[place].rooms[room], w = r0.w; return { gx: r0.gx + 0.15 + i * 1.1 + 0.55, gy: r0.gy + 1.3 }; }
     const r = W.PLACES[place].rooms[room], list = SLOTS[room][kind] || SLOTS[room].stand;
     const s = Array.isArray(list[0]) ? list[i % list.length] : list;

@@ -13,9 +13,9 @@
     const inv = G.giftInv(), money = G.world.money || 0;
     const ids = Object.keys(V.GIFTS).filter(g => inv[g] > 0).sort((a, b) => V.GIFTS[a].price - V.GIFTS[b].price);
     const grid = ids.map(g => `<button class="gift pick" data-item="${g}"><div>${V.GIFTS[g].icon}</div><div>${esc(giftName(g))}</div><div class="mute">${esc(t('gift.have', { n: inv[g] }))}</div></button>`).join('');
-    const vc = G.visitorCard(p), st = p.person.visitor, hearts = Math.round((st.fav || 0) / G.FAV.max * 10);
+    const vc = G.visitorCard(p), st = p.person.visitor, stars = Math.min(5, Math.floor((st.fav || 0) / (G.FAV.max / 5)));
     const profile = vc ? `${t('visitor.' + vc.id + '.era')} · ${t('field.' + vc.field)}` : '';
-    const favLine = `${'❤'.repeat(hearts)}${'♡'.repeat(10 - hearts)} ${t('gift.fav', { n: st.fav || 0, m: G.FAV.ok })}${st.ok ? ' · ' + t('gift.fav_ok') : ''}`;
+    const favLine = `${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}${st.ok ? ' · ' + t('gift.fav_ok') : ''}`;
     const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><div class="mute">${esc(p.person.name)} · ${esc(profile)}</div><div style="margin:4px 0">${esc(favLine)}</div><p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${note ? `<p class="settle-line">${esc(note)}</p>` : ''}${grid ? `<div class="giftgrid vbody">${grid}</div>` : `<p class="mute">${esc(t('gift.empty'))}</p>`}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="vClose" class="primary">${esc(t('cal.close'))}</button></div>`, true);
     note = '';

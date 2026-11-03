@@ -16,7 +16,7 @@ It is meant to sit in a tab beside your work. Nothing is urgent, nothing is puni
 - Every character is a small agent. They move between rooms on a daily routine, eat at mealtimes, sleep at night, and help each other. Needs push them off their routine.
 - Care is done by pressing and holding an action. There are no countdown penalties and no failure states.
 - A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a nanny you can hire with the money you earn at the desk.
-- A time door in the house: historical and literary visitors stay for a few days, you try to work out what they need, and they leave a keepsake for the cabinet. A short summary of every day goes into a calendar you can browse. See [docs/visitors.md](docs/visitors.md).
+- A front door in the house: historical and literary visitors stay for a few days, you try to work out what they need, and they leave a keepsake for the cabinet. A short summary of every day goes into a calendar you can browse. See [docs/visitors.md](docs/visitors.md).
 - Eight interface languages, with dialogue in each: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch.
 - Everything is data. Characters, rules, probabilities and lines are plain YAML files you can open and edit. Saves are plain files too.
 
@@ -41,7 +41,7 @@ Python 3 is only needed if you want to run one of the optional backends below.
 
 ## Documentation
 
-Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The time door and visitor cards: [docs/visitors.md](docs/visitors.md). The optional account server: [account_server/README_account_server.md](account_server/README_account_server.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
+Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The front door and visitor cards: [docs/visitors.md](docs/visitors.md). The optional account server: [account_server/README_account_server.md](account_server/README_account_server.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
 
 ## Data and privacy
 

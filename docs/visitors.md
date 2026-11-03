@@ -1,22 +1,22 @@
 # Time door, visitors and the daily calendar
 
-This page explains the daily rhythm, the visitors who come through the time door, gifts and the display cabinet, and how to write your own visitor cards.
+This page explains the daily rhythm, the visitors who come in through the front door, gifts and the display cabinet, and how to write your own visitor cards.
 
 ## A day
 
 - A play day runs from 14:00 to midnight and takes about five real minutes. There is no speed button.
-- At midnight a small card slides in with a short, plain account of the day, one thing per sentence. It does not pause the game; it fades after a countdown, and unread days are marked in the calendar and on the time bar. Visitors come first, in the order things happened, then what the family did. For example: "Zhuge Liang stepped out of the time door. Zhuge Liang had a good sleep. Zhuge Liang left, but left a feather fan behind as a gift." The night and the morning are played by the engine, and the next day starts at 14:00.
+- At midnight a small card slides in with a short, plain account of the day, one thing per sentence. It does not pause the game; it fades after a countdown, and unread days are marked in the calendar and on the time bar. Visitors come first, in the order things happened, then what the family did. For example: "Zhuge Liang came in through the front door. Zhuge Liang had a good sleep. Zhuge Liang left, but left a feather fan behind as a gift." The night and the morning are played by the engine, and the next day starts at 14:00.
 - Every day is kept in the calendar. Open it from the time at the top right of the game window. The summaries are stored as text keys, so they switch language with the interface.
 - If you leave the page for more than three hours, the game catches up when you return: one day per three hours away, at most three days. Needs rise slowly while you are away and nothing pops up.
 - Needs follow the real-second rhythm, not the clock face. Compressing a day into five minutes does not make people need more care per minute.
 
-## The time door and visitors
+## The front door and visitors
 
-- The time door is a piece of furniture on the right of the yard. Guests step out of it and then move around the house like anyone else.
+- The front door is a wooden gate on the right of the yard. Guests walk in through it and then move around the house like anyone else.
 - A guest is a temporary member of the household. They have needs, and you look after them with the usual actions. One extra action only appears for guests: invite them to rest. They do not help around the house and do not add to the family bonus.
 - A guest stays one to three days and may leave at random. They leave whether or not they are content. The ones who left unsatisfied may come back later.
 - Every guest, like every family member, needs a bed. When the beds are used up, no new guest comes. Buy beds in the shop.
-- The first guest is always Florence Nightingale. She steps out of the time door in the opening story, says it is an interesting place and that she will leave soon. Everyone else arrives at random, and guests you have not yet satisfied come more often than ones you already have.
+- The first guest is always Florence Nightingale. She comes in through the front door in the opening story, says it is an interesting place and that she will leave soon. Everyone else arrives at random, and guests you have not yet satisfied come more often than ones you already have.
 - All texts, including the cards, are available in the eight interface languages: Simplified and Traditional Chinese, English, Japanese, Korean, German, French and Spanish. The translations are machine-assisted and not proofread by native speakers, so corrections are welcome.
 - There are sixty-one official cards, 23 of them medical pioneers from many civilisations. Each card carries a region and a field. Every region has the same total chance of being picked, so a region with more cards does not come more often. Medicine is favoured, politics and the military slightly less. The interface language adds a small lean towards its home region; nothing is guessed from your location.
 - Guests chat with the family now and then, one short line per guest per day, picked by the guest's field and the age of the family member.

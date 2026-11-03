@@ -54,7 +54,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     const nd = G.gameDate().n; await endDay();
     const rec = G.dayRecord(nd), txt = rec ? rec.lines.map(G.settleText) : [];
     check('住满当晚离开，人从家里消失', !G.visitorPeople().some(p => p.person.visitor.id === 'nightingale') && !G.people.some(p => p.person.name === '弗洛伦斯·南丁格尔'));
-    check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /弗洛伦斯·南丁格尔从时空门里走了出来/.test(txt[0]) && /弗洛伦斯·南丁格尔睡了一觉/.test(txt[1]) && txt.some(x => x === '弗洛伦斯·南丁格尔离开了，但留下了一盏油灯作为礼物。'), txt.join(' | '));
+    check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /弗洛伦斯·南丁格尔推开大门走了进来/.test(txt[0]) && /弗洛伦斯·南丁格尔睡了一觉/.test(txt[1]) && txt.some(x => x === '弗洛伦斯·南丁格尔离开了，但留下了一盏油灯作为礼物。'), txt.join(' | '));
     check('结算的那天记为没看过，点开日历后清掉', G.unread().includes(nd) && (G.markRead(nd), !G.unread().includes(nd)));
     check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
     check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.nightingale || 0) < 40; })());
@@ -220,6 +220,27 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('商店有家里的东西和礼物两块，点钱的格子直接打开商店，没有保姆入口', /shop\.sec_gifts/.test(life) && /shop\.sec_bed/.test(life) && /shop\.sec_decor/.test(life) && /mn\.onclick = \(\) => U\.shopDialog\(\)/.test(head) && !/helpDialog|nnhire/.test(life + head));
     check('界面里被调用的开局和商店函数都有定义', ['maybeIntro', 'introDialog', 'shopDialog'].every(f => new RegExp('U\.' + f + ' = ').test(life)) && /U\.giftDialog = /.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'visitor.js'), 'utf8')) && /U\.onboard = /.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'people_add.js'), 'utf8')));
     check('钱的格子写成 钱 加 每小时收入', /' \+' \+ rate \+ '\/h'/.test(head));
+  }
+
+  /* 来客不能被操纵；作息：同类的人不同时起床，幼儿老人有午睡，饭点前饿得快；气泡不会太密 */
+  {
+    const cu = await G.arrive('curie', true);
+    check('来客不能当主角，和宠物一样', cu.person.controllable === false && !G.canLead(cu) && G.setProtagonist(cu.id) === false);
+    const humans = G.activePeople().filter(p => G.isHuman(p) && G.routineOf(p));
+    const wakes = humans.filter(p => G.stage(p) === 'adult').map(p => G.routineOf(p).wake.toFixed(2));
+    check('同类的成年人起床时间各不相同', new Set(wakes).size === wakes.length, wakes.join());
+    const el = humans.find(p => G.stage(p) === 'elder'), ad = humans.find(p => G.stage(p) === 'adult');
+    if (el && ad) check('老人比成年人起得早', G.routineOf(el).wake < G.routineOf(ad).wake, G.routineOf(el).wake.toFixed(2) + ' ' + G.routineOf(ad).wake.toFixed(2));
+    if (ad) {
+      const R = G.routineOf(ad); G.setClock(Math.round(R.meals[1] * 60) - 18); const near = G.rhythm(ad, 'hunger'); G.setClock(Math.round((R.meals[1] + 3) * 60)); const far = G.rhythm(ad, 'hunger');
+      check('饭点前饿得快，两顿饭之间慢', near > 2 * far, near.toFixed(2) + ' vs ' + far.toFixed(2));
+    }
+    G.toast = {}; G.req = {}; G.toastQ = []; G.toastGapUntil = 0;
+    const ps = G.activePeople().filter(p => !p.person.visitor).slice(0, 5);
+    for (const p of ps) G.toastFor(p, '说话', 'soft');
+    check('同一屏说话气泡不超过上限，多的排队', Object.keys(G.toast).length <= 3 && G.toastQ.length >= ps.length - 3, Object.keys(G.toast).length + ' 个，队里 ' + G.toastQ.length);
+    G.toastGapUntil = 0; for (const id in G.toast) G.toast[id].until = 0; G.toastTick();
+    check('前一个说完后排队的冒出来', G.toastQ.length < ps.length - 1);
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);

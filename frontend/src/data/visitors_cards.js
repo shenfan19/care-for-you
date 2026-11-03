@@ -13,7 +13,7 @@
       look: { skin: SK[lk[0]], hairColor: lk[1], hairStyle: lk[2], glasses: lk[3], clothes: lk[4] }, souvenir: { id: id + '_keepsake', icon: sou[0] },
       t: {
         name, era, souvenir: [sou[1], sou[2]], hint: hints,
-        arrive_note: [`${n[0]}推开时空门走了进来，说想在这里住几天。`, `${n[1]} stepped through the time door and asked to stay a few days.`],
+        arrive_note: [`${n[0]}推开大门走了进来，说想在这里住几天。`, `${n[1]} came in through the front door and asked to stay a few days.`],
         ok_line: okLine,
         leave_ok: [`${n[0]}临走前留下${sou[1]}，说：${q[0]}`, `Before leaving, ${n[1]} left ${sou[2].replace(/^An? /, 'a ')} and said: ${q[1]}`],
         leave_miss: [`${n[0]}道了谢，推开门回去了。`, `${n[1]} said thanks and went back through the door.`],

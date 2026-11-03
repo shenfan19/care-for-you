@@ -360,16 +360,36 @@
 
   /* ---------- 作息：睡觉，以及各自的状态 ---------- */
   const inWindow = (dm, a, b) => { a = (((a % 24) + 24) % 24) * 60; b = (((b % 24) + 24) % 24) * 60; return a <= b ? dm >= a && dm < b : dm >= a || dm < b; };
+  /* 每个人的作息：类别给出基准，再按人的编号加一点固定的偏差，所以同一类的人也不会同时起床和吃饭；老人最早，成年人次之，孩子和青少年更晚 */
+  const hash01 = (id, salt) => { let h = 2166136261; for (const ch of String(id) + salt) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return h / 4294967296; };
+  G.routineOf = p => {
+    if (!G.isHuman(p)) return null;
+    const r = (G.classOf(p) || {}).routine; if (!r) return null;
+    const off = salt => (hash01(p.id, salt) * 2 - 1) * (r.spread || 0), sys = (G.tpl.system || {}).routine || {};
+    const morningBath = (sys.morning_bath_langs || []).includes(CY.i18n.lang);
+    const wake = r.wake + off('w'), bed = r.bed + off('b');
+    return { wake, bed, nap: r.nap ? r.nap.map(x => x + off('n')) : null, meals: (r.meals || []).map((x, i) => x + off('m' + i) * 0.5), bath: morningBath ? wake + 0.6 + hash01(p.id, 'bm') * 0.5 : r.bath + off('h') };
+  };
+  /* 需求涨速随时间起伏：靠近某个时刻涨得快，其余时间慢一点；饭点前后饿得快，洗澡点前后觉得脏得快 */
+  G.rhythm = (p, need) => {
+    const R = G.routineOf(p), cfg = (((G.tpl.system || {}).routine || {}).rhythm || {})[need];
+    if (!R || !cfg) return 1;
+    const times = need === 'hygiene' ? [R.bath] : R.meals, h = G.dayMinutes() / 60;
+    let m = 0;
+    for (const x of times) { const d = Math.abs(((h - (x - 0.3) + 12) % 24 + 24) % 24 - 12); m = Math.max(m, 1 - d / cfg.width); }
+    return cfg.lo + (cfg.hi - cfg.lo) * Math.max(0, m);
+  };
   G.sleepWindow = p => {
     if (NOCTURNAL.includes(p.species.id)) return [10, 18];
-    const sh = G.traitMods(p).sleep_shift;
-    return [22 + sh, 6.5 + sh];
+    const sh = G.traitMods(p).sleep_shift, R = G.routineOf(p);
+    return R ? [R.bed + sh, R.wake + sh] : [22 + sh, 6.5 + sh];
   };
   G.activityOf = p => {
     if (p === G.protagonist()) return CY.world && CY.world.leadSleeping() ? 'sleeping' : 'awake';   /* 主角睡不睡看他在不在床上：小睡，或者夜里在卧室里闲着 */
     if (p.species.id !== 'human' && !NOCTURNAL.includes(p.species.id)) return 'awake';
     if (G.flag(p, 'nap')) return 'sleeping';
-    const [a, b] = G.sleepWindow(p), dm = G.dayMinutes();
+    const [a, b] = G.sleepWindow(p), dm = G.dayMinutes(), R = G.routineOf(p);
+    if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && (p.state.needs.rest || 0) > 0.3) return 'sleeping';   /* 幼儿和老人的午睡 */
     if (!inWindow(dm, a, b)) return 'awake';
     const st = G.stage(p);
     if (st === 'infant') return G.maxNeed(p) > 0.9 ? 'awake' : (dm % 180) < 120 ? 'sleeping' : 'awake';
@@ -604,7 +624,7 @@
       for (const k in defs) {
         if (driven(p, k)) continue;
         if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hp * shop.rest_sleep); continue; }
-        const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1);
+        const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1) * G.rhythm(p, k);
         s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
       }
       if (!driven(p, 'mood')) {
@@ -648,7 +668,27 @@
     const s = G.nextGapSeconds();
     G.nextAt = isFinite(s) ? Date.now() + s * 1000 : Date.now() + 5000;
   }
-  G.toastFor = (p, text, kind) => { G.toast[p.id] = { text, kind: kind || 'soft', until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : kind === 'self' ? 7000 : 9000) }; };
+  /* 说话气泡不能太密：画面上说话气泡加打开的请求气泡合计不超过上限，超出的排队，前一个出现或消失后隔几秒再冒出来。哭闹和揭示这类要紧的不排队 */
+  const bub = () => (G.tpl && G.tpl.system && G.tpl.system.bubbles) || {};
+  const liveToasts = () => Object.values(G.toast).filter(x => x.kind !== 'cry').length;
+  const openReqs = () => Math.min(2, Object.values(G.req).filter(r => !r.folded).length);
+  const showToast = (p, text, kind) => { G.toast[p.id] = { text, kind, until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : kind === 'self' ? 7000 : 9000) }; };
+  const gapMs = () => { const g = bub().gap_seconds || [1.5, 3.5]; return (g[0] + Math.random() * (g[1] - g[0])) * 1000; };
+  G.toastQ = []; G.toastGapUntil = 0;
+  G.toastFor = (p, text, kind) => {
+    kind = kind || 'soft';
+    if (kind === 'cry' || kind === 'reveal' || !bub().total) { showToast(p, text, kind); return; }
+    const now = Date.now();
+    if (liveToasts() < Math.max(1, bub().total - openReqs()) && now >= G.toastGapUntil && !G.toastQ.length) { showToast(p, text, kind); G.toastGapUntil = now + gapMs(); return; }
+    G.toastQ = G.toastQ.filter(x => x.p !== p); G.toastQ.push({ p, text, kind, at: now });
+  };
+  G.toastTick = () => {
+    const now = Date.now(), ttl = (bub().queue_seconds || 25) * 1000;
+    G.toastQ = G.toastQ.filter(x => now - x.at < ttl && G.get(x.p.id) && x.p.person.active !== false);
+    while (G.toastQ.length && liveToasts() < Math.max(1, (bub().total || 3) - openReqs()) && now >= G.toastGapUntil) {
+      const x = G.toastQ.shift(); showToast(x.p, x.text, x.kind); G.toastGapUntil = now + gapMs();
+    }
+  };
 
   /* AI 可用时替换一句台词；任何失败都回退成库里的句子 */
   function speakWithAI(p, situation, fallback, kind) {
@@ -978,7 +1018,8 @@
     advance(gameMinutes(dt), false);
     G.dayRoll();
     for (const id in G.req) if (G.req[id].deadline && now > G.req[id].deadline) expire(G.req[id]);
-    for (const id in G.toast) if (now > G.toast[id].until) delete G.toast[id];
+    for (const id in G.toast) if (now > G.toast[id].until) { delete G.toast[id]; G.toastGapUntil = Math.max(G.toastGapUntil, now + gapMs()); }
+    G.toastTick();
     /* 婴幼儿需求严重时会一直哭闹，直到有人管 */
     const was = G.crying; G.crying = {};
     for (const p of G.activePeople()) {

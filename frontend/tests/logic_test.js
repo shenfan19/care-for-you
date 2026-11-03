@@ -1100,7 +1100,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {};
     check('只有一座房子，客房一直在；床位由买到的数目分到各间，最多八张', !!W.PLACES.home.rooms.guest && W.PLACES.home.w === 16 && W.vw('home') === 900 && W.vw('park') === 800);
     G.world.beds = 4; check('四张床：卧室两张，老人房两张，客房没有', JSON.stringify(W.BED_CAP) === JSON.stringify({ bedroom: 2, elder: 2, guest: 0 }), JSON.stringify(W.BED_CAP));
-    G.world.beds = 8; check('八张床：卧室三，老人房二，客房三', JSON.stringify(W.BED_CAP) === JSON.stringify({ bedroom: 3, elder: 2, guest: 3 }));
+    G.world.beds = 8; check('八张床：卧室二，老人房二，客房四', JSON.stringify(W.BED_CAP) === JSON.stringify({ bedroom: 2, elder: 2, guest: 4 }));
     const pj = W.project('home', 15, 7);
     check('最远的格子仍在画面里', pj.x > 0 && pj.x < 900 && pj.y > 0 && pj.y < 600, JSON.stringify(pj));
     check('床位计划里有客房', Array.isArray(W.bedPlan().guest));

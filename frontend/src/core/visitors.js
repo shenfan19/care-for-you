@@ -1,4 +1,4 @@
-/* 访客：从时空门里走出来的人，在家里住一两天，和家里人一样有需求，用同样的动作照顾。
+/* 访客：从大门里走出来的人，在家里住一两天，和家里人一样有需求，用同样的动作照顾。
    每位访客是一个临时的家庭成员：基于朋友或邻居的模板，再按卡片给外观、年龄和起始的疲倦。离开时这个人从家里消失，只留下记录里的一句话和一件纪念品。
    客床数量决定同时能住几位，满床不来新的。送礼是单独的按钮：只有送到对方真正需要的东西才算数，送错了对方收下，当场没有反馈。 */
 (function (CY) {
@@ -61,6 +61,7 @@
     const pid = await G.createPerson({ arch: c.age >= 60 ? 'neighbor' : 'friend', name: t(`visitor.${id}.name`), age: c.age, pronoun: c.pronoun, look: G.lookOf(c) });
     const p = await G.loadOnePerson(pid, []);
     if (!p) return null;
+    if (c.controllable === false) p.person.controllable = false;
     p.person.visitor = { id, since: day(), stay: rint(G.DOOR.stay_min, G.DOOR.stay_max), day_in: 0, ok: false, fav: 0, wrong: [], talk: 0 };
     if (c.tired) p.state.needs.rest = c.tired;
     p.state.mood = 0.55;
@@ -114,9 +115,9 @@
   G.on(() => { if (!G.world.visit_started) G.maybeArrive(); });
   G.dayStartHooks.push(() => { G.maybeArrive(); });
 
-  /* 好感度：满分一百，到五十就算满足，留下回礼，也就是纪念品。送到心仪的礼物，或者做了对方真正需要的事，一下子加很多；
+  /* 好感度：满分五十，到三十就算满足，留下回礼，也就是纪念品。送到心仪的礼物，或者做了对方真正需要的事，一下子加很多；
      送一般的礼物加得不多，要送好几件才够；回答他向你提的问题也加一点。这样不是只有猜中才行，而是更有弹性 */
-  G.FAV = { ok: 50, max: 100, like: 60, other: 8, care: 60, ask: 12 };
+  G.FAV = { ok: 30, max: 50, like: 30, other: 4, care: 30, ask: 6 };   /* 内部五十分，界面五颗星，十分一颗；三颗星满足 */
   const satisfy = p => {
     const st = p.person.visitor;
     if (st.ok) return;
