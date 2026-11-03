@@ -306,12 +306,12 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
-  F['templates/system.yaml'] = `version: 2
+  F['templates/system.yaml'] = `version: 3
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
-bubbles:                      # 画面上同时说话的气泡不能太密：说话气泡和打开的请求气泡合计不超过 total，超出的排队，前一个说完隔几秒再冒出来
-  total: 3
+bubbles:                      # 画面上同时说话的气泡不能太密：说话气泡和打开的请求气泡合计不超过 total，超出的排队，前一个说完隔几秒再冒出来；需求图标和完成的小图标不算
+  total: 2
   gap_seconds: [1.5, 3.5]     # 一个气泡消失或出现后，下一个至少隔多久
   queue_seconds: 25           # 排队太久的话就不说了
 routine:                      # 作息的节奏：每个角色按自己的类别作息，再加上自己的一点偏差，所以一家人不会同时起床、同时吃饭

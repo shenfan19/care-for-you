@@ -228,7 +228,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('来客不能当主角，和宠物一样', cu.person.controllable === false && !G.canLead(cu) && G.setProtagonist(cu.id) === false);
     const humans = G.activePeople().filter(p => G.isHuman(p) && G.routineOf(p));
     const wakes = humans.filter(p => G.stage(p) === 'adult').map(p => G.routineOf(p).wake.toFixed(2));
-    check('同类的成年人起床时间各不相同', new Set(wakes).size === wakes.length, wakes.join());
+    check('同类的成年人起床时间散开，不是同一时刻', Math.max(...wakes) - Math.min(...wakes) > 0.2, wakes.join());
     const el = humans.find(p => G.stage(p) === 'elder'), ad = humans.find(p => G.stage(p) === 'adult');
     if (el && ad) check('老人比成年人起得早', G.routineOf(el).wake < G.routineOf(ad).wake, G.routineOf(el).wake.toFixed(2) + ' ' + G.routineOf(ad).wake.toFixed(2));
     if (ad) {
@@ -238,7 +238,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.toast = {}; G.req = {}; G.toastQ = []; G.toastGapUntil = 0;
     const ps = G.activePeople().filter(p => !p.person.visitor).slice(0, 5);
     for (const p of ps) G.toastFor(p, '说话', 'soft');
-    check('同一屏说话气泡不超过上限，多的排队', Object.keys(G.toast).length <= 3 && G.toastQ.length >= ps.length - 3, Object.keys(G.toast).length + ' 个，队里 ' + G.toastQ.length);
+    check('同一屏说话气泡不超过上限，多的排队', Object.keys(G.toast).length <= 2 && G.toastQ.length >= ps.length - 2, Object.keys(G.toast).length + ' 个，队里 ' + G.toastQ.length);
     G.toastGapUntil = 0; for (const id in G.toast) G.toast[id].until = 0; G.toastTick();
     check('前一个说完后排队的冒出来', G.toastQ.length < ps.length - 1);
   }

@@ -685,7 +685,7 @@
   G.toastTick = () => {
     const now = Date.now(), ttl = (bub().queue_seconds || 25) * 1000;
     G.toastQ = G.toastQ.filter(x => now - x.at < ttl && G.get(x.p.id) && x.p.person.active !== false);
-    while (G.toastQ.length && liveToasts() < Math.max(1, (bub().total || 3) - openReqs()) && now >= G.toastGapUntil) {
+    while (G.toastQ.length && liveToasts() < Math.max(1, (bub().total || 2) - openReqs()) && now >= G.toastGapUntil) {
       const x = G.toastQ.shift(); showToast(x.p, x.text, x.kind); G.toastGapUntil = now + gapMs();
     }
   };
