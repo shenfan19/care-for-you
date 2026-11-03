@@ -40,8 +40,9 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('没选完开局故事时不来', (G.world.story_pending = true, await G.maybeArrive()) === false && (G.world.story_pending = false, true));
     check('第一天午后必到，是家里的一个人', (await G.maybeArrive()) === true && G.people.length === before + 1 && G.visitorPeople().length === 1);
     const zhuge = G.visitorPeople()[0];
-    check('访客有名字、外观和疲倦', zhuge.person.name === '诸葛亮' && zhuge.person.appearance.hairStyle === 'bun' && zhuge.state.needs.rest >= 0.8 && zhuge.person.visitor.id === 'zhuge');
+    check('访客有名字、外观和疲倦', zhuge.person.name === '诸葛亮' && zhuge.person.appearance.hair_style === 'bun' && zhuge.state.needs.rest >= 0.8 && zhuge.person.visitor.id === 'zhuge');
     check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
+    check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.zhuge, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('male') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
     check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
     check('只有一张客床，不会来第二位', (G.world.visit_cd = 0, await G.maybeArrive()) === false && G.visitorPeople().length === 1);
     check('请ta睡一会儿只对访客出现', 'invite_rest' in G.actionsOf(zhuge) && !('invite_rest' in G.actionsOf(baby)) && !('invite_rest' in G.actionsOf(grandpa)));
@@ -56,7 +57,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('小结平铺直叙：到来，睡了一觉，离开并留下礼物，按顺序', /诸葛亮从时空门里走了出来/.test(txt[0]) && /诸葛亮睡了一觉/.test(txt[1]) && txt.some(x => x === '诸葛亮离开了，但留下了一把羽扇作为礼物。'), txt.join(' | '));
     check('结算的那天记为没看过，点开日历后清掉', G.unread().includes(nd) && (G.markRead(nd), !G.unread().includes(nd)));
     check('离开后不是每天都来，冷却 0 到 1 天', G.world.visit_cd >= 0 && G.world.visit_cd <= 1);
-    check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < (c.nightingale || 0) && (c.zhuge || 0) < 120; })());
+    check('已拿到纪念品的人还会再来，但概率很低', (() => { for (const p of G.visitorPeople().slice()) G.deletePerson(p.id); const c = {}; for (let i = 0; i < 400; i++) { const id = G.pickVisitor(); c[id] = (c[id] || 0) + 1; } return (c.zhuge || 0) < 40; })());
     /* 居里夫人：送错收下无反馈，送对留下纪念品，每天次数有上限 */
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
     G.world.visit_cd = 0; G.world.vday = null;

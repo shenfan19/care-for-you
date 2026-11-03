@@ -55,10 +55,19 @@
   };
   G.firstVisitorId = () => V.FIRST[CY.i18n.lang] || V.FIRST.default;
 
+  /* 卡片外观转成人物外观：肤色按色表取编号，发色发型衣服换成人物用的字段名；形象从同性别的六个里按卡片编号固定挑一个，同一个人每次来都长一样。卡片里写了 model 就用它 */
+  const hashId = x => { let h = 0; for (const ch of String(x)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+  G.lookOf = c => {
+    const O = CY.avatarOptions || {}, l = c.look || {}, sk = (O.skin || []).indexOf(l.skin), keys = CY.charKeys || [];
+    const pool = keys.filter(k => k.startsWith(c.pronoun === '她' ? 'female' : 'male'));
+    const model = keys.includes(l.model) ? l.model : pool.length ? pool[hashId(c.id) % pool.length] : undefined;
+    return { skin: sk < 0 ? 2 : sk, hair_color: l.hairColor, hair_style: l.hairStyle, glasses: l.glasses, cloth: l.clothes, model };
+  };
+
   /* 到来：建一个人，放在门口，之后和家里人一样自己走动 */
   G.arrive = async (id, quiet) => {
     const c = V.cards[id]; if (!c) return null;
-    const pid = await G.createPerson({ arch: c.age >= 60 ? 'neighbor' : 'friend', name: t(`visitor.${id}.name`), age: c.age, pronoun: c.pronoun, look: c.look });
+    const pid = await G.createPerson({ arch: c.age >= 60 ? 'neighbor' : 'friend', name: t(`visitor.${id}.name`), age: c.age, pronoun: c.pronoun, look: G.lookOf(c) });
     const p = await G.loadOnePerson(pid, []);
     if (!p) return null;
     p.person.visitor = { id, since: day(), stay: rint(G.DOOR.stay_min, G.DOOR.stay_max), day_in: 0, ok: false, wrong: [], talk: 0 };

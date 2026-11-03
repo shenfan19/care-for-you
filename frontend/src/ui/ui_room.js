@@ -393,7 +393,7 @@
     groom: '✨', vet: '🏥', clean: '🧹', train: '🎓', teach: '🗣', warm: '🔥', veggie: '🥬', mist: '💦', sun: '☀', fertilize: '🌱', prune: '✂', repot: '🪴',
     medicine: '💊', sugar: '🩸', bp: '🫀', heat: '♨', massage: '💆', fever: '🌡', cool: '🧊', inhaler: '💨', air: '🌬', remind: '☝', album: '📷',
     restsit: '💺', steady: '✋', listen: '👂', walkout: '🌳', lead: '🚽', nightlight: '💡', ointment: '🧴', trimnails: '💅', painkill: '🩹', support: '🤲', rehab: '🏃',
-    gift: '🎁', stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
+    gift: '🎁', invite_rest: '😴', stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
   };
   U.actIcon = (p, a) => {
     if (ACT_ICON[a.id]) return ACT_ICON[a.id];
