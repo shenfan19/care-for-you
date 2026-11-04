@@ -366,19 +366,16 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 时间显示 */
   G.cfg.time.mode = 'fast'; G.cfg.time.daynight = 'auto';
   G.cfg.time.mode = 'fast';
-  check('没有倍速档，加速模式 120 倍由一天长度推出，昼夜用游戏时钟', (delete G.cfg.time.speed, G.speed() === 120 && G.daySource() === 'game'));
-  {   /* 两种时间：普通一比一，加速可选 30，60，120；钱按现实时间算 */
+  check('加速默认两倍标准，昼夜用游戏时钟', (delete G.cfg.time.speed, G.speed() === 120 && G.daySource() === 'game'));
+  {   /* 两种时间：标准现实 1 秒是游戏 1 分钟，加速是标准的 2，4，6 倍；钱按标准模式每现实秒算 */
     const m0 = G.cfg.time.mode, f0 = G.cfg.time.fast_speed; delete G.cfg.time.speed;
-    G.cfg.time.mode = 'normal'; check('普通模式流速一比一', G.speed() === 1 && !G.isFast());
-    { const keep = G.cfg.time; G.cfg.time = {}; check('没设过时间模式的新档默认普通', G.timeModeSetting() === 'normal' && G.speed() === 1); G.cfg.time = keep; }
-    G.cfg.time.mode = 'fast'; for (const v of [30, 60, 120]) { G.cfg.time.fast_speed = String(v); check('加速模式 ' + v + ' 倍', G.speed() === v && G.isFast()); }
-    G.cfg.time.fast_speed = '77'; check('加速倍率写错按 120', G.speed() === 120);
-    G.cfg.time.fast_speed = '60'; check('加速 60 倍时一个游戏小时折成 1/60 个现实小时的收入', Math.abs(G.econHours(60) - 1 / 60) < 1e-12);
-    G.cfg.time.mode = 'normal'; check('普通模式一个游戏小时收入就是一个小时', Math.abs(G.econHours(60) - 1) < 1e-12);
-    /* 对齐系统时钟只往后走，天数不倒退 */
-    G.world.game_minutes = 5000; G.world.clock_shift = 3000; const d0 = G.gameDate().n; G.alignClock(); const now = new Date(), tm = now.getHours() * 60 + now.getMinutes();
-    check('对齐系统时钟后时刻对得上，天数不倒退', Math.round(G.dayMinutes()) % 1440 === tm && G.gameDate().n >= d0, G.dayMinutes() + ' ' + tm);
-    G.world.game_minutes = 5000; G.world.clock_shift = 1439 + 1440 * 3; const d1 = G.gameDate().n; G.alignClock(); check('昨天很晚关的，对齐后是第二天，不回到前一天', G.gameDate().n >= d1);
+    G.cfg.time.mode = 'standard'; check('标准模式流速 60，现实 24 分钟一个游戏日', G.speed() === 60 && !G.isFast() && 1440 / G.speed() === 24);
+    { const keep = G.cfg.time; G.cfg.time = {}; check('没设过时间模式的新档默认标准', G.timeModeSetting() === 'standard' && G.speed() === 60); G.cfg.time = keep; }
+    G.cfg.time.mode = 'fast'; for (const v of [2, 4, 6]) { G.cfg.time.fast_speed = String(v); check('加速模式 ' + v + ' 倍', G.speed() === 60 * v && G.isFast()); }
+    G.cfg.time.fast_speed = '77'; check('加速倍数写错按 2', G.speed() === 120);
+    G.cfg.time.fast_speed = '4'; check('加速 4 倍时一个游戏小时折成 1/4 个计价小时，每现实秒赚得和标准一样', Math.abs(G.econHours(60) - 1 / 4) < 1e-12);
+    G.cfg.time.mode = 'standard'; check('标准模式一个游戏小时就是一个计价小时', Math.abs(G.econHours(60) - 1) < 1e-12);
+    check('新档从早上八点开始，不再对齐系统时钟', G.startMinute() === 480 && G.alignClock === undefined);
     G.cfg.time.mode = m0; if (f0 === undefined) delete G.cfg.time.fast_speed; else G.cfg.time.fast_speed = f0;
     delete G.world.clock_shift; G.world.game_minutes = 0;
   }
@@ -395,9 +392,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.DAY.enabled = false;   /* 其余测试按连续时间写，不走日终跳过 */
   check('倍速写坏了按 1，旧设置 real 也按 1', (G.cfg.time.speed = 'abc', G.speed() === 1) && (G.cfg.time.speed = 'real', G.speed() === 1 && G.daySource() === 'game'));
   { /* 切倍速不动时钟；校准和自己设几点只改钟点，不动陪伴天数 */
-    G.world.game_minutes = 12345; G.alignClock();
-    const sysNow = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }, near = (a, b) => Math.min(Math.abs(a - b), 1440 - Math.abs(a - b)) <= 1;
-    check('对齐系统时间', near(G.dayMinutes(), sysNow()), G.dayMinutes() + ' ' + sysNow());
+    G.world.game_minutes = 12345;
     G.setClock(6 * 60 + 30); const before = G.world.game_minutes, shift = G.world.clock_shift;
     await G.setSpeed(60); await G.setSpeed(6); await G.setSpeed(24);
     check('切倍速不动游戏时钟', G.world.clock_shift === shift && G.dayMinutes() === 6 * 60 + 30 + (Math.floor(G.world.game_minutes) - before), G.dayMinutes());
@@ -418,7 +413,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.start(); G.stop();
     check('离开五小时回来，游戏时间照样不动', G.world.game_minutes === gm0);
     G.cfg.time.daynight = 'system';
-    check('新档开局从午后两点开始', await (async () => { const w = G.world.clock_shift; { const wy = Object.assign({}, G.world); delete wy.clock_shift; await CY.store.writeYaml('world.yaml', wy); } await G.load(); const ok = typeof G.world.clock_shift === 'number' && G.dayMinutes() === G.DAY.start; G.world.clock_shift = w; return ok; })());
+    check('新档开局从早上八点开始', await (async () => { const w = G.world.clock_shift; { const wy = Object.assign({}, G.world); delete wy.clock_shift; await CY.store.writeYaml('world.yaml', wy); } await G.load(); const ok = typeof G.world.clock_shift === 'number' && G.dayMinutes() === G.startMinute(); G.world.clock_shift = w; return ok; })());
   }
   G.cfg.time.daynight = 'game'; delete G.world.clock_shift;
   G.world.game_minutes = 3 * 1440 + 5 * 60 + 7;
@@ -989,10 +984,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
       check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
     }
-    {   /* 经济目标（普通模式，现实时间，按一小时实得约工资的 85% 算）：十分钟买得起一件礼物，一小时左右买第一张床，再两小时买第二张 */
-      const hourly = G.WAGE * 0.85, bed1 = G.BED_PRICE[1] / hourly, bed2 = G.BED_PRICE[2] / hourly, cheap = Object.values(CY.visitors.GIFTS).filter(g => g.price <= hourly / 6).length;
-      check('第一张床约一小时攒够', bed1 > 0.8 && bed1 < 1.3, String(bed1));
-      check('第二张床再约两小时攒够', bed2 > 1.6 && bed2 < 2.6, String(bed2));
+    {   /* 经济目标（标准模式，现实时间）：十分钟买得起一件礼物，一小时左右买第一张床，三小时前后攒够第二张。标准下一个现实小时有 22.5 个工作游戏小时，实测一家四口挂机折下来约 55%（挂机时需求没人管，效率会掉） */
+      const hourly = G.WAGE * 22.5 * 0.55, start = 200, bed1 = (G.BED_PRICE[1] - start) / hourly, both = (G.BED_PRICE[1] + G.BED_PRICE[2] - start) / hourly, cheap = Object.values(CY.visitors.GIFTS).filter(g => g.price <= hourly / 6).length;
+      check('第一张床不到一小时攒够', bed1 > 0.4 && bed1 < 1.2, String(bed1));
+      check('两张床三小时前后攒够', both > 2.2 && both < 3.8, String(both));
       check('十分钟的收入够买至少五种礼物，一天里随时有礼物可买', cheap >= 5, String(cheap));
     }
     {   /* 站位：同一间房里的人不叠在一起 */

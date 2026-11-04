@@ -116,8 +116,8 @@
   /* 点时间条打开日历，时间制式和工作时段的设置放在日历最上面 */
   U.timeSettingsHtml = () => {
     const wh = (ini.get(G.cfg, 'economy', 'work_hours') || '09:00-18:00').split('-').map(x => +x.split(':')[0] * 60);
-    const cur = G.timeModeSetting() === 'normal' ? 'normal' : String(G.fastSpeed());
-    const tm = `<div class="prow2">${esc(t('set.time_mode'))}<select data-tm="1">${['normal', '30', '60', '120'].map(v => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(v === 'normal' ? t('time_mode.normal') : t('time_mode.fast', { n: v }))}</option>`).join('')}</select></div>
+    const cur = G.timeModeSetting() === 'fast' ? String(G.fastSpeed()) : 'standard';
+    const tm = `<div class="prow2">${esc(t('set.time_mode'))}<select data-tm="1">${['standard', '2', '4', '6'].map(v => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(v === 'standard' ? t('time_mode.normal') : t('time_mode.fast', { n: v }))}</option>`).join('')}</select></div>
       <div class="mute" style="margin:-2px 0 6px">${esc(t(G.isFast() ? 'time_mode.fast_note' : 'set.time_mode_note'))}</div>`;
     return tm + `<div class="prow2">${esc(t('pop.format'))}<span class="seg"><button data-f="24" class="${U.is12h() ? '' : 'on'}">24</button><button data-f="12" class="${U.is12h() ? 'on' : ''}">12</button></span></div>
       <div class="prow2">${esc(t('pop.work'))}<span>${hourSel('pf', wh[0])} – ${hourSel('pt', wh[1])}</span></div>`;
@@ -129,8 +129,8 @@
     const tmSel = box.querySelector('[data-tm]');
     if (tmSel) tmSel.onchange = async () => {
       const v = tmSel.value;
-      if (v !== 'normal' && !G.isFast() && !confirm(t('time_mode.confirm', { n: v }))) { redraw(); return; }
-      await G.setTimeMode(v === 'normal' ? 'normal' : 'fast', v === 'normal' ? null : v); U.renderClock(); U.renderRoom(true); redraw();
+      if (v !== 'standard' && !G.isFast() && !confirm(t('time_mode.confirm', { n: v }))) { redraw(); return; }
+      await G.setTimeMode(v === 'standard' ? 'standard' : 'fast', v === 'standard' ? null : v); U.renderClock(); U.renderRoom(true); redraw();
     };
     box.querySelectorAll('[data-f]').forEach(b => b.onclick = async () => { G.cfg.ui = G.cfg.ui || {}; G.cfg.ui.clock_12h = b.dataset.f === '12' ? 'true' : 'false'; await G.saveCfg(); U.renderClock(); redraw(); });
   };

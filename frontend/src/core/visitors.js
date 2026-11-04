@@ -5,7 +5,7 @@
   const G = CY.game, V = CY.visitors, store = CY.store;
   const t = (k, v) => CY.t(k, v);
 
-  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, gap_hours: [5, 18], normal_gap_scale: 0.2, arrive_from: 8, arrive_to: 21, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
+  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, gap_hours: [5, 18], arrive_from: 8, arrive_to: 21, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
   G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
   G.visitorPeople = () => G.activePeople().filter(p => p.person.visitor);
@@ -109,7 +109,7 @@
     if (G.world.guest_full) { G.world.guest_full = false; G.world.next_visit = Math.floor(G.world.game_minutes) + 60 * G.visitGap(); }
   };
   /* 两位来客之间隔几个游戏小时。普通模式游戏小时就是现实小时，原来的 5 到 18 小时太久，挂机几个小时见不到人，所以普通模式压成五分之一，约 1 到 3.6 个现实小时；加速模式照旧 */
-  G.visitGap = () => rint(G.DOOR.gap_hours[0], G.DOOR.gap_hours[1]) * (G.speed() <= 1 ? G.DOOR.normal_gap_scale : 1);
+  G.visitGap = () => rint(G.DOOR.gap_hours[0], G.DOOR.gap_hours[1]);
   G.visitDue = () => { const h = G.dayMinutes() / 60; return !(typeof G.world.next_visit === 'number' && G.world.game_minutes < G.world.next_visit) && h >= G.DOOR.arrive_from && h < G.DOOR.arrive_to; };
   G.maybeArrive = async () => {
     if (!G.activePeople().length || !G.world.intro_done || G.world.story_pending) return false;

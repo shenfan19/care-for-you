@@ -9,20 +9,21 @@
   G.SPEEDS = [1, 6, 24, 60];   /* 旧的四档，界面已不用，只留给测试 */
   /* 第一天的时段：14:00 到 24:00，现实 minutes 分钟走完，流速由它定下 */
   G.DAY = { enabled: true, start: 840, end: 1440, minutes: 5 };
-  G.FAST_SPEEDS = [30, 60, 120];
-  G.timeModeSetting = () => ((G.cfg.time || {}).mode === 'fast' ? 'fast' : 'normal');   /* 新档默认普通；加速在日历菜单里选，切换时明确告知赚钱不加快 */
-  G.fastSpeed = () => { const v = parseFloat((G.cfg.time || {}).fast_speed); return G.FAST_SPEEDS.includes(v) ? v : 120; };
+  G.STD_SPEED = 60;   /* 标准模式：现实 1 秒是游戏 1 分钟，现实 24 分钟是游戏一天 */
+  G.FAST_SPEEDS = [2, 4, 6];   /* 加速模式是标准的几倍 */
+  G.timeModeSetting = () => ((G.cfg.time || {}).mode === 'fast' ? 'fast' : 'standard');   /* 新档默认标准；加速在日历菜单里选，切换时明确告知赚钱不加快 */
+  G.fastSpeed = () => { const v = parseFloat((G.cfg.time || {}).fast_speed); return G.FAST_SPEEDS.includes(v) ? v : 2; };
   G.dayRealMinutes = () => { const v = parseFloat((G.cfg.time || {}).day_minutes); return isFinite(v) && v > 0 ? v : G.DAY.minutes; };
   /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */
   G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
   /* 开发者模式：网址带 ?devtools，或者带 ?dev= 的内部测试入口，界面上多出开发面板和状态曲线，普通玩家看不到 */
   Object.defineProperty(G, 'DEVTOOLS', { get: () => { try { return G.DEV > 0 || /[?&]devtools/.test(globalThis.location && location.search || ''); } catch (e) { return false; } } });
-  G.speed = () => { if (G.DEV) return G.DEV; const raw = (G.cfg.time || {}).speed; if (raw !== undefined && raw !== '') { const v = parseFloat(raw); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; } return G.timeModeSetting() === 'fast' ? G.fastSpeed() : 1; };
-  G.isFast = () => G.speed() > 1;
-  /* 钱按现实时间算：一个游戏小时折成多少个"普通小时"。普通模式是 1，加速 N 倍就除以 N */
-  G.econHours = gmin => gmin / 60 / Math.max(1, G.speed());
-  /* 新档从哪一刻开始：普通模式从系统时刻，加速模式从下午两点（只剩十个小时，几分钟就到午夜，很快看到每日结算） */
-  G.startMinute = () => { if (G.timeModeSetting() === 'fast' || G.DEV) return G.DAY.start; const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
+  G.speed = () => { if (G.DEV) return G.DEV; const raw = (G.cfg.time || {}).speed; if (raw !== undefined && raw !== '') { const v = parseFloat(raw); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; } return G.STD_SPEED * (G.timeModeSetting() === 'fast' ? G.fastSpeed() : 1); };
+  G.isFast = () => G.speed() > G.STD_SPEED;
+  /* 钱按标准模式算：标准下一个游戏小时就是一个计价小时；加速 N 倍就除以 N，每现实秒赚的和标准一样 */
+  G.econHours = gmin => gmin / 60 / Math.max(1, G.speed() / G.STD_SPEED);
+  /* 新档从早上八点开始，不再跟系统时钟 */
+  G.startMinute = () => (G.DEV ? G.DAY.start : 480);
   /* 游戏日历：新存档从现实当天开始，每过一个游戏日加一天；第几天，星期，节日都按它算 */
   G.gameDate = () => {
     if (!G.world.start_date) { const d = new Date(); G.world.start_date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -40,22 +41,14 @@
   G.speedLabel = () => '×' + Math.round(G.speed());
   /* 让游戏里现在是几点几分，0 到 1439 */
   G.setClock = minutes => { G.world.clock_shift = ((((Math.round(minutes) - Math.floor(G.world.game_minutes)) % 1440) + 1440) % 1440); };
-  /* 对齐到系统时钟 */
-  /* 对齐到系统时钟：只往后走，天数不会倒退，比如昨晚十一点关的，今早十点打开，就是第二天十点 */
-  G.alignClock = () => {
-    const d = new Date(), target = d.getHours() * 60 + d.getMinutes(), gm = Math.floor(G.world.game_minutes), old = gm + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 0);
-    let t = Math.floor(old / 1440) * 1440 + target; if (t < old) t += 1440;
-    G.world.clock_shift = t - gm;
-  };
   G.setSpeed = async v => {
     G.cfg.time = G.cfg.time || {}; G.cfg.time.speed = String(v);
     await G.saveCfg(); G.save(true);
   };
-  /* 选模式：normal 或 fast（加 fast 的倍率）。切回普通模式把时刻对齐到系统时钟 */
+  /* 选模式：standard 或 fast（加 fast 的倍数） */
   G.setTimeMode = async (mode, fastSpeed) => {
-    G.cfg.time = G.cfg.time || {}; G.cfg.time.mode = mode === 'fast' ? 'fast' : 'normal'; delete G.cfg.time.speed;
+    G.cfg.time = G.cfg.time || {}; G.cfg.time.mode = mode === 'fast' ? 'fast' : 'standard'; delete G.cfg.time.speed;
     if (fastSpeed && G.FAST_SPEEDS.includes(+fastSpeed)) G.cfg.time.fast_speed = String(fastSpeed);
-    if (G.cfg.time.mode === 'normal') G.alignClock();
     await G.saveCfg(); G.save(true);
   };
   /* 日终：午夜过后，替玩家把夜里和上午走完，停在第二天午后；离线模式，需求涨得慢，不弹窗不说话。

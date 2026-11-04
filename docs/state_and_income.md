@@ -41,8 +41,8 @@ Prices follow a play day of about five minutes: a toy 80, fruit 200, a bookshelf
 - `G.focus`, `G.focusStep`, `G.efficiency`, `G.burden`, `G.capacity`, `G.householdBonus`, and the shop table are in `frontend/src/core/economy.js`.
 - The tests are in `frontend/tests/logic_test.js`.
 
-## Normal and fast time
+## Standard and fast time
 
-- Normal mode runs at real time and follows your system clock, so it can sit open beside your own work. Fast mode (30, 60 or 120 times) speeds the game up to feel the rhythm of caring quickly. Choose in the calendar menu (click the clock). Switching to fast asks you to confirm and says plainly that earning does not speed up.
-- Money is earned by real time in both modes. Work focus climbs over 20 game minutes, which is 20 real minutes in normal mode.
-- Rough pace in normal mode: a gift after about 10 minutes, the first guest bed after about an hour, the second about two hours later.
+- Standard mode runs one real second as one game minute, so a game day takes 24 real minutes, and it can sit open beside your own work. Fast mode (2, 4 or 6 times standard) speeds the game up to feel the rhythm of caring quickly. Choose in the calendar menu (click the clock). Switching to fast asks you to confirm and says plainly that earning does not speed up.
+- Money is earned at the standard pace per real second in both modes. Work focus climbs over 20 game minutes, which is 20 real seconds in standard mode.
+- Rough pace in standard mode: a gift after about 10 minutes, the first guest bed after about an hour, the second around the three hour mark.

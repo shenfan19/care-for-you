@@ -59,8 +59,8 @@ CY.i18n.register('en', {
   'about.p1': 'Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.',
   'about.p2': 'A personal project by Fan Shen, released under the MIT License.',
   'set.time_mode': 'Time',
-  'set.time_mode_note': 'Normal runs at real time, good for leaving it open beside your work. Fast speeds the game up to feel the rhythm of caring quickly. Money is earned by real time either way.',
-  'time_mode.normal': 'Normal (real time)',
+  'set.time_mode_note': 'Standard: 1 real second is 1 game minute, so a game day takes 24 real minutes. Good for leaving it open beside your work. Fast is a multiple of that. Money is earned at the standard pace per real second either way.',
+  'time_mode.normal': 'Standard (1 s = 1 min)',
   'time_mode.fast': 'Fast ×{n}',
   'time_mode.confirm': 'Switch to fast ×{n}? Only the time in the game speeds up. Money is still earned by real time, so you will not earn faster.',
   'time_mode.fast_note': 'Fast mode is on. Only game time is faster; money is still earned by real time, so it does not come any quicker. Switch back to Normal to leave it running beside your work.',
@@ -131,10 +131,10 @@ CY.i18n.register('en', {
   'ini.interrupt.countdown_seconds': 'Countdown seconds',
   'ini.interrupt.answer_seconds': 'Countdown seconds for questions. Letting it run out counts as missed, with no penalty',
   'ini.interrupt.quiet_hours': 'No interruptions during this real-time window; leave empty to disable',
-  'ini.time.mode': 'real follows real time; compressed speeds it up; paused stops',
+  'ini.time.mode': 'standard: 1 real second is 1 game minute, a game day is 24 real minutes; fast: a multiple of standard, see fast_speed, and earning does not speed up',
   'ini.time.speed': 'Time speed, a multiplier on the game clock: 1 is real pace, 24 makes one real hour a game day, 60 makes 24 real minutes a game day. Click the time at the bottom right of the room to cycle the four settings. Set what time it is in the Game clock section of Settings. While you are away the world pauses and resumes where you left. While you are away the game always advances at 1x',
-  'ini.time.mode': 'normal: game time equals real time and the clock follows the system clock, good for leaving it running; fast: sped up, see fast_speed, and earning does not speed up',
-  'ini.time.fast_speed': 'Speed of fast mode: 30, 60 or 120',
+  'ini.time.mode': 'standard: 1 real second is 1 game minute, a game day is 24 real minutes; fast: a multiple of standard, see fast_speed, and earning does not speed up',
+  'ini.time.fast_speed': 'How many times faster than standard the fast mode is: 2, 4 or 6',
   'ini.time.daynight': 'auto: use the game clock; system: always system clock; game: always game clock',
   'ini.time.compress_ratio': 'In compressed mode, one real minute equals this many game minutes',
   'ini.time.offline_cap_hours': 'At most this many game hours are simulated while you are away',
@@ -381,7 +381,7 @@ CY.i18n.register("en", {
 
  "ini.ui.house_view": "How the home is shown: rooms is one small scene per area, house is the whole house in one picture", "lbl.ui.house_view": "Home view", "ini.ui.clock_12h": "When true, times on screen use a 12-hour clock; the default is 24-hour", "lbl.ui.clock_12h": "12-hour clock", "ini.ui.scene": "Room background: auto is living room by day and bedroom at night; living, bedroom, kitchen, lawn, balcony; none is plain",
  "ini.play.last_mode": "The mode you were in before pausing, reality or fast. Rarely needs changing.",
- "ini.time.mode": "real is Reality mode, following the real clock; compressed is Fast mode with time sped up; paused stops. The top bar switch changes this"
+ 'ini.time.mode': 'standard: 1 real second is 1 game minute, a game day is 24 real minutes; fast: a multiple of standard, see fast_speed, and earning does not speed up',
 });
 
 CY.i18n.register("en", {"player.title": "Dad", "player.name": "you"});
