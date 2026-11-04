@@ -3,6 +3,8 @@
   /* 节，键，默认值，说明 */
   const SCHEMA = [
     ['interrupt', 'countdown_seconds', '25', '提醒和问答的倒计时秒数，到时没赶上，能自理的自己处理，没有惩罚'],
+    ['time', 'mode', 'fast', 'normal 游戏时间和现实时间一比一，时刻跟系统时钟，适合挂机；fast 加速，倍率见 fast_speed，赚钱不随加速增加'],
+    ['time', 'fast_speed', '120', '加速模式的倍率，30，60 或 120'],
     ['time', 'daynight', 'auto', 'auto 用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
     ['play', 'backend_provider', 'builtin', 'builtin 是内置后端，规则和台词都在数据文件夹的明文 YAML 里；lm 是内置的数值积分后端，在浏览器里直接积分需求，心情，虚弱度，模型在 templates/lm，实验阶段；http 是把状态发给一个远程后端'],
     ['play', 'condition_models', 'true', '为 true 时，得了病的角色，其疾病部分由浏览器里的积分引擎按 templates/lm/models 里的疾病模型计算，并在状态窗口里显示读数；没有疾病模型的角色不受影响。关掉就退回纯概率表'],

@@ -125,7 +125,8 @@
     G.world = Object.assign({ game_minutes: 0, last_seen: '' }, await store.readYaml('world.yaml'));
     delete G.world.beds;   /* 旧版本的床位数字段，现在床位是固定的，不再使用 */
     /* 新档开局对齐系统时间，之后游戏时钟自己走 */
-    if (typeof G.world.clock_shift !== 'number') G.setClock(G.DAY.start);
+    if (typeof G.world.clock_shift !== 'number') G.setClock(G.startMinute());
+    else if (G.timeModeSetting() === 'normal' && !G.DEV && (G.cfg.time || {}).speed === undefined) G.alignClock();   /* 普通模式：打开时把时刻对齐到系统时钟 */
     const files = await store.list();
     /* 新增的模板文件补上；内置模板的版本比文件里新，就用新的覆盖，旧的留在 _backup 里 */
     const seed = CY.seed.files();

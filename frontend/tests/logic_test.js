@@ -176,7 +176,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.clearFlag(G.get(gp), 'hospital');
     W.holding = false; W.tick();
     check('医院里没有人了，主角回家', W.player().place === 'home');
-    G.cfg.time.mode = 'real';
+    G.cfg.time.mode = 'fast';
     /* 动作停下几秒，勾了自动回岗位就回去 */
     W.moveTo('home', 'kitchen'); W.lastActive = Date.now() - 1000; W.tick();
     check('停得不够久不自动回去', W.player().room === 'kitchen');
@@ -364,9 +364,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('每个问题恰好三个预设回答', G.tpl.asks.every(q => q.answers.length === 3));
 
   /* 时间显示 */
-  G.cfg.time.mode = 'compressed'; G.cfg.time.daynight = 'auto';
-  G.cfg.time.mode = 'real';
-  check('没有倍速档，流速由一天长度推出：六百游戏分钟除以五现实分钟是 120，昼夜用游戏时钟', (delete G.cfg.time.speed, G.speed() === 120 && G.daySource() === 'game'));
+  G.cfg.time.mode = 'fast'; G.cfg.time.daynight = 'auto';
+  G.cfg.time.mode = 'fast';
+  check('没有倍速档，加速模式 120 倍由一天长度推出，昼夜用游戏时钟', (delete G.cfg.time.speed, G.speed() === 120 && G.daySource() === 'game'));
+  {   /* 两种时间：普通一比一，加速可选 30，60，120；钱按现实时间算 */
+    const m0 = G.cfg.time.mode, f0 = G.cfg.time.fast_speed; delete G.cfg.time.speed;
+    G.cfg.time.mode = 'normal'; check('普通模式流速一比一', G.speed() === 1 && !G.isFast());
+    G.cfg.time.mode = 'fast'; for (const v of [30, 60, 120]) { G.cfg.time.fast_speed = String(v); check('加速模式 ' + v + ' 倍', G.speed() === v && G.isFast()); }
+    G.cfg.time.fast_speed = '77'; check('加速倍率写错按 120', G.speed() === 120);
+    G.cfg.time.fast_speed = '60'; check('加速 60 倍时一个游戏小时折成 1/60 个现实小时的收入', Math.abs(G.econHours(60) - 1 / 60) < 1e-12);
+    G.cfg.time.mode = 'normal'; check('普通模式一个游戏小时收入就是一个小时', Math.abs(G.econHours(60) - 1) < 1e-12);
+    /* 对齐系统时钟只往后走，天数不倒退 */
+    G.world.game_minutes = 5000; G.world.clock_shift = 3000; const d0 = G.gameDate().n; G.alignClock(); const now = new Date(), tm = now.getHours() * 60 + now.getMinutes();
+    check('对齐系统时钟后时刻对得上，天数不倒退', Math.round(G.dayMinutes()) % 1440 === tm && G.gameDate().n >= d0, G.dayMinutes() + ' ' + tm);
+    G.world.game_minutes = 5000; G.world.clock_shift = 1439 + 1440 * 3; const d1 = G.gameDate().n; G.alignClock(); check('昨天很晚关的，对齐后是第二天，不回到前一天', G.gameDate().n >= d1);
+    G.cfg.time.mode = m0; if (f0 === undefined) delete G.cfg.time.fast_speed; else G.cfg.time.fast_speed = f0;
+    delete G.world.clock_shift; G.world.game_minutes = 0;
+  }
   { /* 午夜翻日：从第二天起是完整的一天，不跳过夜里和上午，时钟在 0 点接着走，日历加一天，钩子被调用 */
     G.setClock(23 * 60 + 58); G._dayN = G.gameDate().n; const d0 = G.gameDate().n, calls = [], starts = [];
     G.dayEndHooks.push(x => calls.push(x)); G.dayStartHooks.push(x => starts.push(x));
@@ -451,7 +465,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 
   /* 没人管：婴儿哭闹，老人自己解决 */
-  G.cfg.time.mode = 'compressed'; G.cfg.interrupt.frequency = 'normal'; 
+  G.cfg.time.mode = 'fast'; G.cfg.interrupt.frequency = 'normal'; 
   for (const p of G.people) { for (const k in p.state.needs) p.state.needs[k] = 0.1; p.person.active = false; }
   bb.person.active = true; eld.person.active = true; sis2.person.active = true;
   bb.state.needs.hunger = 0.95; eld.state.needs.hunger = 0.95; eld.state.needs.rest = 0.95;
@@ -660,7 +674,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     dd.person.helper = true; G.setProtagonist(dd.id);
     check('做了主角的大人不再算分担家人', !G.helpers().some(h => h.id === dd.id));
     G.setProtagonist(gp.id);
-    G.cfg.time.mode = 'compressed'; G.lastTick = Date.now() - 5000; G.tick();
+    G.cfg.time.mode = 'fast'; G.lastTick = Date.now() - 5000; G.tick();
     G.setProtagonist(kd.id);
     check('孩子可以做主角，圈不变慢', G.protagonist() === kd && G.holdSeconds({ min: 30 }) === h0);
     check('快照里有主角', CY.protocol.world().protagonist === kd.id && CY.protocol.person(kd, {}).protagonist === true);
@@ -770,7 +784,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     for (const x of G.people) x.person.active = false;
     const baby3 = await mk('baby', '没人理的宝宝'); const B3 = G.get(baby3.id); B3.person.active = true; for (const k in B3.state.needs) B3.state.needs[k] = 0.1; B3.state.needs.hunger = 0.85; G.act[B3.id] = 'awake';
-    G.cfg.time.mode = 'real'; G.cfg.time.daynight = 'game'; G.world.clock_shift = ((600 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; G.nagN = {}; G.nagLogged = {}; G.nagAt = {}; G.req = {}; G.nextAt = Date.now() + 1e9;
+    G.cfg.time.mode = 'fast'; G.cfg.time.daynight = 'game'; G.world.clock_shift = ((600 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; G.nagN = {}; G.nagLogged = {}; G.nagAt = {}; G.req = {}; G.nextAt = Date.now() + 1e9;
     const gaps = [];
     for (let i = 0; i < 5; i++) {
       G.nagAt = {}; G.nagTick(Date.now()); gaps.push(G.nagAt[B3.id] - Date.now());
@@ -899,6 +913,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const atHour = h => { G.cfg.time.daynight = 'game'; G.world.clock_shift = ((h * 60 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; };
     CY.world.enforce = false; G.cfg.economy.work_hours = '09:00-18:00'; G.setProtagonist(null);
+    const sp0 = G.cfg.time.speed; G.cfg.time.speed = '1';   /* 这一段按普通模式，一个游戏小时就是一个现实小时 */
     atHour(10); G.world.money = 100; G.world.focus = undefined; G.economyTick(60, false);
     /* 专注从 10% 用 20 分钟线性爬到满额：第一个小时的平均专注是 (20 乘 0.55 加 40) 除以 60 */
     check('工作时段第一个小时按专注曲线赚钱', Math.abs(G.world.money - (100 + G.WAGE * 51 / 60)) < 0.01 && G.focus() === 1, G.world.money + ' ' + G.focus());
@@ -915,8 +930,9 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       check('被叫走专注立刻掉回 10%', Math.abs(G.focus() - 0.1) < 1e-9, G.focus());
     }
     atHour(22); G.world.money = m1;
+    if (sp0 === undefined) delete G.cfg.time.speed; else G.cfg.time.speed = sp0;
     const pen = (() => { const e = G.people.find(p => p.person.kind === 'human' && G.stage(p) === 'elder'); return e; })();
-    if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，每小时 G.PENSION', Math.abs(G.world.money - m1 - G.PENSION) < 0.01); G.setProtagonist(null); }
+    if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，按现实小时算', Math.abs(G.world.money - m1 - G.PENSION * G.econHours(60)) < 0.01); G.setProtagonist(null); }
     for (const x of G.people) x.person.active = true;
   }
 
@@ -971,6 +987,12 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       check('以后新增的 yaml 和 csv 文件照收，不用改导入端', ext.ok && !!ext.files['people/x1/future_thing.yaml'] && !!ext.files['people/x1/mood_notes.csv'] && !!ext.files['curves_extra.csv'] && ext.rejected.length === 0, JSON.stringify(ext.rejected));
       const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
       check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
+    }
+    {   /* 经济目标（普通模式，现实时间，按一小时实得约工资的 85% 算）：十分钟买得起一件礼物，一小时左右买第一张床，再两小时买第二张 */
+      const hourly = G.WAGE * 0.85, bed1 = G.BED_PRICE[1] / hourly, bed2 = G.BED_PRICE[2] / hourly, cheap = Object.values(CY.visitors.GIFTS).filter(g => g.price <= hourly / 6).length;
+      check('第一张床约一小时攒够', bed1 > 0.8 && bed1 < 1.3, String(bed1));
+      check('第二张床再约两小时攒够', bed2 > 1.6 && bed2 < 2.6, String(bed2));
+      check('十分钟的收入够买至少五种礼物，一天里随时有礼物可买', cheap >= 5, String(cheap));
     }
     {   /* 站位：同一间房里的人不叠在一起 */
       const W = CY.world, ls = [{ id: 'a', room: 'living', kind: 'stand', gx: 2, gy: 2 }, { id: 'b', room: 'living', kind: 'stand', gx: 2, gy: 2 }, { id: 'c', room: 'living', kind: 'stand', gx: 2.05, gy: 2 }, { id: 'd', room: 'living', kind: 'stand', gx: 2, gy: 2.05 }, { id: 'e', room: 'living', kind: 'stand', gx: 2, gy: 2 }];

@@ -10,8 +10,8 @@
   };
   G.isWorkTime = () => { const [a, b] = G.workWindow(), d = G.dayMinutes(); return d >= a && d < b; };
 
-  G.WAGE = 14;             /* 工作时段在书桌前，每游戏小时。没有挂机惩罚，挂机也能攒钱，所以收入压低，完整的一天约 125，买东西要攒几天，挂机和前台玩都不会被钱追着跑 */
-  G.PENSION = 1.4;           /* 老人主角的退休金，每游戏小时，固定，不用到书桌前 */
+  G.WAGE = 700;             /* 工作时段在书桌前，每游戏小时。没有挂机惩罚，挂机也能攒钱，所以收入压低，完整的一天约 125，买东西要攒几天，挂机和前台玩都不会被钱追着跑 */
+  G.PENSION = 70;           /* 老人主角的退休金，每游戏小时，固定，不用到书桌前 */
   G.START_MONEY = 200;
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
@@ -75,7 +75,7 @@
   };
   /* 每次时间推进：赚钱 */
   G.economyTick = (gmin, offline) => {
-    const hours = gmin / 60, W = CY.world, lead = G.protagonist();
+    const hours = G.econHours(gmin), W = CY.world, lead = G.protagonist();   /* 钱按现实时间：加速模式下每个游戏小时折回去 */
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (lead && G.stage(lead) === 'elder') { G.world.money += G.PENSION * hours; G.focusStep(gmin, false); }
     else {
@@ -100,7 +100,7 @@
   ];
   /* 床位：家里三间卧室，夫妻、孩子、老人各两张，一共六张，是家人的床，不用买，家人最多六位，婴儿睡婴儿床不占床位。
      客房一开始就有一张床，只给穿越者睡，最多三张，另外两张在商店买。家人和客人的床分开，家人住满了也有床留给第一位客人，不然就永远没有客人来 */
-  G.FAMILY_BEDS = 6; G.GUEST_BED_MAX = 3; G.BED_PRICE = { 1: 600, 2: 900 };
+  G.FAMILY_BEDS = 6; G.GUEST_BED_MAX = 3; G.BED_PRICE = { 1: 600, 2: 1200 };
   G.sleepers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
   G.bedUsers = () => G.sleepers().filter(p => !p.person.visitor);
   G.guestBedsOwned = () => Math.min(G.GUEST_BED_MAX, Math.max(1, G.world.gbeds || 1));

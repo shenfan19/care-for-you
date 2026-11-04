@@ -56,7 +56,7 @@
     if (!tm || !mn) return;
     const c = G.clock();
     const gd = G.gameDate();
-    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes);
+    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes) + (G.isFast() ? ' ⏩' : '');
     tm.title = ''; tm.classList.toggle('unread', G.unread().length > 0);
     tm.style.cursor = 'pointer';
     tm.onclick = e => { e.stopPropagation(); U.calendarDialog(); };
