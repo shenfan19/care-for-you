@@ -267,7 +267,30 @@
         out.push({ id: p.id, place, room, kind, ...W.slotPoint(place, room, kind, i) });
       }
     }
+    W.spread(place, out);
     return out;
+  };
+  /* 同一间房里站着的人不叠在一起：两个人的格子距离小于 SEP 就沿连线推开，按编号排序，结果是固定的，不会来回抖；床，椅子，摇篮是固定位置，不动 */
+  W.SEP = 0.62;
+  W.spread = (place, list) => {
+    const free = l => l.kind === 'stand' || l.kind === 'mat';
+    for (const room of new Set(list.map(l => l.room))) {
+      const r = W.PLACES[place].rooms[room], g = list.filter(l => l.room === room).sort((a, b) => (a.id < b.id ? -1 : 1)), mv = g.filter(free);
+      if (mv.length < 1 || g.length < 2) continue;
+      for (let it = 0; it < 8; it++) {
+        let moved = false;
+        for (const a of mv) for (const b of g) {
+          if (a === b) continue;
+          let dx = a.gx - b.gx, dy = a.gy - b.gy, d = Math.hypot(dx, dy);
+          if (d >= W.SEP) continue;
+          if (d < 1e-6) { dx = a.id < b.id ? 1 : -1; dy = 0.5; d = Math.hypot(dx, dy); }
+          const k = (W.SEP - d) / d * (free(b) ? 0.5 : 1);
+          a.gx += dx * k; a.gy += dy * k; moved = true;
+        }
+        for (const a of mv) { a.gx = Math.min(r.gx + r.w - 0.2, Math.max(r.gx + 0.2, a.gx)); a.gy = Math.min(r.gy + r.h - 0.2, Math.max(r.gy + 0.2, a.gy)); }
+        if (!moved) break;
+      }
+    }
   };
   /* 哪些地点有人。没有人的地点不出现 */
   W.othersPlaces = () => { const set = new Set(G.activePeople().filter(p => !W.driven(p)).map(p => W.locationOf(p).place)); return W.PLACE_LIST.filter(pl => set.has(pl)); };

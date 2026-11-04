@@ -972,6 +972,14 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
       check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
     }
+    {   /* 站位：同一间房里的人不叠在一起 */
+      const W = CY.world, ls = [{ id: 'a', room: 'living', kind: 'stand', gx: 2, gy: 2 }, { id: 'b', room: 'living', kind: 'stand', gx: 2, gy: 2 }, { id: 'c', room: 'living', kind: 'stand', gx: 2.05, gy: 2 }, { id: 'd', room: 'living', kind: 'stand', gx: 2, gy: 2.05 }, { id: 'e', room: 'living', kind: 'stand', gx: 2, gy: 2 }];
+      W.spread('home', ls);
+      const r = W.PLACES.home.rooms.living; let minD = 9; for (const x of ls) for (const y of ls) if (x !== y) minD = Math.min(minD, Math.hypot(x.gx - y.gx, x.gy - y.gy));
+      check('五个人挤在一点也会被推开，互相至少 0.5 格，且都在房间里', minD > 0.5 && ls.every(l => l.gx >= r.gx && l.gx <= r.gx + r.w && l.gy >= r.gy && l.gy <= r.gy + r.h), String(minD));
+      const again = [{ id: 'a', room: 'living', kind: 'stand', gx: 2, gy: 2 }, { id: 'b', room: 'living', kind: 'stand', gx: 2, gy: 2 }]; W.spread('home', again); const a2 = JSON.stringify(again); again[0].gx = 2; again[0].gy = 2; again[1].gx = 2; again[1].gy = 2; W.spread('home', again);
+      check('同样的输入结果固定，不抖', JSON.stringify(again) === a2);
+    }
     {   /* 叙事冲突：老人自己能倒水，宝宝不能；卧床的人没有轮椅出不了门，买了就能 */
       const gid = await G.createPerson({ arch: 'paternal_grandpa', name: '爷爷叙事' }), bid = await G.createPerson({ arch: 'baby', name: '宝宝叙事' }); await G.load();
       const gp = G.get(gid), bp = G.get(bid);
