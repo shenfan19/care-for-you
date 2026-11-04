@@ -55,7 +55,7 @@
   /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
   /* 工作专注：进入工作不是立刻满额，坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟；离开工作（离开书桌，外出办事，被叫去照顾人）立刻掉回 floor，而且离开期间仍按 floor 计收入，不是零。收入速率 = 工资 乘 专注 乘 家庭效率 乘 家人加成。
      配偶不在家（出差，去公司）是别处没人打断的工作，专注按满额，家庭效率和加成照乘。参数出处见 CY.references 里的 focus。 */
-  G.FOCUS = { floor: 0.2, minutes: 60 };
+  G.FOCUS = { floor: 0.2, minutes: 20 };
   G.focus = () => (typeof G.world.focus === 'number' ? G.world.focus : G.FOCUS.floor);
   /* 走过 gmin 分钟，working 为真就爬升，否则掉回 floor；返回这段时间的平均专注，离线大步长也按线性积分，不会少算也不会多算 */
   G.focusStep = (gmin, working) => {

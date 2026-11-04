@@ -18,7 +18,7 @@
       return `<details class="kn"><summary><b>${esc(needLabel(r.need))}</b> ${badge(it ? it.status : 'setting')}<span class="mute"> ${esc(t('know.game'))}: ${game}${esc(hr ? ' · ' + t('know.real_short') + hr : '')}</span></summary>
         <div class="kbody"><p>${esc(real)}</p>${it && it.note ? `<p class="mute">${esc(pick(it.note))}</p>` : ''}${it && it.refs ? `<ul class="krefs">${refs(it)}</ul>` : ''}</div></details>`;
     }).join('');
-    const fo = R.items.find(i => i.id === 'focus'), F = G.FOCUS || { floor: 0.2, minutes: 60 };
+    const fo = R.items.find(i => i.id === 'focus'), F = G.FOCUS || { floor: 0.2, minutes: 20 };
     const conds = Object.keys(G.tpl.conditions || {}).map(c => `<li>${esc(CY.tOr('cond.' + c, (G.tpl.conditions[c] || {}).label || c))}</li>`).join('');
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('set.know'))}</h2>
       <p class="warn">${esc(pick(R.medical))}</p>
