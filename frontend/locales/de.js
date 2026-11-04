@@ -47,6 +47,8 @@ CY.i18n.register("de", {
 'set.time_mode_note': 'Normal läuft in Echtzeit, gut zum Offenlassen neben der Arbeit. Schnell beschleunigt das Spiel, damit man den Pflegerhythmus rasch spürt. Geld wird in beiden Fällen nach Echtzeit verdient.',
 'time_mode.normal': 'Normal (Echtzeit)',
 'time_mode.fast': 'Schnell ×{n}',
+'time_mode.confirm': 'Auf schnell ×{n} umstellen? Nur die Spielzeit läuft schneller. Geld wird weiter nach Echtzeit verdient, man verdient also nicht schneller.',
+'time_mode.fast_note': 'Der schnelle Modus ist an. Nur die Spielzeit läuft schneller; Geld wird nach Echtzeit verdient. Zum Offenlassen neben der Arbeit zurück auf Normal.',
 'set.know': 'Wissen und Quellen',
 'know.intro': 'Jeder Rhythmus im Spiel mit realem Hintergrund steht hier mit seiner Quelle. Wo es keine verlässliche Quelle gibt, steht das dabei.',
 'know.checked': 'Die Quellen wurden anhand von Zusammenfassungen oder offiziellen Seiten geprüft, nicht vollständig gelesen.',

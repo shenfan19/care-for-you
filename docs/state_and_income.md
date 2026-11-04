@@ -43,6 +43,6 @@ Prices follow a play day of about five minutes: a toy 80, fruit 200, a bookshelf
 
 ## Normal and fast time
 
-- Normal mode runs at real time and follows your system clock, so it can sit open beside your own work. Fast mode (30, 60 or 120 times) speeds the game up to feel the rhythm of caring quickly. Choose in Settings, under Time.
+- Normal mode runs at real time and follows your system clock, so it can sit open beside your own work. Fast mode (30, 60 or 120 times) speeds the game up to feel the rhythm of caring quickly. Choose in the calendar menu (click the clock). Switching to fast asks you to confirm and says plainly that earning does not speed up.
 - Money is earned by real time in both modes. Work focus climbs over 20 game minutes, which is 20 real minutes in normal mode.
 - Rough pace in normal mode: a gift after about 10 minutes, the first guest bed after about an hour, the second about two hours later.

@@ -49,6 +49,8 @@ CY.i18n.register("fr", {
 'set.time_mode_note': 'Normal suit le temps réel, idéal à laisser ouvert à côté du travail. Rapide accélère le jeu pour sentir vite le rythme des soins. L’argent se gagne au temps réel dans les deux cas.',
 'time_mode.normal': 'Normal (temps réel)',
 'time_mode.fast': 'Rapide ×{n}',
+'time_mode.confirm': 'Passer en rapide ×{n} ? Seul le temps du jeu accélère. L’argent se gagne toujours au temps réel : vous ne gagnerez pas plus vite.',
+'time_mode.fast_note': 'Le mode rapide est actif. Seul le temps du jeu accélère ; l’argent se gagne au temps réel. Revenez à Normal pour le laisser ouvert à côté du travail.',
 'set.know': 'Savoirs et références',
 'know.intro': 'Chaque rythme du jeu qui a une base réelle est listé ici avec sa source. Sans source fiable, c’est indiqué.',
 'know.checked': 'Les sources ont été vérifiées sur les résumés ou les pages officielles, pas lues en entier.',

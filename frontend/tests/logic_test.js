@@ -370,6 +370,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {   /* 两种时间：普通一比一，加速可选 30，60，120；钱按现实时间算 */
     const m0 = G.cfg.time.mode, f0 = G.cfg.time.fast_speed; delete G.cfg.time.speed;
     G.cfg.time.mode = 'normal'; check('普通模式流速一比一', G.speed() === 1 && !G.isFast());
+    { const keep = G.cfg.time; G.cfg.time = {}; check('没设过时间模式的新档默认普通', G.timeModeSetting() === 'normal' && G.speed() === 1); G.cfg.time = keep; }
     G.cfg.time.mode = 'fast'; for (const v of [30, 60, 120]) { G.cfg.time.fast_speed = String(v); check('加速模式 ' + v + ' 倍', G.speed() === v && G.isFast()); }
     G.cfg.time.fast_speed = '77'; check('加速倍率写错按 120', G.speed() === 120);
     G.cfg.time.fast_speed = '60'; check('加速 60 倍时一个游戏小时折成 1/60 个现实小时的收入', Math.abs(G.econHours(60) - 1 / 60) < 1e-12);

@@ -47,6 +47,8 @@ CY.i18n.register("es", {
 'set.time_mode_note': 'Normal va a tiempo real, ideal para dejarlo abierto junto al trabajo. Rápido acelera el juego para sentir pronto el ritmo de los cuidados. El dinero se gana en tiempo real en ambos casos.',
 'time_mode.normal': 'Normal (tiempo real)',
 'time_mode.fast': 'Rápido ×{n}',
+'time_mode.confirm': '¿Cambiar a rápido ×{n}? Solo se acelera el tiempo del juego. El dinero se sigue ganando en tiempo real, así que no ganarás más rápido.',
+'time_mode.fast_note': 'El modo rápido está activo. Solo se acelera el tiempo del juego; el dinero se gana en tiempo real. Vuelve a Normal para dejarlo abierto junto al trabajo.',
 'set.know': 'Saberes y referencias',
 'know.intro': 'Cada ritmo del juego con base real aparece aquí con su fuente. Si no hay una fuente fiable, se dice.',
 'know.checked': 'Las fuentes se comprobaron en resúmenes o páginas oficiales, sin leerlas enteras.',

@@ -10,7 +10,7 @@
   /* 第一天的时段：14:00 到 24:00，现实 minutes 分钟走完，流速由它定下 */
   G.DAY = { enabled: true, start: 840, end: 1440, minutes: 5 };
   G.FAST_SPEEDS = [30, 60, 120];
-  G.timeModeSetting = () => ((G.cfg.time || {}).mode === 'normal' ? 'normal' : 'fast');   /* 新档默认加速：试玩的人几分钟内就要看到变化，想挂机的在设置里切普通 */
+  G.timeModeSetting = () => ((G.cfg.time || {}).mode === 'fast' ? 'fast' : 'normal');   /* 新档默认普通；加速在日历菜单里选，切换时明确告知赚钱不加快 */
   G.fastSpeed = () => { const v = parseFloat((G.cfg.time || {}).fast_speed); return G.FAST_SPEEDS.includes(v) ? v : 120; };
   G.dayRealMinutes = () => { const v = parseFloat((G.cfg.time || {}).day_minutes); return isFinite(v) && v > 0 ? v : G.DAY.minutes; };
   /* 内部测试开关：网址带 ?dev=360 时倍速固定为 360，长按时间为 0。不进设置，对外版本没有这个入口 */

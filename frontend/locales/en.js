@@ -62,6 +62,8 @@ CY.i18n.register('en', {
   'set.time_mode_note': 'Normal runs at real time, good for leaving it open beside your work. Fast speeds the game up to feel the rhythm of caring quickly. Money is earned by real time either way.',
   'time_mode.normal': 'Normal (real time)',
   'time_mode.fast': 'Fast ×{n}',
+  'time_mode.confirm': 'Switch to fast ×{n}? Only the time in the game speeds up. Money is still earned by real time, so you will not earn faster.',
+  'time_mode.fast_note': 'Fast mode is on. Only game time is faster; money is still earned by real time, so it does not come any quicker. Switch back to Normal to leave it running beside your work.',
   'set.know': 'Knowledge and references',
   'know.intro': 'Every rhythm in the game that has a real-life basis is listed here with its source. Where there is no reliable source it says so.',
   'know.checked': 'Sources were checked against abstracts or official pages, not read in full.',
