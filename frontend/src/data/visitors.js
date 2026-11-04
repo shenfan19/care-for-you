@@ -15,7 +15,7 @@
     ['spectacles', '👓', 120, '一副眼镜', 'Spectacles'], ['chess', '♟️', 120, '棋盘', 'Chess set'], ['paints', '🎨', 140, '一盒颜料', 'Box of paints'], ['medkit', '🧰', 150, '药箱', 'First-aid kit'],
     ['flute', '🎶', 150, '一支笛子', 'A flute'], ['harmonica', '🎵', 180, '口琴', 'Harmonica'], ['clock', '⏰', 200, '座钟', 'Table clock'], ['coat', '🧥', 220, '厚外套', 'Warm coat'],
     ['telescope', '🔭', 300, '望远镜', 'Telescope'], ['microscope', '🔬', 400, '显微镜', 'Microscope'], ['lab_suit', '🥼', 500, '防护服', 'Protective suit'],
-  ]) { const price = Math.round(price0 * 1.5 / 5) * 5; /* 礼物价格按慢攒钱重标，比日常家具更花钱 */ V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } }; CY.i18n.register('zh-CN', { ['gift.' + id]: zh }); CY.i18n.register('en', { ['gift.' + id]: en }); }
+  ]) { const price = Math.round(price0 * 2 / 5) * 5; /* 礼物价格按慢攒钱重标，比日常家具更花钱；最便宜的约等于满负荷两分钟的收入 */ V.GIFTS[id] = { id, icon, price, name: { 'zh-CN': zh, en } }; CY.i18n.register('zh-CN', { ['gift.' + id]: zh }); CY.i18n.register('en', { ['gift.' + id]: en }); }
 
   /* 第一位来客固定是南丁格尔：开局故事里她推开大门走进来，说这里有趣，很快就会离开 */
   V.FIRST = { default: 'nightingale' };

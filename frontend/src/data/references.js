@@ -41,7 +41,7 @@
     { id: 'mobility', kind: 'need', key: 'mobility', status: 'setting', real: SET },
     { id: 'focus', kind: 'focus', status: 'setting', refs: ['leroy2009'],
       real: { en: 'After an interruption part of the attention stays with the unfinished task and later work suffers (attention residue). Commonly quoted figures for how long it takes to get back to full focus, such as 15 to 25 minutes, have no reliable original source.', 'zh-CN': '被打断后，一部分注意力还留在没做完的事上，之后的工作做得更差（注意力残留）。常被引用的"回到满专注要 15 到 25 分钟"没有可靠的原始出处。' },
-      note: { en: 'In the game, leaving work drops income to 10% at once and it climbs back linearly over 20 game minutes. The direction has a source; the 20 minutes is a setting.', 'zh-CN': '游戏里离开工作立刻掉到 10%，之后用 20 个游戏分钟线性爬回满额。方向有文献，20 分钟是设定。' } },
+      note: { en: 'In the game, leaving the desk, going out on an errand or being called away drops income to 20% at once, and it climbs back linearly over 60 game minutes. The direction has a source; the 20% and the 60 minutes are settings, set longer than the quoted real figures so that the cost is felt in a game where a day lasts 24 minutes.', 'zh-CN': '游戏里离开书桌，外出办事或被叫去照顾人，收入立刻掉到 20%，之后用 60 个游戏分钟线性爬回满额。方向有文献，20% 和 60 分钟是设定，比常被引用的现实数字取得长，因为游戏里一天只有 24 分钟，短了玩家感觉不到代价。' } },
   ];
 
   /* 一个需求在某个阶段对应的条目：先找阶段专属的，再找通用的，都没有返回 null */

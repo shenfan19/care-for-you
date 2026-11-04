@@ -911,19 +911,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     CY.world.enforce = false; G.cfg.economy.work_hours = '09:00-18:00'; G.setProtagonist(null);
     const sp0 = G.cfg.time.speed; G.cfg.time.speed = '1';   /* 这一段按普通模式，一个游戏小时就是一个现实小时 */
     atHour(10); G.world.money = 100; G.world.focus = undefined; G.economyTick(60, false);
-    /* 专注从 10% 用 20 分钟线性爬到满额：第一个小时的平均专注是 (20 乘 0.55 加 40) 除以 60 */
-    check('工作时段第一个小时按专注曲线赚钱', Math.abs(G.world.money - (100 + G.WAGE * 51 / 60)) < 0.01 && G.focus() === 1, G.world.money + ' ' + G.focus());
+    /* 专注从 floor 用 minutes 个游戏分钟线性爬到满额：第一个小时的平均专注是 (M 乘 (f+1)/2 加 (60-M)) 除以 60 */
+    const F = G.FOCUS, avg1 = (F.minutes * (F.floor + 1) / 2 + (60 - F.minutes)) / 60;
+    check('工作时段第一个小时按专注曲线赚钱', Math.abs(G.world.money - (100 + G.WAGE * avg1)) < 0.01 && G.focus() === 1, G.world.money + ' ' + G.focus());
     G.economyTick(60, false);
-    check('专注满额后每小时赚 G.WAGE', Math.abs(G.world.money - (100 + G.WAGE * 51 / 60 + G.WAGE)) < 0.01, G.world.money);
+    check('专注满额后每小时赚 G.WAGE', Math.abs(G.world.money - (100 + G.WAGE * avg1 + G.WAGE)) < 0.01, G.world.money);
     const m1 = G.world.money; atHour(22); G.economyTick(60, false);
-    check('不是工作时段不赚钱，专注掉回 10%', Math.abs(G.world.money - m1) < 0.01 && Math.abs(G.focus() - 0.1) < 1e-9, G.focus());
+    check('不是工作时段不赚钱，专注掉回 floor', Math.abs(G.world.money - m1) < 0.01 && Math.abs(G.focus() - F.floor) < 1e-9, G.focus());
     atHour(10); G.world.focus = undefined; G.economyTick(10, false);
-    check('坐下 10 分钟专注爬到 55%', Math.abs(G.focus() - 0.55) < 1e-9, G.focus());
-    G.economyTick(10, false); check('再坐 10 分钟到 100%', Math.abs(G.focus() - 1) < 1e-9, G.focus());
+    check('坐下 10 分钟专注按斜率爬升', Math.abs(G.focus() - (F.floor + (1 - F.floor) / F.minutes * 10)) < 1e-9, G.focus());
+    G.economyTick(F.minutes, false); check('坐满 minutes 分钟之后到 100%', Math.abs(G.focus() - 1) < 1e-9, G.focus());
     G.economyTick(30, false); atHour(22);
-    {   /* 被叫走：时段内不在书桌前，立刻掉回 10% */
-      atHour(11); G.world.focus = 1; const lw0 = G.leadWorking; G.leadWorking = () => false; G.economyTick(5, false); G.leadWorking = lw0;
-      check('被叫走专注立刻掉回 10%', Math.abs(G.focus() - 0.1) < 1e-9, G.focus());
+    {   /* 被叫走：时段内不在书桌前，立刻掉回 floor，而且仍按 floor 赚钱，不是零 */
+      const ld = G.defaultLead(); G.setProtagonist(ld.id);
+      atHour(11); G.world.focus = 1; const lw0 = G.leadWorking; G.leadWorking = () => false; const m2 = G.world.money; G.economyTick(5, false); G.leadWorking = lw0;
+      check('被叫走专注立刻掉回 floor', Math.abs(G.focus() - F.floor) < 1e-9, G.focus());
+      check('不在岗仍按 floor 赚钱，不是零', Math.abs(G.world.money - m2 - G.WAGE * G.econHours(5) * F.floor * G.efficiency() * G.householdBonus()) < 0.01 && G.world.money > m2, String(G.world.money - m2));
+      G.setProtagonist(null);
     }
     atHour(22); G.world.money = m1;
     if (sp0 === undefined) delete G.cfg.time.speed; else G.cfg.time.speed = sp0;
@@ -984,10 +988,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
       check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
     }
-    {   /* 经济目标（标准模式，现实时间）：十分钟买得起一件礼物，一小时左右买第一张床，三小时前后攒够第二张。标准下一个现实小时有 22.5 个工作游戏小时，实测一家四口挂机折下来约 55%（挂机时需求没人管，效率会掉） */
+    {   /* 经济目标（标准模式，现实时间）：第一张床半小时左右，第二张一小时一刻前后，礼物按满负荷约一两分钟一件。标准下一个现实小时有 22.5 个工作游戏小时，实测一家四口挂机折下来约 55%（挂机时需求没人管，效率会掉） */
       const hourly = G.WAGE * 22.5 * 0.55, start = 200, bed1 = (G.BED_PRICE[1] - start) / hourly, both = (G.BED_PRICE[1] + G.BED_PRICE[2] - start) / hourly, cheap = Object.values(CY.visitors.GIFTS).filter(g => g.price <= hourly / 6).length;
-      check('第一张床不到一小时攒够', bed1 > 0.4 && bed1 < 1.2, String(bed1));
-      check('两张床三小时前后攒够', both > 2.2 && both < 3.8, String(both));
+      check('第一张床半小时左右攒够', bed1 > 0.3 && bed1 < 0.8, String(bed1));
+      check('两张床一小时一刻前后攒够', both > 1.0 && both < 1.7, String(both));
       check('十分钟的收入够买至少五种礼物，一天里随时有礼物可买', cheap >= 5, String(cheap));
     }
     {   /* 站位：同一间房里的人不叠在一起 */

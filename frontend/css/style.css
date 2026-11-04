@@ -391,6 +391,7 @@ button.corner.unread { position:relative; }
 .opanel { position:fixed; z-index:40; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:8px 10px; box-shadow:0 4px 18px #0003; }
 .opanel .ophead { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
 .opanel .ophead b { flex:1; font-size:15px; }
+.opanel .ophead .hb { font-size:12px; padding:1px 8px; }
 .opanel .ophead .x { padding:0 8px; font-size:16px; line-height:1.3; border:none; background:none; color:var(--mute); }
 .opanel .opneeds { display:flex; flex-wrap:wrap; gap:4px 8px; font-size:12px; color:var(--mute); margin-bottom:4px; }
 .opanel .opneeds .urgent { color:var(--accent); font-weight:600; }
@@ -450,3 +451,6 @@ button.corner.unread { position:relative; }
 .kbadge { font-size:11px; padding:0 6px; border-radius:8px; border:1px solid var(--line); margin-left:4px; }
 .kbadge.sourced { border-color:var(--accent); color:var(--accent); }
 .kbadge.derived { border-color:var(--accent); }
+
+.srow2 .pc { min-width:34px; text-align:right; font-size:12px; }
+.statgrid .intro { margin:8px 0; padding:6px 8px; border-left:3px solid var(--line); }

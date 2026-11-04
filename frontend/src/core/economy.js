@@ -53,9 +53,9 @@
     return G.MOOD.eff_min + (1 - G.MOOD.eff_min) * (1 - share);
   };
   /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
-  /* 工作专注：进入工作不是立刻满额，坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟；离开工作立刻掉回 floor。收入速率 = 工资 乘 专注 乘 家庭效率 乘 家人加成。
+  /* 工作专注：进入工作不是立刻满额，坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟；离开工作（离开书桌，外出办事，被叫去照顾人）立刻掉回 floor，而且离开期间仍按 floor 计收入，不是零。收入速率 = 工资 乘 专注 乘 家庭效率 乘 家人加成。
      配偶不在家（出差，去公司）是别处没人打断的工作，专注按满额，家庭效率和加成照乘。参数出处见 CY.references 里的 focus。 */
-  G.FOCUS = { floor: 0.1, minutes: 20 };
+  G.FOCUS = { floor: 0.2, minutes: 60 };
   G.focus = () => (typeof G.world.focus === 'number' ? G.world.focus : G.FOCUS.floor);
   /* 走过 gmin 分钟，working 为真就爬升，否则掉回 floor；返回这段时间的平均专注，离线大步长也按线性积分，不会少算也不会多算 */
   G.focusStep = (gmin, working) => {
@@ -80,7 +80,8 @@
     if (lead && G.stage(lead) === 'elder') { G.world.money += G.PENSION * hours; G.focusStep(gmin, false); }
     else {
       const lw = G.leadWorking(offline), k = G.focusStep(gmin, lw);
-      if (lw) G.world.money += G.WAGE * hours * k * G.efficiency() * G.householdBonus();
+      const away = !lw && G.isWorkTime() && !!lead && G.stage(lead) !== 'elder' && (!W || W.worker(lead));   /* 工作时段里人不在岗：按 floor 算，不是零 */
+      if (lw || away) G.world.money += G.WAGE * hours * k * G.efficiency() * G.householdBonus();
       else if (G.isWorkTime() && W && W.enforce && !(lead && W.worker(lead)) && W.hasWorker()) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();   /* 别人在家办公，没人打断，专注满额 */
     }
     if (G.awayIncome) G.world.money += G.awayIncome(hours);
@@ -100,7 +101,7 @@
   ];
   /* 床位：家里三间卧室，夫妻、孩子、老人各两张，一共六张，是家人的床，不用买，家人最多六位，婴儿睡婴儿床不占床位。
      客房一开始就有一张床，只给穿越者睡，最多三张，另外两张在商店买。家人和客人的床分开，家人住满了也有床留给第一位客人，不然就永远没有客人来 */
-  G.FAMILY_BEDS = 6; G.GUEST_BED_MAX = 3; G.BED_PRICE = { 1: 600, 2: 1200 };
+  G.FAMILY_BEDS = 6; G.GUEST_BED_MAX = 3; G.BED_PRICE = { 1: 600, 2: 400 };
   G.sleepers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
   G.bedUsers = () => G.sleepers().filter(p => !p.person.visitor);
   G.guestBedsOwned = () => Math.min(G.GUEST_BED_MAX, Math.max(1, G.world.gbeds || 1));

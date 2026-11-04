@@ -482,7 +482,9 @@
     const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => p.state.needs[k] > U.NEED_LIT).sort((a, b) => p.state.needs[b] - p.state.needs[a]);
     const conds = (p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ');
     const head = doc().createElement('div'); head.className = 'ophead';
-    head.innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${conds ? '<span title="' + esc(conds) + '">🩺</span>' : ''}<button class="x" aria-label="×">×</button>`;
+    head.innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${conds ? '<span title="' + esc(conds) + '">🩺</span>' : ''}<button class="hb" data-a="info">${esc(t('btn.status'))}</button>${p.person.visitor ? '' : `<button class="hb" data-a="edit">${esc(t('btn.edit'))}</button>`}<button class="x" aria-label="×">×</button>`;
+    head.querySelector('[data-a=info]').onclick = () => { U.closeRing(); U.renderRoom(true); U.statusDialog(pid); };
+    const eb = head.querySelector('[data-a=edit]'); if (eb) eb.onclick = () => { U.closeRing(); U.renderRoom(true); U.addDialog(null, () => {}, pid); };
     head.querySelector('.x').onclick = () => { U.closeRing(); U.renderRoom(true); };
     layer.appendChild(head);
     if (lit.length) {
@@ -508,13 +510,6 @@
       grid.appendChild(b);
     });
     layer.appendChild(grid);
-    const more = doc().createElement('div'); more.className = 'opmore';
-    more.innerHTML = `<button class="tog" aria-label="⋯">⋯</button><span class="items"><button data-a="info">${esc(t('room.info', { name: p.person.name }))}</button><button data-a="edit">${esc(t('room.edit', { name: p.person.name }))}</button><button data-a="away">${esc(t('room.away', { name: p.person.name }))}</button></span>`;
-    more.querySelector('.tog').onclick = () => more.classList.toggle('open');
-    more.querySelector('[data-a=info]').onclick = () => { U.closeRing(); U.renderRoom(true); U.statusDialog(pid); };
-    more.querySelector('[data-a=edit]').onclick = () => { U.closeRing(); U.renderRoom(true); U.addDialog(null, () => {}, pid); };
-    more.querySelector('[data-a=away]').onclick = () => { if (!win().confirm(t('room.away', { name: p.person.name }) + '?')) return; U.closeRing(); G.setActive(pid, false); U.renderRoom(true); };
-    layer.appendChild(more);
     layer.style.left = '0px'; layer.style.top = '0px';
     U.room.appendChild(layer);
     /* 先量一下容器的原点和面板的高度，再摆：右边放得下放右边，否则放左边；窄屏贴底 */

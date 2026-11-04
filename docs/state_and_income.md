@@ -45,4 +45,4 @@ Prices follow a play day of about five minutes: a toy 80, fruit 200, a bookshelf
 
 - Standard mode runs one real second as one game minute, so a game day takes 24 real minutes, and it can sit open beside your own work. Fast mode (2, 4 or 6 times standard) speeds the game up to feel the rhythm of caring quickly. Choose in the calendar menu (click the clock). Switching to fast asks you to confirm and says plainly that earning does not speed up.
 - Money is earned at the standard pace per real second in both modes. Work focus climbs over 20 game minutes, which is 20 real seconds in standard mode.
-- Rough pace in standard mode: a gift after about 10 minutes, the first guest bed after about an hour, the second around the three hour mark.
+- Rough pace in standard mode: the first guest bed after about half an hour, the second around an hour and a quarter, and a gift about every minute or two of full-load income.

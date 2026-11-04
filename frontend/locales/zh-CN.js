@@ -2,7 +2,7 @@
 CY.i18n.register('zh-CN', {
   'app.title': 'Care for You',
             'hdr.save': '存档与下载',   'hdr.settings': '设置', 'hdr.about': '关于',
-      'btn.add': '＋ 添加', 'btn.cancel': '取消', 'btn.close': '关闭', 'btn.save': '保存', 'btn.later': '待会儿',
+      'btn.status': '状态', 'btn.add': '＋ 添加', 'btn.cancel': '取消', 'btn.close': '关闭', 'btn.save': '保存', 'btn.later': '待会儿',
   'room.empty': '这里还没有人。', 'room.away': '让{name}先离开桌面', 'room.bar': '心情 {mood}%　虚弱 {frail}%',
   'ask.own': '自己说……', 'ask.send': '说', 'pick.reroll': '都不像', 'nudge.yes': '好，我去', 'nudge.no': '晚点', 'unit.sec': '{n}秒',
 

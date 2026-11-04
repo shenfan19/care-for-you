@@ -5,3 +5,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 tools/render_iso/render_paths.ini
+
+# local 3D experiment, not part of this release
+frontend/demo3d/
