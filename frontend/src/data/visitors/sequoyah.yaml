@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: sequoyah
+order: 490
+official: true
+region: United States
+age: 50
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - pen
+  - lamp
+controllable: false
+area: am
+field: edu
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#8a6a4b'
+souvenir:
+  id: sequoyah_keepsake
+  icon: 📝
+src: Encyclopaedia Britannica, Sequoyah; creator of the Cherokee syllabary, completed about 1821.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 塞阔雅
+    en: Sequoyah
+    zh-TW: 塞闊雅
+    ja: セコイア
+    ko: 세쿼이아
+    fr: Sequoyah
+    es: Sequoyah
+    de: Sequoyah
+  era:
+    zh-CN: 十八至十九世纪，切罗基族
+    en: 18th-19th century, Cherokee
+    zh-TW: 十八至十九世紀，切羅基族
+    ja: 18〜19世紀、チェロキー族
+    ko: 18~19세기, 체로키족
+    fr: XVIIIe et XIXe siècles, Cherokee
+    es: Siglos XVIII y XIX, cheroqui
+    de: 18. und 19. Jahrhundert, Cherokee
+  souvenir:
+    zh-CN: 一页音节表的复印件
+    en: A copy of a page of a syllable chart
+    zh-TW: 一頁音節表的影印件
+    ja: 音節表の一ページの写し
+    ko: 음절표 한 쪽의 사본
+    fr: Une copie d'une page d'un tableau de syllabes
+    es: Una copia de una página de una tabla de sílabas
+    de: Eine Kopie einer Seite einer Silbentabelle
+  arrive_note:
+    zh-CN: 塞阔雅推开大门走了进来，说想在这里住几天。
+    en: Sequoyah came in through the front door and asked to stay a few days.
+    zh-TW: 塞闊雅推開大門走了進來，說想在這裡住幾天。
+    ja: セコイアは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 세쿼이아은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Sequoyah franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Sequoyah cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Sequoyah trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把灯移近，一个符号一个符号地对了起来。
+    en: He moved the lamp closer and checked the symbols one by one.
+    zh-TW: 他把燈移近，一個符號一個符號地對了起來。
+    ja: 彼はランプを近づけ、記号をひとつずつ確かめた。
+    ko: 그는 램프를 가까이 당기고 기호를 하나하나 확인했습니다.
+    fr: Il approcha la lampe et vérifia les symboles un à un.
+    es: Acercó la lámpara y fue comprobando los símbolos uno a uno.
+    de: Er rückte die Lampe näher und prüfte die Zeichen eines nach dem anderen.
+  leave_ok:
+    zh-CN: 塞阔雅临走前留下一页音节表的复印件，说：自己的话，值得有自己的字。
+    en: 'Before leaving, Sequoyah left a copy of a page of a syllable chart and said: Your own language deserves its own letters.'
+    zh-TW: 塞闊雅臨走前留下一頁音節表的影印件，說：自己的話，值得有自己的字。
+    ja: 帰る前に、セコイアは記念の品を残していった：音節表の一ページの写し。そして言った。「自分の言葉には、自分の文字があっていい。」
+    ko: '떠나기 전에 세쿼이아은(는) 기념품을 남겼습니다: 음절표 한 쪽의 사본. 그리고 말했습니다. “자기 말에는 자기 글자가 있어야 합니다.”'
+    fr: 'Avant de partir, Sequoyah laissa un souvenir : Une copie d''une page d''un tableau de syllabes. Et dit : « Ta propre langue mérite ses propres lettres. »'
+    es: 'Antes de irse, Sequoyah dejó un recuerdo: Una copia de una página de una tabla de sílabas. Y dijo: «Tu propia lengua merece sus propias letras.»'
+    de: 'Vor dem Abschied ließ Sequoyah etwas zurück: Eine Kopie einer Seite einer Silbentabelle. Dazu sagte Sequoyah: „Die eigene Sprache verdient eigene Buchstaben.“'
+  leave_miss:
+    zh-CN: 塞阔雅道了谢，推开门回去了。
+    en: Sequoyah said thanks and went back through the door.
+    zh-TW: 塞闊雅道了謝，推開門回去了。
+    ja: セコイアはお礼を言い、扉をくぐって帰っていった。
+    ko: 세쿼이아은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Sequoyah remercia et repassa la porte.
+    es: Sequoyah dio las gracias y volvió a cruzar la puerta.
+    de: Sequoyah bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说要给自己的话造一套文字，试了很多年，一个符号一个符号地改。, en: 'He said he wanted to make a writing system for his own language, and tried for years, changing it symbol by symbol.', zh-TW: 他說要給自己的話造一套文字，試了很多年，一個符號一個符號地改。, ja: 彼は、自分の言語のために文字体系を作りたいと言い、何年も試して、記号をひとつずつ直してきたと語った。, ko: 그는 자기 언어의 문자 체계를 만들고 싶어 여러 해를 시도하며 기호를 하나하나 고쳐 왔다고 말했습니다., fr: 'Il dit qu''il voulait créer un système d''écriture pour sa propre langue, qu''il avait essayé pendant des années en modifiant symbole après symbole.', es: 'Dijo que quería crear un sistema de escritura para su propia lengua, que lo había intentado durante años cambiándolo símbolo a símbolo.', de: 'Er sagte, er wolle für seine eigene Sprache ein Schriftsystem schaffen, habe es jahrelang versucht und Zeichen für Zeichen geändert.'}
+    - {zh-CN: 他随身带着一叠写满符号的纸，说还要再核对一遍。, en: He carried a stack of paper full of symbols and said he still had to check them once more., zh-TW: 他隨身帶著一疊寫滿符號的紙，說還要再核對一遍。, ja: 彼は記号でいっぱいの紙の束を持ち歩き、もう一度確かめなければならないと言った。, ko: 그는 기호로 가득한 종이 뭉치를 들고 다니며 한 번 더 확인해야 한다고 말했습니다., fr: Il portait une pile de papier couverte de symboles et dit qu'il devait encore les vérifier une fois., es: Llevaba un montón de papel lleno de símbolos y dijo que aún tenía que revisarlos una vez más., de: 'Er trug einen Stapel Papier voller Zeichen bei sich und sagte, er müsse sie noch einmal prüfen.'}

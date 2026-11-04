@@ -1,0 +1,26 @@
+# 角色卡源文件，一类典型角色一个文件，由 tools/build_cards.js 打包进 src/data/cards_packed.js。
+# 标识类字段（id，group，species，voice，pronoun，look 的取值）只写英文编码；label 按语言写成对象，八种语言都在这里。
+# order 是添加角色列表里的先后；pronoun 是 he，she 或 it；health，help，prefs，dialogue 是在原型默认值之上的覆盖。
+id: toddler
+order: 170
+group: family
+label:
+  zh-CN: 幼儿
+  en: Toddler
+  zh-TW: 幼兒
+  ja: 幼児
+  ko: 유아
+  fr: Tout-petit
+  es: Niño pequeño
+  de: Kleinkind
+species: human
+age: 2
+voice: toddler
+pronoun: she
+look:
+  skin: 0
+  hair_style: bun
+  hair_color: brown
+  glasses: none
+  beard: false
+  cloth: '#e7a6a1'

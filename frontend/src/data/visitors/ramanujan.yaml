@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: ramanujan
+order: 180
+official: true
+region: India
+age: 30
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - notebook
+  - soup
+controllable: false
+area: sa
+field: sci
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#f0f0f0'
+souvenir:
+  id: ramanujan_keepsake
+  icon: 📓
+src: Encyclopaedia Britannica, Srinivasa Ramanujan; his notebooks.
+review: 2026-11-02 通过：不涉及宗教说法，只写笔记与饭菜
+t:
+  name:
+    zh-CN: 斯里尼瓦瑟·拉马努金
+    en: Srinivasa Ramanujan
+    zh-TW: 斯里尼瓦瑟·拉馬努金
+    ja: シュリニヴァーサ・ラマヌジャン
+    ko: 스리니바사 라마누잔
+    fr: Srinivasa Ramanujan
+    es: Srinivasa Ramanujan
+    de: Srinivasa Ramanujan
+  era:
+    zh-CN: 二十世纪初，印度
+    en: early 20th century, India
+    zh-TW: 二十世紀初，印度
+    ja: 20世紀初め、インド
+    ko: 20세기 초, 인도
+    fr: Début du XXe siècle, Inde
+    es: Principios del siglo XX, India
+    de: Anfang des 20. Jahrhunderts, Indien
+  souvenir:
+    zh-CN: 一页笔记的复印件
+    en: A copy of a page of notes
+    zh-TW: 一頁筆記的影印件
+    ja: ノートの一ページの写し
+    ko: 공책 한 쪽의 사본
+    fr: Une copie d'une page de notes
+    es: Una copia de una página de notas
+    de: Eine Kopie einer Notizseite
+  arrive_note:
+    zh-CN: 斯里尼瓦瑟·拉马努金推开大门走了进来，说想在这里住几天。
+    en: Srinivasa Ramanujan came in through the front door and asked to stay a few days.
+    zh-TW: 斯里尼瓦瑟·拉馬努金推開大門走了進來，說想在這裡住幾天。
+    ja: シュリニヴァーサ・ラマヌジャンは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 스리니바사 라마누잔은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Srinivasa Ramanujan franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Srinivasa Ramanujan cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Srinivasa Ramanujan trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他吃得很慢，吃完又翻开了笔记本。
+    en: He ate slowly, and afterwards opened his notebook again.
+    zh-TW: 他吃得很慢，吃完又翻開了筆記本。
+    ja: 彼はゆっくり食べ、それからまたノートを開いた。
+    ko: 그는 천천히 먹은 뒤 다시 공책을 펼쳤습니다.
+    fr: Il mangea lentement, puis rouvrit son carnet.
+    es: Comió despacio y después volvió a abrir su cuaderno.
+    de: Er aß langsam und schlug danach sein Heft wieder auf.
+  leave_ok:
+    zh-CN: 斯里尼瓦瑟·拉马努金临走前留下一页笔记的复印件，说：数字是有感情的，你只要肯陪它们。
+    en: 'Before leaving, Srinivasa Ramanujan left a copy of a page of notes and said: Numbers have feelings, if only you keep them company.'
+    zh-TW: 斯里尼瓦瑟·拉馬努金臨走前留下一頁筆記的影印件，說：數字是有感情的，你只要肯陪它們。
+    ja: 帰る前に、シュリニヴァーサ・ラマヌジャンは記念の品を残していった：ノートの一ページの写し。そして言った。「数には気持ちがあります。寄り添えば、分かるのです。」
+    ko: '떠나기 전에 스리니바사 라마누잔은(는) 기념품을 남겼습니다: 공책 한 쪽의 사본. 그리고 말했습니다. “숫자에게도 마음이 있습니다. 곁에 있어 주기만 하면요.”'
+    fr: 'Avant de partir, Srinivasa Ramanujan laissa un souvenir : Une copie d''une page de notes. Et dit : « Les nombres ont des sentiments, si tu leur tiens compagnie. »'
+    es: 'Antes de irse, Srinivasa Ramanujan dejó un recuerdo: Una copia de una página de notas. Y dijo: «Los números tienen sentimientos, si les haces compañía.»'
+    de: 'Vor dem Abschied ließ Srinivasa Ramanujan etwas zurück: Eine Kopie einer Notizseite. Dazu sagte Srinivasa Ramanujan: „Zahlen haben Gefühle, wenn man ihnen nur Gesellschaft leistet.“'
+  leave_miss:
+    zh-CN: 斯里尼瓦瑟·拉马努金道了谢，推开门回去了。
+    en: Srinivasa Ramanujan said thanks and went back through the door.
+    zh-TW: 斯里尼瓦瑟·拉馬努金道了謝，推開門回去了。
+    ja: シュリニヴァーサ・ラマヌジャンはお礼を言い、扉をくぐって帰っていった。
+    ko: 스리니바사 라마누잔은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Srinivasa Ramanujan remercia et repassa la porte.
+    es: Srinivasa Ramanujan dio las gracias y volvió a cruzar la puerta.
+    de: Srinivasa Ramanujan bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他翻着一本旧笔记本，说有些公式是睡梦里想到的。, en: 'He leafed through an old notebook, saying some of the formulas came to him in sleep.', zh-TW: 他翻著一本舊筆記本，說有些公式是睡夢裡想到的。, ja: 彼は古いノートをめくり、いくつかの公式は眠っているときに浮かんだと言った。, ko: '그는 낡은 공책을 넘기며, 어떤 공식은 잠결에 떠오른다고 말했습니다.', fr: Il feuilletait un vieux carnet en disant que certaines formules lui venaient en rêve., es: Hojeaba un cuaderno viejo y dijo que algunas de las fórmulas le llegaban en sueños., de: 'Er blätterte in einem alten Heft und sagte, manche Formeln kämen ihm im Schlaf.'}
+    - {zh-CN: 他说起家乡的饭菜，眼睛里有一点光。, en: 'He talked about the food of home, with a gleam in his eyes.', zh-TW: 他說起家鄉的飯菜，眼睛裡有一點光。, ja: 彼は故郷の料理の話をして、目を輝かせた。, ko: 그는 고향 음식 이야기를 하며 눈을 반짝였습니다., fr: 'Il parla de la cuisine de son pays, une lueur dans les yeux.', es: 'Habló de la comida de su tierra, con un brillo en los ojos.', de: 'Er sprach vom Essen seiner Heimat, mit einem Glanz in den Augen.'}

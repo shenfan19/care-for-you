@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: pasteur
+order: 250
+official: true
+region: France
+age: 60
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - microscope
+  - medkit
+controllable: false
+area: eu
+field: med
+look:
+  skin: '#fde3d0'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#6f86a0'
+souvenir:
+  id: pasteur_keepsake
+  icon: 🔬
+src: Encyclopaedia Britannica, Louis Pasteur.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 路易·巴斯德
+    en: Louis Pasteur
+    zh-TW: 路易·巴斯德
+    ja: ルイ・パスツール
+    ko: 루이 파스퇴르
+    fr: Louis Pasteur
+    es: Louis Pasteur
+    de: Louis Pasteur
+  era:
+    zh-CN: 十九世纪，法国
+    en: 19th century, France
+    zh-TW: 十九世紀，法國
+    ja: 19世紀、フランス
+    ko: 19세기, 프랑스
+    fr: XIXe siècle, France
+    es: Siglo XIX, Francia
+    de: 19. Jahrhundert, Frankreich
+  souvenir:
+    zh-CN: 一页实验记录的复印件
+    en: A copy of a page of lab records
+    zh-TW: 一頁實驗記錄的影印件
+    ja: 実験記録の一ページの写し
+    ko: 실험 기록 한 쪽의 사본
+    fr: Une copie d'une page de notes de laboratoire
+    es: Una copia de una página de registros de laboratorio
+    de: Eine Kopie einer Seite der Laboraufzeichnungen
+  arrive_note:
+    zh-CN: 路易·巴斯德推开大门走了进来，说想在这里住几天。
+    en: Louis Pasteur came in through the front door and asked to stay a few days.
+    zh-TW: 路易·巴斯德推開大門走了進來，說想在這裡住幾天。
+    ja: ルイ・パスツールは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 루이 파스퇴르은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Louis Pasteur franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Louis Pasteur cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Louis Pasteur trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他凑近东西，屏住呼吸看了起来。
+    en: He leaned close and watched, holding his breath.
+    zh-TW: 他湊近東西，屏住呼吸看了起來。
+    ja: 彼は身を乗り出し、息をひそめて覗き込んだ。
+    ko: 그는 몸을 기울여 숨을 죽이고 들여다보았습니다.
+    fr: Il se pencha et observa en retenant son souffle.
+    es: Se acercó y miró, conteniendo la respiración.
+    de: Er beugte sich vor und sah mit angehaltenem Atem hin.
+  leave_ok:
+    zh-CN: 路易·巴斯德临走前留下一页实验记录的复印件，说：看得见的是结果，看不见的是原因。
+    en: 'Before leaving, Louis Pasteur left a copy of a page of lab records and said: What you see is the result, what you cannot see is the cause.'
+    zh-TW: 路易·巴斯德臨走前留下一頁實驗記錄的影印件，說：看得見的是結果，看不見的是原因。
+    ja: 帰る前に、ルイ・パスツールは記念の品を残していった：実験記録の一ページの写し。そして言った。「見えるものは結果、見えないものは原因です。」
+    ko: '떠나기 전에 루이 파스퇴르은(는) 기념품을 남겼습니다: 실험 기록 한 쪽의 사본. 그리고 말했습니다. “보이는 것은 결과이고, 보이지 않는 것은 원인입니다.”'
+    fr: 'Avant de partir, Louis Pasteur laissa un souvenir : Une copie d''une page de notes de laboratoire. Et dit : « Ce qu''on voit est le résultat, ce qu''on ne voit pas est la cause. »'
+    es: 'Antes de irse, Louis Pasteur dejó un recuerdo: Una copia de una página de registros de laboratorio. Y dijo: «Lo que ves es el resultado, lo que no ves es la causa.»'
+    de: 'Vor dem Abschied ließ Louis Pasteur etwas zurück: Eine Kopie einer Seite der Laboraufzeichnungen. Dazu sagte Louis Pasteur: „Was man sieht, ist die Wirkung, was man nicht sieht, ist die Ursache.“'
+  leave_miss:
+    zh-CN: 路易·巴斯德道了谢，推开门回去了。
+    en: Louis Pasteur said thanks and went back through the door.
+    zh-TW: 路易·巴斯德道了謝，推開門回去了。
+    ja: ルイ・パスツールはお礼を言い、扉をくぐって帰っていった。
+    ko: 루이 파스퇴르은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Louis Pasteur remercia et repassa la porte.
+    es: Louis Pasteur dio las gracias y volvió a cruzar la puerta.
+    de: Louis Pasteur bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他对着一滴水看了很久，说里面有看不见的世界。, en: 'He looked at a single drop of water for a long time, saying there was an unseen world inside.', zh-TW: 他對著一滴水看了很久，說裡面有看不見的世界。, ja: 彼は一滴の水を長いこと眺め、その中には目に見えない世界があると言った。, ko: 그는 물 한 방울을 오래 들여다보며 그 안에 보이지 않는 세계가 있다고 말했습니다., fr: Il regarda longtemps une seule goutte d'eau en disant qu'il y avait un monde invisible à l'intérieur., es: Miró durante mucho rato una sola gota de agua y dijo que dentro había un mundo invisible., de: 'Er sah lange auf einen einzigen Wassertropfen und sagte, darin liege eine unsichtbare Welt.'}
+    - {zh-CN: 他说想让大家吃的、喝的都更干净一点。, en: He said he wanted everything people eat and drink to be a little cleaner., zh-TW: 他說想讓大家吃的、喝的都更乾淨一點。, ja: 彼は、人が口にするものはすべて、もう少し清潔であってほしいと言った。, ko: 그는 사람들이 먹고 마시는 모든 것이 조금 더 깨끗했으면 좋겠다고 말했습니다., fr: Il dit qu'il voulait que tout ce que les gens mangent et boivent soit un peu plus propre., es: Dijo que quería que todo lo que la gente come y bebe fuera un poco más limpio., de: 'Er sagte, alles, was Menschen essen und trinken, solle ein wenig sauberer sein.'}
+said:
+  zh-CN: 在观察的领域里，机遇只偏爱有准备的头脑。
+  en: In the fields of observation, chance favors only the prepared mind.
+  zh-TW: 在觀察的領域裡，機遇只偏愛有準備的頭腦。
+  ja: 観察の領域では、偶然は準備のできた心にしか味方しない。
+  ko: 관찰의 영역에서 우연은 준비된 정신에게만 호의를 베푼다.
+  fr: Dans le champ de l'observation, le hasard ne favorise que l'esprit préparé.
+  es: En el campo de la observación, la casualidad solo favorece a la mente preparada.
+  de: Im Feld der Beobachtung begünstigt der Zufall nur den vorbereiteten Geist.

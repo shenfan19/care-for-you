@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: euler
+order: 300
+official: true
+region: Switzerland
+age: 62
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - spectacles
+  - pen
+controllable: false
+area: eu
+field: sci
+look:
+  skin: '#fde3d0'
+  hairColor: gray
+  hairStyle: short
+  glasses: round
+  clothes: '#7d8fa8'
+souvenir:
+  id: euler_keepsake
+  icon: 📐
+src: Encyclopaedia Britannica, Leonhard Euler.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 莱昂哈德·欧拉
+    en: Leonhard Euler
+    zh-TW: 萊昂哈德·尤拉
+    ja: レオンハルト・オイラー
+    ko: 레온하르트 오일러
+    fr: Leonhard Euler
+    es: Leonhard Euler
+    de: Leonhard Euler
+  era:
+    zh-CN: 十八世纪，瑞士
+    en: 18th century, Switzerland
+    zh-TW: 十八世紀，瑞士
+    ja: 18世紀、スイス
+    ko: 18세기, 스위스
+    fr: XVIIIe siècle, Suisse
+    es: Siglo XVIII, Suiza
+    de: 18. Jahrhundert, Schweiz
+  souvenir:
+    zh-CN: 一页演算的复印件
+    en: A copy of a page of workings
+    zh-TW: 一頁演算的影印件
+    ja: 計算の一ページの写し
+    ko: 계산 한 쪽의 사본
+    fr: Une copie d'une page de calculs
+    es: Una copia de una página de cálculos
+    de: Eine Kopie einer Seite mit Rechenwegen
+  arrive_note:
+    zh-CN: 莱昂哈德·欧拉推开大门走了进来，说想在这里住几天。
+    en: Leonhard Euler came in through the front door and asked to stay a few days.
+    zh-TW: 萊昂哈德·尤拉推開大門走了進來，說想在這裡住幾天。
+    ja: レオンハルト・オイラーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 레온하르트 오일러은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Leonhard Euler franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Leonhard Euler cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Leonhard Euler trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他戴上东西，把纸凑得近了一些。
+    en: He put it on and held the paper closer.
+    zh-TW: 他戴上東西，把紙湊得近了一些。
+    ja: 彼はそれをかけて、紙を顔に近づけた。
+    ko: 그는 그것을 쓰고 종이를 눈 가까이 가져갔습니다.
+    fr: Il les mit et rapprocha le papier.
+    es: Se las puso y acercó el papel.
+    de: Er setzte sie auf und hielt das Papier näher.
+  leave_ok:
+    zh-CN: 莱昂哈德·欧拉临走前留下一页演算的复印件，说：光线暗下来，也还能算下去。
+    en: 'Before leaving, Leonhard Euler left a copy of a page of workings and said: Even when the light dims, you can keep calculating.'
+    zh-TW: 萊昂哈德·尤拉臨走前留下一頁演算的影印件，說：光線暗下來，也還能算下去。
+    ja: 帰る前に、レオンハルト・オイラーは記念の品を残していった：計算の一ページの写し。そして言った。「光が弱まっても、計算は続けられます。」
+    ko: '떠나기 전에 레온하르트 오일러은(는) 기념품을 남겼습니다: 계산 한 쪽의 사본. 그리고 말했습니다. “빛이 어두워져도 계산은 계속할 수 있습니다.”'
+    fr: 'Avant de partir, Leonhard Euler laissa un souvenir : Une copie d''une page de calculs. Et dit : « Même quand la lumière baisse, tu peux continuer à calculer. »'
+    es: 'Antes de irse, Leonhard Euler dejó un recuerdo: Una copia de una página de cálculos. Y dijo: «Aunque la luz se apague, puedes seguir calculando.»'
+    de: 'Vor dem Abschied ließ Leonhard Euler etwas zurück: Eine Kopie einer Seite mit Rechenwegen. Dazu sagte Leonhard Euler: „Auch wenn das Licht schwächer wird, kannst du weiterrechnen.“'
+  leave_miss:
+    zh-CN: 莱昂哈德·欧拉道了谢，推开门回去了。
+    en: Leonhard Euler said thanks and went back through the door.
+    zh-TW: 萊昂哈德·尤拉道了謝，推開門回去了。
+    ja: レオンハルト・オイラーはお礼を言い、扉をくぐって帰っていった。
+    ko: 레온하르트 오일러은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Leonhard Euler remercia et repassa la porte.
+    es: Leonhard Euler dio las gracias y volvió a cruzar la puerta.
+    de: Leonhard Euler bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他眯着眼睛看你写的字，说眼睛越来越花了。, en: He squinted at your handwriting and said his eyes were getting worse., zh-TW: 他眯著眼睛看你寫的字，說眼睛越來越花了。, ja: 彼はあなたの字を目を細めて読み、視力が落ちてきたと言った。, ko: 그는 당신의 글씨를 눈을 가늘게 뜨고 읽으며 시력이 점점 나빠진다고 말했습니다., fr: Il plissa les yeux sur ton écriture et dit que sa vue baissait., es: Entrecerró los ojos para leer tu letra y dijo que la vista le fallaba cada vez más., de: 'Er kniff die Augen zusammen, um deine Handschrift zu lesen, und sagte, seine Augen würden schlechter.'}
+    - {zh-CN: 他说算着算着，旁边孩子爬到膝盖上也不影响。, en: He said he could keep calculating even with a child climbing on his knee., zh-TW: 他說算著算著，旁邊孩子爬到膝蓋上也不影響。, ja: 彼は、膝に子どもがよじ登ってきても計算を続けられると言った。, ko: 그는 무릎 위로 아이가 기어올라도 계산을 계속할 수 있다고 말했습니다., fr: Il dit qu'il pouvait continuer à calculer même avec un enfant grimpant sur ses genoux., es: Dijo que podía seguir calculando aunque un niño le trepara por las rodillas., de: 'Er sagte, er könne weiterrechnen, auch wenn ein Kind auf seinem Knie klettert.'}
+said:
+  zh-CN: 世上没有哪件事，不带着某种最大或最小的道理。
+  en: Nothing takes place in the world whose meaning is not that of some maximum or minimum.
+  zh-TW: 世上沒有哪件事，不帶著某種最大或最小的道理。
+  ja: 世の中に、何かの最大か最小の意味を持たないことは起こらない。
+  ko: 세상에 일어나는 어떤 일도 어떤 최대 혹은 최소의 뜻을 지니지 않은 것이 없다.
+  fr: Rien ne se produit dans le monde dont le sens ne soit celui d'un maximum ou d'un minimum.
+  es: Nada ocurre en el mundo cuyo sentido no sea el de algún máximo o mínimo.
+  de: In der Welt geschieht nichts, dessen Sinn nicht der eines Maximums oder Minimums wäre.

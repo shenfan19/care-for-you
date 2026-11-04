@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: murasaki
+order: 210
+official: true
+region: Japan
+age: 35
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - brush
+  - lamp
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#fffaf6'
+  hairColor: black
+  hairStyle: long
+  glasses: none
+  clothes: '#9a8fc0'
+souvenir:
+  id: murasaki_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica, Murasaki Shikibu; The Tale of Genji.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 紫式部
+    en: Murasaki Shikibu
+    zh-TW: 紫式部
+    ja: 紫式部
+    ko: 무라사키 시키부
+    fr: Murasaki Shikibu
+    es: Murasaki Shikibu
+    de: Murasaki Shikibu
+  era:
+    zh-CN: 平安时代，日本
+    en: Heian period, Japan
+    zh-TW: 平安時代，日本
+    ja: 平安時代、日本
+    ko: 헤이안 시대, 일본
+    fr: Période de Heian, Japon
+    es: Período Heian, Japón
+    de: Heian-Zeit, Japan
+  souvenir:
+    zh-CN: 一页物语的复印件
+    en: A copy of a page of the tale
+    zh-TW: 一頁物語的影印件
+    ja: 物語の一ページの写し
+    ko: 이야기 한 쪽의 사본
+    fr: Une copie d'une page du récit
+    es: Una copia de una página del relato
+    de: Eine Kopie einer Seite der Erzählung
+  arrive_note:
+    zh-CN: 紫式部推开大门走了进来，说想在这里住几天。
+    en: Murasaki Shikibu came in through the front door and asked to stay a few days.
+    zh-TW: 紫式部推開大門走了進來，說想在這裡住幾天。
+    ja: 紫式部は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 무라사키 시키부은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Murasaki Shikibu franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Murasaki Shikibu cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Murasaki Shikibu trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 灯亮了，她提起笔，轻轻点了点头。
+    en: The lamp lit, she took up the brush and nodded softly.
+    zh-TW: 燈亮了，她提起筆，輕輕點了點頭。
+    ja: 灯りがともると、彼女は筆を取り、そっとうなずいた。
+    ko: 등불이 켜지자 그녀는 붓을 들고 가만히 고개를 끄덕였습니다.
+    fr: La lampe allumée, elle prit le pinceau et hocha doucement la tête.
+    es: Con la lámpara encendida, tomó el pincel y asintió suavemente.
+    de: Als die Lampe brannte, nahm sie den Pinsel und nickte leise.
+  leave_ok:
+    zh-CN: 紫式部临走前留下一页物语的复印件，说：故事是写给还没出生的人的。
+    en: 'Before leaving, Murasaki Shikibu left a copy of a page of the tale and said: Stories are written for people who are not yet born.'
+    zh-TW: 紫式部臨走前留下一頁物語的影印件，說：故事是寫給還沒出生的人的。
+    ja: 帰る前に、紫式部は記念の品を残していった：物語の一ページの写し。そして言った。「物語は、まだ生まれていない人のために書くものです。」
+    ko: '떠나기 전에 무라사키 시키부은(는) 기념품을 남겼습니다: 이야기 한 쪽의 사본. 그리고 말했습니다. “이야기는 아직 태어나지 않은 사람을 위해 씁니다.”'
+    fr: 'Avant de partir, Murasaki Shikibu laissa un souvenir : Une copie d''une page du récit. Et dit : « On écrit des histoires pour des gens qui ne sont pas encore nés. »'
+    es: 'Antes de irse, Murasaki Shikibu dejó un recuerdo: Una copia de una página del relato. Y dijo: «Las historias se escriben para gente que aún no ha nacido.»'
+    de: 'Vor dem Abschied ließ Murasaki Shikibu etwas zurück: Eine Kopie einer Seite der Erzählung. Dazu sagte Murasaki Shikibu: „Geschichten schreibt man für Menschen, die noch nicht geboren sind.“'
+  leave_miss:
+    zh-CN: 紫式部道了谢，推开门回去了。
+    en: Murasaki Shikibu said thanks and went back through the door.
+    zh-TW: 紫式部道了謝，推開門回去了。
+    ja: 紫式部はお礼を言い、扉をくぐって帰っていった。
+    ko: 무라사키 시키부은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Murasaki Shikibu remercia et repassa la porte.
+    es: Murasaki Shikibu dio las gracias y volvió a cruzar la puerta.
+    de: Murasaki Shikibu bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她安静地坐在窗边，说夜里想写点东西。, en: She sat quietly by the window and said she wanted to write something tonight., zh-TW: 她安靜地坐在窗邊，說夜裡想寫點東西。, ja: 彼女は窓辺に静かに座り、今夜何か書きたいと言った。, ko: 그녀는 창가에 조용히 앉아 오늘 밤 무언가 쓰고 싶다고 말했습니다., fr: Elle s'assit tranquillement près de la fenêtre et dit qu'elle voulait écrire quelque chose ce soir., es: Se sentó tranquila junto a la ventana y dijo que quería escribir algo esta noche., de: 'Sie saß still am Fenster und sagte, sie wolle heute Abend etwas schreiben.'}
+    - {zh-CN: 她看了看天色，问能不能再亮一点。, en: She looked at the sky and asked whether it could be a little brighter., zh-TW: 她看了看天色，問能不能再亮一點。, ja: 彼女は空を見上げ、もう少し明るくならないものかと尋ねた。, ko: 그녀는 하늘을 올려다보며 조금 더 밝을 수는 없느냐고 물었습니다., fr: Elle regarda le ciel et demanda s'il pouvait être un peu plus clair., es: Miró el cielo y preguntó si podía ser un poco más claro., de: 'Sie sah zum Himmel und fragte, ob es ein wenig heller sein könne.'}

@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: archimedes
+order: 140
+official: true
+region: Greece
+age: 60
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - book
+  - lamp
+controllable: false
+area: eu
+field: sci
+look:
+  skin: '#e8bc92'
+  hairColor: white
+  hairStyle: bald
+  glasses: none
+  clothes: '#7d8fa8'
+souvenir:
+  id: archimedes_keepsake
+  icon: ⚖️
+src: Plutarch, Life of Marcellus; Encyclopaedia Britannica, Archimedes.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 阿基米德
+    en: Archimedes
+    zh-TW: 阿基米德
+    ja: アルキメデス
+    ko: 아르키메데스
+    fr: Archimède
+    es: Arquímedes
+    de: Archimedes
+  era:
+    zh-CN: 古希腊
+    en: Ancient Greece
+    zh-TW: 古希臘
+    ja: 古代ギリシャ
+    ko: 고대 그리스
+    fr: Grèce antique
+    es: Antigua Grecia
+    de: Antikes Griechenland
+  souvenir:
+    zh-CN: 一根小杠杆
+    en: A small lever
+    zh-TW: 一根小槓桿
+    ja: 小さなてこ
+    ko: 작은 지렛대
+    fr: Un petit levier
+    es: Una palanca pequeña
+    de: Ein kleiner Hebel
+  arrive_note:
+    zh-CN: 阿基米德推开大门走了进来，说想在这里住几天。
+    en: Archimedes came in through the front door and asked to stay a few days.
+    zh-TW: 阿基米德推開大門走了進來，說想在這裡住幾天。
+    ja: アルキメデスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 아르키메데스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Archimède franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Arquímedes cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Archimedes trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他转着东西，露出了孩子般的笑容。
+    en: He turned it over, grinning like a child.
+    zh-TW: 他轉著東西，露出了孩子般的笑容。
+    ja: 彼はそれをひっくり返し、子どものようににやりと笑った。
+    ko: 그는 그것을 뒤집어 보며 아이처럼 씩 웃었습니다.
+    fr: Il le retourna en souriant comme un enfant.
+    es: Le dio la vuelta, sonriendo como un niño.
+    de: Er drehte es um und grinste wie ein Kind.
+  leave_ok:
+    zh-CN: 阿基米德临走前留下一根小杠杆，说：找到那个支点，剩下的只是时间。
+    en: 'Before leaving, Archimedes left a small lever and said: Find the fulcrum and the rest is only time.'
+    zh-TW: 阿基米德臨走前留下一根小槓桿，說：找到那個支點，剩下的只是時間。
+    ja: 帰る前に、アルキメデスは記念の品を残していった：小さなてこ。そして言った。「支点を見つけなさい。あとは時間の問題です。」
+    ko: '떠나기 전에 아르키메데스은(는) 기념품을 남겼습니다: 작은 지렛대. 그리고 말했습니다. “받침점을 찾으세요. 나머지는 시간문제입니다.”'
+    fr: 'Avant de partir, Archimède laissa un souvenir : Un petit levier. Et dit : « Trouve le point d''appui et le reste n''est qu''une question de temps. »'
+    es: 'Antes de irse, Arquímedes dejó un recuerdo: Una palanca pequeña. Y dijo: «Encuentra el punto de apoyo y lo demás es solo cuestión de tiempo.»'
+    de: 'Vor dem Abschied ließ Archimedes etwas zurück: Ein kleiner Hebel. Dazu sagte Archimedes: „Finde den Drehpunkt, der Rest ist nur Zeit.“'
+  leave_miss:
+    zh-CN: 阿基米德道了谢，推开门回去了。
+    en: Archimedes said thanks and went back through the door.
+    zh-TW: 阿基米德道了謝，推開門回去了。
+    ja: アルキメデスはお礼を言い、扉をくぐって帰っていった。
+    ko: 아르키메데스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Archimède remercia et repassa la porte.
+    es: Arquímedes dio las gracias y volvió a cruzar la puerta.
+    de: Archimedes bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他盯着你的浴缸看了很久，若有所思。, en: 'He stared at your bathtub for a long while, lost in thought.', zh-TW: 他盯著你的浴缸看了很久，若有所思。, ja: 彼はあなたの浴槽を長いこと見つめ、考え込んでいた。, ko: 그는 당신의 욕조를 한참 바라보며 생각에 잠겼습니다., fr: 'Il fixa longtemps ta baignoire, perdu dans ses pensées.', es: 'Estuvo mucho rato mirando tu bañera, perdido en sus pensamientos.', de: 'Er starrte lange in deine Badewanne, ganz in Gedanken versunken.'}
+    - {zh-CN: 他说只要有一个够稳的支点，他能把整个世界撬起来。, en: He said that with a firm enough place to stand he could move the whole world., zh-TW: 他說只要有一個夠穩的支點，他能把整個世界撬起來。, ja: 彼は、しっかりした足場さえあれば世界全体を動かせると言った。, ko: 그는 단단히 디딜 곳만 있다면 세상 전체도 움직일 수 있다고 말했습니다., fr: 'Il dit qu''avec un point d''appui assez ferme, il pourrait soulever le monde entier.', es: Dijo que con un lugar firme donde apoyarse podría mover el mundo entero., de: 'Er sagte, mit einem festen Standpunkt könne er die ganze Welt bewegen.'}
+said:
+  zh-CN: 尤里卡！我找到了！
+  en: Eureka! I have found it!
+  zh-TW: 尤里卡！我找到了！
+  ja: ユーレカ！ 見つけたぞ！
+  ko: 유레카! 찾았다!
+  fr: Eurêka ! J'ai trouvé !
+  es: ¡Eureka! ¡Lo he encontrado!
+  de: Heureka! Ich hab's gefunden!

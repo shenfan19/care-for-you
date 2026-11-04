@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: al_khwarizmi
+order: 160
+official: true
+region: Central Asia
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - map
+  - notebook
+controllable: false
+area: wa
+field: sci
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#d4a24c'
+souvenir:
+  id: al_khwarizmi_keepsake
+  icon: 📐
+src: Encyclopaedia Britannica, al-Khwarizmi; Kitab al-jabr; Surat al-ard.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 花拉子米
+    en: Al-Khwarizmi
+    zh-TW: 花拉子米
+    ja: フワーリズミー
+    ko: 알콰리즈미
+    fr: Al-Khwârizmî
+    es: Al-Juarismi
+    de: Al-Chwarizmi
+  era:
+    zh-CN: 九世纪，中亚
+    en: 9th century, Central Asia
+    zh-TW: 九世紀，中亞
+    ja: 9世紀、中央アジア
+    ko: 9세기, 중앙아시아
+    fr: IXe siècle, Asie centrale
+    es: Siglo IX, Asia Central
+    de: 9. Jahrhundert, Zentralasien
+  souvenir:
+    zh-CN: 一页演算的复印件
+    en: A copy of a page of workings
+    zh-TW: 一頁演算的影印件
+    ja: 計算の一ページの写し
+    ko: 계산 한 쪽의 사본
+    fr: Une copie d'une page de calculs
+    es: Una copia de una página de cálculos
+    de: Eine Kopie einer Seite mit Rechenwegen
+  arrive_note:
+    zh-CN: 花拉子米推开大门走了进来，说想在这里住几天。
+    en: Al-Khwarizmi came in through the front door and asked to stay a few days.
+    zh-TW: 花拉子米推開大門走了進來，說想在這裡住幾天。
+    ja: フワーリズミーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 알콰리즈미은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Al-Khwârizmî franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Al-Juarismi cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Al-Chwarizmi trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把东西摊开，立刻算了起来。
+    en: He spread it out and began calculating.
+    zh-TW: 他把東西攤開，立刻算了起來。
+    ja: 彼はそれを広げて、計算を始めた。
+    ko: 그는 그것을 펼치고 계산을 시작했습니다.
+    fr: Il la déplia et se mit à calculer.
+    es: Lo desplegó y se puso a calcular.
+    de: Er breitete sie aus und begann zu rechnen.
+  leave_ok:
+    zh-CN: 花拉子米临走前留下一页演算的复印件，说：把难题拆开，一步一步，总能走完。
+    en: 'Before leaving, Al-Khwarizmi left a copy of a page of workings and said: Break a hard problem apart and take it step by step.'
+    zh-TW: 花拉子米臨走前留下一頁演算的影印件，說：把難題拆開，一步一步，總能走完。
+    ja: 帰る前に、フワーリズミーは記念の品を残していった：計算の一ページの写し。そして言った。「難しい問題はばらして、一歩ずつ進めなさい。」
+    ko: '떠나기 전에 알콰리즈미은(는) 기념품을 남겼습니다: 계산 한 쪽의 사본. 그리고 말했습니다. “어려운 문제는 쪼개서 한 걸음씩 나아가세요.”'
+    fr: 'Avant de partir, Al-Khwârizmî laissa un souvenir : Une copie d''une page de calculs. Et dit : « Décompose un problème difficile et avance pas à pas. »'
+    es: 'Antes de irse, Al-Juarismi dejó un recuerdo: Una copia de una página de cálculos. Y dijo: «Divide un problema difícil y avanza paso a paso.»'
+    de: 'Vor dem Abschied ließ Al-Chwarizmi etwas zurück: Eine Kopie einer Seite mit Rechenwegen. Dazu sagte Al-Chwarizmi: „Zerlege ein schweres Problem und geh es Schritt für Schritt an.“'
+  leave_miss:
+    zh-CN: 花拉子米道了谢，推开门回去了。
+    en: Al-Khwarizmi said thanks and went back through the door.
+    zh-TW: 花拉子米道了謝，推開門回去了。
+    ja: フワーリズミーはお礼を言い、扉をくぐって帰っていった。
+    ko: 알콰리즈미은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Al-Khwârizmî remercia et repassa la porte.
+    es: Al-Juarismi dio las gracias y volvió a cruzar la puerta.
+    de: Al-Chwarizmi bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他在地上画着方程，一步一步地解给你看。, en: He drew an equation on the ground and solved it step by step for you., zh-TW: 他在地上畫著方程，一步一步地解給你看。, ja: 彼は地面に方程式を書き、一歩ずつ解いて見せた。, ko: 그는 바닥에 방정식을 그리고 한 단계씩 풀어 보였습니다., fr: Il dessina une équation par terre et te la résolut pas à pas., es: Dibujó una ecuación en el suelo y te la resolvió paso a paso., de: Er zeichnete eine Gleichung auf den Boden und löste sie dir Schritt für Schritt.}
+    - {zh-CN: 他问你的地图画得准不准，说他也画过一幅。, en: 'He asked whether your map was accurate, saying he had drawn one himself.', zh-TW: 他問你的地圖畫得準不準，說他也畫過一幅。, ja: 彼はあなたの地図は正確かと尋ね、自分でも描いたことがあると言った。, ko: '그는 당신의 지도가 정확하냐고 묻고, 자신도 하나 그린 적이 있다고 말했습니다.', fr: 'Il demanda si ta carte était exacte, disant en avoir dessiné une lui-même.', es: 'Preguntó si tu mapa era exacto, y dijo que él había dibujado uno.', de: 'Er fragte, ob deine Karte genau sei, und sagte, er habe selbst eine gezeichnet.'}

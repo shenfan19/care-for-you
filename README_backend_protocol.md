@@ -229,7 +229,7 @@ Besides the HTTP backend, the game page offers its own read and write interface,
 
 ## Character cards
 
-Data folder templates/cards/card-id.yaml, one per typical kind of character. Fields: id, label, group, species, age, stage, pronoun, voice, look, traits, health (score, mood, conditions), class (urgency, self_care, nag, cries), need_rate (need rate multipliers), self_actions, help (proactive, efficiency, interval), dialogue (voice, lines). The card in a snapshot is the card id. A backend can read all cards with CY.api.cards().
+Data folder templates/cards/card-id.yaml, one per typical kind of character. Card ids are English codes such as `maternal_grandma`, `young_woman` or `toddler_2`, and pronoun is `he`, `she` or `it`. Fields: id, label, group, species, age, stage, pronoun, voice, look, traits, health (score, mood, conditions), class (urgency, self_care, nag, cries), need_rate (need rate multipliers), self_actions, help (proactive, efficiency, interval), dialogue (voice, lines). The card in a snapshot is the card id. A backend can read all cards with CY.api.cards().
 
 ## Disease models
 

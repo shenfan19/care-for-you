@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: sun_simiao
+order: 510
+official: true
+region: China
+age: 75
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - seeds
+  - soup
+controllable: false
+area: ea
+field: med
+look:
+  skin: '#f6d2b4'
+  hairColor: white
+  hairStyle: bald
+  glasses: none
+  clothes: '#7f9a8a'
+souvenir:
+  id: sun_simiao_keepsake
+  icon: 🌿
+src: Encyclopaedia Britannica, Sun Simiao; Beiji Qianjin Yaofang (c. 652), and the essay on the sincerity of great physicians.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 孙思邈
+    en: Sun Simiao
+    zh-TW: 孫思邈
+    ja: 孫思邈
+    ko: 손사막
+    fr: Sun Simiao
+    es: Sun Simiao
+    de: Sun Simiao
+  era:
+    zh-CN: 唐代，中国
+    en: Tang dynasty, China
+    zh-TW: 唐代，中國
+    ja: 唐代、中国
+    ko: 당나라, 중국
+    fr: Dynastie Tang, Chine
+    es: Dinastía Tang, China
+    de: Tang-Dynastie, China
+  souvenir:
+    zh-CN: 一页药方的复印件
+    en: A copy of a page of prescriptions
+    zh-TW: 一頁藥方的影印件
+    ja: 処方の一ページの写し
+    ko: 처방 한 쪽의 사본
+    fr: Une copie d'une page d'ordonnances
+    es: Una copia de una página de recetas
+    de: Eine Kopie einer Seite mit Rezepten
+  arrive_note:
+    zh-CN: 孙思邈推开大门走了进来，说想在这里住几天。
+    en: Sun Simiao came in through the front door and asked to stay a few days.
+    zh-TW: 孫思邈推開大門走了進來，說想在這裡住幾天。
+    ja: 孫思邈は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 손사막은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Sun Simiao franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Sun Simiao cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Sun Simiao trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把种子在手心里掂了掂，说这一把能救不少人。
+    en: He weighed the seeds in his palm and said this handful could help many people.
+    zh-TW: 他把種子在手心裡掂了掂，說這一把能救不少人。
+    ja: 彼は種を掌で量り、この一握りで多くの人を助けられると言った。
+    ko: 그는 씨앗을 손바닥에 올려 무게를 가늠하고, 이 한 줌이 많은 사람을 도울 수 있다고 말했습니다.
+    fr: Il soupesa les graines dans sa paume et dit que cette poignée pouvait aider beaucoup de monde.
+    es: Sopesó las semillas en la palma y dijo que ese puñado podía ayudar a mucha gente.
+    de: Er wog die Samen in der Handfläche und sagte, diese Handvoll könne vielen Menschen helfen.
+  leave_ok:
+    zh-CN: 孙思邈临走前留下一页药方的复印件，说：药不在贵，对症就好。
+    en: 'Before leaving, Sun Simiao left a copy of a page of prescriptions and said: A remedy need not be costly, only right for the illness.'
+    zh-TW: 孫思邈臨走前留下一頁藥方的影印件，說：藥不在貴，對症就好。
+    ja: 帰る前に、孫思邈は記念の品を残していった：処方の一ページの写し。そして言った。「薬は高価でなくてよい。病に合っていればそれでよい。」
+    ko: '떠나기 전에 손사막은(는) 기념품을 남겼습니다: 처방 한 쪽의 사본. 그리고 말했습니다. “약은 비쌀 필요가 없고, 병에 맞기만 하면 됩니다.”'
+    fr: 'Avant de partir, Sun Simiao laissa un souvenir : Une copie d''une page d''ordonnances. Et dit : « Un remède n''a pas besoin d''être cher, seulement adapté à la maladie. »'
+    es: 'Antes de irse, Sun Simiao dejó un recuerdo: Una copia de una página de recetas. Y dijo: «Un remedio no tiene por qué ser caro, solo adecuado a la enfermedad.»'
+    de: 'Vor dem Abschied ließ Sun Simiao etwas zurück: Eine Kopie einer Seite mit Rezepten. Dazu sagte Sun Simiao: „Eine Arznei muss nicht teuer sein, nur die richtige für die Krankheit.“'
+  leave_miss:
+    zh-CN: 孙思邈道了谢，推开门回去了。
+    en: Sun Simiao said thanks and went back through the door.
+    zh-TW: 孫思邈道了謝，推開門回去了。
+    ja: 孫思邈はお礼を言い、扉をくぐって帰っていった。
+    ko: 손사막은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Sun Simiao remercia et repassa la porte.
+    es: Sun Simiao dio las gracias y volvió a cruzar la puerta.
+    de: Sun Simiao bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说看病不分贫富贵贱，来的都是病人，一视同仁。, en: 'He said a healer should not tell rich from poor; everyone who comes is a patient, and all are treated alike.', zh-TW: 他說看病不分貧富貴賤，來的都是病人，一視同仁。, ja: 彼は、医者は貧富を分けてはならない、来る人はみな病人で、みな同じに診ると言った。, ko: '그는 의원은 부자와 가난한 이를 가려서는 안 되며, 찾아온 이는 모두 환자이고 똑같이 대해야 한다고 말했습니다.', fr: 'Il disait qu''un guérisseur ne doit pas distinguer le riche du pauvre ; quiconque vient est un malade, et tous sont traités de même.', es: Dijo que un sanador no debe distinguir entre ricos y pobres; quien llega es un enfermo y a todos se les trata igual., de: 'Er sagte, ein Heiler dürfe nicht zwischen arm und reich unterscheiden; wer kommt, ist ein Kranker, und alle werden gleich behandelt.'}
+    - {zh-CN: 他喜欢进山采药，说好药常常长在没人注意的地方。, en: He liked to gather herbs in the hills and said the best medicines often grow where nobody looks., zh-TW: 他喜歡進山採藥，說好藥常常長在沒人注意的地方。, ja: 彼は山で薬草を摘むのが好きで、いちばんよい薬は人目につかないところに生えることが多いと言った。, ko: '그는 산에서 약초 캐기를 좋아했고, 가장 좋은 약은 아무도 눈여겨보지 않는 곳에서 자라는 일이 많다고 말했습니다.', fr: Il aimait cueillir des herbes dans les collines et disait que les meilleurs remèdes poussent souvent là où personne ne regarde., es: Le gustaba recoger hierbas en las montañas y decía que los mejores remedios suelen crecer donde nadie mira., de: 'Er sammelte gern Kräuter in den Bergen und sagte, die besten Heilmittel wüchsen oft dort, wo niemand hinsieht.'}
+said:
+  zh-CN: 人命至重，有贵千金，一方济之，德逾于此。
+  en: A human life is worth more than a thousand pieces of gold; a prescription that helps one person does more good than gold.
+  zh-TW: 人命至重，有貴千金，一方濟之，德逾於此。
+  ja: 人の命は千金より重い。一人を救う処方は、金よりも徳が大きい。
+  ko: 사람의 목숨은 천금보다 귀하니, 한 사람을 돕는 처방은 금보다 덕이 큽니다.
+  fr: Une vie humaine vaut plus que mille pièces d'or ; une ordonnance qui aide une personne fait plus de bien que l'or.
+  es: Una vida humana vale más que mil monedas de oro; una receta que ayuda a una persona hace más bien que el oro.
+  de: Der Mensch ist mehr wert als tausend Goldstücke; ein Rezept, das einem Menschen hilft, nützt mehr als Gold.

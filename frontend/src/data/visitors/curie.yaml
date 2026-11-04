@@ -1,0 +1,115 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: curie
+order: 30
+official: true
+region: Poland / France
+years: 1867-1934
+age: 45
+pronoun: she
+stay:
+  - 3
+  - 4
+wants:
+  - lab_suit
+  - gloves
+controllable: false
+area: eu
+field: sci
+look:
+  skin: '#fde3d0'
+  hairColor: gray
+  hairStyle: bun
+  glasses: none
+  clothes: '#4f6d8f'
+souvenir:
+  id: notebook_page
+  icon: 📄
+src: Nobel Prize biographies, Marie Curie; her death from aplastic anemia is generally linked to long exposure to radiation.
+review: 2026-11-02 通过：纪念品为笔记复印页，不涉及放射性物质
+t:
+  name:
+    zh-CN: 玛丽·居里
+    en: Marie Curie
+    zh-TW: 瑪麗·居里
+    ja: マリー・キュリー
+    ko: 마리 퀴리
+    fr: Marie Curie
+    es: Marie Curie
+    de: Marie Curie
+  era:
+    zh-CN: 十九至二十世纪，波兰与法国
+    en: 19th-20th century, Poland and France
+    zh-TW: 十九至二十世紀，波蘭與法國
+    ja: 19〜20世紀、ポーランドとフランス
+    ko: 19~20세기, 폴란드와 프랑스
+    fr: XIXe et XXe siècles, Pologne et France
+    es: Siglos XIX y XX, Polonia y Francia
+    de: 19. und 20. Jahrhundert, Polen und Frankreich
+  souvenir:
+    zh-CN: 一页笔记的复印件
+    en: A copy of a notebook page
+    zh-TW: 一頁筆記的影印件
+    ja: ノートの一ページの写し
+    ko: 공책 한 쪽의 사본
+    fr: Une copie d'une page de carnet
+    es: Una copia de una página de cuaderno
+    de: Eine Kopie einer Notizbuchseite
+  arrive_note:
+    zh-CN: 居里夫人推开大门走了进来，说实验室太久没有休息，想在这里住几天。
+    en: Marie Curie stepped through the door, saying she had not left the laboratory in ages and would like to stay a few days.
+    zh-TW: 居里夫人推開大門走了進來，說實驗室太久沒有休息，想在這裡住幾天。
+    ja: マリー・キュリーは玄関をくぐって現れ、実験室から長いこと出ていないので、数日ここに泊まりたいと言った。
+    ko: 마리 퀴리는 현관문을 지나 들어와, 실험실에서 한참 나온 적이 없으니 며칠 묵고 싶다고 말했습니다.
+    fr: Marie Curie franchit la porte d'entrée et dit qu'elle n'était pas sortie du laboratoire depuis une éternité et qu'elle aimerait rester quelques jours.
+    es: Marie Curie cruzó la puerta principal y dijo que hacía siglos que no salía del laboratorio y que le gustaría quedarse unos días.
+    de: Marie Curie trat durch die Haustür und sagte, sie sei ewig nicht aus dem Labor herausgekommen und würde gern ein paar Tage bleiben.
+  ok_line:
+    zh-CN: 她把东西穿戴好，认真地点了点头。
+    en: She put it on and nodded seriously.
+    zh-TW: 她把東西穿戴好，認真地點了點頭。
+    ja: 彼女はそれを身につけ、真剣な顔でうなずいた。
+    ko: 그녀는 그것을 입고 진지하게 고개를 끄덕였습니다.
+    fr: Elle l'enfila et hocha gravement la tête.
+    es: Se lo puso y asintió con seriedad.
+    de: Sie zog es an und nickte ernst.
+  leave_ok:
+    zh-CN: 居里夫人临走前把一页笔记的复印件留给了你，说：谢谢你替我想到这些。
+    en: 'Before leaving, Marie Curie left you a copy of a notebook page: "Thank you for thinking of this for me."'
+    zh-TW: 居里夫人臨走前把一頁筆記的影印件留給了你，說：謝謝你替我想到這些。
+    ja: 帰る前に、マリー・キュリーはノートの一ページの写しを残していった。「私のためにこれを思いついてくれて、ありがとう。」
+    ko: 떠나기 전에 마리 퀴리는 공책 한 쪽의 사본을 남겼습니다. “저를 위해 이런 것까지 생각해 줘서 고마워요.”
+    fr: 'Avant de partir, Marie Curie te laissa la copie d''une page de carnet : « Merci d''avoir pensé à cela pour moi. »'
+    es: 'Antes de irse, Marie Curie te dejó la copia de una página de cuaderno: «Gracias por pensar en esto por mí.»'
+    de: 'Vor dem Abschied ließ Marie Curie dir die Kopie einer Notizbuchseite da: „Danke, dass du daran gedacht hast.“'
+  leave_miss:
+    zh-CN: 居里夫人惦记着实验，匆匆道别回去了。
+    en: Marie Curie, worried about her experiments, said a quick goodbye and went back.
+    zh-TW: 居里夫人惦記著實驗，匆匆道別回去了。
+    ja: マリー・キュリーは実験が気がかりで、急いで別れを告げて帰っていった。
+    ko: 마리 퀴리는 실험이 걱정되어 서둘러 작별하고 돌아갔습니다.
+    fr: Marie Curie, inquiète pour ses expériences, dit un au revoir rapide et repartit.
+    es: Marie Curie, preocupada por sus experimentos, se despidió deprisa y volvió.
+    de: Marie Curie, in Gedanken bei ihren Experimenten, verabschiedete sich eilig und ging zurück.
+  wrong_late:
+    zh-CN: 临走时她轻声说：“你的心意我收到了，只是我更需要能护住双手的东西。”
+    en: 'On the way out she said softly: "I appreciate the thought, but what I really needed was something to protect my hands."'
+    zh-TW: 臨走時她輕聲說：“你的心意我收到了，只是我更需要能護住雙手的東西。”
+    ja: 帰りぎわに、彼女は小声で言った。「お気持ちは受け取りました。でも本当に必要だったのは、手を守るものでした。」
+    ko: 나가면서 그녀는 조용히 말했습니다. “마음은 잘 받았어요. 다만 제가 정말 필요했던 건 손을 보호해 줄 물건이었어요.”
+    fr: 'En sortant, elle dit doucement : « Ton attention me touche, mais j''avais surtout besoin de quoi protéger mes mains. »'
+    es: 'Al salir dijo en voz baja: «Agradezco el gesto, pero lo que de verdad necesitaba era algo que me protegiera las manos.»'
+    de: 'Beim Hinausgehen sagte sie leise: „Deine Absicht habe ich verstanden, aber ich brauchte eher etwas, das meine Hände schützt.“'
+  hint:
+    - {zh-CN: 她把手背到身后：“手指有时会疼，大概是实验室里的缘故。”, en: 'She hid her hands behind her back: "My fingers hurt sometimes, probably from the laboratory."', zh-TW: 她把手背到身後：“手指有時會疼，大概是實驗室裡的緣故。”, ja: 彼女は手を背中に隠した。「ときどき指が痛むのです。たぶん実験室のせいでしょう。」, ko: 그녀는 손을 등 뒤로 감췄습니다. “가끔 손가락이 아파요. 아마 실험실 때문일 거예요.”, fr: 'Elle cacha ses mains derrière son dos : « Mes doigts me font parfois mal, sans doute à cause du laboratoire. »', es: 'Escondió las manos a la espalda: «A veces me duelen los dedos, seguramente por el laboratorio.»', de: 'Sie versteckte die Hände hinter dem Rücken: „Meine Finger schmerzen manchmal, wahrscheinlich vom Labor.“'}
+    - {zh-CN: 她好奇地看着你的灯：“有没有能挡住那些看不见的光的东西？”, en: 'She looked at your lamp curiously: "Is there anything that can block those invisible rays?"', zh-TW: 她好奇地看著你的燈：“有沒有能擋住那些看不見的光的東西？”, ja: 彼女はあなたのランプを興味深そうに見た。「この見えない光を遮れるものはありますか？」, ko: 그녀는 당신의 램프를 호기심 어린 눈으로 보았습니다. “이 보이지 않는 빛을 막아 줄 만한 게 있을까요?”, fr: 'Elle regarda ta lampe avec curiosité : « Y a-t-il quelque chose qui puisse arrêter ces rayons invisibles ? »', es: 'Miró tu lámpara con curiosidad: «¿Hay algo que pueda detener esos rayos invisibles?»', de: 'Sie betrachtete neugierig deine Lampe: „Gibt es etwas, das diese unsichtbaren Strahlen aufhalten kann?“'}
+said:
+  zh-CN: 生活中没有什么可怕的东西，只有需要理解的东西。
+  en: Nothing in life is to be feared, it is only to be understood.
+  zh-TW: 生活中沒有什麼可怕的東西，只有需要理解的東西。
+  ja: 人生に恐れるべきものはない。理解すべきものがあるだけだ。
+  ko: 삶에서 두려워할 것은 아무것도 없다. 이해해야 할 것이 있을 뿐이다.
+  fr: Rien dans la vie n'est à craindre, tout est à comprendre.
+  es: Nada en la vida debe temerse, solo comprenderse.
+  de: Nichts im Leben ist zu fürchten, es muss nur verstanden werden.

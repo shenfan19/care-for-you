@@ -1,0 +1,106 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: zhuge
+order: 20
+official: true
+region: China
+years: 181-234
+age: 48
+pronoun: he
+stay:
+  - 1
+  - 1
+wants: []
+care: invite_rest
+tired: 0.85
+controllable: false
+area: ea
+field: pol
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#5f8a7a'
+souvenir:
+  id: feather_fan
+  icon: 🪶
+src: 《三国志·蜀书·诸葛亮传》，司马懿评“食少事烦”。
+review: 2026-11-02 通过：只写操劳与休息，不涉及战争评价
+t:
+  name:
+    zh-CN: 诸葛亮
+    en: Zhuge Liang
+    zh-TW: 諸葛亮
+    ja: 諸葛亮
+    ko: 제갈량
+    fr: Zhuge Liang
+    es: Zhuge Liang
+    de: Zhuge Liang
+  era:
+    zh-CN: 三国，蜀汉
+    en: Three Kingdoms, Shu Han
+    zh-TW: 三國，蜀漢
+    ja: 三国時代、蜀漢
+    ko: 삼국시대, 촉한
+    fr: Trois Royaumes, Shu Han
+    es: Tres Reinos, Shu Han
+    de: Drei Reiche, Shu Han
+  souvenir:
+    zh-CN: 一把羽扇
+    en: A feather fan
+    zh-TW: 一把羽扇
+    ja: 羽扇
+    ko: 깃털 부채
+    fr: Un éventail de plumes
+    es: Un abanico de plumas
+    de: Ein Federfächer
+  arrive_note:
+    zh-CN: 诸葛亮推开大门走了进来，眼下有些青黑，问能否借一张床。
+    en: Zhuge Liang stepped through the door, dark circles under his eyes, and asked if he could borrow a bed.
+    zh-TW: 諸葛亮推開大門走了進來，眼下有些青黑，問能否借一張床。
+    ja: 諸葛亮は玄関をくぐって現れた。目の下には隈があり、ベッドを貸してもらえないかと尋ねた。
+    ko: 제갈량은 현관문을 지나 들어왔습니다. 눈 밑이 거뭇했고, 침대를 하나 빌릴 수 있겠느냐고 물었습니다.
+    fr: Zhuge Liang franchit la porte d'entrée, les yeux cernés, et demanda s'il pouvait emprunter un lit.
+    es: Zhuge Liang cruzó la puerta principal, con ojeras marcadas, y preguntó si podía pedir prestada una cama.
+    de: Zhuge Liang trat durch die Haustür, mit dunklen Ringen unter den Augen, und fragte, ob er ein Bett ausleihen dürfe.
+  ok_line:
+    zh-CN: 他一觉睡到天黑，醒来时精神了不少。
+    en: He slept until dusk and woke much refreshed.
+    zh-TW: 他一覺睡到天黑，醒來時精神了不少。
+    ja: 彼は夕暮れまで眠り、すっかり元気になって目を覚ました。
+    ko: 그는 해 질 녘까지 자고 한결 개운해져서 깨어났습니다.
+    fr: Il dormit jusqu'au crépuscule et se réveilla bien reposé.
+    es: Durmió hasta el anochecer y despertó muy descansado.
+    de: Er schlief bis zur Dämmerung und wachte ganz erfrischt auf.
+  leave_ok:
+    zh-CN: 诸葛亮临走前说：家里人最重要，莫要熬坏了身子。他留下一把羽扇。
+    en: Before leaving, Zhuge Liang said family matters most and begged you not to wear yourself out. He left a feather fan.
+    zh-TW: 諸葛亮臨走前說：家裡人最重要，莫要熬壞了身子。他留下一把羽扇。
+    ja: 帰る前に、諸葛亮は、家族こそ何より大切だ、どうか体を壊さぬようにと言った。彼は羽扇を残していった。
+    ko: 떠나기 전에 제갈량은 가족이 무엇보다 소중하니 부디 몸을 상하지 말라고 당부했습니다. 그는 깃털 부채를 남기고 갔습니다.
+    fr: Avant de partir, Zhuge Liang dit que la famille passe avant tout et te supplia de ne pas t'épuiser. Il laissa un éventail de plumes.
+    es: Antes de irse, Zhuge Liang dijo que la familia es lo más importante y te rogó que no te agotes. Dejó un abanico de plumas.
+    de: Vor dem Abschied sagte Zhuge Liang, die Familie sei das Wichtigste, und bat dich, dich nicht zu überarbeiten. Er ließ einen Federfächer zurück.
+  leave_miss:
+    zh-CN: 诸葛亮拱手道谢，转身回去了。
+    en: Zhuge Liang bowed his thanks and went back through the door.
+    zh-TW: 諸葛亮拱手道謝，轉身回去了。
+    ja: 諸葛亮は拱手して礼を述べ、扉をくぐって帰っていった。
+    ko: 제갈량은 두 손을 모아 감사를 표하고 문을 지나 돌아갔습니다.
+    fr: Zhuge Liang s'inclina pour remercier et repassa la porte.
+    es: Zhuge Liang hizo una reverencia de agradecimiento y volvió a cruzar la puerta.
+    de: Zhuge Liang verbeugte sich dankend und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他摆摆手：“事无巨细，夜里总睡不踏实。”, en: 'He waved a hand: "So many matters, big and small, and I never sleep well."', zh-TW: 他擺擺手：“事無鉅細，夜裡總睡不踏實。”, ja: 彼は手を振った。「大小さまざまな事があって、夜はいつもよく眠れない。」, ko: 그는 손을 내저었습니다. “크고 작은 일이 너무 많아 밤에 늘 잠을 설친다오.”, fr: 'Il fit un geste de la main : « Tant d''affaires, grandes et petites, et je ne dors jamais bien. »', es: 'Hizo un gesto con la mano: «Tantos asuntos, grandes y pequeños, y nunca duermo bien.»', de: 'Er winkte ab: „So viele Dinge, große und kleine, und nachts schlafe ich nie ruhig.“'}
+    - {zh-CN: 他笑了笑：“有人说我吃得少、事情多，说得不错。”, en: 'He smiled: "Someone once said I eat little and handle too much. They were not wrong."', zh-TW: 他笑了笑：“有人說我吃得少、事情多，說得不錯。”, ja: 彼は微笑んだ。「食は少なく、仕事は多いと言った者がいた。その通りだ。」, ko: 그는 웃었습니다. “누군가 내가 적게 먹고 일은 많이 한다고 했지. 틀린 말은 아니오.”, fr: 'Il sourit : « Quelqu''un a dit un jour que je mange peu et que je fais trop. Il n''avait pas tort. »', es: 'Sonrió: «Alguien dijo una vez que como poco y atiendo demasiado. No andaba errado.»', de: 'Er lächelte: „Jemand sagte einmal, ich äße wenig und erledigte zu viel. Das war nicht falsch.“'}
+said:
+  zh-CN: 非淡泊无以明志，非宁静无以致远。
+  en: Without simplicity there is no clarity of purpose; without stillness, no reaching far.
+  zh-TW: 非淡泊無以明志，非寧靜無以致遠。
+  ja: 質素でなければ志は明らかにならず、静かでなければ遠くへは行けない。
+  ko: 소박하지 않으면 뜻을 밝힐 수 없고, 고요하지 않으면 멀리 갈 수 없다.
+  fr: Sans simplicité, pas de clarté de dessein ; sans calme, pas d'horizon lointain.
+  es: Sin sencillez no hay claridad de propósito; sin quietud, no se llega lejos.
+  de: Ohne Schlichtheit gibt es keine Klarheit des Ziels, ohne Stille kein Weitkommen.

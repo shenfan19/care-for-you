@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: galois
+order: 40
+official: true
+region: France
+age: 20
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - notebook
+  - pen
+controllable: false
+area: eu
+field: sci
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: curly
+  glasses: none
+  clothes: '#7d8fa8'
+souvenir:
+  id: galois_keepsake
+  icon: 📝
+src: Encyclopaedia Britannica, Évariste Galois; his last-night manuscripts with the marginal note "Je n'ai pas le temps".
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 埃瓦里斯特·伽罗瓦
+    en: Évariste Galois
+    zh-TW: 埃瓦里斯特·伽羅瓦
+    ja: エヴァリスト・ガロア
+    ko: 에바리스트 갈루아
+    fr: Évariste Galois
+    es: Évariste Galois
+    de: Évariste Galois
+  era:
+    zh-CN: 十九世纪，法国
+    en: 19th century, France
+    zh-TW: 十九世紀，法國
+    ja: 19世紀、フランス
+    ko: 19세기, 프랑스
+    fr: XIXe siècle, France
+    es: Siglo XIX, Francia
+    de: 19. Jahrhundert, Frankreich
+  souvenir:
+    zh-CN: 一张写满公式的纸
+    en: A sheet full of formulas
+    zh-TW: 一張寫滿公式的紙
+    ja: 公式でいっぱいの一枚の紙
+    ko: 공식으로 가득한 종이 한 장
+    fr: Une feuille couverte de formules
+    es: Una hoja llena de fórmulas
+    de: Ein Blatt voller Formeln
+  arrive_note:
+    zh-CN: 埃瓦里斯特·伽罗瓦推开大门走了进来，说想在这里住几天。
+    en: Évariste Galois came in through the front door and asked to stay a few days.
+    zh-TW: 埃瓦里斯特·伽羅瓦推開大門走了進來，說想在這裡住幾天。
+    ja: エヴァリスト・ガロアは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 에바리스트 갈루아은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Évariste Galois franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Évariste Galois cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Évariste Galois trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他接过东西，立刻伏案写了起来。
+    en: He took it and bent over the desk writing at once.
+    zh-TW: 他接過東西，立刻伏案寫了起來。
+    ja: 彼はそれを受け取ると、すぐ机に身を乗り出して書きはじめた。
+    ko: 그는 그것을 받아 들자마자 책상 위로 몸을 숙이고 쓰기 시작했습니다.
+    fr: Il le prit et se pencha aussitôt sur le bureau pour écrire.
+    es: Lo tomó y se inclinó de inmediato sobre el escritorio a escribir.
+    de: Er nahm es entgegen und beugte sich sofort schreibend über den Tisch.
+  leave_ok:
+    zh-CN: 埃瓦里斯特·伽罗瓦临走前留下一张写满公式的纸，说：有人替我留意到了时间，谢谢。
+    en: 'Before leaving, Évariste Galois left a sheet full of formulas and said: Thank you for noticing that I was short of time.'
+    zh-TW: 埃瓦里斯特·伽羅瓦臨走前留下一張寫滿公式的紙，說：有人替我留意到了時間，謝謝。
+    ja: 帰る前に、エヴァリスト・ガロアは記念の品を残していった：公式でいっぱいの一枚の紙。そして言った。「時間が足りないことに気づいてくれて、ありがとう。」
+    ko: '떠나기 전에 에바리스트 갈루아은(는) 기념품을 남겼습니다: 공식으로 가득한 종이 한 장. 그리고 말했습니다. “내게 시간이 모자란다는 걸 알아봐 줘서 고마워요.”'
+    fr: 'Avant de partir, Évariste Galois laissa un souvenir : Une feuille couverte de formules. Et dit : « Merci d''avoir remarqué que je manquais de temps. »'
+    es: 'Antes de irse, Évariste Galois dejó un recuerdo: Una hoja llena de fórmulas. Y dijo: «Gracias por darte cuenta de que me faltaba tiempo.»'
+    de: 'Vor dem Abschied ließ Évariste Galois etwas zurück: Ein Blatt voller Formeln. Dazu sagte Évariste Galois: „Danke, dass du bemerkt hast, wie knapp meine Zeit war.“'
+  leave_miss:
+    zh-CN: 埃瓦里斯特·伽罗瓦道了谢，推开门回去了。
+    en: Évariste Galois said thanks and went back through the door.
+    zh-TW: 埃瓦里斯特·伽羅瓦道了謝，推開門回去了。
+    ja: エヴァリスト・ガロアはお礼を言い、扉をくぐって帰っていった。
+    ko: 에바리스트 갈루아은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Évariste Galois remercia et repassa la porte.
+    es: Évariste Galois dio las gracias y volvió a cruzar la puerta.
+    de: Évariste Galois bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他一直在纸上写着，边角上有一行小字：“我没有时间了。”, en: 'He kept writing, and in the margin was a line: "I have no time."', zh-TW: 他一直在紙上寫著，邊角上有一行小字：“我沒有時間了。”, ja: 彼はずっと書き続け、余白には一行あった。「時間がない。」, ko: '그는 쉬지 않고 썼고, 여백에는 한 줄이 적혀 있었습니다. “시간이 없다.”', fr: 'Il écrivait sans cesse, et dans la marge se trouvait une ligne : « Je n''ai pas le temps. »', es: 'No dejaba de escribir, y en el margen había una línea: «No tengo tiempo.»', de: 'Er schrieb unablässig, und am Rand stand eine Zeile: „Ich habe keine Zeit.“'}
+    - {zh-CN: 他说今晚要把想到的东西全写完，怕明天来不及。, en: He said he had to write down everything tonight in case tomorrow was too late., zh-TW: 他說今晚要把想到的東西全寫完，怕明天來不及。, ja: 彼は、明日では遅いかもしれないので、今夜のうちに全部書いてしまわなければと言った。, ko: 그는 내일이면 늦을지도 모르니 오늘 밤 안에 전부 써야 한다고 말했습니다., fr: 'Il dit qu''il devait tout écrire cette nuit, au cas où demain serait trop tard.', es: Dijo que tenía que escribir todo esta noche por si mañana era demasiado tarde., de: 'Er sagte, er müsse heute Nacht alles aufschreiben, falls es morgen zu spät sei.'}
+said:
+  zh-CN: 我没有时间了……我没有时间了。
+  en: I have no time... I have no time.
+  zh-TW: 我沒有時間了……我沒有時間了。
+  ja: 時間がない……時間がない。
+  ko: 시간이 없어…… 시간이 없어.
+  fr: Je n'ai pas le temps… Je n'ai pas le temps.
+  es: No tengo tiempo… No tengo tiempo.
+  de: Ich habe keine Zeit … Ich habe keine Zeit.

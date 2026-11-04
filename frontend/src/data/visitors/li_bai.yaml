@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: li_bai
+order: 80
+official: true
+region: China
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - brush
+  - map
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#5f8a7a'
+souvenir:
+  id: li_bai_keepsake
+  icon: 📜
+src: 《全唐诗》，《静夜思》；Encyclopaedia Britannica, Li Bai.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 李白
+    en: Li Bai
+    zh-TW: 李白
+    ja: 李白
+    ko: 이백
+    fr: Li Bai
+    es: Li Bai
+    de: Li Bai
+  era:
+    zh-CN: 唐代，中国
+    en: Tang dynasty, China
+    zh-TW: 唐代，中國
+    ja: 唐代、中国
+    ko: 당나라, 중국
+    fr: Dynastie Tang, Chine
+    es: Dinastía Tang, China
+    de: Tang-Dynastie, China
+  souvenir:
+    zh-CN: 一页诗稿的复印件
+    en: A copy of a page of poems
+    zh-TW: 一頁詩稿的影印件
+    ja: 詩を書いた一ページの写し
+    ko: 시 한 쪽의 사본
+    fr: Une copie d'une page de poèmes
+    es: Una copia de una página de poemas
+    de: Eine Kopie einer Gedichtseite
+  arrive_note:
+    zh-CN: 李白推开大门走了进来，说想在这里住几天。
+    en: Li Bai came in through the front door and asked to stay a few days.
+    zh-TW: 李白推開大門走了進來，說想在這裡住幾天。
+    ja: 李白は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 이백은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Li Bai franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Li Bai cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Li Bai trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他提笔就写，墨迹还没干，月亮已经上来了。
+    en: He took the brush and wrote, and the moon was up before the ink dried.
+    zh-TW: 他提筆就寫，墨跡還沒幹，月亮已經上來了。
+    ja: 彼は筆を取って書き、墨が乾かないうちに月が昇った。
+    ko: 그는 붓을 들고 썼고, 먹이 마르기도 전에 달이 떠올랐습니다.
+    fr: Il prit le pinceau et écrivit, et la lune était déjà levée avant que l'encre soit sèche.
+    es: Tomó el pincel y escribió, y la luna ya estaba alta antes de que se secara la tinta.
+    de: Er nahm den Pinsel und schrieb, und der Mond stand schon am Himmel, bevor die Tusche trocken war.
+  leave_ok:
+    zh-CN: 李白临走前留下一页诗稿的复印件，说：明月在，就还有人陪着。
+    en: 'Before leaving, Li Bai left a copy of a page of poems and said: As long as the moon is there, someone keeps you company.'
+    zh-TW: 李白臨走前留下一頁詩稿的影印件，說：明月在，就還有人陪著。
+    ja: 帰る前に、李白は記念の品を残していった：詩を書いた一ページの写し。そして言った。「月がある限り、誰かがそばにいてくれる。」
+    ko: '떠나기 전에 이백은(는) 기념품을 남겼습니다: 시 한 쪽의 사본. 그리고 말했습니다. “달이 있는 한, 누군가 곁에서 함께해 줍니다.”'
+    fr: 'Avant de partir, Li Bai laissa un souvenir : Une copie d''une page de poèmes. Et dit : « Tant que la lune est là, quelqu''un te tient compagnie. »'
+    es: 'Antes de irse, Li Bai dejó un recuerdo: Una copia de una página de poemas. Y dijo: «Mientras haya luna, alguien te hace compañía.»'
+    de: 'Vor dem Abschied ließ Li Bai etwas zurück: Eine Kopie einer Gedichtseite. Dazu sagte Li Bai: „Solange der Mond da ist, leistet dir jemand Gesellschaft.“'
+  leave_miss:
+    zh-CN: 李白道了谢，推开门回去了。
+    en: Li Bai said thanks and went back through the door.
+    zh-TW: 李白道了謝，推開門回去了。
+    ja: 李白はお礼を言い、扉をくぐって帰っていった。
+    ko: 이백은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Li Bai remercia et repassa la porte.
+    es: Li Bai dio las gracias y volvió a cruzar la puerta.
+    de: Li Bai bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他望着窗外的月亮发呆，嘴里念念有词。, en: 'He stared at the moon outside the window, murmuring to himself.', zh-TW: 他望著窗外的月亮發呆，嘴裡唸唸有詞。, ja: 彼は窓の外の月をじっと見つめ、ひとりごとをつぶやいていた。, ko: 그는 창밖의 달을 뚫어지게 바라보며 혼잣말을 웅얼거렸습니다., fr: Il fixait la lune derrière la fenêtre en murmurant pour lui-même., es: 'Miraba fijamente la luna junto a la ventana, murmurando para sí.', de: Er starrte auf den Mond vor dem Fenster und murmelte vor sich hin.}
+    - {zh-CN: 他问你有没有纸笔，诗要趁新鲜写下来，还问你远处是什么地方。, en: 'He asked for paper and a brush, since a poem has to be written while fresh, and wondered what lay far away.', zh-TW: 他問你有沒有紙筆，詩要趁新鮮寫下來，還問你遠處是什麼地方。, ja: 彼は紙と筆を求めた。詩は新鮮なうちに書かねばならない。そして遠くには何があるのだろうと思いをはせた。, ko: 그는 종이와 붓을 청했습니다. 시는 싱싱할 때 써야 하니까요. 그리고 먼 곳에는 무엇이 있을까 생각했습니다., fr: 'Il demanda du papier et un pinceau, car un poème doit s''écrire tant qu''il est frais, et se demanda ce qui se trouvait au loin.', es: 'Pidió papel y pincel, porque un poema hay que escribirlo en caliente, y se preguntó qué habría lejos.', de: 'Er bat um Papier und Pinsel, denn ein Gedicht muss frisch geschrieben werden, und fragte sich, was in der Ferne liegt.'}
+said:
+  zh-CN: 天生我材必有用，千金散尽还复来。
+  en: Heaven made me with talents, and they must be of use; spend a thousand in gold and it will come again.
+  zh-TW: 天生我材必有用，千金散盡還復來。
+  ja: 天は私に才能を与えた、必ず役に立つはずだ。千金を使い果たしても、また戻ってくる。
+  ko: 하늘이 내게 재주를 주었으니 반드시 쓸모가 있으리라. 천금을 다 써도 다시 돌아온다.
+  fr: Le ciel m'a donné des talents, et ils doivent servir ; dépense mille pièces d'or, elles reviendront.
+  es: El cielo me dio talentos, y han de servir para algo; gasta mil monedas de oro y volverán.
+  de: Der Himmel gab mir Talente, und sie müssen zu etwas taugen; gib tausend Goldstücke aus, sie kommen wieder.

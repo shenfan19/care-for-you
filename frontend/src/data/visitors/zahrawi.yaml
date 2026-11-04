@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: zahrawi
+order: 560
+official: true
+region: Al-Andalus
+age: 50
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - gloves
+  - clock
+controllable: false
+area: wa
+field: med
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#6a8f7a'
+souvenir:
+  id: zahrawi_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica, al-Zahrawi (Abulcasis); the illustrated surgical chapter of Kitab al-Tasrif.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 宰赫拉维
+    en: Al-Zahrawi
+    zh-TW: 宰赫拉維
+    ja: ザフラーウィー
+    ko: 자흐라위
+    fr: Al-Zahrawi
+    es: Al-Zahrawi
+    de: Al-Zahrawi
+  era:
+    zh-CN: 十至十一世纪，安达卢斯
+    en: 10th-11th century, Al-Andalus
+    zh-TW: 十至十一世紀，安達盧斯
+    ja: 10〜11世紀、アンダルス
+    ko: 10~11세기, 알안달루스
+    fr: Xe et XIe siècles, Al-Andalus
+    es: Siglos X y XI, Al-Ándalus
+    de: 10. und 11. Jahrhundert, Al-Andalus
+  souvenir:
+    zh-CN: 一页器具图谱的复印件
+    en: A copy of a page of instrument drawings
+    zh-TW: 一頁器具圖譜的影印件
+    ja: 器具の図の一ページの写し
+    ko: 기구 도판 한 쪽의 사본
+    fr: Une copie d'une page de dessins d'instruments
+    es: Una copia de una página de dibujos de instrumentos
+    de: Eine Kopie einer Seite mit Instrumentenzeichnungen
+  arrive_note:
+    zh-CN: 宰赫拉维推开大门走了进来，说想在这里住几天。
+    en: Al-Zahrawi came in through the front door and asked to stay a few days.
+    zh-TW: 宰赫拉維推開大門走了進來，說想在這裡住幾天。
+    ja: ザフラーウィーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 자흐라위은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Al-Zahrawi franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Al-Zahrawi cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Al-Zahrawi trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把东西摆在桌上，对着钟看了看时辰，说准点最要紧。
+    en: He laid it on the table, glanced at the clock, and said punctuality matters most.
+    zh-TW: 他把東西擺在桌上，對著鍾看了看時辰，說準點最要緊。
+    ja: 彼はそれを机に置き、時計をちらりと見て、時間を守ることが何より大切だと言った。
+    ko: 그는 그것을 탁자에 놓고 시계를 흘끗 보더니 시간을 지키는 것이 가장 중요하다고 말했습니다.
+    fr: Il le posa sur la table, jeta un œil à l'horloge et dit que la ponctualité compte avant tout.
+    es: Lo dejó sobre la mesa, miró el reloj y dijo que la puntualidad es lo más importante.
+    de: Er legte es auf den Tisch, warf einen Blick auf die Uhr und sagte, Pünktlichkeit sei das Wichtigste.
+  leave_ok:
+    zh-CN: 宰赫拉维临走前留下一页器具图谱的复印件，说：手艺要一代一代画下来，才不会失传。
+    en: 'Before leaving, Al-Zahrawi left a copy of a page of instrument drawings and said: A craft must be drawn down generation by generation, or it is lost.'
+    zh-TW: 宰赫拉維臨走前留下一頁器具圖譜的影印件，說：手藝要一代一代畫下來，才不會失傳。
+    ja: 帰る前に、ザフラーウィーは記念の品を残していった：器具の図の一ページの写し。そして言った。「技は代々描き残さなければ、失われてしまいます。」
+    ko: '떠나기 전에 자흐라위은(는) 기념품을 남겼습니다: 기구 도판 한 쪽의 사본. 그리고 말했습니다. “기술은 세대에서 세대로 그려 남기지 않으면 사라집니다.”'
+    fr: 'Avant de partir, Al-Zahrawi laissa un souvenir : Une copie d''une page de dessins d''instruments. Et dit : « Un métier doit être dessiné de génération en génération, sinon il se perd. »'
+    es: 'Antes de irse, Al-Zahrawi dejó un recuerdo: Una copia de una página de dibujos de instrumentos. Y dijo: «Un oficio debe dibujarse de generación en generación, o se pierde.»'
+    de: 'Vor dem Abschied ließ Al-Zahrawi etwas zurück: Eine Kopie einer Seite mit Instrumentenzeichnungen. Dazu sagte Al-Zahrawi: „Ein Handwerk muss von Generation zu Generation aufgezeichnet werden, sonst geht es verloren.“'
+  leave_miss:
+    zh-CN: 宰赫拉维道了谢，推开门回去了。
+    en: Al-Zahrawi said thanks and went back through the door.
+    zh-TW: 宰赫拉維道了謝，推開門回去了。
+    ja: ザフラーウィーはお礼を言い、扉をくぐって帰っていった。
+    ko: 자흐라위은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Al-Zahrawi remercia et repassa la porte.
+    es: Al-Zahrawi dio las gracias y volvió a cruzar la puerta.
+    de: Al-Zahrawi bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他把用过的手术器具一件件画下来，说一幅图胜过千句话。, en: He drew each surgical instrument he used and said one picture is worth a thousand words., zh-TW: 他把用過的手術器具一件件畫下來，說一幅圖勝過千句話。, ja: 彼は使った手術器具を一つずつ描き、一枚の絵は千の言葉に勝ると言った。, ko: '그는 쓴 수술 기구를 하나하나 그려 두었고, 그림 한 장이 천 마디 말보다 낫다고 말했습니다.', fr: Il dessinait chaque instrument chirurgical qu'il employait et disait qu'une image vaut mille mots., es: Dibujaba cada instrumento quirúrgico que usaba y decía que una imagen vale más que mil palabras., de: 'Er zeichnete jedes chirurgische Instrument, das er benutzte, und sagte, ein Bild sei mehr wert als tausend Worte.'}
+    - {zh-CN: 他说医生的手要稳，心要细，器具要干净。, en: 'He said a surgeon''s hands must be steady, his mind careful and his tools clean.', zh-TW: 他說醫生的手要穩，心要細，器具要乾淨。, ja: 彼は、外科医の手は確かに、心は細やかに、道具は清潔でなければならないと言った。, ko: '그는 외과의의 손은 흔들림이 없고, 마음은 세심하고, 도구는 깨끗해야 한다고 말했습니다.', fr: 'Il disait que les mains d''un chirurgien doivent être sûres, son esprit minutieux et ses outils propres.', es: 'Dijo que las manos de un cirujano deben ser firmes, su mente cuidadosa y sus herramientas limpias.', de: 'Er sagte, die Hände eines Chirurgen müssten ruhig sein, der Geist sorgfältig und die Werkzeuge sauber.'}

@@ -1,0 +1,106 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: nightingale
+order: 10
+official: true
+region: Britain
+years: 1820-1910
+age: 38
+pronoun: she
+stay:
+  - 1
+  - 1
+wants: []
+care: invite_rest
+tired: 0.85
+controllable: false
+area: eu
+field: med
+look:
+  skin: '#fde3d0'
+  hairColor: brown
+  hairStyle: bun
+  glasses: none
+  clothes: '#7d8fa8'
+souvenir:
+  id: oil_lamp
+  icon: 🪔
+src: Encyclopaedia Britannica, Florence Nightingale; Crimean War nursing, later years largely bedridden by illness.
+review: 2026-11-02 通过：无政治与宗教争议，只提护理与休息
+t:
+  name:
+    zh-CN: 弗洛伦斯·南丁格尔
+    en: Florence Nightingale
+    zh-TW: 弗洛倫斯·南丁格爾
+    ja: フローレンス・ナイチンゲール
+    ko: 플로렌스 나이팅게일
+    fr: Florence Nightingale
+    es: Florence Nightingale
+    de: Florence Nightingale
+  era:
+    zh-CN: 十九世纪，英国
+    en: 19th century, Britain
+    zh-TW: 十九世紀，英國
+    ja: 19世紀、イギリス
+    ko: 19세기, 영국
+    fr: XIXe siècle, Royaume-Uni
+    es: Siglo XIX, Reino Unido
+    de: 19. Jahrhundert, Großbritannien
+  souvenir:
+    zh-CN: 一盏油灯
+    en: An oil lamp
+    zh-TW: 一盞油燈
+    ja: 石油ランプ
+    ko: 석유 등잔
+    fr: Une lampe à huile
+    es: Una lámpara de aceite
+    de: Eine Öllampe
+  arrive_note:
+    zh-CN: 南丁格尔推开大门走了进来，说自己照顾了太多人，想借一张床。
+    en: Florence Nightingale stepped through the door and asked to borrow a bed, having nursed too many people.
+    zh-TW: 南丁格爾推開大門走了進來，說自己照顧了太多人，想借一張床。
+    ja: ナイチンゲールは玄関をくぐって現れ、あまりにも多くの人を看病したので、ベッドをひとつ貸してほしいと頼んだ。
+    ko: 나이팅게일은 현관문을 지나 들어와, 너무 많은 사람을 간호했으니 침대 하나만 빌려 달라고 청했습니다.
+    fr: Florence Nightingale franchit la porte d'entrée et demanda à emprunter un lit, ayant soigné trop de monde.
+    es: Florence Nightingale cruzó la puerta principal y pidió que le prestaran una cama, porque había cuidado a demasiada gente.
+    de: Florence Nightingale trat durch die Haustür und bat, ein Bett auszuleihen, weil sie zu viele Menschen gepflegt hatte.
+  ok_line:
+    zh-CN: 她睡了很久，醒来时气色好多了。
+    en: She slept for hours and woke looking much better.
+    zh-TW: 她睡了很久，醒來時氣色好多了。
+    ja: 彼女は何時間も眠り、見違えるほど顔色がよくなって目を覚ました。
+    ko: 그녀는 몇 시간을 자고 한결 좋아진 얼굴로 깨어났습니다.
+    fr: Elle dormit des heures et se réveilla bien mieux.
+    es: Durmió durante horas y despertó con mucho mejor aspecto.
+    de: Sie schlief stundenlang und wachte deutlich erholter auf.
+  leave_ok:
+    zh-CN: 南丁格尔临走前说：你把家人照顾得很好，请继续好好照顾他们。她留下了一盏油灯。
+    en: Before leaving, Florence Nightingale said you are looking after your family well and asked you to keep doing so. She left an oil lamp.
+    zh-TW: 南丁格爾臨走前說：你把家人照顧得很好，請繼續好好照顧他們。她留下了一盞油燈。
+    ja: 帰る前に、ナイチンゲールは、あなたは家族をよく世話していますと言い、これからも続けてくださいと頼んだ。彼女は石油ランプを残していった。
+    ko: 떠나기 전에 나이팅게일은 당신이 가족을 잘 돌보고 있다고 말하며 계속 그렇게 해 달라고 부탁했습니다. 그녀는 석유 등잔을 남기고 갔습니다.
+    fr: Avant de partir, Florence Nightingale dit que tu prends bien soin de ta famille et te demanda de continuer. Elle laissa une lampe à huile.
+    es: Antes de irse, Florence Nightingale dijo que cuidas bien de tu familia y te pidió que sigas así. Dejó una lámpara de aceite.
+    de: Vor dem Abschied sagte Florence Nightingale, du sorgst gut für deine Familie, und bat dich, so weiterzumachen. Sie ließ eine Öllampe zurück.
+  leave_miss:
+    zh-CN: 南丁格尔轻声道了谢，没有多说，推开门回去了。
+    en: Florence Nightingale thanked you quietly and went back through the door.
+    zh-TW: 南丁格爾輕聲道了謝，沒有多說，推開門回去了。
+    ja: ナイチンゲールは静かにお礼を言い、扉をくぐって帰っていった。
+    ko: 나이팅게일은 조용히 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Florence Nightingale remercia doucement et repassa la porte.
+    es: Florence Nightingale dio las gracias en voz baja y volvió a cruzar la puerta.
+    de: Florence Nightingale bedankte sich leise und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她揉了揉眼睛：“我很久没有睡过一个整觉了。”, en: 'She rubbed her eyes: "I have not slept a whole night in a long time."', zh-TW: 她揉了揉眼睛：“我很久沒有睡過一個整覺了。”, ja: 彼女は目をこすった。「一晩ぐっすり眠るなんて、もう長いことしていません。」, ko: 그녀는 눈을 비볐습니다. “밤새 푹 자 본 지 오래됐어요.”, fr: 'Elle se frotta les yeux : « Cela fait longtemps que je n''ai pas dormi toute une nuit. »', es: 'Se frotó los ojos: «Hace mucho que no duermo una noche entera.»', de: 'Sie rieb sich die Augen: „Ich habe schon lange keine ganze Nacht mehr durchgeschlafen.“'}
+    - {zh-CN: 她看了看你的家人：“照顾人的人，也需要被人照顾。”, en: 'She looked at your family: "Those who care for others need caring for too."', zh-TW: 她看了看你的家人：“照顧人的人，也需要被人照顧。”, ja: 彼女はあなたの家族を見た。「人の世話をする人も、世話をされる必要があるのです。」, ko: 그녀는 당신의 가족을 바라보았습니다. “남을 돌보는 사람도 돌봄이 필요해요.”, fr: 'Elle regarda ta famille : « Ceux qui prennent soin des autres ont aussi besoin qu''on prenne soin d''eux. »', es: 'Miró a tu familia: «Quien cuida a otros también necesita que lo cuiden.»', de: 'Sie sah deine Familie an: „Wer sich um andere kümmert, braucht auch jemanden, der sich um ihn kümmert.“'}
+said:
+  zh-CN: 医院的第一条要求，是不能伤害病人。
+  en: The very first requirement in a hospital is that it should do the sick no harm.
+  zh-TW: 醫院的第一條要求，是不能傷害病人。
+  ja: 病院の第一の要件は、病人に害を与えないことです。
+  ko: 병원의 첫 번째 요건은 환자에게 해를 끼치지 않는 것입니다.
+  fr: La toute première exigence d'un hôpital est de ne pas nuire aux malades.
+  es: El primer requisito de un hospital es que no haga daño a los enfermos.
+  de: Die allererste Forderung an ein Krankenhaus ist, dass es den Kranken keinen Schaden zufügt.

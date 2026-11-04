@@ -33,14 +33,14 @@ This page explains the daily rhythm, the visitors who come in through the front 
 
 ## Writing a visitor card
 
-Official cards live in `frontend/src/data/visitors.js` and `frontend/src/data/visitors_cards.js`. You can add your own cards without changing any code by putting YAML files in the data folder under `templates/visitors/`. Cards you add yourself are marked as unofficial in the game, are never uploaded and are not hosted by this project. A card with `care: invite_rest` is satisfied by inviting the guest to rest, and `tired: 0.85` makes them arrive exhausted.
+Official cards are one YAML file per visitor in `frontend/src/data/visitors/`. After editing one, run `node tools/build_cards.js` to pack them into `frontend/src/data/visitors_packed.js`, which the page loads; `node tools/build_cards.js --check` tells you whether the packed file is out of date. Each file carries the text of all eight interface languages next to each other, so a card can be read, proofread and translated in one place; the packer does not translate anything. The same format works for your own cards, which may list only the languages you write, and a card may carry a `said` field, a famous line that follows the two hints. You can add your own cards without changing any code by putting YAML files in the data folder under `templates/visitors/`. Cards you add yourself are marked as unofficial in the game, are never uploaded and are not hosted by this project. A card with `care: invite_rest` is satisfied by inviting the guest to rest, and `tired: 0.85` makes them arrive exhausted.
 
 ```yaml
 cards:
   - id: example
     region: Somewhere
     age: 40
-    pronoun: 他        # 他, 她 or 它, used by the portrait
+    pronoun: he        # he, she or it, used by the portrait
     stay: [1, 2]       # fewest and most days
     wants: [tea, book] # gift ids from the gift list, or use care: rest instead
     look: { skin: '#f6d2b4', hairColor: black, hairStyle: short, glasses: none, clothes: '#7f9580' }
@@ -61,7 +61,7 @@ cards:
       wrong_late: { zh-CN: '', en: '' }
 ```
 
-Gift ids are the keys of `V.GIFTS` in `visitors.js`. Check the result with `node frontend/tests/play_test.js`, which verifies the fields, the languages and the gifts of every official card.
+Gift ids are the keys of `V.GIFTS` in `frontend/src/data/visitors.js`. A card's `order` only decides where it sits in the list. Check the result with `node frontend/tests/play_test.js`, which verifies the fields, the languages and the gifts of every official card.
 
 ## What the official cards follow
 

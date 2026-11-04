@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: horton
+order: 420
+official: true
+region: Sierra Leone
+age: 40
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - umbrella
+  - coat
+controllable: false
+area: af
+field: med
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: short
+  glasses: round
+  clothes: '#5f7f9a'
+souvenir:
+  id: horton_keepsake
+  icon: 🌦️
+src: Encyclopaedia Britannica and Dictionary of African Biography, James Africanus Horton; Physical and Medical Climate and Meteorology of the West Coast of Africa (1867).
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 詹姆斯·阿非利加努斯·霍顿
+    en: James Africanus Horton
+    zh-TW: 詹姆斯·阿非利加努斯·霍頓
+    ja: ジェームズ・アフリカヌス・ホートン
+    ko: 제임스 아프리카누스 호턴
+    fr: James Africanus Horton
+    es: James Africanus Horton
+    de: James Africanus Horton
+  era:
+    zh-CN: 十九世纪，塞拉利昂
+    en: 19th century, Sierra Leone
+    zh-TW: 十九世紀，獅子山
+    ja: 19世紀、シエラレオネ
+    ko: 19세기, 시에라리온
+    fr: XIXe siècle, Sierra Leone
+    es: Siglo XIX, Sierra Leona
+    de: 19. Jahrhundert, Sierra Leone
+  souvenir:
+    zh-CN: 一页天气和病例的记录
+    en: A page of weather and case records
+    zh-TW: 一頁天氣和病例的記錄
+    ja: 天気と症例の記録の一ページ
+    ko: 날씨와 증례 기록 한 쪽
+    fr: Une page de relevés météo et de cas
+    es: Una página de registros del tiempo y de casos
+    de: Eine Seite mit Wetter- und Fallaufzeichnungen
+  arrive_note:
+    zh-CN: 詹姆斯·阿非利加努斯·霍顿推开大门走了进来，说想在这里住几天。
+    en: James Africanus Horton came in through the front door and asked to stay a few days.
+    zh-TW: 詹姆斯·阿非利加努斯·霍頓推開大門走了進來，說想在這裡住幾天。
+    ja: ジェームズ・アフリカヌス・ホートンは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 제임스 아프리카누스 호턴은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: James Africanus Horton franchit la porte d'entrée et demanda à rester quelques jours.
+    es: James Africanus Horton cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: James Africanus Horton trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他撑开看了看，说雨季的数字又要多记一栏。
+    en: He opened it, looked at the sky, and said the rainy season needed another column.
+    zh-TW: 他撐開看了看，說雨季的數字又要多記一欄。
+    ja: 彼はそれを開き、空を見上げて、雨季には欄がもうひとつ要ると言った。
+    ko: 그는 그것을 펴 들고 하늘을 올려다보며, 우기에는 칸이 하나 더 필요하겠다고 말했습니다.
+    fr: Il l'ouvrit, regarda le ciel et dit que la saison des pluies demandait une colonne de plus.
+    es: Lo abrió, miró al cielo y dijo que la temporada de lluvias necesitaba otra columna.
+    de: Er spannte ihn auf, sah zum Himmel und sagte, die Regenzeit brauche eine weitere Spalte.
+  leave_ok:
+    zh-CN: 詹姆斯·阿非利加努斯·霍顿临走前留下一页天气和病例的记录，说：数据是诚实的，你只要肯记。
+    en: 'Before leaving, James Africanus Horton left a page of weather and case records and said: Records are honest, as long as you keep them.'
+    zh-TW: 詹姆斯·阿非利加努斯·霍頓臨走前留下一頁天氣和病例的記錄，說：資料是誠實的，你只要肯記。
+    ja: 帰る前に、ジェームズ・アフリカヌス・ホートンは記念の品を残していった：天気と症例の記録の一ページ。そして言った。「記録は正直です。つけ続けさえすれば。」
+    ko: '떠나기 전에 제임스 아프리카누스 호턴은(는) 기념품을 남겼습니다: 날씨와 증례 기록 한 쪽. 그리고 말했습니다. “기록은 정직합니다. 꾸준히 적기만 한다면요.”'
+    fr: 'Avant de partir, James Africanus Horton laissa un souvenir : Une page de relevés météo et de cas. Et dit : « Les relevés sont honnêtes, pourvu qu''on les tienne. »'
+    es: 'Antes de irse, James Africanus Horton dejó un recuerdo: Una página de registros del tiempo y de casos. Y dijo: «Los registros son honestos, siempre que los lleves.»'
+    de: 'Vor dem Abschied ließ James Africanus Horton etwas zurück: Eine Seite mit Wetter- und Fallaufzeichnungen. Dazu sagte James Africanus Horton: „Aufzeichnungen sind ehrlich, solange man sie führt.“'
+  leave_miss:
+    zh-CN: 詹姆斯·阿非利加努斯·霍顿道了谢，推开门回去了。
+    en: James Africanus Horton said thanks and went back through the door.
+    zh-TW: 詹姆斯·阿非利加努斯·霍頓道了謝，推開門回去了。
+    ja: ジェームズ・アフリカヌス・ホートンはお礼を言い、扉をくぐって帰っていった。
+    ko: 제임스 아프리카누스 호턴은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: James Africanus Horton remercia et repassa la porte.
+    es: James Africanus Horton dio las gracias y volvió a cruzar la puerta.
+    de: James Africanus Horton bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说一个地方的病，要用那个地方的天气、水和饮食来看，每一样都要记。, en: 'He said the illnesses of a place must be read against its weather, water and food, and each must be recorded.', zh-TW: 他說一個地方的病，要用那個地方的天氣、水和飲食來看，每一樣都要記。, ja: 彼は、ある土地の病は、その土地の天気、水、食べ物と合わせて見るべきで、すべて記録しなければならないと言った。, ko: '그는 한 지역의 병은 그곳의 날씨, 물, 음식과 함께 읽어야 하고 모든 것을 기록해야 한다고 말했습니다.', fr: 'Il dit que les maladies d''un endroit doivent se lire avec son climat, son eau et son alimentation, et que tout doit être consigné.', es: 'Dijo que las enfermedades de un lugar hay que leerlas junto con su clima, su agua y su comida, y que todo debe anotarse.', de: 'Er sagte, die Krankheiten eines Ortes müsse man an dessen Wetter, Wasser und Kost ablesen, und alles müsse festgehalten werden.'}
+    - {zh-CN: 他在英国学了医，回来后一直在记家乡的病例。, en: 'He trained in medicine in Britain and, back home, kept recording the cases of his homeland.', zh-TW: 他在英國學了醫，回來後一直在記家鄉的病例。, ja: 彼はイギリスで医学を学び、帰郷してからも故郷の症例を記録しつづけていた。, ko: 그는 영국에서 의학을 배우고 돌아와 고향의 증례를 계속 기록하고 있었습니다., fr: 'Il avait étudié la médecine en Grande-Bretagne et, de retour, continuait de consigner les cas de sa terre.', es: 'Estudió medicina en Gran Bretaña y, de vuelta, siguió registrando los casos de su tierra.', de: Er hatte in Großbritannien Medizin studiert und führte nach seiner Rückkehr weiter Buch über die Fälle seiner Heimat.}

@@ -77,23 +77,9 @@ CY.i18n.register("zh-TW", {
  "bg.rose": "玫瑰",
  "bg.gray": "中性灰",
  "lang.auto": "跟隨瀏覽器",
- "arch.grandpa": "爺爺",
- "arch.grandma": "奶奶",
- "arch.waigong": "外公",
- "arch.waipo": "外婆",
- "arch.dad": "爸爸",
- "arch.mom": "媽媽",
- "arch.aunt": "姑姑",
- "arch.uncle": "舅舅", "arch.me": "我",
- "arch.brother": "哥哥",
- "arch.sister": "姐姐",
- "arch.daughter": "女兒",
- "arch.son": "兒子",
- "arch.nephew": "侄子",
- "arch.friend": "朋友",
- "arch.cat": "貓",
- "arch.dog": "狗",
- "arch.snake": "蛇",
+
+ "arch.me": "我",
+
  "ob.title": "你有什麼人要照顧嗎？",
  "ob.sub": "選一個開始就行，之後隨時可以再新增。",
   "ob.added": "已新增：{names}",
@@ -106,7 +92,7 @@ CY.i18n.register("zh-TW", {
  "preset.elder.note": "有糖尿病，會有吃藥和飲食的小選擇",
  "preset.pet.label": "只養一隻貓",
  "preset.pet.note": "最輕的開始",
- "preset.name.grandpa": "爺爺",
+ "preset.name.paternal_grandpa": "爺爺",
  "preset.name.daughter": "寶寶",
  "preset.name.cat": "糰子",
  "sec.interrupt": "打擾",
@@ -232,7 +218,7 @@ CY.i18n.register("zh-TW", {
  "ans.generic3": "我也想知道。",
      "unit.min": "{n} 分鐘",
  "unit.hour": "{n} 小時",
- 
+
  "sec.play": "體驗",
  "sec.economy": "工作與錢",
  "add.group_plant": "花草",
@@ -258,17 +244,7 @@ CY.i18n.register("zh-TW", {
  "preset.name.baby": "寶寶",
  "preset.name.succulent": "多肉",
  "preset.name.flower": "小花",
- "arch.baby": "寶寶",
- "arch.toddler": "幼兒",
- "arch.teen": "少年",
- "arch.rabbit": "兔子",
- "arch.hamster": "倉鼠",
- "arch.bird": "小鳥",
- "arch.fish": "金魚",
- "arch.turtle": "烏龜",
- "arch.succulent": "多肉",
- "arch.flower": "開花的花",
- "arch.tree": "盆栽小樹",
+
  "class.infant": "嬰兒",
  "class.toddler": "幼兒",
  "class.child": "兒童",
@@ -288,18 +264,15 @@ CY.i18n.register("zh-TW", {
  "class.tree": "小樹",
  "type.cry": "哭鬧",
  "type.self": "自己來",
-    
-     
- 
- 
+
              "toast.busy": "你正忙著{what}。",
  "toast.started": "開始{what}，要花 {min} 分鐘。",
- 
+
  "toast.nobody": "……",
  "log.self": "沒人管，{name}自己解決了：{need}",
  "log.cry": "{name}哭了起來：{need}",
  "log.healed": "{name}的{cond}好了",
- 
+
  "log.missed_need_helpless": "你沒趕上，{name}沒法自己處理：{text}",
  "line.cry": "哇——",
  "mode.reality": "現實",
@@ -381,12 +354,7 @@ CY.i18n.register("zh-TW", {
  "pron.sub.m": "他",
  "pron.sub.f": "她",
  "pron.sub.n": "牠",
- "arch.husband": "丈夫",
- "arch.wife": "妻子",
- "arch.neighbor": "鄰居老人",
- "arch.roommate": "室友",
- "arch.parrot": "鸚鵡",
- "arch.cactus": "仙人掌",
+
  "class.cactus": "仙人掌",
  "need.thirst": "口渴",
  "need.hunger": "飢餓",
@@ -515,15 +483,13 @@ CY.i18n.register("zh-TW", {
  "ini.ai.max_calls_per_hour": "每小時最多呼叫次數，防止花費失控",
  "ini.ai.share_replies": "是否允許把你回答過的話發給 AI 作為上下文",
 
- 
-
  });
 
 CY.i18n.register("zh-TW", {"player.title": "爸爸", "player.name": "你"});
 
 CY.i18n.register("zh-TW", {"btn.edit": "編輯", "btn.archive": "封存", "btn.delete": "刪除", "btn.restore": "恢復", "del.title": "刪除{name}？", "del.note": "刪除後{name}的紀錄、說過的話和狀態都會從本機移除，無法恢復。只是想讓ta先離開的話，可以選封存，紀錄會留著。"});
 
-CY.i18n.register("zh-TW", {"hdr.share": "分享卡片", "share.title": "分享卡片", "share.note": "只在你的裝置上生成一張圖，你選哪些數字就放哪些，預設不含名字。遊戲不會上傳，也不推薦你分享。", "share.f_time": "陪伴時間", "share.f_care": "照顧次數", "share.f_talk": "聊過天", "share.f_called": "被叫的次數", "share.f_back": "收到的心意", "share.f_names": "顯示名字", "share.save": "儲存圖片", "share.send": "分享", "share.line_time": "陪伴了 {t}", "share.line_care": "照顧了 {n} 次", "share.line_talk": "聊了 {n} 次", "share.line_back": "收到了 {n} 份心意", "share.foot": "Care for You · 沒有分數，只有陪伴", "cond.heart": "心臟病", "cond.parkinson": "帕金森氏症", "cond.depress": "情緒低落", "cond.nocturia": "夜尿多", "cond.eczema": "濕疹", "cond.fracture": "骨折復原", "cond.trauma": "創傷後驚醒", "cond.allergy": "過敏", "need.chest": "胸口發悶", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上廁所", "need.itch": "皮膚發癢", "need.pain": "傷處疼", "need.nightmare": "睡不安穩", "need.sneeze": "打噴嚏流眼淚", "need.veg": "想吃新鮮蔬菜", "need.humid": "要噴水保濕", "act.restsit": "扶著坐下歇歇", "act.steady": "扶穩", "act.listen": "靜靜聽ta說", "act.walkout": "陪著出去走走", "act.lead": "扶去廁所", "act.nightlight": "開小夜燈", "act.selftoilet": "自己去廁所", "selfact.selftoilet": "自己去廁所", "act.ointment": "塗藥膏", "act.trimnails": "剪指甲", "act.support": "扶著走幾步", "act.painkill": "吃止痛藥", "act.rehab": "陪著做復健動作", "act.stayclose": "陪在身邊不說話", "act.warmdrink": "遞一杯熱飲", "act.antihist": "吃抗過敏藥", "act.airclean": "打掃除塵", "act.veggie": "餵新鮮蔬菜", "act.mist": "噴水保濕", "act.train": "教口令", "act.teach": "教說話", "class.guineapig": "天竺鼠", "class.gecko": "守宮", "arch.guineapig": "天竺鼠", "arch.gecko": "守宮", "arch.refugee_elder": "逃難來的老人", "arch.refugee_mother": "逃難來的媽媽", "arch.refugee_child": "逃難來的孩子", "arch.wheelchair": "坐輪椅的家人", "preset.host.label": "收留一家逃難的人", "preset.host.note": "一位老人，一位媽媽，一個孩子，剛到一個陌生的地方，需要時間慢慢安下心來", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "媽媽", "preset.name.refugee_child": "孩子", "preset.night.label": "夜裡起夜的爺爺", "preset.night.note": "夜尿多，夜裡要起來，白天也有些虛弱，需要有人留意"});
+CY.i18n.register("zh-TW", {"hdr.share": "分享卡片", "share.title": "分享卡片", "share.note": "只在你的裝置上生成一張圖，你選哪些數字就放哪些，預設不含名字。遊戲不會上傳，也不推薦你分享。", "share.f_time": "陪伴時間", "share.f_care": "照顧次數", "share.f_talk": "聊過天", "share.f_called": "被叫的次數", "share.f_back": "收到的心意", "share.f_names": "顯示名字", "share.save": "儲存圖片", "share.send": "分享", "share.line_time": "陪伴了 {t}", "share.line_care": "照顧了 {n} 次", "share.line_talk": "聊了 {n} 次", "share.line_back": "收到了 {n} 份心意", "share.foot": "Care for You · 沒有分數，只有陪伴", "cond.heart": "心臟病", "cond.parkinson": "帕金森氏症", "cond.depress": "情緒低落", "cond.nocturia": "夜尿多", "cond.eczema": "濕疹", "cond.fracture": "骨折復原", "cond.trauma": "創傷後驚醒", "cond.allergy": "過敏", "need.chest": "胸口發悶", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上廁所", "need.itch": "皮膚發癢", "need.pain": "傷處疼", "need.nightmare": "睡不安穩", "need.sneeze": "打噴嚏流眼淚", "need.veg": "想吃新鮮蔬菜", "need.humid": "要噴水保濕", "act.restsit": "扶著坐下歇歇", "act.steady": "扶穩", "act.listen": "靜靜聽ta說", "act.walkout": "陪著出去走走", "act.lead": "扶去廁所", "act.nightlight": "開小夜燈", "act.selftoilet": "自己去廁所", "selfact.selftoilet": "自己去廁所", "act.ointment": "塗藥膏", "act.trimnails": "剪指甲", "act.support": "扶著走幾步", "act.painkill": "吃止痛藥", "act.rehab": "陪著做復健動作", "act.stayclose": "陪在身邊不說話", "act.warmdrink": "遞一杯熱飲", "act.antihist": "吃抗過敏藥", "act.airclean": "打掃除塵", "act.veggie": "餵新鮮蔬菜", "act.mist": "噴水保濕", "act.train": "教口令", "act.teach": "教說話", "class.guineapig": "天竺鼠", "class.gecko": "守宮", "preset.host.label": "收留一家逃難的人", "preset.host.note": "一位老人，一位媽媽，一個孩子，剛到一個陌生的地方，需要時間慢慢安下心來", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "媽媽", "preset.name.refugee_child": "孩子", "preset.night.label": "夜裡起夜的爺爺", "preset.night.note": "夜尿多，夜裡要起來，白天也有些虛弱，需要有人留意"});
 
 CY.i18n.register("zh-TW", {"loc.home": "家", "loc.office": "辦公室", "loc.hospital": "醫院", "loc.bedroom": "臥室", "loc.market": "超市", "loc.aisle": "超市裡", "act.groceries": "去買菜", "log.groceries": "買菜回來了，帶回 {n} 份食材", "loc.guest": "客房", "loc.elder": "老人房", "loc.toilet": "衛生間", "loc.study": "書房", "loc.living": "客廳", "loc.kitchen": "廚房", "loc.yard": "院子", "loc.ward": "病房", "loc.desk": "工位", "nav.here": "你在{place}", "nav.travel_hold": "前往{place}，長按 {n} 秒", "toast.offsite": "{name}在{place}，先過去吧", "toast.walking": "正在走過去，到了就做", "log.fall_minor": "{name}夜裡起夜時摔了一下，沒有大礙。", "log.fall_serious": "{name}夜裡起夜摔倒了，被送到了醫院。", "log.discharge": "{name}出院回家了。", "log.night_wc": "{name}夜裡起來上了廁所。", "room.edit": "編輯{name}", });
 
@@ -533,11 +499,9 @@ CY.i18n.register("zh-TW", {"backend.error": "遠端後端連不上，已改用�
 
 CY.i18n.register("zh-TW", {"trait.shy": "害羞", "trait.shy_tip": "話少，不愛主動開口，需要陪伴的速度慢一點，也更能自己待著", "trait.chatty": "愛聊天", "trait.chatty_tip": "話多，想有人陪的速度更快，心情也更好", "trait.curious": "好奇", "trait.curious_tip": "什麼都想看看，想玩的速度更快", "trait.stubborn": "倔強", "trait.stubborn_tip": "認定了就不改，照顧的效果打一點折扣，心情稍低", "trait.gentle": "溫和", "trait.gentle_tip": "脾氣好，心情偏高，身體稍結實一點", "trait.playful": "愛玩", "trait.playful_tip": "想玩的速度很快，心情偏高", "trait.anxious": "愛操心", "trait.anxious_tip": "想有人陪的速度更快，身體稍弱，心情偏低", "trait.proud": "要面子", "trait.proud_tip": "不願麻煩別人，自理更多，想有人陪的速度慢", "trait.sentimental": "念舊", "trait.sentimental_tip": "愛回憶以前，想有人陪的速度偏快"});
 
-CY.i18n.register("zh-TW", {"arch.hedgehog": "刺蝟", "arch.duck": "鴨子", "arch.ferret": "雪貂", "arch.axolotl": "六角恐龍", "arch.chicken": "小雞", "arch.orchid": "蘭花", "arch.bamboo": "竹子", "arch.gongong": "公公", "arch.popo": "婆婆", "arch.grandson": "孫子", "arch.granddaughter": "孫女", "arch.younger_brother": "弟弟", "arch.younger_sister": "妹妹", "arch.niece": "外甥女", "arch.classmate": "同學", "class.hedgehog": "刺蝟", "class.duck": "鴨子", "class.ferret": "雪貂", "class.axolotl": "六角恐龍", "class.chicken": "小雞", "class.orchid": "蘭花", "class.bamboo": "竹子", "preset.threegen.label": "三代同堂", "preset.threegen.note": "爺爺奶奶，媽媽，寶寶，每個人的節奏都不一樣", "preset.solo.label": "一個人，一隻貓，幾盆花", "preset.solo.note": "安靜的日子，需要的不多，但每天都要看一眼", "preset.zoo.label": "一屋子小動物", "preset.zoo.note": "貓，狗，兔子，刺蝟，各有各的脾氣", "preset.garden.label": "花草一角", "preset.garden.note": "不說話，只按時間需要澆水和陽光", "preset.name.grandma": "奶奶", "preset.name.mom": "媽媽", "preset.name.dog": "豆豆", "preset.name.rabbit": "糯米", "preset.name.hedgehog": "小刺", "preset.name.orchid": "蘭蘭", "preset.name.bamboo": "青青", "preset.name.cactus": "小刺球"});
+CY.i18n.register("zh-TW", {"class.hedgehog": "刺蝟", "class.duck": "鴨子", "class.ferret": "雪貂", "class.axolotl": "六角恐龍", "class.chicken": "小雞", "class.orchid": "蘭花", "class.bamboo": "竹子", "preset.threegen.label": "三代同堂", "preset.threegen.note": "爺爺奶奶，媽媽，寶寶，每個人的節奏都不一樣", "preset.solo.label": "一個人，一隻貓，幾盆花", "preset.solo.note": "安靜的日子，需要的不多，但每天都要看一眼", "preset.zoo.label": "一屋子小動物", "preset.zoo.note": "貓，狗，兔子，刺蝟，各有各的脾氣", "preset.garden.label": "花草一角", "preset.garden.note": "不說話，只按時間需要澆水和陽光", "preset.name.paternal_grandma": "奶奶", "preset.name.mom": "媽媽", "preset.name.dog": "豆豆", "preset.name.rabbit": "糯米", "preset.name.hedgehog": "小刺", "preset.name.orchid": "蘭蘭", "preset.name.bamboo": "青青", "preset.name.cactus": "小刺球"});
 
-CY.i18n.register("zh-TW", {});
 
-CY.i18n.register("zh-TW", {});
 
 CY.i18n.register("zh-TW", {"me.work_start": "到了工作時間，你在書房辦公。", "me.work_end": "下班了，你從書房出來。", "me.go": "你去了{place}。", "me.back": "你回到了家。"});
 
@@ -545,11 +509,10 @@ CY.i18n.register("zh-TW", {"loc.park": "公園", "loc.street": "街上", "loc.la
 
 CY.i18n.register("zh-TW", {"add.helper": "在家辦公，自動賺錢，也分擔照顧"});
 
-CY.i18n.register("zh-TW", {});
 
 CY.i18n.register("zh-TW", {"people.lead": "設為操縱對象", "people.lead_on": "操縱對象，點擊取消"});
 
-CY.i18n.register("zh-TW", {"arch.elder": "典型老人", "arch.toddler1": "1歲孩子", "arch.toddler2": "2歲孩子", "arch.toddler3": "3歲孩子", "arch.toddler4": "4歲孩子", "arch.child12": "12歲孩子", "arch.woman25": "25歲女性", "arch.man25": "25歲男性", "add.helper": "在家，自動分擔照顧"});
+CY.i18n.register("zh-TW", {"add.helper": "在家，自動分擔照顧"});
 
 CY.i18n.register("zh-TW", {"social.chat": "{a}和{b}聊了幾句。", "social.play": "{a}陪{b}玩了一會兒。", "social.pet": "{a}摸了摸{b}。"});
 
@@ -566,8 +529,6 @@ CY.i18n.register("zh-TW", {"card.title": "角色卡", "card.note": "這一類角
 CY.i18n.register("zh-TW", {"badge.help": "去幫忙"});
 
 CY.i18n.register("zh-TW", {"social.pets": "{a}和{b}追著玩了一陣。"});
-CY.i18n.register("zh-TW", {});
-CY.i18n.register("zh-TW", {});
 CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "share.note": "只在你的裝置上產生一張圖，放什麼內容由你勾選，名字也由你決定。遊戲不會上傳，也不推薦你分享。", "brand.name": "照顧你", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
 CY.i18n.register("zh-TW", {"corner.day": "第 {m} 個月 第 {d} 天"});
 CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到 100，0 是關掉。現場合成的安靜音樂，夜裡更低更慢。瀏覽器要求先點一下頁面才會出聲", "ini.audio.mute": "為 true 時音樂和音效全部靜音，不改兩個音量的值", "lbl.audio.mute": "全部靜音", "ini.audio.sfx_volume": "音效音量，0 到 100，0 是關掉。點按、有人開口、完成打勾、發生了事情時的輕響"});
@@ -581,7 +542,6 @@ CY.i18n.register("zh-TW", {"cred.p3": "家具圖：Kenney 的 Furniture Kit（CC
 CY.i18n.register("zh-TW", {"add.model": "形象", "add.model_auto": "自動"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit 和 Mini Characters（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色在遊戲裡按玩家的選擇重新著色。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動物、花草、動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"corner.eff_tip": "現在的工作效率是 {n}%，你的心情好，收入就多；工作和家裡有人沒人管會讓心情下降，照顧、被關心會讓它回升。"});
-CY.i18n.register("zh-TW", {});
 CY.i18n.register("zh-TW", {"shop.title": "商店", "shop.note": "買了就一直有，沒有限時，沒有折扣，不買也能完整地玩。", "shop.owned": "已有", "shop.locked": "先買上一檔", "shop.toy": "玩具", "shop.toy_fx": "嬰兒和幼兒玩耍的需求漲得慢四分之一，客廳裡多一隻小熊。", "shop.bed": "好一點的床", "shop.bed_fx": "睡覺時休息恢復得快三成，臥室多一個床頭櫃和燈。", "shop.stroller": "嬰兒車", "shop.stroller_fx": "帶嬰兒和幼兒出門時，他們更開心。", "shop.wheelchair": "輪椅", "shop.wheelchair_fx": "老人行動的需求漲得慢三成，老人房裡多一把輪椅。", "shop.decor1": "裝飾一檔", "shop.decor1_fx": "客廳裡多一盆植物，大家的心情目標加 0.02。", "shop.decor2": "裝飾二檔", "shop.decor2_fx": "再加地毯和落地燈，心情目標再加 0.02。", "shop.decor3": "裝飾三檔", "shop.decor3_fx": "再加收音機和綠植，心情目標再加 0.02。", "shop.house2": "中等屋子", "shop.house2_fx": "搬進更大的房子：多一間客房，三張床位，家裡更寬敞，心情目標加 0.03。", "shop.bed2": "床品升級", "shop.bed2_fx": "再換上好床品，睡覺時休息恢復再快一些，老人房多一盞夜燈。", "shop.books": "書架", "shop.books_fx": "客廳裡多一個書架，玩耍的需求漲得慢一些，心情目標加 0.01。", "shop.fruit": "果盤", "shop.fruit_fx": "餐桌上常備水果和麵包，飢餓漲得慢一成。", "arc.diabetes.first": "{name}說這幾天血糖的數字比平時高一點，想讓你以後多留意。", "arc.diabetes.habit": "{name}把藥盒自己擺到了桌上顯眼的地方，說這樣不會忘。", "arc.diabetes.checkup": "{name}去複查回來了，醫生說控制得不錯，{name}心情很好。", "log.bought": "買了{item}。"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters 和 Cube Pets（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});

@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: galen
+order: 570
+official: true
+region: Greece / Rome
+age: 62
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - book
+  - scarf
+controllable: false
+area: eu
+field: med
+look:
+  skin: '#fde3d0'
+  hairColor: gray
+  hairStyle: curly
+  glasses: none
+  clothes: '#c9c0a0'
+souvenir:
+  id: galen_keepsake
+  icon: 📝
+src: Encyclopaedia Britannica, Galen of Pergamum; the treatise That the Best Physician Is Also a Philosopher.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 盖伦
+    en: Galen
+    zh-TW: 蓋倫
+    ja: ガレノス
+    ko: 갈레노스
+    fr: Galien
+    es: Galeno
+    de: Galen
+  era:
+    zh-CN: 二世纪，帕加马与罗马
+    en: 2nd century, Pergamon and Rome
+    zh-TW: 二世紀，帕加馬與羅馬
+    ja: 2世紀、ペルガモンとローマ
+    ko: 2세기, 페르가몬과 로마
+    fr: IIe siècle, Pergame et Rome
+    es: Siglo II, Pérgamo y Roma
+    de: 2. Jahrhundert, Pergamon und Rom
+  souvenir:
+    zh-CN: 一页观察笔记的复印件
+    en: A copy of a page of observation notes
+    zh-TW: 一頁觀察筆記的影印件
+    ja: 観察ノートの一ページの写し
+    ko: 관찰 노트 한 쪽의 사본
+    fr: Une copie d'une page de notes d'observation
+    es: Una copia de una página de notas de observación
+    de: Eine Kopie einer Seite mit Beobachtungsnotizen
+  arrive_note:
+    zh-CN: 盖伦推开大门走了进来，说想在这里住几天。
+    en: Galen came in through the front door and asked to stay a few days.
+    zh-TW: 蓋倫推開大門走了進來，說想在這裡住幾天。
+    ja: ガレノスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 갈레노스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Galien franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Galeno cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Galen trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把围巾搭在肩上，翻开了书。
+    en: He draped the scarf over his shoulders and opened the book.
+    zh-TW: 他把圍巾搭在肩上，翻開了書。
+    ja: 彼はマフラーを肩にかけ、本を開いた。
+    ko: 그는 목도리를 어깨에 두르고 책을 펼쳤습니다.
+    fr: Il drapa l'écharpe sur ses épaules et ouvrit le livre.
+    es: Se echó la bufanda sobre los hombros y abrió el libro.
+    de: Er legte sich den Schal um die Schultern und schlug das Buch auf.
+  leave_ok:
+    zh-CN: 盖伦临走前留下一页观察笔记的复印件，说：多看，多想，再下结论。
+    en: 'Before leaving, Galen left a copy of a page of observation notes and said: Look much, think much, then conclude.'
+    zh-TW: 蓋倫臨走前留下一頁觀察筆記的影印件，說：多看，多想，再下結論。
+    ja: 帰る前に、ガレノスは記念の品を残していった：観察ノートの一ページの写し。そして言った。「よく見て、よく考え、それから結論を出しなさい。」
+    ko: '떠나기 전에 갈레노스은(는) 기념품을 남겼습니다: 관찰 노트 한 쪽의 사본. 그리고 말했습니다. “많이 보고, 많이 생각하고, 그런 다음 결론을 내리십시오.”'
+    fr: 'Avant de partir, Galien laissa un souvenir : Une copie d''une page de notes d''observation. Et dit : « Regarde beaucoup, pense beaucoup, puis conclus. »'
+    es: 'Antes de irse, Galeno dejó un recuerdo: Una copia de una página de notas de observación. Y dijo: «Mira mucho, piensa mucho y luego concluye.»'
+    de: 'Vor dem Abschied ließ Galen etwas zurück: Eine Kopie einer Seite mit Beobachtungsnotizen. Dazu sagte Galen: „Viel schauen, viel denken, dann schließen.“'
+  leave_miss:
+    zh-CN: 盖伦道了谢，推开门回去了。
+    en: Galen said thanks and went back through the door.
+    zh-TW: 蓋倫道了謝，推開門回去了。
+    ja: ガレノスはお礼を言い、扉をくぐって帰っていった。
+    ko: 갈레노스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Galien remercia et repassa la porte.
+    es: Galeno dio las gracias y volvió a cruzar la puerta.
+    de: Galen bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说医生也该是哲学家，先要学会观察，再要学会思考。, en: 'He said a physician should also be a philosopher: first learn to observe, then to think.', zh-TW: 他說醫生也該是哲學家，先要學會觀察，再要學會思考。, ja: 彼は、医者は哲学者でもあるべきで、まず観察を、次に思考を学ぶのだと言った。, ko: '그는 의사는 철학자이기도 해야 하며, 먼저 관찰을 배우고 그다음에 생각하는 법을 배워야 한다고 말했습니다.', fr: 'Il disait qu''un médecin doit aussi être philosophe : d''abord apprendre à observer, ensuite à penser.', es: 'Dijo que un médico debe ser también filósofo: primero aprender a observar, luego a pensar.', de: 'Er sagte, ein Arzt solle auch Philosoph sein: erst beobachten lernen, dann denken.'}
+    - {zh-CN: 他说好医生要亲手摸过脉，才有资格谈病。, en: He said a good physician earns the right to speak of illness only after he has felt the pulse with his own hand., zh-TW: 他說好醫生要親手摸過脈，才有資格談病。, ja: 彼は、自分の手で脈に触れて初めて、病を語る資格があると言った。, ko: 그는 좋은 의사는 제 손으로 맥을 짚어 본 뒤에야 병을 말할 자격이 있다고 말했습니다., fr: Il disait qu'un bon médecin n'a le droit de parler de maladie qu'après avoir senti le pouls de sa propre main., es: Dijo que un buen médico solo tiene derecho a hablar de enfermedad después de haber sentido el pulso con su propia mano., de: 'Er sagte, ein guter Arzt habe erst das Recht, von Krankheit zu sprechen, wenn er den Puls mit eigener Hand gefühlt hat.'}
+said:
+  zh-CN: 最好的医生，也是哲学家。
+  en: The best physician is also a philosopher.
+  zh-TW: 最好的醫生，也是哲學家。
+  ja: 最良の医者は、哲学者でもある。
+  ko: 가장 좋은 의사는 철학자이기도 합니다.
+  fr: Le meilleur médecin est aussi un philosophe.
+  es: El mejor médico es también un filósofo.
+  de: Der beste Arzt ist auch ein Philosoph.

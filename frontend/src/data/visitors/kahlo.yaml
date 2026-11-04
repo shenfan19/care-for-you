@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: kahlo
+order: 480
+official: true
+region: Mexico
+age: 35
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - paints
+  - scarf
+controllable: false
+area: am
+field: art
+look:
+  skin: '#d9a67c'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#c0506a'
+souvenir:
+  id: kahlo_keepsake
+  icon: 🌺
+src: Encyclopaedia Britannica, Frida Kahlo; self-portraits, her house in Coyoacan and her pets.
+review: 2026-11-02 AI初核通过，待用户终审：只写绘画与家居，不涉及政治立场和健康状况
+t:
+  name:
+    zh-CN: 弗里达·卡罗
+    en: Frida Kahlo
+    zh-TW: 弗裡達·卡羅
+    ja: フリーダ・カーロ
+    ko: 프리다 칼로
+    fr: Frida Kahlo
+    es: Frida Kahlo
+    de: Frida Kahlo
+  era:
+    zh-CN: 二十世纪，墨西哥
+    en: 20th century, Mexico
+    zh-TW: 二十世紀，墨西哥
+    ja: 20世紀、メキシコ
+    ko: 20세기, 멕시코
+    fr: XXe siècle, Mexique
+    es: Siglo XX, México
+    de: 20. Jahrhundert, Mexiko
+  souvenir:
+    zh-CN: 一朵纸花
+    en: A paper flower
+    zh-TW: 一朵紙花
+    ja: 紙の花
+    ko: 종이꽃
+    fr: Une fleur en papier
+    es: Una flor de papel
+    de: Eine Papierblume
+  arrive_note:
+    zh-CN: 弗里达·卡罗推开大门走了进来，说想在这里住几天。
+    en: Frida Kahlo came in through the front door and asked to stay a few days.
+    zh-TW: 弗裡達·卡羅推開大門走了進來，說想在這裡住幾天。
+    ja: フリーダ・カーロは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 프리다 칼로은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Frida Kahlo franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Frida Kahlo cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Frida Kahlo trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她立刻铺开颜料，说要先画这条围巾的红。
+    en: She spread out the paints at once and said she would start with the red of the scarf.
+    zh-TW: 她立刻鋪開顏料，說要先畫這條圍巾的紅。
+    ja: 彼女はすぐに絵の具を広げ、まずこのマフラーの赤から描くと言った。
+    ko: 그녀는 곧바로 물감을 펼치며 이 목도리의 붉은색부터 그리겠다고 말했습니다.
+    fr: Elle étala aussitôt les peintures et dit qu'elle commencerait par le rouge de l'écharpe.
+    es: Extendió enseguida las pinturas y dijo que empezaría por el rojo de la bufanda.
+    de: Sie breitete sofort die Farben aus und sagte, sie fange mit dem Rot des Schals an.
+  leave_ok:
+    zh-CN: 弗里达·卡罗临走前留下一朵纸花，说：颜色是不会骗人的，我只是照着画。
+    en: 'Before leaving, Frida Kahlo left a paper flower and said: Colours do not lie; I only paint what I see.'
+    zh-TW: 弗裡達·卡羅臨走前留下一朵紙花，說：顏色是不會騙人的，我只是照著畫。
+    ja: 帰る前に、フリーダ・カーロは記念の品を残していった：紙の花。そして言った。「色は嘘をつかない。私は見たものを描くだけ。」
+    ko: '떠나기 전에 프리다 칼로은(는) 기념품을 남겼습니다: 종이꽃. 그리고 말했습니다. “색은 거짓말하지 않아요. 저는 본 것을 그릴 뿐이에요.”'
+    fr: 'Avant de partir, Frida Kahlo laissa un souvenir : Une fleur en papier. Et dit : « Les couleurs ne mentent pas ; je ne peins que ce que je vois. »'
+    es: 'Antes de irse, Frida Kahlo dejó un recuerdo: Una flor de papel. Y dijo: «Los colores no mienten; yo solo pinto lo que veo.»'
+    de: 'Vor dem Abschied ließ Frida Kahlo etwas zurück: Eine Papierblume. Dazu sagte Frida Kahlo: „Farben lügen nicht, ich male nur, was ich sehe.“'
+  leave_miss:
+    zh-CN: 弗里达·卡罗道了谢，推开门回去了。
+    en: Frida Kahlo said thanks and went back through the door.
+    zh-TW: 弗裡達·卡羅道了謝，推開門回去了。
+    ja: フリーダ・カーロはお礼を言い、扉をくぐって帰っていった。
+    ko: 프리다 칼로은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Frida Kahlo remercia et repassa la porte.
+    es: Frida Kahlo dio las gracias y volvió a cruzar la puerta.
+    de: Frida Kahlo bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她问你家里有没有镜子，她喜欢对着镜子画自己。, en: 'She asked whether you had a mirror, because she liked to paint herself looking into one.', zh-TW: 她問你家裡有沒有鏡子，她喜歡對著鏡子畫自己。, ja: 彼女は鏡はあるかと尋ねた。鏡に向かって自分を描くのが好きなのだという。, ko: 그녀는 거울이 있느냐고 물었습니다. 거울을 보며 자신을 그리는 것을 좋아한다면서요., fr: 'Elle demanda si tu avais un miroir, car elle aimait se peindre en se regardant dans l''un d''eux.', es: 'Preguntó si tenías un espejo, porque le gustaba pintarse mirando uno.', de: 'Sie fragte, ob du einen Spiegel hättest, denn sie male sich gern beim Blick in einen.'}
+    - {zh-CN: 她的衣服颜色鲜艳，还说家里养过猴子、小狗和鹦鹉。, en: 'Her clothes were brightly coloured, and she said she had kept monkeys, dogs and a parrot at home.', zh-TW: 她的衣服顏色鮮豔，還說家裡養過猴子、小狗和鸚鵡。, ja: 彼女の服は鮮やかな色で、家では猿や犬やオウムを飼っていたと言った。, ko: '그녀의 옷은 색이 화려했고, 집에서 원숭이와 개와 앵무새를 길렀다고 말했습니다.', fr: 'Ses vêtements étaient de couleurs vives, et elle dit avoir eu chez elle des singes, des chiens et un perroquet.', es: 'Su ropa era de colores vivos y dijo que en casa había tenido monos, perros y un loro.', de: 'Ihre Kleider waren leuchtend bunt, und sie sagte, sie habe zu Hause Affen, Hunde und einen Papagei gehalten.'}
+said:
+  zh-CN: 我画的，是我自己的现实。
+  en: I paint my own reality.
+  zh-TW: 我畫的，是我自己的現實。
+  ja: 私は、自分自身の現実を描いている。
+  ko: 나는 나 자신의 현실을 그린다.
+  fr: Je peins ma propre réalité.
+  es: Pinto mi propia realidad.
+  de: Ich male meine eigene Wirklichkeit.

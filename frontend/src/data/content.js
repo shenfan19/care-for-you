@@ -4,7 +4,7 @@
 (function (CY) {
   /* ---------- 角色原型：添加角色时的预设 ---------- */
   const L = (look) => look;
-  /* 角色原型和推荐组合在 content_more.js 里，这里先放空数组，由那边填充 */
+  /* 角色原型来自 cards 文件夹的 YAML，由 tools/build_cards.js 打包成 cards_packed.js 填进这个数组，推荐组合在 content_more.js 里 */
   const archetypes = [];
   const presets = [];
 
@@ -130,8 +130,8 @@
   Q('ask_e04', { voice: ['elder'] }, '今天吃饭了吗？', ['吃了，你呢？', '还没，一会儿吃。', '正好，陪你一起吃。']);
   Q('ask_e05', { voice: ['elder'] }, '你是不是又瘦了？', ['没有，是衣服宽。', '最近忙，我会注意。', '你才要多吃点。']);
   Q('ask_e06', { voice: ['elder'] }, '我这把老骨头，是不是拖累你了？', ['没有，你在我就踏实。', '你别这么想。', '咱们是一家人。']);
-  Q('ask_e07', { voice: ['elder'], pronoun: ['他'] }, '走，陪我下盘棋？', ['好，我让你三个子。', '等我忙完这点事。', '今天换我来先手。']);
-  Q('ask_e08', { voice: ['elder'], pronoun: ['她'] }, '你小时候的衣服，我还留着一件。', ['真的吗，我想看看。', '你还留着呀。', '快收好，别又弄丢了。']);
+  Q('ask_e07', { voice: ['elder'], pronoun: ['he'] }, '走，陪我下盘棋？', ['好，我让你三个子。', '等我忙完这点事。', '今天换我来先手。']);
+  Q('ask_e08', { voice: ['elder'], pronoun: ['she'] }, '你小时候的衣服，我还留着一件。', ['真的吗，我想看看。', '你还留着呀。', '快收好，别又弄丢了。']);
   Q('ask_p01', { voice: ['parent'] }, '你吃饭了没有？', ['吃了，你放心。', '还没，等会儿。', '你吃了吗？']);
   Q('ask_p02', { voice: ['parent'] }, '最近工作累不累？', ['还行，能应付。', '有点累，但在扛。', '忙完这阵就好了。']);
   Q('ask_p03', { voice: ['parent'] }, '天凉了，衣服带够没有？', ['带了。', '没带，我等会儿加。', '你也多穿点。']);
@@ -145,8 +145,8 @@
   Q('ask_s02', { voice: ['sibling'] }, '最近有啥好玩的事没？', ['有，改天讲给你。', '没有，天天上班。', '你先说。']);
   Q('ask_s03', { voice: ['sibling'] }, '周末有空吗？出来走走。', ['有，去哪？', '这周不行，下周。', '好，你定。']);
   Q('ask_s04', { voice: ['sibling'] }, '你是不是又熬夜了？', ['被你发现了。', '没有，别瞎猜。', '今晚早睡，保证。']);
-  Q('ask_s05', { voice: ['sibling'], pronoun: ['她'], stage: ['adult'] }, '今天肚子有点不舒服，想喝点热的。', ['我给你倒杯热水。', '要不要先歇一会儿？', '需要我陪你吗？']);
-  Q('ask_s06', { voice: ['sibling'], pronoun: ['她'], stage: ['adult'] }, '这几天身体不太舒服，脾气也不好，你多担待。', ['没事，我给你留点安静。', '要不要喝点热的？', '有事随时说。'], { sensitive: true });
+  Q('ask_s05', { voice: ['sibling'], pronoun: ['she'], stage: ['adult'] }, '今天肚子有点不舒服，想喝点热的。', ['我给你倒杯热水。', '要不要先歇一会儿？', '需要我陪你吗？']);
+  Q('ask_s06', { voice: ['sibling'], pronoun: ['she'], stage: ['adult'] }, '这几天身体不太舒服，脾气也不好，你多担待。', ['没事，我给你留点安静。', '要不要喝点热的？', '有事随时说。'], { sensitive: true });
   Q('ask_c01', { voice: ['child'] }, '{title}，你小时候也这么小吗？', ['对呀，比你还小。', '我小时候也爱问问题。', '你猜猜看。']);
   Q('ask_c02', { voice: ['child'] }, '{title}，天为什么会黑？', ['因为太阳去睡觉了。', '因为地球在转。', '我们一起查一查。']);
   Q('ask_c03', { voice: ['child'] }, '{title}，你今天会早点回来吗？', ['会，我尽量。', '不一定，但会给你打电话。', '早点回来陪你玩。']);
@@ -154,7 +154,11 @@
   Q('ask_c05', { voice: ['child'] }, '{title}，我长大了可以像你一样吗？', ['你会比我更厉害。', '你想像我什么？', '你做你自己就最好。']);
 
   /* ---------- 创建角色 ---------- */
-  function archOf(id) { return archetypes.find(a => a.id === id); }
+  /* 旧版本用拼音和数字做角色卡 id，用他她它存称呼。旧存档和旧数据文件夹里的值读进来时换成新的 */
+  const LEGACY_ARCH = { grandpa: 'paternal_grandpa', grandma: 'paternal_grandma', waigong: 'maternal_grandpa', waipo: 'maternal_grandma', gongong: 'father_in_law', popo: 'mother_in_law', aunt: 'paternal_aunt', uncle: 'maternal_uncle', brother: 'older_brother', sister: 'older_sister', niece: 'maternal_niece', woman25: 'young_woman', man25: 'young_man', child12: 'child_12', toddler1: 'toddler_1', toddler2: 'toddler_2', toddler3: 'toddler_3', toddler4: 'toddler_4', wheelchair: 'wheelchair_user' };
+  const LEGACY_PRON = { '他': 'he', '她': 'she', '它': 'it' };
+  const archId = id => (id in LEGACY_ARCH ? LEGACY_ARCH[id] : id), pron = x => (x in LEGACY_PRON ? LEGACY_PRON[x] : x);
+  function archOf(id) { id = archId(id); return archetypes.find(a => a.id === id); }
 
-  CY.content = { archetypes, presets, voices, sayings, nudges, asks, archOf };
+  CY.content = { archetypes, presets, voices, sayings, nudges, asks, archOf, LEGACY_ARCH, archId, pron };
 })(globalThis.CY = globalThis.CY || {});

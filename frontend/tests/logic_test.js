@@ -13,7 +13,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('种子里有声线、说话库、问答库、提醒库、AI 技能', G.tpl.voices.elder && G.tpl.sayLib.length > 30 && G.tpl.asks.length > 20 && G.tpl.nudges.length > 3 && G.tpl.skills.speak && G.tpl.persona);
   check('原型至少 15 种', CY.content.archetypes.length >= 15);
 
-  for (const m of [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }]) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
+  for (const m of [{ arch: 'paternal_grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }]) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
   await G.load();
   let grandpa, baby, cat; const refs = () => { grandpa = G.people.find(p => p.person.name === '爷爷'); baby = G.people.find(p => p.person.name === '宝宝'); cat = G.people.find(p => p.person.name === '团子'); }; refs();
   check('推荐组合创建了三个角色', G.people.length === 3 && grandpa && baby && cat);
@@ -27,7 +27,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 语言 */
   CY.i18n.set('en');
   check('英文下需求和动作标签换成英文', G.actionsOf(grandpa).pet.label === 'Pat shoulder' && G.needLabel('thirst', { label: '口渴' }) === 'Thirsty');
-  check('缺的键回退到中文，再回退到键名', CY.t('no.such.key') === 'no.such.key' && CY.t('arch.grandpa') === 'Grandpa');
+  check('缺的键回退到中文，再回退到键名', CY.t('no.such.key') === 'no.such.key' && CY.t('arch.paternal_grandpa') === 'Grandpa');
   CY.i18n.set('zh-CN');
   check('中文下用模板里的标签', G.actionsOf(grandpa).pet.label === '拍拍肩');
   check('语言检测', CY.i18n.detect('en') === 'en' && CY.i18n.detect('zh-CN') === 'zh-CN');
@@ -112,7 +112,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const bad = [];
     for (const c of Object.keys(G.tpl.conditions)) {
-      const pid = await G.createPerson({ arch: 'grandpa', name: '测试', conditions: [c] }); await G.load();
+      const pid = await G.createPerson({ arch: 'paternal_grandpa', name: '测试', conditions: [c] }); await G.load();
       const p = G.get(pid), cd = G.tpl.conditions[c];
       const acts = G.actionsOf(p);
       for (const a of Object.keys(cd.actions || {})) if (!cd.actions[a].selfonly && !acts[a]) bad.push(c + ':' + a + ':缺动作');
@@ -134,7 +134,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 世界与后端：房间分布，直接站到旁边，住院，夜里起夜，指令检查，远程后端，台词 */
   {
     const W = CY.world, P = CY.protocol;
-    const gp = await G.createPerson({ arch: 'grandpa', name: '爷爷', conditions: ['nocturia'] });
+    const gp = await G.createPerson({ arch: 'paternal_grandpa', name: '爷爷', conditions: ['nocturia'] });
     const bb = await G.createPerson({ arch: 'baby', name: '宝宝' });
     const ct = await G.createPerson({ arch: 'cat', name: '猫' });
     await G.load();
@@ -311,7 +311,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const a of arch) { const id = await G.createPerson({ arch: a.id, name: 't' }); await G.load(); const pp = G.get(id); try { const svg = CY.avatar(pp); if (!svg || svg.length < 200) noArt.push(a.id); } catch (e) { noArt.push(a.id + ':' + e.message); } await G.deletePerson(id); }
     check('每个身份都画得出头像', noArt.length === 0, noArt.join());
     /* 性格的台词真的会被选到 */
-    const tid = await G.createPerson({ arch: 'grandpa', name: '性格测试', traits: ['shy', 'chatty'] }); await G.load();
+    const tid = await G.createPerson({ arch: 'paternal_grandpa', name: '性格测试', traits: ['shy', 'chatty'] }); await G.load();
     const tp = G.get(tid), shyLines = C.TRAIT_LINES.zh.shy.glance.concat(C.TRAIT_LINES.zh.chatty.glance);
     const lines = G.lines(tp, 'glance', null);
     check('性格的台词混进了可选的台词', shyLines.every(l => lines.includes(l)) && lines.length > shyLines.length);
@@ -351,9 +351,9 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('可以让角色离开桌面', G.activePeople().length === 3);
 
   /* 问答库按身份和称呼筛选，敏感话题默认不出现 */
-  const sis = { person: { voice: 'sibling', age: 26, pronoun: '她', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
-  const bro = { person: { voice: 'sibling', age: 28, pronoun: '他', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
-  const kid = { person: { voice: 'child', age: 7, pronoun: '她', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
+  const sis = { person: { voice: 'sibling', age: 26, pronoun: 'she', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
+  const bro = { person: { voice: 'sibling', age: 28, pronoun: 'he', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
+  const kid = { person: { voice: 'child', age: 7, pronoun: 'she', kind: 'human', lines: {} }, species: { id: 'human' }, state: { asked: [] } };
   G.cfg.interaction.sensitive_topics = 'false';
   check('姐妹可以被问到身体不适的话题，兄弟不会', G.askBank(sis).some(q => q.id === 'ask_s05') && !G.askBank(bro).some(q => q.id === 'ask_s05'));
   check('孩子只被问孩子的问题', G.askBank(kid).every(q => q.voice.includes('child')));
@@ -427,7 +427,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const mk = async (arch, name, extra) => { const id = await G.createPerson(Object.assign({ arch, name }, extra || {})); await G.load(); refs(); return G.get(id); };
   const stg = CY.content.stageOf;
   check('年龄换成阶段', [0.5, 1, 3.9, 4, 12, 13, 17, 18, 64, 65].map(stg).join() === 'infant,toddler,toddler,child,child,teen,teen,adult,adult,elder');
-  let bb = await mk('baby', '小宝'), sis2 = await mk('sister', '阿姐'), eld = await mk('grandma', '阿婆', { conditions: ['arthritis', 'forgetful'] }), tdl = await mk('toddler', '二岁');
+  let bb = await mk('baby', '小宝'), sis2 = await mk('older_sister', '阿姐'), eld = await mk('paternal_grandma', '阿婆', { conditions: ['arthritis', 'forgetful'] }), tdl = await mk('toddler', '二岁');
   check('婴儿喂奶换尿布，没有倒水和做饭', 'feed' in G.actionsOf(bb) && 'diaper' in G.actionsOf(bb) && !('water' in G.actionsOf(bb)) && !('meal' in G.actionsOf(bb)));
   check('姐姐不能喂饭也不能换尿布，但可以聊天', !('feed' in G.actionsOf(sis2)) && !('diaper' in G.actionsOf(sis2)) && 'chat' in G.actionsOf(sis2));
   check('老人可以散步和扶去休息', 'walk' in G.actionsOf(eld) && 'rest' in G.actionsOf(eld));
@@ -487,7 +487,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('分担的家人响应后台的请求去照顾', momHelped);
   /* 外出和耽误的工作 */
   G.cfg.economy.work_hours = '00:00-23:59'; G.cfg.time.daynight = 'system'; await store_write_cfg();
-  const elderX = await mk('grandpa', '外出爷爷'), babyX = await mk('toddler', '外出宝宝'); const EX = G.get(elderX.id), BX = G.get(babyX.id);
+  const elderX = await mk('paternal_grandpa', '外出爷爷'), babyX = await mk('toddler', '外出宝宝'); const EX = G.get(elderX.id), BX = G.get(babyX.id);
   EX.state.needs.mobility = 0.9; BX.state.needs.play = 0.9; for (const p of G.people) { p.person.active = p === EX || p === BX; }
   check('带爷爷去公园', G.perform(EX.id, 'park') === true && !!G.flag(EX, 'outing') && !!G.flag(BX, 'outing'));
   check('一起去的人在公园，公园页出现', CY.world.locationOf(EX).place === 'park' && CY.world.occupiedPlaces().includes('park'));
@@ -518,7 +518,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.cfg.economy.work_hours = '09:00-18:00'; G.cfg.time.daynight = 'auto'; await store_write_cfg(); refs();
 
   /* 旧数据：缺年龄的人按阶段补年龄，旧版本的物种模板被新版覆盖 */
-  const legacy = await mk('grandpa', '旧爷爷');
+  const legacy = await mk('paternal_grandpa', '旧爷爷');
   const pr = ctx.jsyaml.load(mem.get(`people/${legacy.id}/person.yaml`)); delete pr.age; pr.age_stage = 'elder'; mem.set(`people/${legacy.id}/person.yaml`, ctx.jsyaml.dump(pr));
   mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
@@ -527,7 +527,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */
-  const eld2 = await mk('grandpa', '独居老人'); const kid2 = await mk('daughter', '小孩'); const hamP = await mk('hamster', '仓鼠鼠'); const owl = await mk('sister', '夜猫', { traits: ['nightowl'] }); const lark = await mk('sister', '早起', { traits: ['earlybird'] });
+  const eld2 = await mk('paternal_grandpa', '独居老人'); const kid2 = await mk('daughter', '小孩'); const hamP = await mk('hamster', '仓鼠鼠'); const owl = await mk('older_sister', '夜猫', { traits: ['nightowl'] }); const lark = await mk('older_sister', '早起', { traits: ['earlybird'] });
   check('自己做的动作不在菜单里，但属于角色自己', !('drink' in G.actionsOf(eld2)) && 'drink' in G.allActionsOf(eld2) && 'cook' in G.allActionsOf(eld2) && !('drink' in G.allActionsOf(await mk('baby', '宝'))));
   const bby = G.people[G.people.length - 1];
   check('婴儿自己只能玩一玩、咿呀几声，吃喝拉睡一样都做不了', (() => { const own = Object.values(G.allActionsOf(bby)).filter(a => a.self); return own.length >= 2 && own.every(a => Object.keys(a.effect).every(k => ['play', 'company'].includes(k))); })());
@@ -565,11 +565,11 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const cl = await mk('toddler', '黏人精', { traits: ['clingy'] }); const pl = await mk('toddler', '普通娃');
   const C1 = G.get(cl.id), P1 = G.get(pl.id);
   check('黏人的孩子想要陪伴涨得更快', G.traitMods(C1).rate.company > 1.5 && G.traitMods(P1).rate.company === undefined);
-  const ind = await mk('brother', '独立哥', { traits: ['independent', 'sturdy'] });
-  check('独立的人自理更强，结实的人虚弱涨得慢', G.classOf(G.get(ind.id)).self_care > G.classOf(G.get(await mk('brother', '普通哥').then(x => x.id))).self_care && G.traitMods(G.get(ind.id)).frailty < 1);
-  check('性格特征最多两个', (await mk('brother', '多特征', { traits: ['clingy', 'sickly', 'grumpy'] })).person.traits.length === 2);
+  const ind = await mk('older_brother', '独立哥', { traits: ['independent', 'sturdy'] });
+  check('独立的人自理更强，结实的人虚弱涨得慢', G.classOf(G.get(ind.id)).self_care > G.classOf(G.get(await mk('older_brother', '普通哥').then(x => x.id))).self_care && G.traitMods(G.get(ind.id)).frailty < 1);
+  check('性格特征最多两个', (await mk('older_brother', '多特征', { traits: ['clingy', 'sickly', 'grumpy'] })).person.traits.length === 2);
   /* 更多动作 */
-  const doc = await mk('grandpa', '看病的', { conditions: ['cold'] }); const DC = G.get(doc.id);
+  const doc = await mk('paternal_grandpa', '看病的', { conditions: ['cold'] }); const DC = G.get(doc.id);
   DC.state.needs.fever = 0.9;
   check('宠物有梳毛和看兽医，花草有换盆，洗澡只有需要的人', 'groom' in G.actionsOf(G.get(dogP.id)) && 'vet' in G.actionsOf(G.get(dogP.id)) && 'repot' in G.actionsOf(G.get(flowerP.id)) && 'bath' in G.actionsOf(C1) && !('bath' in G.actionsOf(G.get(ind.id))));
   const act26 = new Set(); for (const p of G.people) for (const k in G.allActionsOf(p)) act26.add(k);
@@ -580,7 +580,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('英文内容包的每种声线都齐全', Object.keys(zhP.voices).every(v => enP.voices[v] && enP.voices[v].request && enP.voices[v].glance && enP.voices[v].cares_back && enP.voices[v].reveal), Object.keys(zhP.voices).filter(v => !CY.content.packs.en.voices[v]).join());
   check('各语言的条目编号一致', JSON.stringify(zhP.sayings.map(x => x.id)) === JSON.stringify(enP.sayings.map(x => x.id)) && JSON.stringify(zhP.asks.map(x => x.id)) === JSON.stringify(enP.asks.map(x => x.id)) && JSON.stringify(zhP.nudges.map(x => x.id)) === JSON.stringify(enP.nudges.map(x => x.id)));
   check('英文的说话库和问答库真的是英文', enP.sayings.every(x => /[A-Za-z]/.test(x.text)) && enP.asks.every(q => /[A-Za-z]/.test(q.say) && q.answers.length === 3 && q.answers.every(a => /[A-Za-z]/.test(a))), enP.asks.filter(q => !/[A-Za-z]/.test(q.say) || q.answers.length !== 3).map(q => q.id).join());
-  check('英文问题保留筛选条件', enP.asks.find(q => q.id === 'ask_s05').pronoun[0] === '她' && enP.asks.find(q => q.id === 'ask_a04').sensitive === true);
+  check('英文问题保留筛选条件', enP.asks.find(q => q.id === 'ask_s05').pronoun[0] === 'she' && enP.asks.find(q => q.id === 'ask_a04').sensitive === true);
   check('没有内容包的语言回退到英文再回退到中文', frP.voices.elder.request.thirst[0].startsWith('...') && frP.sayings.length === zhP.sayings.length);
   G.cfg.ui.language = 'en'; await store_write_cfg(); CY.i18n.set('en'); await G.reloadContent();
   check('换语言时角色换成该语言的台词，问答也换', /[A-Za-z]/.test(G.lines(G.get(eld2.id), 'request', 'thirst')[0]) && G.askBank(G.get(eld2.id)).every(q => /[A-Za-z]/.test(q.say)));
@@ -642,7 +642,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
-    const ids = []; for (const [a2, n2] of [['grandpa', '主角爷爷'], ['dad', '爸爸'], ['baby', '小宝宝'], ['daughter', '十二岁']]) ids.push((await mk(a2, n2)).id);
+    const ids = []; for (const [a2, n2] of [['paternal_grandpa', '主角爷爷'], ['dad', '爸爸'], ['baby', '小宝宝'], ['daughter', '十二岁']]) ids.push((await mk(a2, n2)).id);
     const [gp, dd, bz, kd] = ids.map(id => G.get(id));
     for (const x of [gp, dd, bz, kd]) { x.person.active = true; for (const k in x.state.needs) x.state.needs[k] = 0.1; }
     const h0 = G.holdSeconds({ min: 30 }), nObs = W.layout('home').length;
@@ -673,9 +673,9 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const files = Object.keys(CY.seed.files()).filter(f => /^templates\/cards\//.test(f));
     check('每种原型都有一张角色卡', files.length === CY.content.archetypes.length && files.length >= 40, files.length + ' vs ' + CY.content.archetypes.length);
-    for (const id of ['elder', 'toddler1', 'toddler2', 'toddler3', 'toddler4', 'child12', 'woman25', 'wife', 'popo']) check('有典型角色卡 ' + id, !!G.tpl.cards[id] && G.tpl.cards[id].health && typeof G.tpl.cards[id].health.score === 'number' && !!G.tpl.cards[id].help && !!G.tpl.cards[id].dialogue && Array.isArray(G.tpl.cards[id].self_actions));
-    check('1到4岁卡的年龄对', [1, 2, 3, 4].every(n => G.tpl.cards['toddler' + n].age === n) && G.tpl.cards.child12.age === 12 && G.tpl.cards.woman25.age === 25);
-    const eid = await G.createPerson({ arch: 'elder', name: '卡爷爷' }), cid = await G.createPerson({ arch: 'child12', name: '卡孩子' }), wid = await G.createPerson({ arch: 'wife', name: '卡妻子' });
+    for (const id of ['elder', 'toddler_1', 'toddler_2', 'toddler_3', 'toddler_4', 'child_12', 'young_woman', 'wife', 'mother_in_law']) check('有典型角色卡 ' + id, !!G.tpl.cards[id] && G.tpl.cards[id].health && typeof G.tpl.cards[id].health.score === 'number' && !!G.tpl.cards[id].help && !!G.tpl.cards[id].dialogue && Array.isArray(G.tpl.cards[id].self_actions));
+    check('1到4岁卡的年龄对', [1, 2, 3, 4].every(n => G.tpl.cards['toddler_' + n].age === n) && G.tpl.cards.child_12.age === 12 && G.tpl.cards.young_woman.age === 25);
+    const eid = await G.createPerson({ arch: 'elder', name: '卡爷爷' }), cid = await G.createPerson({ arch: 'child_12', name: '卡孩子' }), wid = await G.createPerson({ arch: 'wife', name: '卡妻子' });
     await G.load();
     const E0 = G.get(eid), K = G.get(cid), Wf = G.get(wid);
     const E = E0;
@@ -698,7 +698,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const W = CY.world;
     const keepDay = [G.cfg.time.daynight, G.world.clock_shift];
     for (const x of G.people) x.person.active = false;
-    const ids = []; for (const [a2, n2] of [['grandpa', '走动爷爷'], ['mom', '走动妈妈'], ['baby', '走动宝宝'], ['cat', '走动猫']]) ids.push((await mk(a2, n2)).id);
+    const ids = []; for (const [a2, n2] of [['paternal_grandpa', '走动爷爷'], ['mom', '走动妈妈'], ['baby', '走动宝宝'], ['cat', '走动猫']]) ids.push((await mk(a2, n2)).id);
     const [gp2, mm2, bb2, ct2] = ids.map(id => G.get(id));
     G.cfg.time.daynight = 'game'; G.world.clock_shift = (14 * 60 - (Math.floor(G.world.game_minutes) % 1440) + 1440) % 1440;   /* 下午两点，创建角色会重新载入设置，所以放在创建之后 */
     for (const x of [gp2, mm2, bb2, ct2]) { x.person.active = true; for (const k in x.state.needs) x.state.needs[k] = 0.1; G.act[x.id] = 'awake'; }
@@ -755,7 +755,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const W = CY.world, keepDay = [G.cfg.time.daynight, G.world.clock_shift];
     for (const x of G.people) x.person.active = false;
-    const ids = []; for (const [a2, n2] of [['mom', '饭妈妈'], ['dad', '饭爸爸'], ['grandma', '饭奶奶'], ['baby', '饭宝宝']]) ids.push((await mk(a2, n2)).id);
+    const ids = []; for (const [a2, n2] of [['mom', '饭妈妈'], ['dad', '饭爸爸'], ['paternal_grandma', '饭奶奶'], ['baby', '饭宝宝']]) ids.push((await mk(a2, n2)).id);
     const four = ids.map(id => G.get(id));
     G.cfg.time.daynight = 'game'; G.world.clock_shift = (18.5 * 60 - (Math.floor(G.world.game_minutes) % 1440) + 1440) % 1440;
     for (const x of four) { x.person.active = true; for (const k in x.state.needs) x.state.needs[k] = 0.1; x.state.needs.hunger = 0.8; W.agents[x.id] = { room: 'kitchen', next: Date.now() + 1e9 }; G.act[x.id] = 'awake'; }
@@ -910,7 +910,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
 
   {
     /* 病程：进度存在 story.arcs，读档，导出再导入都原样回来，不重复触发，条件不够就停着，世界暂停不跳阶段 */
-    const id = await G.createPerson({ arch: 'grandpa', name: '病程', conditions: ['diabetes'] }); await G.load(); for (const x of G.people) x.person.active = x.id === id;
+    const id = await G.createPerson({ arch: 'paternal_grandpa', name: '病程', conditions: ['diabetes'] }); await G.load(); for (const x of G.people) x.person.active = x.id === id;
     const arcLogs = () => Object.values(G.journal[id] || {}).flat().filter(e => e.k && e.k.indexOf('arc.diabetes.') === 0).map(e => e.k);
     const day = () => Math.floor(G.world.game_minutes / 1440);
     const st = () => G.arcState(G.get(id), 'diabetes');
@@ -955,7 +955,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('操纵对象必须有：放弃以后自动换回默认的那位（爸爸，没有就妈妈、成年人），不另造“我”，事件挂在他身上而不是一个叫“你”的角色', await (async () => { const GG = CY.game, had = GG.protagonist(); GG.setProtagonist(null); const n0 = GG.people.length; const made = await GG.ensurePlayer(); const again = await GG.ensurePlayer(); const lead = GG.protagonist(); const ar = p => p.person.archetype || p.person.card; const want = GG.activePeople().filter(GG.canLead); const def = want.find(p => ar(p) === 'dad') || want.find(p => ar(p) === 'mom') || want.find(p => GG.stage(p) === 'adult') || want[0]; GG.logK(GG.youId(), 'event', 'log.groceries', { n: 1 }); const bound = GG.journal[lead.id] && Object.values(GG.journal[lead.id]).some(m => m.some(e => e.k === 'log.groceries')); const ok = made && !again && lead && lead === def && GG.youId() === lead.id && bound && GG.people.length === n0 && !GG.people.some(p => ar(p) === 'me'); GG.setProtagonist(had ? had.id : null); return !!ok; })());
   {
     CY.i18n.set('zh-CN');
-    const ida = await G.createPerson({ arch: 'grandpa', name: '爷爷', name_auto: 'grandpa', roleText: '爷爷' }), idb = await G.createPerson({ arch: 'grandma', name: '奶奶', name_auto: 'grandma', roleText: '奶奶' });
+    const ida = await G.createPerson({ arch: 'paternal_grandpa', name: '爷爷', name_auto: 'paternal_grandpa', roleText: '爷爷' }), idb = await G.createPerson({ arch: 'paternal_grandma', name: '奶奶', name_auto: 'paternal_grandma', roleText: '奶奶' });
     await G.load();
     CY.i18n.set('en'); await G.refreshAutoNames();
     check('系统起的名字跟界面语言走', G.get(ida).person.name === 'Grandpa' && G.get(ida).person.role !== '爷爷', G.get(ida).person.name);
@@ -969,7 +969,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
     const mkp = async (arch, age) => { const id = await G.createPerson({ arch, name: arch, age }); return id; };
-    const ids = [await mkp('grandpa'), await mkp('grandma'), await mkp('dad'), await mkp('mom'), await mkp('toddler'), await mkp('daughter'), await mkp('baby')];
+    const ids = [await mkp('paternal_grandpa'), await mkp('paternal_grandma'), await mkp('dad'), await mkp('mom'), await mkp('toddler'), await mkp('daughter'), await mkp('baby')];
     await G.load(); for (const x of G.people) x.person.active = ids.includes(x.id);
     const plan = W.bedPlan(), humans = G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant').length;
     const placed = plan.bedroom.length + plan.kids.length + plan.elder.length + plan.guest.length + plan.living.length;
@@ -1000,7 +1000,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     for (const x of G.people) x.person.active = false;
     const mk2 = async (arch, name) => { const id = await G.createPerson({ arch, name }); return id; };
-    const dadId = await mk2('dad', '爸'), momId = await mk2('mom', '妈'), sisId = await mk2('sister', '姐'), babId = await mk2('baby', '宝'), husId = await mk2('husband', '夫');
+    const dadId = await mk2('dad', '爸'), momId = await mk2('mom', '妈'), sisId = await mk2('older_sister', '姐'), babId = await mk2('baby', '宝'), husId = await mk2('husband', '夫');
     await G.load(); const ids = [dadId, momId, sisId, babId, husId]; for (const x of G.people) x.person.active = ids.includes(x.id);
     const W = CY.world;
     check('夫妻上班，姐姐不上班', W.worker(G.get(dadId)) && W.worker(G.get(momId)) && W.worker(G.get(husId)) && !W.worker(G.get(sisId)));
@@ -1032,8 +1032,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const mkv = async arch => { const id = await G.createPerson({ arch, name: arch }); await G.load(); for (const x of G.people) x.person.active = x.id === id; return G.get(id); };
     const keys = ['tv', 'lunch', 'dinner', 'wakeup', 'goodnight'];
-    const okAll = []; for (const arch of ['dad', 'grandpa', 'toddler2', 'cat', 'dog']) { const pp = await mkv(arch); for (const k of keys) { const has = G.lines(pp, 'ambient', k).length > 0; if (!has && !(['cat', 'dog'].includes(arch) && ['lunch', 'wakeup'].includes(k) && arch === 'cat') && !(arch === 'dog' && ['lunch', 'goodnight'].includes(k)) && !(arch === 'cat' && ['lunch', 'wakeup'].includes(k)) && !(arch === 'dog' && k === 'goodnight')) okAll.push(arch + '.' + k); } }
-    check('日程台词：大人，老人，孩子都有早起，午饭，晚饭，看电视，睡前', !okAll.some(x => /^(dad|grandpa|toddler2)\./.test(x)), okAll.join(','));
+    const okAll = []; for (const arch of ['dad', 'paternal_grandpa', 'toddler_2', 'cat', 'dog']) { const pp = await mkv(arch); for (const k of keys) { const has = G.lines(pp, 'ambient', k).length > 0; if (!has && !(['cat', 'dog'].includes(arch) && ['lunch', 'wakeup'].includes(k) && arch === 'cat') && !(arch === 'dog' && ['lunch', 'goodnight'].includes(k)) && !(arch === 'cat' && ['lunch', 'wakeup'].includes(k)) && !(arch === 'dog' && k === 'goodnight')) okAll.push(arch + '.' + k); } }
+    check('日程台词：大人，老人，孩子都有早起，午饭，晚饭，看电视，睡前', !okAll.some(x => /^(dad|paternal_grandpa|toddler_2)\./.test(x)), okAll.join(','));
     const dad = await mkv('dad'); G.setClock(20 * 60); let seen = 0; for (let i = 0; i < 60; i++) { const r = CY.backendLocal.line({ person: { id: dad.id, counters: {} }, group: 'ambient', situation: { room: 'living', band: 'evening' } }); if (G.lines(dad, 'ambient', 'tv').includes(r.text)) seen++; }
     check('晚上在客厅，大人闲谈里会说到看电视', seen > 5, seen);
     for (const x of G.people) x.person.active = true;
@@ -1051,7 +1051,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     /* 卧床：老人虚弱到 0.8 躺下，降到 0.55 以下起来；躺着不能散步，有轮椅才能被推出去；婴儿没有婴儿车出不了门 */
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
-    const gpId = await G.createPerson({ arch: 'grandpa', name: '卧床爷' }), babyId = await G.createPerson({ arch: 'baby', name: '小宝' });
+    const gpId = await G.createPerson({ arch: 'paternal_grandpa', name: '卧床爷' }), babyId = await G.createPerson({ arch: 'baby', name: '小宝' });
     await G.load(); for (const x of G.people) x.person.active = [gpId, babyId].includes(x.id);
     const gp = G.get(gpId), bb = G.get(babyId);
     G.world.owned = {};
@@ -1080,7 +1080,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     /* 看护：需要看护的人不能单独留在家里；家里还有别的大人，他就留下；作业只有五岁以后才有 */
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
-    const dId = await G.createPerson({ arch: 'dad', name: '领队爸' }), gId = await G.createPerson({ arch: 'grandpa', name: '带队爷' }), kId = await G.createPerson({ arch: 'daughter', name: '跟着的女儿' }), mId = await G.createPerson({ arch: 'mom', name: '留守妈' });
+    const dId = await G.createPerson({ arch: 'dad', name: '领队爸' }), gId = await G.createPerson({ arch: 'paternal_grandpa', name: '带队爷' }), kId = await G.createPerson({ arch: 'daughter', name: '跟着的女儿' }), mId = await G.createPerson({ arch: 'mom', name: '留守妈' });
     await G.load(); const set = ids => { for (const x of G.people) { x.person.active = ids.includes(x.id); G.clearFlag(x, 'outing'); G.act[x.id] = 'awake'; } };
     set([dId, gId, kId]); G.setProtagonist(dId); W.enforce = false;
     const gp = G.get(gId), kid = G.get(kId);
@@ -1160,7 +1160,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
-    const dadId = await G.createPerson({ arch: 'dad', name: 'd' }), gpId = await G.createPerson({ arch: 'grandpa', name: 'g' }), kidId = await G.createPerson({ arch: 'daughter', name: 'k' });
+    const dadId = await G.createPerson({ arch: 'dad', name: 'd' }), gpId = await G.createPerson({ arch: 'paternal_grandpa', name: 'g' }), kidId = await G.createPerson({ arch: 'daughter', name: 'k' });
     await G.load(); for (const x of G.people) x.person.active = [dadId, gpId, kidId].includes(x.id);
     G.setProtagonist(dadId); W.enforce = true; W.moveTo('home', 'study'); W.escort = false;
     const gp = G.get(gpId);
@@ -1176,7 +1176,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   }
   {
     for (const x of G.people) x.person.active = false;
-    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g', conditions: ['diabetes'] });
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), gId = await G.createPerson({ arch: 'paternal_grandpa', name: 'g', conditions: ['diabetes'] });
     await G.load(); for (const x of G.people) x.person.active = [dId, gId].includes(x.id);
     G.setProtagonist(dId);
     const mine = Object.values(G.actionsOf(G.get(dId))).map(a => a.id), theirs = Object.values(G.actionsOf(G.get(gId))).map(a => a.id);
@@ -1189,7 +1189,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   }
   {
     for (const x of G.people) x.person.active = false;
-    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' }), bId = await G.createPerson({ arch: 'baby', name: 'b' });
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'paternal_grandpa', name: 'g' }), bId = await G.createPerson({ arch: 'baby', name: 'b' });
     await G.load(); const ids = [dId, mId, gId, bId]; for (const x of G.people) x.person.active = ids.includes(x.id);
     G.setProtagonist(dId); for (const id of ids) { G.act[id] = 'awake'; for (const k in G.get(id).state.needs) G.get(id).state.needs[k] = 0.2; }
     const mom = G.get(mId), gp = G.get(gId), baby = G.get(bId);
@@ -1210,7 +1210,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   }
   {
     for (const x of G.people) x.person.active = false;
-    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' });
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), mId = await G.createPerson({ arch: 'mom', name: 'm' }), gId = await G.createPerson({ arch: 'paternal_grandpa', name: 'g' });
     await G.load(); const ids = [dId, mId, gId]; for (const x of G.people) x.person.active = ids.includes(x.id);
     G.setProtagonist(dId); for (const id of ids) { G.act[id] = 'awake'; for (const k in G.get(id).state.needs) G.get(id).state.needs[k] = 0.2; }
     const dad = G.get(dId), mom = G.get(mId), gp = G.get(gId);
@@ -1224,7 +1224,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const W = CY.world;
     for (const x of G.people) x.person.active = false;
-    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), gId = await G.createPerson({ arch: 'grandpa', name: 'g' });
+    const dId = await G.createPerson({ arch: 'dad', name: 'd' }), gId = await G.createPerson({ arch: 'paternal_grandpa', name: 'g' });
     await G.load(); for (const x of G.people) x.person.active = [dId, gId].includes(x.id);
     G.setProtagonist(dId); W.enforce = true; W.moveTo('home', 'study'); G.setClock(15 * 60);
     const dad = G.get(dId); dad.state.needs.rest = 0.9;

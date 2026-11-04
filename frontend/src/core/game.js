@@ -18,7 +18,7 @@
   const PLANTS = ['succulent', 'flower', 'tree', 'cactus', 'orchid', 'bamboo'];
   const NOCTURNAL = ['hamster', 'hedgehog', 'gecko'];
   const CHILDLIKE = ['child', 'infant', 'toddler', 'teen'];
-  const PRON_CODE = { '他': 'm', '她': 'f', '它': 'n' };
+  const PRON_CODE = { he: 'm', she: 'f', it: 'n' };
 
   G.on = fn => G.listeners.push(fn);
   const emit = () => G.listeners.forEach(f => { try { f(); } catch (e) { console.error(e); } });
@@ -90,6 +90,10 @@
       const person = await store.readYaml(`people/${id}/person.yaml`);
       if (!person) return null;
       person.id = id;
+      /* 旧存档里的角色卡 id 和称呼，换成现在的写法 */
+      if (person.archetype) person.archetype = CY.content.archId(person.archetype);
+      if (person.card) person.card = CY.content.archId(person.card);
+      if (person.pronoun) person.pronoun = CY.content.pron(person.pronoun);
       const species = G.tpl.species[person.species];
       if (!species) { console.warn('找不到物种模板', person.species); return null; }
       /* 肤色色板加了两档偏白的，旧存档里的肤色序号按新色板换算，保持原来的颜色 */
@@ -146,7 +150,7 @@
     }
     /* 角色卡：每类典型角色一张，读进来替换内置的原型，新增的卡会出现在添加角色的列表里 */
     G.tpl.cards = {};
-    for (const p of files) { const m = p.match(/^templates\/cards\/([^/]+)\.yaml$/); if (m) { const x = await store.readYaml(p); if (x) G.tpl.cards[x.id || m[1]] = x; } }
+    for (const p of files) { const m = p.match(/^templates\/cards\/([^/]+)\.yaml$/); if (m && !(m[1] in CY.content.LEGACY_ARCH)) { const x = await store.readYaml(p); if (x) G.tpl.cards[x.id || m[1]] = x; } }
     for (const id in G.tpl.cards) {
       const c = G.tpl.cards[id], a = Object.assign({}, c, { id, role: c.label || c.role || id }), L = CY.content.archetypes, i = L.findIndex(x => x.id === id);
       if (i >= 0) L[i] = a; else L.push(a);
@@ -189,7 +193,7 @@
     if (human && CHILDLIKE.includes(voice)) voice = CY.content.STAGE_VOICE[CY.content.stageOf(age)] || voice;
     const person = {
       version: 2, id, active: true, name: spec.name || spec.roleText || arch.role || '', role: spec.roleText || arch.role || '',
-      archetype: spec.arch || '', voice, pronoun: spec.pronoun || arch.pronoun || (human ? '他' : '它'),
+      archetype: spec.arch || '', voice, pronoun: CY.content.pron(spec.pronoun || arch.pronoun || (human ? 'he' : 'it')),
       kind: human ? 'human' : PLANTS.includes(species) ? 'plant' : 'animal', species,
       appearance: Object.assign({}, spec.look || arch.look || {}, typeof (spec.look || arch.look || {}).skin === 'number' ? { skin_v: 2 } : {}), personality: { talkative: 0.5, temper: '', catchphrases: [] },
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
@@ -237,7 +241,7 @@
         if (a.help) { o.help = { efficiency: a.help.efficiency, interval: a.help.interval, role: a.help.role }; }
       }
     }
-    if (patch.pronoun) o.pronoun = patch.pronoun;
+    if (patch.pronoun) o.pronoun = CY.content.pron(patch.pronoun);
     if (patch.look) o.appearance = Object.assign({}, o.appearance, patch.look);
     if (Array.isArray(patch.traits)) o.traits = patch.traits.slice(0, 2);
     if (typeof patch.helper === 'boolean') o.helper = patch.helper;
@@ -295,7 +299,7 @@
     c.self_care = clamp(c.self_care + G.traitMods(p).self_care, 0, 0.98);
     return c;
   };
-  G.pronoun = p => (p ? (p.person.pronoun || (G.isHuman(p) ? '他' : '它')) : '他');
+  G.pronoun = p => CY.content.pron(p ? (p.person.pronoun || (G.isHuman(p) ? 'he' : 'it')) : 'he');
   const rateOf = (d, stage) => (typeof d.rate === 'number' ? d.rate : (d.rate && (d.rate[stage] !== undefined ? d.rate[stage] : d.rate.default)) || 0.05);
   G.needsOf = p => {
     const out = {};
@@ -341,7 +345,7 @@
   const ACTOR_SLOW = { elder: 1.6 };
   G.holdSeconds = a => { if (G.DEV) return 0; const pr = G.protagonist(), k = pr ? ACTOR_SLOW[G.stage(pr)] || 1 : 1; return +((typeof a.min === 'number' && a.min > 0 ? G.holdFor(a.min) : a.hold) * k).toFixed(1); };
   /* 对主角的称呼：家里的孩子按主角的名字叫，那是孩子的视角。外甥女，侄子，逃难来的孩子不是主角的孩子，主角是爸爸就叫叔叔，是妈妈就叫阿姨，是姑姑舅舅这类就照名字叫 */
-  const NOT_MINE = ['niece', 'nephew', 'refugee_child'];
+  const NOT_MINE = ['maternal_niece', 'nephew', 'refugee_child'];
   G.titleFor = p => {
     const pr = G.protagonist();
     if (!pr) return t('player.title');
@@ -349,7 +353,7 @@
     if (NOT_MINE.includes(spk) && (role === 'dad' || role === 'mom')) return t(role === 'dad' ? 'title.uncle' : 'title.aunt');
     return pr.person.name;
   };
-  /* 称呼：内部用他她它三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
+  /* 称呼：内部用 he，she，it 三个码，显示时按当前语言取词，拉丁文字的语言在句首大写 */
   G.pronounWord = p => t('pron.sub.' + (PRON_CODE[G.pronoun(p)] || 'm'));
   G.fmt = (s, p) => {
     const w = G.pronounWord(p), cap = /^[a-zà-ÿ]/.test(w) && CY.i18n.lang !== 'zh-CN' && CY.i18n.lang !== 'zh-TW';
@@ -601,7 +605,7 @@
   };
   G.bedCheck = p => {
     const s = p.state;
-    if (!G.isHuman(p) || G.stage(p) !== 'elder' || p.person.visitor || (p.person.archetype || p.person.card) === 'wheelchair') { if (s.bedrest) delete s.bedrest; return; }
+    if (!G.isHuman(p) || G.stage(p) !== 'elder' || p.person.visitor || (p.person.archetype || p.person.card) === 'wheelchair_user') { if (s.bedrest) delete s.bedrest; return; }
     if (!s.bedrest && s.frailty >= 0.8) { s.bedrest = true; G.logK(p.id, 'frail', 'log.bedrest', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.bedrest'), p), 'soft'); }
     else if (s.bedrest && s.frailty < 0.55) { delete s.bedrest; G.logK(p.id, 'recovered', 'log.bedrest_end', { name: p.person.name }); }
   };
@@ -736,8 +740,8 @@
 
   /* 台词和问答的适用关系：谁会说（arch），主角是谁（to），成对的（pairs，说话的人和主角）；没有主角时不卡 to */
   G.related = (q, p) => {
-    const archOf = x => (x && x.person ? x.person.archetype || x.person.card || '' : ''), spk = archOf(p), lead = G.protagonist(), role = archOf(lead);
-    return (!q.arch || q.arch.includes(spk)) && (!q.to || !lead || q.to.includes(role)) && (!q.pairs || !!(lead && q.pairs.some(([a, b]) => a === spk && b === role)));
+    const C = CY.content, archOf = x => C.archId(x && x.person ? x.person.archetype || x.person.card || '' : ''), spk = archOf(p), lead = G.protagonist(), role = archOf(lead), ids = a => a.map(C.archId);
+    return (!q.arch || ids(q.arch).includes(spk)) && (!q.to || !lead || ids(q.to).includes(role)) && (!q.pairs || !!(lead && q.pairs.some(([a, b]) => C.archId(a) === spk && C.archId(b) === role)));
   };
   /* 候选的“说过的话”：同声线、还没选过的 */
   G.pickOptions = (p, n = 3) => {
@@ -756,7 +760,7 @@
     const sens = ini.bool(G.cfg, 'interaction', 'sensitive_topics');
     const recent = new Set(p.state.asked || []);
     const fits = (arr, val) => !arr || arr.includes(val);
-    let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun, pr) && G.related(q, p) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
+    let pool = G.tpl.asks.filter(q => fits(q.voice, v) && fits(q.stage, st) && fits(q.pronoun && q.pronoun.map(CY.content.pron), pr) && G.related(q, p) && (!q.min_age || G.age(p) >= q.min_age) && (sens || !q.sensitive));
     const mine = ((p.person.lines || {}).ask || []).filter(q => q && q.say).map((q, i) => ({ id: `own${i}`, say: q.say, answers: q.answers || [] }));
     pool = pool.concat(mine);
     const fresh = pool.filter(q => !recent.has(q.id));

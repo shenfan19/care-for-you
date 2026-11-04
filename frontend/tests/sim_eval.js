@@ -17,11 +17,11 @@ const net = { calls: 0, bytesOut: 0, bytesIn: 0, ms: [], byKind: {} };
 const sleep0 = () => new Promise(r => setImmediate(r));
 
 const FAMILIES = {
-  family: [['grandpa', '爷爷', ['diabetes']], ['grandma', '奶奶', ['arthritis']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler2', '二岁'], ['baby', '宝宝'], ['daughter', '女儿'], ['cat', '团子'], ['dog', '豆豆']],
-  solo: [['grandpa', '爷爷', ['nocturia']]],
+  family: [['paternal_grandpa', '爷爷', ['diabetes']], ['paternal_grandma', '奶奶', ['arthritis']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler_2', '二岁'], ['baby', '宝宝'], ['daughter', '女儿'], ['cat', '团子'], ['dog', '豆豆']],
+  solo: [['paternal_grandpa', '爷爷', ['nocturia']]],
   duo: [['mom', '妈妈'], ['baby', '宝宝']],
   trio: [['mom', '妈妈'], ['dad', '爸爸'], ['baby', '宝宝']],
-  five: [['grandpa', '爷爷', ['diabetes']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler2', '二岁'], ['baby', '宝宝']],
+  five: [['paternal_grandpa', '爷爷', ['diabetes']], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler_2', '二岁'], ['baby', '宝宝']],
   plants: [['dad', '爸爸'], ['flower', '小花'], ['flower', '小草'], ['flower', '小树'], ['flower', '小苗']],
   zoo: [['cat', '团子'], ['dog', '豆豆'], ['rabbit', '糯米'], ['hamster', '仓鼠'], ['flower', '小花']],
 };

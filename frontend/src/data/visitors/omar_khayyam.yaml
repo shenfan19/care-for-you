@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: omar_khayyam
+order: 330
+official: true
+region: Persia
+age: 50
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - telescope
+  - chess
+controllable: false
+area: wa
+field: sci
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#8a6f9a'
+souvenir:
+  id: omar_khayyam_keepsake
+  icon: 📅
+src: Encyclopaedia Britannica, Omar Khayyam; algebra treatise on cubic equations, the Jalali calendar reform. Attribution of the quatrains is debated and not used here.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 奥马尔·海亚姆
+    en: Omar Khayyam
+    zh-TW: 奧馬爾·海亞姆
+    ja: オマル・ハイヤーム
+    ko: 오마르 하이얌
+    fr: Omar Khayyam
+    es: Omar Jayyam
+    de: Omar Chayyam
+  era:
+    zh-CN: 十一至十二世纪，波斯
+    en: 11th-12th century, Persia
+    zh-TW: 十一至十二世紀，波斯
+    ja: 11〜12世紀、ペルシャ
+    ko: 11~12세기, 페르시아
+    fr: XIe et XIIe siècles, Perse
+    es: Siglos XI y XII, Persia
+    de: 11. und 12. Jahrhundert, Persien
+  souvenir:
+    zh-CN: 一页历法算稿
+    en: A page of calendar calculations
+    zh-TW: 一頁曆法算稿
+    ja: 暦の計算の一ページ
+    ko: 달력 계산 한 쪽
+    fr: Une page de calculs de calendrier
+    es: Una página de cálculos de calendario
+    de: Eine Seite mit Kalenderrechnungen
+  arrive_note:
+    zh-CN: 奥马尔·海亚姆推开大门走了进来，说想在这里住几天。
+    en: Omar Khayyam came in through the front door and asked to stay a few days.
+    zh-TW: 奧馬爾·海亞姆推開大門走了進來，說想在這裡住幾天。
+    ja: オマル・ハイヤームは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 오마르 하이얌은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Omar Khayyam franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Omar Jayyam cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Omar Chayyam trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把棋子一枚枚摆好，说今晚的星星一定很好。
+    en: He set out the pieces one by one and said tonight's stars would be good.
+    zh-TW: 他把棋子一枚枚擺好，說今晚的星星一定很好。
+    ja: 彼は駒をひとつずつ並べ、今夜の星はきっときれいだろうと言った。
+    ko: 그는 말을 하나씩 늘어놓으며 오늘 밤 별은 분명 아름다울 거라고 말했습니다.
+    fr: Il disposa les pièces une à une et dit que les étoiles seraient sûrement belles ce soir.
+    es: Colocó las piezas una a una y dijo que esta noche las estrellas serían seguramente hermosas.
+    de: Er stellte die Figuren eine nach der anderen auf und sagte, die Sterne würden heute Nacht bestimmt schön.
+  leave_ok:
+    zh-CN: 奥马尔·海亚姆临走前留下一页历法算稿，说：日子数得清，才好好过。
+    en: 'Before leaving, Omar Khayyam left a page of calendar calculations and said: Count the days well and you can live them well.'
+    zh-TW: 奧馬爾·海亞姆臨走前留下一頁曆法算稿，說：日子數得清，才好好過。
+    ja: 帰る前に、オマル・ハイヤームは記念の品を残していった：暦の計算の一ページ。そして言った。「日を丁寧に数えれば、日々を丁寧に生きられます。」
+    ko: '떠나기 전에 오마르 하이얌은(는) 기념품을 남겼습니다: 달력 계산 한 쪽. 그리고 말했습니다. “날을 잘 세면, 날을 잘 살 수 있습니다.”'
+    fr: 'Avant de partir, Omar Khayyam laissa un souvenir : Une page de calculs de calendrier. Et dit : « Compte bien les jours et tu pourras bien les vivre. »'
+    es: 'Antes de irse, Omar Jayyam dejó un recuerdo: Una página de cálculos de calendario. Y dijo: «Cuenta bien los días y podrás vivirlos bien.»'
+    de: 'Vor dem Abschied ließ Omar Chayyam etwas zurück: Eine Seite mit Kalenderrechnungen. Dazu sagte Omar Chayyam: „Zähle die Tage gut, dann kannst du sie gut leben.“'
+  leave_miss:
+    zh-CN: 奥马尔·海亚姆道了谢，推开门回去了。
+    en: Omar Khayyam said thanks and went back through the door.
+    zh-TW: 奧馬爾·海亞姆道了謝，推開門回去了。
+    ja: オマル・ハイヤームはお礼を言い、扉をくぐって帰っていった。
+    ko: 오마르 하이얌은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Omar Khayyam remercia et repassa la porte.
+    es: Omar Jayyam dio las gracias y volvió a cruzar la puerta.
+    de: Omar Chayyam bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他在纸上画了几段圆锥曲线，说三次方程也能用几何的办法解出来。, en: He drew a few conic sections and said even cubic equations can be solved with geometry., zh-TW: 他在紙上畫了幾段圓錐曲線，說三次方程也能用幾何的辦法解出來。, ja: 彼は円錐曲線をいくつか描き、三次方程式も幾何学で解けると言った。, ko: 그는 원뿔 곡선 몇 개를 그리며 3차 방정식도 기하학으로 풀 수 있다고 말했습니다., fr: Il dessina quelques coniques et dit que même les équations du troisième degré pouvaient se résoudre par la géométrie., es: Dibujó unas cónicas y dijo que incluso las ecuaciones cúbicas se pueden resolver con geometría., de: 'Er zeichnete ein paar Kegelschnitte und sagte, auch kubische Gleichungen ließen sich mit Geometrie lösen.'}
+    - {zh-CN: 他说算了一晚上的历，想找个人下盘棋歇一歇。, en: He said he had spent the whole evening on calendar sums and wanted someone to play a game of chess with., zh-TW: 他說算了一晚上的歷，想找個人下盤棋歇一歇。, ja: 彼は、一晩じゅう暦の計算をしていたので、チェスの相手がほしいと言った。, ko: 그는 저녁 내내 달력 계산을 했으니 체스를 둘 상대를 찾고 싶다고 말했습니다., fr: Il dit avoir passé toute la soirée sur des calculs de calendrier et vouloir quelqu'un pour une partie d'échecs., es: Dijo que había pasado toda la tarde con cálculos de calendario y que quería alguien con quien jugar una partida de ajedrez., de: 'Er sagte, er habe den ganzen Abend an Kalenderrechnungen gesessen und wolle jemanden zu einer Partie Schach finden.'}

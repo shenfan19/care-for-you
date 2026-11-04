@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: machado
+order: 460
+official: true
+region: Brazil
+age: 60
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - spectacles
+  - tea
+controllable: false
+area: am
+field: art
+look:
+  skin: '#d9a67c'
+  hairColor: gray
+  hairStyle: short
+  glasses: round
+  clothes: '#7a6a5a'
+souvenir:
+  id: machado_keepsake
+  icon: 📕
+src: Encyclopaedia Britannica, Machado de Assis; founder and first president of the Brazilian Academy of Letters.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 马查多·德·阿西斯
+    en: Machado de Assis
+    zh-TW: 馬查多·德·阿西斯
+    ja: マシャード・デ・アシス
+    ko: 마샤두 지 아시스
+    fr: Machado de Assis
+    es: Machado de Assis
+    de: Machado de Assis
+  era:
+    zh-CN: 十九至二十世纪，巴西
+    en: 19th-20th century, Brazil
+    zh-TW: 十九至二十世紀，巴西
+    ja: 19〜20世紀、ブラジル
+    ko: 19~20세기, 브라질
+    fr: XIXe et XXe siècles, Brésil
+    es: Siglos XIX y XX, Brasil
+    de: 19. und 20. Jahrhundert, Brasilien
+  souvenir:
+    zh-CN: 一页校样的复印件
+    en: A copy of a page of proofs
+    zh-TW: 一頁校樣的影印件
+    ja: 校正刷りの一ページの写し
+    ko: 교정쇄 한 쪽의 사본
+    fr: Une copie d'une page d'épreuves
+    es: Una copia de una página de pruebas de imprenta
+    de: Eine Kopie einer Seite mit Korrekturfahnen
+  arrive_note:
+    zh-CN: 马查多·德·阿西斯推开大门走了进来，说想在这里住几天。
+    en: Machado de Assis came in through the front door and asked to stay a few days.
+    zh-TW: 馬查多·德·阿西斯推開大門走了進來，說想在這裡住幾天。
+    ja: マシャード・デ・アシスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 마샤두 지 아시스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Machado de Assis franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Machado de Assis cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Machado de Assis trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他戴上看了看，满意地笑了。
+    en: He put them on, looked around, and smiled with satisfaction.
+    zh-TW: 他戴上看了看，滿意地笑了。
+    ja: 彼はそれをかけて周りを見回し、満足そうに微笑んだ。
+    ko: 그는 그것을 쓰고 주위를 둘러보며 만족스레 미소 지었습니다.
+    fr: Il les mit, regarda autour de lui et sourit, satisfait.
+    es: Se las puso, miró alrededor y sonrió satisfecho.
+    de: Er setzte sie auf, sah sich um und lächelte zufrieden.
+  leave_ok:
+    zh-CN: 马查多·德·阿西斯临走前留下一页校样的复印件，说：字要一个一个排对，才对得起读的人。
+    en: 'Before leaving, Machado de Assis left a copy of a page of proofs and said: Set each word right, and you deserve the reader.'
+    zh-TW: 馬查多·德·阿西斯臨走前留下一頁校樣的影印件，說：字要一個一個排對，才對得起讀的人。
+    ja: 帰る前に、マシャード・デ・アシスは記念の品を残していった：校正刷りの一ページの写し。そして言った。「言葉をひとつずつ正しく組めば、読者に顔向けできます。」
+    ko: '떠나기 전에 마샤두 지 아시스은(는) 기념품을 남겼습니다: 교정쇄 한 쪽의 사본. 그리고 말했습니다. “낱말을 하나하나 바르게 짜야 독자에게 부끄럽지 않습니다.”'
+    fr: 'Avant de partir, Machado de Assis laissa un souvenir : Une copie d''une page d''épreuves. Et dit : « Compose chaque mot comme il faut, et tu seras digne du lecteur. »'
+    es: 'Antes de irse, Machado de Assis dejó un recuerdo: Una copia de una página de pruebas de imprenta. Y dijo: «Coloca bien cada palabra y serás digno del lector.»'
+    de: 'Vor dem Abschied ließ Machado de Assis etwas zurück: Eine Kopie einer Seite mit Korrekturfahnen. Dazu sagte Machado de Assis: „Setze jedes Wort richtig, dann wirst du dem Leser gerecht.“'
+  leave_miss:
+    zh-CN: 马查多·德·阿西斯道了谢，推开门回去了。
+    en: Machado de Assis said thanks and went back through the door.
+    zh-TW: 馬查多·德·阿西斯道了謝，推開門回去了。
+    ja: マシャード・デ・アシスはお礼を言い、扉をくぐって帰っていった。
+    ko: 마샤두 지 아시스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Machado de Assis remercia et repassa la porte.
+    es: Machado de Assis dio las gracias y volvió a cruzar la puerta.
+    de: Machado de Assis bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说话慢条斯理，总在你以为他要认真的时候讲个笑话。, en: He spoke slowly and always told a joke just when you thought he was about to be serious., zh-TW: 他說話慢條斯理，總在你以為他要認真的時候講個笑話。, ja: 彼はゆっくり話し、まじめな話をするかと思うと、ちょうどそのとき冗談を言った。, ko: '그는 느긋하게 말했고, 진지해질 것 같을 때마다 꼭 농담을 했습니다.', fr: Il parlait posément et racontait toujours une blague juste quand on le croyait sur le point d'être sérieux., es: Hablaba con calma y siempre contaba un chiste justo cuando creías que iba a ponerse serio., de: 'Er sprach gemächlich und erzählte immer dann einen Witz, wenn man dachte, er werde gleich ernst.'}
+    - {zh-CN: 他说读书的人就像朋友，写东西时得时不时跟他打个招呼。, en: 'He said a reader is like a friend, and while writing you should greet them now and then.', zh-TW: 他說讀書的人就像朋友，寫東西時得時不時跟他打個招呼。, ja: 彼は、読者は友人のようなものだから、書くときは時々声をかけなければならないと言った。, ko: 그는 독자는 친구와 같아서 글을 쓸 때 가끔 인사를 건네야 한다고 말했습니다., fr: 'Il dit qu''un lecteur est comme un ami et qu''en écrivant, il faut le saluer de temps en temps.', es: Dijo que un lector es como un amigo y que al escribir hay que saludarlo de vez en cuando., de: 'Er sagte, ein Leser sei wie ein Freund, und beim Schreiben müsse man ihn ab und zu grüßen.'}

@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: tupaia
+order: 500
+official: true
+region: Raiatea (Polynesia)
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - map
+  - umbrella
+controllable: false
+area: am
+field: trv
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: long
+  glasses: none
+  clothes: '#6a9a8f'
+souvenir:
+  id: tupaia_keepsake
+  icon: 🧭
+src: Encyclopaedia Britannica, Tupaia; navigator and priest from Raiatea, his chart of the Pacific islands drawn in 1769.
+review: 2026-11-02 AI初核通过，待用户终审：只写航海与海图，不涉及殖民叙事
+t:
+  name:
+    zh-CN: 图帕伊亚
+    en: Tupaia
+    zh-TW: 圖帕伊亞
+    ja: トゥパイア
+    ko: 투파이아
+    fr: Tupaia
+    es: Tupaia
+    de: Tupaia
+  era:
+    zh-CN: 十八世纪，社会群岛
+    en: 18th century, Society Islands
+    zh-TW: 十八世紀，社會群島
+    ja: 18世紀、ソシエテ諸島
+    ko: 18세기, 소시에테 제도
+    fr: XVIIIe siècle, îles de la Société
+    es: Siglo XVIII, Islas de la Sociedad
+    de: 18. Jahrhundert, Gesellschaftsinseln
+  souvenir:
+    zh-CN: 一张海图的复印件
+    en: A copy of a sea chart
+    zh-TW: 一張海圖的影印件
+    ja: 海図の写し
+    ko: 해도의 사본
+    fr: Une copie d'une carte marine
+    es: Una copia de una carta marina
+    de: Eine Kopie einer Seekarte
+  arrive_note:
+    zh-CN: 图帕伊亚推开大门走了进来，说想在这里住几天。
+    en: Tupaia came in through the front door and asked to stay a few days.
+    zh-TW: 圖帕伊亞推開大門走了進來，說想在這裡住幾天。
+    ja: トゥパイアは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 투파이아은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Tupaia franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Tupaia cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Tupaia trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把东西展开，用手指在上面比了比远处的岛。
+    en: He spread it out and traced the distant islands with a finger.
+    zh-TW: 他把東西展開，用手指在上面比了比遠處的島。
+    ja: 彼はそれを広げ、遠くの島々を指でなぞった。
+    ko: 그는 그것을 펼치고 손가락으로 먼 섬들을 짚어 나갔습니다.
+    fr: Il la déplia et suivit du doigt les îles lointaines.
+    es: La desplegó y recorrió con el dedo las islas lejanas.
+    de: Er breitete sie aus und zeichnete mit dem Finger die fernen Inseln nach.
+  leave_ok:
+    zh-CN: 图帕伊亚临走前留下一张海图的复印件，说：海上没有路，只有记住的方向。
+    en: 'Before leaving, Tupaia left a copy of a sea chart and said: There are no roads at sea, only directions you remember.'
+    zh-TW: 圖帕伊亞臨走前留下一張海圖的影印件，說：海上沒有路，只有記住的方向。
+    ja: 帰る前に、トゥパイアは記念の品を残していった：海図の写し。そして言った。「海に道はない。覚えている方角があるだけだ。」
+    ko: '떠나기 전에 투파이아은(는) 기념품을 남겼습니다: 해도의 사본. 그리고 말했습니다. “바다에는 길이 없고, 기억하는 방향만 있을 뿐입니다.”'
+    fr: 'Avant de partir, Tupaia laissa un souvenir : Une copie d''une carte marine. Et dit : « En mer, il n''y a pas de routes, seulement des directions dont on se souvient. »'
+    es: 'Antes de irse, Tupaia dejó un recuerdo: Una copia de una carta marina. Y dijo: «En el mar no hay caminos, solo direcciones que recuerdas.»'
+    de: 'Vor dem Abschied ließ Tupaia etwas zurück: Eine Kopie einer Seekarte. Dazu sagte Tupaia: „Auf dem Meer gibt es keine Straßen, nur Richtungen, an die man sich erinnert.“'
+  leave_miss:
+    zh-CN: 图帕伊亚道了谢，推开门回去了。
+    en: Tupaia said thanks and went back through the door.
+    zh-TW: 圖帕伊亞道了謝，推開門回去了。
+    ja: トゥパイアはお礼を言い、扉をくぐって帰っていった。
+    ko: 투파이아은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Tupaia remercia et repassa la porte.
+    es: Tupaia dio las gracias y volvió a cruzar la puerta.
+    de: Tupaia bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他不看星图，凭星星出现的方向，就能说出哪个岛在哪边。, en: 'He needed no star chart; from the direction in which stars rise, he could say where each island lay.', zh-TW: 他不看星圖，憑星星出現的方向，就能說出哪個島在哪邊。, ja: 彼は星図を必要とせず、星が昇る方角から、どの島がどちらにあるかを言い当てた。, ko: 그는 별자리 지도가 필요 없었습니다. 별이 뜨는 방향만으로 섬이 어디에 있는지 말할 수 있었습니다., fr: 'Il n''avait pas besoin de carte du ciel : à la direction où se lèvent les étoiles, il savait dire où se trouvait chaque île.', es: 'No necesitaba carta estelar: por la dirección en que salen las estrellas, sabía decir dónde estaba cada isla.', de: 'Er brauchte keine Sternkarte: An der Richtung, in der die Sterne aufgehen, konnte er sagen, wo jede Insel lag.'}
+    - {zh-CN: 他在纸上画了一张海的图，上面有七十多个岛。, en: 'He drew a chart of the sea on paper, with more than seventy islands on it.', zh-TW: 他在紙上畫了一張海的圖，上面有七十多個島。, ja: 彼は紙に海の地図を描き、七十を超える島を書き込んだ。, ko: '그는 종이에 바다 지도를 그렸고, 거기에는 일흔 개가 넘는 섬이 있었습니다.', fr: 'Il dessina sur le papier une carte de la mer, avec plus de soixante-dix îles.', es: 'Dibujó en papel una carta del mar, con más de setenta islas.', de: 'Er zeichnete eine Karte des Meeres auf Papier, mit mehr als siebzig Inseln darauf.'}

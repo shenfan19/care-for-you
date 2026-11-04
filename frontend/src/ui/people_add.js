@@ -44,7 +44,7 @@
       const dlg = U.dialog(`<div class="addgrid"><div class="prev">${CY.avatarPreview(arch, look, st.age)}</div><div>
         <div class="row"><input id="an" placeholder="${esc(t('add.name_ph'))}" value="${esc(st.name)}" style="flex:1"><select id="aa">${archSel}</select></div>
         ${human ? `<div class="row">${esc(t('add.age'))} <input id="aage" type="number" min="0" max="110" step="1" value="${st.age}" style="width:72px"> <span class="pill">${esc(t('stage.' + stage))}</span>
-          ${esc(t('add.pronoun'))} ${sel('pronoun', ['他', '她', '它'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
+          ${esc(t('add.pronoun'))} ${sel('pronoun', ['he', 'she', 'it'], [t('pron.he'), t('pron.she'), t('pron.it')], st.pronoun)}</div>
           <div class="mute stagenote">${esc(t('stage.note.' + stage))}</div>
           <div class="row">${esc(t('add.skin'))} ${sw('skin', O.skin.map((_, i) => i), look.skin, v => O.skin[v])}</div>
           <div class="row">${esc(t('add.haircolor'))} ${sw('hair_color', O.hairColor, look.hair_color, v => O.hairColorHex[v])} ${esc(t('add.cloth'))} ${sw('cloth', O.clothes, look.cloth)}</div>
@@ -117,7 +117,7 @@
     const nm = a => CY.tOr('preset.name.' + a.id, U.archName(a.id));
     const members = [];
     if (Math.random() < 0.3) {
-      const a = rnd(fam.filter(x => ['uncle', 'aunt', 'grandpa', 'grandma', 'friend', 'man25', 'woman25'].includes(x.id))), age = 25 + Math.floor(Math.random() * 56);
+      const a = rnd(fam.filter(x => ['maternal_uncle', 'paternal_aunt', 'paternal_grandpa', 'paternal_grandma', 'friend', 'young_man', 'young_woman'].includes(x.id))), age = 25 + Math.floor(Math.random() * 56);
       members.push({ arch: a.id, name: t('preset.name.self'), age, conditions: condsFor({ species: 'human', age }, 0.8), lead: true });
       if (Math.random() < 0.5) { const p = rnd(pets.concat(plants)); members.push({ arch: p.id, name: nm(p) }); }
     } else {
@@ -141,7 +141,7 @@
       return add.concat(members);
     }
     if (members.some(m => ['dad', 'mom', 'wife', 'husband'].includes(m.arch))) return members;
-    return [mk(rnd(hasPeople ? ['husband', 'wife'] : ['man25', 'woman25']), true)].concat(members);
+    return [mk(rnd(hasPeople ? ['husband', 'wife'] : ['young_man', 'young_woman']), true)].concat(members);
   };
   U.createMembers = async function (members) {
     let lead = null;

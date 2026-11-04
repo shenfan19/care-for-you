@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: scheherazade
+order: 340
+official: true
+region: Arabian Nights (fiction)
+age: 28
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - lamp
+  - blanket
+controllable: false
+area: wa
+field: art
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: long
+  glasses: none
+  clothes: '#b0707a'
+souvenir:
+  id: scheherazade_keepsake
+  icon: 🕯️
+src: One Thousand and One Nights, the frame story; Encyclopaedia Britannica, Arabian Nights.
+review: 2026-11-02 AI初核通过，待用户终审：只用说书人形象，不涉及框架故事里的情节
+t:
+  name:
+    zh-CN: 山鲁佐德
+    en: Scheherazade
+    zh-TW: 山魯佐德
+    ja: シェヘラザード
+    ko: 셰에라자드
+    fr: Shéhérazade
+    es: Sherezade
+    de: Scheherazade
+  era:
+    zh-CN: 《一千零一夜》中的人物
+    en: A character from One Thousand and One Nights
+    zh-TW: 《一千零一夜》中的人物
+    ja: 『千一夜物語』の登場人物
+    ko: 《천일야화》의 인물
+    fr: Un personnage des « Mille et Une Nuits »
+    es: Un personaje de «Las mil y una noches»
+    de: Eine Figur aus „Tausendundeine Nacht“
+  souvenir:
+    zh-CN: 一支故事蜡烛
+    en: A story candle
+    zh-TW: 一支故事蠟燭
+    ja: 物語のろうそく
+    ko: 이야기 초
+    fr: Une bougie à histoires
+    es: Una vela de cuentos
+    de: Eine Geschichtenkerze
+  arrive_note:
+    zh-CN: 山鲁佐德推开大门走了进来，说想在这里住几天。
+    en: Scheherazade came in through the front door and asked to stay a few days.
+    zh-TW: 山魯佐德推開大門走了進來，說想在這裡住幾天。
+    ja: シェヘラザードは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 셰에라자드은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Shéhérazade franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Sherezade cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Scheherazade trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她把灯放在床边，轻声讲起了第一个故事。
+    en: She set it by the bed and softly began the first story.
+    zh-TW: 她把燈放在床邊，輕聲講起了第一個故事。
+    ja: 彼女は枕元にランプを置き、小声で最初の物語を語りはじめた。
+    ko: 그녀는 램프를 침대 곁에 놓고 조용히 첫 이야기를 시작했습니다.
+    fr: Elle posa la lampe près du lit et commença doucement la première histoire.
+    es: Puso la lámpara junto a la cama y empezó en voz baja el primer cuento.
+    de: Sie stellte die Lampe neben das Bett und begann leise die erste Geschichte.
+  leave_ok:
+    zh-CN: 山鲁佐德临走前留下一支故事蜡烛，说：故事讲给愿意听的人，就不会断。
+    en: 'Before leaving, Scheherazade left a story candle and said: Tell a story to someone who wants to listen and it never ends.'
+    zh-TW: 山魯佐德臨走前留下一支故事蠟燭，說：故事講給願意聽的人，就不會斷。
+    ja: 帰る前に、シェヘラザードは記念の品を残していった：物語のろうそく。そして言った。「聞きたい人に物語を語れば、終わることはありません。」
+    ko: '떠나기 전에 셰에라자드은(는) 기념품을 남겼습니다: 이야기 초. 그리고 말했습니다. “듣고 싶은 사람에게 이야기를 들려주면 이야기는 끝나지 않습니다.”'
+    fr: 'Avant de partir, Shéhérazade laissa un souvenir : Une bougie à histoires. Et dit : « Raconte une histoire à quelqu''un qui veut l''écouter, et elle ne finit jamais. »'
+    es: 'Antes de irse, Sherezade dejó un recuerdo: Una vela de cuentos. Y dijo: «Cuéntale una historia a quien quiera escuchar y nunca termina.»'
+    de: 'Vor dem Abschied ließ Scheherazade etwas zurück: Eine Geschichtenkerze. Dazu sagte Scheherazade: „Erzähle eine Geschichte jemandem, der zuhören will, und sie endet nie.“'
+  leave_miss:
+    zh-CN: 山鲁佐德道了谢，推开门回去了。
+    en: Scheherazade said thanks and went back through the door.
+    zh-TW: 山魯佐德道了謝，推開門回去了。
+    ja: シェヘラザードはお礼を言い、扉をくぐって帰っていった。
+    ko: 셰에라자드은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Shéhérazade remercia et repassa la porte.
+    es: Sherezade dio las gracias y volvió a cruzar la puerta.
+    de: Scheherazade bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她说她肚子里有很多很多故事，一个晚上讲不完。, en: She said she held so many stories that one night would never be enough., zh-TW: 她說她肚子裡有很多很多故事，一個晚上講不完。, ja: 彼女は、一晩では語りきれないほど多くの物語が胸にあると言った。, ko: 그녀는 이야기가 너무 많아 하룻밤으로는 턱없이 모자란다고 말했습니다., fr: Elle dit qu'elle portait en elle tant d'histoires qu'une nuit ne suffirait jamais., es: Dijo que guardaba tantas historias que una noche nunca bastaría., de: 'Sie sagte, sie trage so viele Geschichten in sich, dass eine Nacht nie reichen würde.'}
+    - {zh-CN: 她问你家里有没有人想听故事，最好是睡觉之前。, en: 'She asked whether anyone in the house wanted a story, preferably before bed.', zh-TW: 她問你家裡有沒有人想聽故事，最好是睡覺之前。, ja: 彼女は、家に物語を聞きたい人はいないかと尋ねた。できれば寝る前がいいという。, ko: 그녀는 집에 이야기를 듣고 싶은 사람이 없느냐고 물었습니다. 되도록 잠들기 전이면 좋다면서요., fr: 'Elle demanda si quelqu''un dans la maison voulait entendre une histoire, de préférence avant de dormir.', es: 'Preguntó si alguien en la casa quería oír un cuento, mejor antes de dormir.', de: 'Sie fragte, ob jemand im Haus eine Geschichte hören wolle, am besten vor dem Schlafen.'}
+said:
+  zh-CN: 这还只是故事的开头。
+  en: And that was only the beginning of the story.
+  zh-TW: 這還只是故事的開頭。
+  ja: それは、物語のほんの始まりにすぎなかった。
+  ko: 그것은 이야기의 시작에 불과했습니다.
+  fr: Et ce n'était que le début de l'histoire.
+  es: Y eso solo era el comienzo de la historia.
+  de: Und das war erst der Anfang der Geschichte.

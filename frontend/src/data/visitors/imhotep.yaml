@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: imhotep
+order: 440
+official: true
+region: Egypt
+age: 45
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - map
+  - lamp
+controllable: false
+area: af
+field: sci
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#c9b27a'
+souvenir:
+  id: imhotep_keepsake
+  icon: 🔺
+src: Encyclopaedia Britannica, Imhotep; architect of the Step Pyramid at Saqqara. His reputation as a healer comes from later tradition.
+review: 2026-11-02 AI初核通过，待用户终审：行医一说是后世传统，文字已标明
+t:
+  name:
+    zh-CN: 伊姆霍特普
+    en: Imhotep
+    zh-TW: 伊姆霍特普
+    ja: イムホテプ
+    ko: 임호텝
+    fr: Imhotep
+    es: Imhotep
+    de: Imhotep
+  era:
+    zh-CN: 古埃及，传说他也是医者
+    en: Ancient Egypt, later remembered as a healer
+    zh-TW: 古埃及，傳說他也是醫者
+    ja: 古代エジプト、のちに癒やし手として記憶される
+    ko: 고대 이집트, 훗날 치유자로도 기억됨
+    fr: Égypte antique, resté dans les mémoires comme guérisseur
+    es: Antiguo Egipto, recordado después como sanador
+    de: Altes Ägypten, später als Heiler in Erinnerung
+  souvenir:
+    zh-CN: 一页阶梯形的草图
+    en: A sketch of a stepped building
+    zh-TW: 一頁階梯形的草圖
+    ja: 階段状の建物のスケッチ
+    ko: 계단식 건축물 스케치
+    fr: Un croquis d'un édifice à degrés
+    es: Un boceto de un edificio escalonado
+    de: Eine Skizze eines stufenförmigen Bauwerks
+  arrive_note:
+    zh-CN: 伊姆霍特普推开大门走了进来，说想在这里住几天。
+    en: Imhotep came in through the front door and asked to stay a few days.
+    zh-TW: 伊姆霍特普推開大門走了進來，說想在這裡住幾天。
+    ja: イムホテプは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 임호텝은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Imhotep franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Imhotep cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Imhotep trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把东西摊开，指着上面的一个点，说就从这里量起。
+    en: He spread it out, pointed at one spot, and said they would measure from here.
+    zh-TW: 他把東西攤開，指著上面的一個點，說就從這裡量起。
+    ja: 彼はそれを広げて一点を指さし、ここから測ろうと言った。
+    ko: 그는 그것을 펼쳐 한 점을 가리키며 여기서부터 재자고 말했습니다.
+    fr: Il le déplia, montra un point et dit qu'on mesurerait à partir de là.
+    es: Lo extendió, señaló un punto y dijo que desde ahí se mediría.
+    de: Er breitete es aus, zeigte auf eine Stelle und sagte, von hier aus werde gemessen.
+  leave_ok:
+    zh-CN: 伊姆霍特普临走前留下一页阶梯形的草图，说：高的东西，都是从稳的地方开始的。
+    en: 'Before leaving, Imhotep left a sketch of a stepped building and said: Anything tall begins from somewhere steady.'
+    zh-TW: 伊姆霍特普臨走前留下一頁階梯形的草圖，說：高的東西，都是從穩的地方開始的。
+    ja: 帰る前に、イムホテプは記念の品を残していった：階段状の建物のスケッチ。そして言った。「高いものは、しっかりした場所から始まります。」
+    ko: '떠나기 전에 임호텝은(는) 기념품을 남겼습니다: 계단식 건축물 스케치. 그리고 말했습니다. “높은 것은 모두 단단한 곳에서 시작합니다.”'
+    fr: 'Avant de partir, Imhotep laissa un souvenir : Un croquis d''un édifice à degrés. Et dit : « Tout ce qui est haut commence en un lieu stable. »'
+    es: 'Antes de irse, Imhotep dejó un recuerdo: Un boceto de un edificio escalonado. Y dijo: «Todo lo alto empieza en un lugar firme.»'
+    de: 'Vor dem Abschied ließ Imhotep etwas zurück: Eine Skizze eines stufenförmigen Bauwerks. Dazu sagte Imhotep: „Alles Hohe beginnt an einem festen Ort.“'
+  leave_miss:
+    zh-CN: 伊姆霍特普道了谢，推开门回去了。
+    en: Imhotep said thanks and went back through the door.
+    zh-TW: 伊姆霍特普道了謝，推開門回去了。
+    ja: イムホテプはお礼を言い、扉をくぐって帰っていった。
+    ko: 임호텝은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Imhotep remercia et repassa la porte.
+    es: Imhotep dio las gracias y volvió a cruzar la puerta.
+    de: Imhotep bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说盖一座高高的石头建筑，先要把地基量得比谁都准。, en: He said to raise a tall stone building you must measure the foundation more carefully than anyone., zh-TW: 他說蓋一座高高的石頭建築，先要把地基量得比誰都準。, ja: 彼は、高い石の建物を建てるには、誰よりも正確に土台を測らなければならないと言った。, ko: 그는 높은 석조 건물을 세우려면 누구보다 정확히 기초를 재야 한다고 말했습니다., fr: 'Il dit que pour élever un haut édifice de pierre, il faut mesurer les fondations plus soigneusement que quiconque.', es: Dijo que para levantar un edificio alto de piedra hay que medir los cimientos con más cuidado que nadie., de: 'Er sagte, um ein hohes Steinbauwerk zu errichten, müsse man das Fundament sorgfältiger vermessen als alle anderen.'}
+    - {zh-CN: 后来的人说他也会治病，他听了笑笑，没有说是还是不是。, en: Later people said he could heal as well; he smiled and neither agreed nor denied it., zh-TW: 後來的人說他也會治病，他聽了笑笑，沒有說是還是不是。, ja: のちの人は、彼は病も治せたと言ったが、彼は微笑むだけで、そうとも違うとも言わなかった。, ko: '훗날 사람들은 그가 병도 고쳤다고 했지만, 그는 웃기만 할 뿐 그렇다 아니라 말하지 않았습니다.', fr: 'Plus tard, on dit qu''il savait aussi guérir ; il sourit sans confirmer ni démentir.', es: Más tarde la gente dijo que también sabía curar; él sonrió y no lo confirmó ni lo negó., de: 'Später sagte man, er habe auch heilen können; er lächelte und bestätigte es weder, noch bestritt er es.'}

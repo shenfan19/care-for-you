@@ -1,4 +1,4 @@
-/* 内容数据的第二部分：按年龄和种类分组的角色原型，推荐组合，婴幼儿、少年、更多宠物和花草的声线，以及补充的说话库、问答库和提醒库。 */
+/* 内容数据的第二部分：推荐组合（角色原型在 cards 文件夹里，一类一个 YAML），婴幼儿、少年、更多宠物和花草的声线，以及补充的说话库、问答库和提醒库。 */
 (function (CY) {
   const C = CY.content;
 
@@ -6,40 +6,6 @@
   C.stageOf = years => (years < 1 ? 'infant' : years < 4 ? 'toddler' : years < 13 ? 'child' : years < 18 ? 'teen' : years < 65 ? 'adult' : 'elder');
   C.STAGE_VOICE = { infant: 'infant', toddler: 'toddler', child: 'child', teen: 'teen' };
   C.AGE_OF_STAGE = { infant: 0.5, toddler: 2, child: 7, teen: 15, adult: 35, elder: 75 };
-
-  const H = (id, role, age, voice, pronoun, look) => ({ id, group: 'family', role, species: 'human', age, voice, pronoun, look });
-  const P = (id, group, role, species, voice, look, pronoun) => ({ id, group, role, species, age: 3, voice, pronoun: pronoun || '它', look });
-  C.archetypes.push(
-    H('grandpa', '爷爷', 75, 'elder', '他', { skin: 1, hair_style: 'bald', hair_color: 'white', glasses: 'round', beard: false, cloth: '#7f9580' }),
-    H('grandma', '奶奶', 72, 'elder', '她', { skin: 1, hair_style: 'bun', hair_color: 'gray', glasses: 'none', beard: false, cloth: '#b58aa5' }),
-    H('waigong', '外公', 78, 'elder', '他', { skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'square', beard: false, cloth: '#7d8fa8' }),
-    H('waipo', '外婆', 76, 'elder', '她', { skin: 1, hair_style: 'bob', hair_color: 'gray', glasses: 'none', beard: false, cloth: '#c28a6e' }),
-    H('dad', '爸爸', 45, 'parent', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'square', beard: false, cloth: '#6f86a0' }),
-    H('mom', '妈妈', 42, 'parent', '她', { skin: 1, hair_style: 'bob', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#c07a6b' }),
-    H('aunt', '姑姑', 50, 'aunt', '她', { skin: 1, hair_style: 'curly', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#d4a24c' }),
-    H('uncle', '舅舅', 48, 'aunt', '他', { skin: 4, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f8a7a' }),
-    H('brother', '哥哥', 28, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#4f6d8f' }),
-    H('sister', '姐姐', 26, 'sibling', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#b5677a' }),
-    H('friend', '朋友', 30, 'sibling', '她', { skin: 1, hair_style: 'long', hair_color: 'auburn', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
-    H('baby', '宝宝', 0.5, 'infant', '她', { skin: 0, hair_style: 'bald', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#f2c9c4' }),
-    H('toddler', '幼儿', 2, 'toddler', '她', { skin: 0, hair_style: 'bun', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e7a6a1' }),
-    H('daughter', '女儿', 7, 'child', '她', { skin: 0, hair_style: 'ponytail', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e7a6a1' }),
-    H('son', '儿子', 7, 'child', '他', { skin: 0, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#8fbf9f' }),
-    H('nephew', '侄子', 9, 'child', '他', { skin: 1, hair_style: 'curly', hair_color: 'black', glasses: 'round', beard: false, cloth: '#e0b062' }),
-    H('teen', '少年', 15, 'teen', '他', { skin: 1, hair_style: 'short', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#7a8fb8' }),
-    P('cat', 'animal', '猫', 'cat', 'cat', { coat: 'orange' }),
-    P('dog', 'animal', '狗', 'dog', 'dog', { coat: 'tan' }),
-    P('rabbit', 'animal', '兔子', 'rabbit', 'rabbit', { coat: 'white' }),
-    P('hamster', 'animal', '仓鼠', 'hamster', 'hamster', { coat: 'tan' }),
-    P('bird', 'animal', '小鸟', 'bird', 'bird', { coat: 'yellow' }),
-    P('fish', 'animal', '金鱼', 'fish', 'fish', { coat: 'orange' }),
-    P('turtle', 'animal', '乌龟', 'turtle', 'turtle', { coat: 'green' }),
-    P('snake', 'animal', '蛇', 'snake', 'snake', { coat: 'green' }),
-    P('succulent', 'plant', '多肉', 'succulent', 'plant', { coat: 'green' }),
-    P('flower', 'plant', '开花的花', 'flower', 'plant', { coat: 'rose' }),
-    P('tree', 'plant', '盆栽小树', 'tree', 'plant', { coat: 'green' }),
-  );
-
 
   /* ---------- 声线 ---------- */
   const V = C.voices;
@@ -142,56 +108,16 @@
   Q('ask_e10', { voice: ['elder'] }, '你结婚的时候，我给你包的红包还在吗？', ['还在，我收着呢。', '让我找找看。', '谢谢你，一直记着。']);
   Q('ask_p06', { voice: ['parent'] }, '你小时候最怕什么，还记得吗？', ['怕黑。', '怕打雷。', '不记得了，你说说。']);
   Q('ask_s07', { voice: ['sibling'] }, '爸妈那边最近怎么样？', ['挺好的，你呢？', '有点操心，一起商量？', '这周我打电话问问。']);
-  /* ---------- 更多身份：伴侣、邻居老人、室友、鹦鹉、仙人掌 ---------- */
-  C.archetypes.splice(11, 0,
-    H('husband', '丈夫', 38, 'partner', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: true, cloth: '#5f7f9a' }),
-    H('wife', '妻子', 36, 'partner', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c58a8f' }),
-    H('neighbor', '邻居老人', 70, 'elder', '她', { skin: 1, hair_style: 'bob', hair_color: 'white', glasses: 'round', beard: false, cloth: '#8f9fb8' }),
-    H('roommate', '室友', 25, 'sibling', '他', { skin: 1, hair_style: 'curly', hair_color: 'brown', glasses: 'round', beard: false, cloth: '#6aa08f' }),
-  );
-  C.archetypes.push(
-    P('parrot', 'animal', '鹦鹉', 'bird', 'bird', { coat: 'green' }),
-    P('cactus', 'plant', '仙人掌', 'cactus', 'plant', { coat: 'green' }),
-    P('guineapig', 'animal', '豚鼠', 'guineapig', 'rabbit', { coat: 'tan' }),
-    P('gecko', 'animal', '守宫', 'gecko', 'snake', { coat: 'green' }),
-    H('refugee_elder', '逃难来的老人', 72, 'elder', '她', { skin: 3, hair_style: 'bun', hair_color: 'gray', glasses: 'none', beard: false, cloth: '#9c8f7a' }),
-    H('refugee_mother', '逃难来的妈妈', 34, 'parent', '她', { skin: 3, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#a3786b' }),
-    H('refugee_child', '逃难来的孩子', 6, 'child', '他', { skin: 3, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c9a35b' }),
-    H('wheelchair', '坐轮椅的家人', 68, 'elder', '他', { skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'square', beard: true, cloth: '#6f8fa0' }),
-    P('hedgehog', 'animal', '刺猬', 'hedgehog', 'hedgehog', { coat: 'brown' }),
-    P('duck', 'animal', '鸭子', 'duck', 'duck', { coat: 'yellow' }),
-    P('ferret', 'animal', '雪貂', 'ferret', 'ferret', { coat: 'tan' }),
-    P('axolotl', 'animal', '六角恐龙', 'axolotl', 'axolotl', { coat: 'rose' }),
-    P('chicken', 'animal', '小鸡', 'chicken', 'chicken', { coat: 'white' }),
-    P('orchid', 'plant', '兰花', 'orchid', 'plant', { coat: 'rose' }),
-    P('bamboo', 'plant', '竹子', 'bamboo', 'plant', { coat: 'green' }),
-    H('gongong', '公公', 72, 'elder', '他', { skin: 1, hair_style: 'bald', hair_color: 'gray', glasses: 'square', beard: false, cloth: '#6f7f8f' }),
-    H('popo', '婆婆', 70, 'elder', '她', { skin: 1, hair_style: 'bun', hair_color: 'gray', glasses: 'round', beard: false, cloth: '#a98a9a' }),
-    H('grandson', '孙子', 6, 'child', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
-    H('granddaughter', '孙女', 4, 'child', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#e7a6a1' }),
-    H('younger_brother', '弟弟', 20, 'sibling', '他', { skin: 1, hair_style: 'curly', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f8a7a' }),
-    H('younger_sister', '妹妹', 22, 'sibling', '她', { skin: 1, hair_style: 'bob', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#c58a8f' }),
-    H('niece', '外甥女', 10, 'child', '她', { skin: 1, hair_style: 'bun', hair_color: 'brown', glasses: 'round', beard: false, cloth: '#9a8fc0' }),
-    H('elder', '典型老人', 75, 'elder', '他', { skin: 1, hair_style: 'short', hair_color: 'gray', glasses: 'round', beard: false, cloth: '#7f8f9a' }),
-    H('toddler1', '1岁孩子', 1, 'toddler', '她', { skin: 0, hair_style: 'bald', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#f2c9c4' }),
-    H('toddler2', '2岁孩子', 2, 'toddler', '她', { skin: 0, hair_style: 'bun', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e7a6a1' }),
-    H('toddler3', '3岁孩子', 3, 'toddler', '他', { skin: 0, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#8fbf9f' }),
-    H('toddler4', '4岁孩子', 4, 'child', '他', { skin: 0, hair_style: 'short', hair_color: 'brown', glasses: 'none', beard: false, cloth: '#e0b062' }),
-    H('child12', '12岁孩子', 12, 'child', '她', { skin: 1, hair_style: 'ponytail', hair_color: 'black', glasses: 'none', beard: false, cloth: '#7aa5b8' }),
-    H('woman25', '25岁女性', 25, 'sibling', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#c58a8f' }),
-    H('man25', '25岁男性', 25, 'sibling', '他', { skin: 1, hair_style: 'short', hair_color: 'black', glasses: 'none', beard: false, cloth: '#5f7f9f' }),
-    H('classmate', '同学', 16, 'teen', '她', { skin: 1, hair_style: 'long', hair_color: 'black', glasses: 'none', beard: false, cloth: '#6aa08f' }),
-  );
 
   /* 开局的七个典型叙事。away 写了上班或上学的人白天离家，到点回来，主角只能是留在家里的人 */
   C.presets.push(
     { id: 'couple_baby', members: [{ arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
-    { id: 'dual_work', members: [{ arch: 'dad', name: '爸爸', age: 36, away: 'work' }, { arch: 'mom', name: '妈妈', age: 34, away: 'work' }, { arch: 'grandpa', name: '爷爷', conditions: ['hypertension'] }, { arch: 'grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'toddler', name: '宝宝' }] },
-    { id: 'single_parent', members: [{ arch: 'mom', name: '妈妈', age: 36, away: 'work' }, { arch: 'waipo', name: '外婆', conditions: ['arthritis'] }, { arch: 'son', name: '儿子', age: 8, away: 'school' }] },
+    { id: 'dual_work', members: [{ arch: 'dad', name: '爸爸', age: 36, away: 'work' }, { arch: 'mom', name: '妈妈', age: 34, away: 'work' }, { arch: 'paternal_grandpa', name: '爷爷', conditions: ['hypertension'] }, { arch: 'paternal_grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'toddler', name: '宝宝' }] },
+    { id: 'single_parent', members: [{ arch: 'mom', name: '妈妈', age: 36, away: 'work' }, { arch: 'maternal_grandma', name: '外婆', conditions: ['arthritis'] }, { arch: 'son', name: '儿子', age: 8, away: 'school' }] },
     { id: 'summer', members: [{ arch: 'dad', name: '爸爸', age: 40, away: 'work' }, { arch: 'mom', name: '妈妈', age: 38, away: 'work' }, { arch: 'teen', name: '哥哥', age: 15 }, { arch: 'toddler', name: '弟弟' }] },
-    { id: 'threegen', members: [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
-    { id: 'elder_care', members: [{ arch: 'husband', name: '丈夫' }, { arch: 'wife', name: '妻子' }, { arch: 'waigong', name: '外公', conditions: ['diabetes', 'hypertension'] }] },
-    { id: 'solo_pets', members: [{ arch: 'woman25', name: '我', age: 28, lead: true }, { arch: 'cat', name: '团子' }, { arch: 'succulent', name: '多肉' }, { arch: 'orchid', name: '兰兰' }] },
+    { id: 'threegen', members: [{ arch: 'paternal_grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'paternal_grandma', name: '奶奶', conditions: ['arthritis'] }, { arch: 'dad', name: '爸爸' }, { arch: 'mom', name: '妈妈' }, { arch: 'baby', name: '宝宝' }] },
+    { id: 'elder_care', members: [{ arch: 'husband', name: '丈夫' }, { arch: 'wife', name: '妻子' }, { arch: 'maternal_grandpa', name: '外公', conditions: ['diabetes', 'hypertension'] }] },
+    { id: 'solo_pets', members: [{ arch: 'young_woman', name: '我', age: 28, lead: true }, { arch: 'cat', name: '团子' }, { arch: 'succulent', name: '多肉' }, { arch: 'orchid', name: '兰兰' }] },
   );
 
   V.partner = {

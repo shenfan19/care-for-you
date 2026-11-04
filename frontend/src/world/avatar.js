@@ -372,7 +372,7 @@ function beanDraw(o, V) {
   CY.charKeyOf = (p) => {
     const a = (p.person && p.person.appearance) || {};
     if (CHAR_KEYS.includes(a.model)) return a.model;
-    const she = ((p.person && p.person.pronoun) || '') === '她', pool = CHAR_KEYS.filter(k => k.startsWith(she ? 'female' : 'male'));
+    const she = CY.content.pron((p.person && p.person.pronoun) || '') === 'she', pool = CHAR_KEYS.filter(k => k.startsWith(she ? 'female' : 'male'));
     return pool[hashOf((p.person && p.person.id) || (p.id) || (a.hair_style || '') + (a.cloth || '')) % pool.length];
   };
   let sprUid = 0;
@@ -421,14 +421,14 @@ function beanDraw(o, V) {
   CY.avatar = (p, dir, pose) => {
     if (DRAW[p.species.id]) { const G0 = CY.game; return !['sprite', 'blocky'].includes(CY.figure) ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
     const G = CY.game, asleep = pose !== 'awake' && !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p) && !G.flag(p, 'outing'))));
-    const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
+    const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair_user';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
     const pz = asleep ? 'sleep' : (wc || (G && G.usingWheelchair && G.usingWheelchair(p) && pose !== 'sit')) ? 'chair' : pose === 'sit' ? 'sit' : dir && pose !== 'stand' ? 'walk' : 'stand';
     return (CY.figure === 'sprite' ? sprite : CY.figure === 'blocky' ? (a, b, c) => blockySprite(a, b, c === 'chair' ? 'sit' : c) : () => null)(p, dir || '', pz) || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
   };
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {
     const years = typeof age === 'number' ? age : arch.age;
-    return CY.avatar({ species: { id: arch.species }, state: { mood: 0.7 }, person: { age: years, appearance: look, pronoun: arch.pronoun || '他' } });
+    return CY.avatar({ species: { id: arch.species }, state: { mood: 0.7 }, person: { age: years, appearance: look, pronoun: arch.pronoun || 'he' } });
   };
   CY.avatarOptions = {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],

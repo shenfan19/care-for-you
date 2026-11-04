@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: vesalius
+order: 580
+official: true
+region: Belgium
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - paints
+  - brush
+controllable: false
+area: eu
+field: med
+look:
+  skin: '#fde3d0'
+  hairColor: brown
+  hairStyle: short
+  glasses: none
+  clothes: '#7a5a4a'
+souvenir:
+  id: vesalius_keepsake
+  icon: 📖
+src: Encyclopaedia Britannica, Andreas Vesalius; De humani corporis fabrica (1543).
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 维萨里
+    en: Andreas Vesalius
+    zh-TW: 維薩里
+    ja: アンドレアス・ヴェサリウス
+    ko: 안드레아스 베살리우스
+    fr: André Vésale
+    es: Andrés Vesalio
+    de: Andreas Vesalius
+  era:
+    zh-CN: 十六世纪，佛兰德
+    en: 16th century, Flanders
+    zh-TW: 十六世紀，佛蘭德
+    ja: 16世紀、フランドル
+    ko: 16세기, 플랑드르
+    fr: XVIe siècle, Flandre
+    es: Siglo XVI, Flandes
+    de: 16. Jahrhundert, Flandern
+  souvenir:
+    zh-CN: 一页解剖图的复印件
+    en: A copy of a page of an anatomical plate
+    zh-TW: 一頁解剖圖的影印件
+    ja: 解剖図の一ページの写し
+    ko: 해부도 한 쪽의 사본
+    fr: Une copie d'une page d'une planche anatomique
+    es: Una copia de una página de una lámina anatómica
+    de: Eine Kopie einer Seite einer anatomischen Tafel
+  arrive_note:
+    zh-CN: 维萨里推开大门走了进来，说想在这里住几天。
+    en: Andreas Vesalius came in through the front door and asked to stay a few days.
+    zh-TW: 維薩里推開大門走了進來，說想在這裡住幾天。
+    ja: アンドレアス・ヴェサリウスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 안드레아스 베살리우스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: André Vésale franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Andrés Vesalio cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Andreas Vesalius trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他调了调颜色，说这一笔要画得很准。
+    en: He mixed a colour and said this stroke had to be very exact.
+    zh-TW: 他調了調顏色，說這一筆要畫得很準。
+    ja: 彼は色を混ぜ、この一筆はとても正確でなければならないと言った。
+    ko: 그는 색을 섞으며 이 한 획은 아주 정확해야 한다고 말했습니다.
+    fr: Il mélangea une couleur et dit que ce trait devait être très exact.
+    es: Mezcló un color y dijo que este trazo tenía que ser muy exacto.
+    de: Er mischte eine Farbe und sagte, dieser Strich müsse sehr genau sein.
+  leave_ok:
+    zh-CN: 维萨里临走前留下一页解剖图的复印件，说：相信眼睛，也相信画下来的线条。
+    en: 'Before leaving, Andreas Vesalius left a copy of a page of an anatomical plate and said: Trust your eyes, and trust the lines you draw.'
+    zh-TW: 維薩里臨走前留下一頁解剖圖的影印件，說：相信眼睛，也相信畫下來的線條。
+    ja: 帰る前に、アンドレアス・ヴェサリウスは記念の品を残していった：解剖図の一ページの写し。そして言った。「自分の目と、自分で引いた線を信じなさい。」
+    ko: '떠나기 전에 안드레아스 베살리우스은(는) 기념품을 남겼습니다: 해부도 한 쪽의 사본. 그리고 말했습니다. “자기 눈과 자기가 그은 선을 믿으십시오.”'
+    fr: 'Avant de partir, André Vésale laissa un souvenir : Une copie d''une page d''une planche anatomique. Et dit : « Fie-toi à tes yeux et aux lignes que tu traces. »'
+    es: 'Antes de irse, Andrés Vesalio dejó un recuerdo: Una copia de una página de una lámina anatómica. Y dijo: «Confía en tus ojos y en las líneas que dibujas.»'
+    de: 'Vor dem Abschied ließ Andreas Vesalius etwas zurück: Eine Kopie einer Seite einer anatomischen Tafel. Dazu sagte Andreas Vesalius: „Vertraue deinen Augen und den Linien, die du zeichnest.“'
+  leave_miss:
+    zh-CN: 维萨里道了谢，推开门回去了。
+    en: Andreas Vesalius said thanks and went back through the door.
+    zh-TW: 維薩里道了謝，推開門回去了。
+    ja: アンドレアス・ヴェサリウスはお礼を言い、扉をくぐって帰っていった。
+    ko: 안드레아스 베살리우스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: André Vésale remercia et repassa la porte.
+    es: Andrés Vesalio dio las gracias y volvió a cruzar la puerta.
+    de: Andreas Vesalius bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说书上画的和他亲眼看到的不一样，所以要亲手核对。, en: 'He said what the books showed did not match what he saw, so he checked everything with his own eyes.', zh-TW: 他說書上畫的和他親眼看到的不一樣，所以要親手核對。, ja: 彼は、本に描かれているものと自分の目で見たものが違うので、すべて自分の目で確かめると言った。, ko: '그는 책에 그려진 것과 자기 눈으로 본 것이 달라서, 모든 것을 직접 확인한다고 말했습니다.', fr: 'Il disait que ce que montraient les livres ne correspondait pas à ce qu''il voyait, et vérifiait donc tout de ses propres yeux.', es: 'Dijo que lo que mostraban los libros no coincidía con lo que veía, así que lo comprobaba todo con sus propios ojos.', de: 'Er sagte, was die Bücher zeigten, stimme nicht mit dem überein, was er sehe, also prüfe er alles mit eigenen Augen.'}
+    - {zh-CN: 他说要看懂身体，就得把它的结构一处一处画下来。, en: 'He said that to understand the body you must draw its structure, one part after another.', zh-TW: 他說要看懂身體，就得把它的結構一處一處畫下來。, ja: 彼は、体を理解するには、その構造を一か所ずつ描いていくしかないと言った。, ko: 그는 몸을 이해하려면 그 구조를 한 곳 한 곳 그려 나가야 한다고 말했습니다., fr: 'Il disait que pour comprendre le corps, il faut dessiner sa structure, partie après partie.', es: 'Dijo que para entender el cuerpo hay que dibujar su estructura, parte por parte.', de: 'Er sagte, um den Körper zu verstehen, müsse man seinen Aufbau Teil für Teil zeichnen.'}

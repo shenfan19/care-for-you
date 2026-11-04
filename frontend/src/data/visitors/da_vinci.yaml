@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: da_vinci
+order: 70
+official: true
+region: Italy
+age: 62
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - paints
+  - kite
+controllable: false
+area: eu
+field: art
+look:
+  skin: '#f6d2b4'
+  hairColor: gray
+  hairStyle: long
+  glasses: none
+  clothes: '#9a8fc0'
+souvenir:
+  id: da_vinci_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica, Leonardo da Vinci; notebooks in mirror script, studies of bird flight.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 列奥纳多·达·芬奇
+    en: Leonardo da Vinci
+    zh-TW: 列奧納多·達·芬奇
+    ja: レオナルド・ダ・ヴィンチ
+    ko: 레오나르도 다 빈치
+    fr: Léonard de Vinci
+    es: Leonardo da Vinci
+    de: Leonardo da Vinci
+  era:
+    zh-CN: 十五至十六世纪，意大利
+    en: 15th-16th century, Italy
+    zh-TW: 十五至十六世紀，義大利
+    ja: 15〜16世紀、イタリア
+    ko: 15~16세기, 이탈리아
+    fr: XVe et XVIe siècles, Italie
+    es: Siglos XV y XVI, Italia
+    de: 15. und 16. Jahrhundert, Italien
+  souvenir:
+    zh-CN: 一页手稿的复印件
+    en: A copy of a manuscript page
+    zh-TW: 一頁手稿的影印件
+    ja: 手稿の一ページの写し
+    ko: 수고 한 쪽의 사본
+    fr: Une copie d'une page de manuscrit
+    es: Una copia de una página de manuscrito
+    de: Eine Kopie einer Manuskriptseite
+  arrive_note:
+    zh-CN: 列奥纳多·达·芬奇推开大门走了进来，说想在这里住几天。
+    en: Leonardo da Vinci came in through the front door and asked to stay a few days.
+    zh-TW: 列奧納多·達·芬奇推開大門走了進來，說想在這裡住幾天。
+    ja: レオナルド・ダ・ヴィンチは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 레오나르도 다 빈치은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Léonard de Vinci franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Leonardo da Vinci cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Leonardo da Vinci trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他拿起东西，立刻画了起来。
+    en: He picked it up and started drawing at once.
+    zh-TW: 他拿起東西，立刻畫了起來。
+    ja: 彼はそれを手に取り、すぐに描きはじめた。
+    ko: 그는 그것을 집어 들자마자 그리기 시작했습니다.
+    fr: Il le prit et se mit aussitôt à dessiner.
+    es: Lo cogió y se puso a dibujar enseguida.
+    de: Er nahm es in die Hand und begann sofort zu zeichnen.
+  leave_ok:
+    zh-CN: 列奥纳多·达·芬奇临走前留下一页手稿的复印件，说：好奇心就是最好的礼物，谢谢你陪我看鸟。
+    en: 'Before leaving, Leonardo da Vinci left a copy of a manuscript page and said: Curiosity is the best gift. Thank you for watching the birds with me.'
+    zh-TW: 列奧納多·達·芬奇臨走前留下一頁手稿的影印件，說：好奇心就是最好的禮物，謝謝你陪我看鳥。
+    ja: 帰る前に、レオナルド・ダ・ヴィンチは記念の品を残していった：手稿の一ページの写し。そして言った。「好奇心こそ最高の贈り物です。一緒に鳥を見てくれてありがとう。」
+    ko: '떠나기 전에 레오나르도 다 빈치은(는) 기념품을 남겼습니다: 수고 한 쪽의 사본. 그리고 말했습니다. “호기심이 가장 좋은 선물입니다. 함께 새를 봐 줘서 고마워요.”'
+    fr: 'Avant de partir, Léonard de Vinci laissa un souvenir : Une copie d''une page de manuscrit. Et dit : « La curiosité est le plus beau cadeau. Merci d''avoir regardé les oiseaux avec moi. »'
+    es: 'Antes de irse, Leonardo da Vinci dejó un recuerdo: Una copia de una página de manuscrito. Y dijo: «La curiosidad es el mejor regalo. Gracias por mirar los pájaros conmigo.»'
+    de: 'Vor dem Abschied ließ Leonardo da Vinci etwas zurück: Eine Kopie einer Manuskriptseite. Dazu sagte Leonardo da Vinci: „Neugier ist das beste Geschenk. Danke, dass du mit mir die Vögel beobachtet hast.“'
+  leave_miss:
+    zh-CN: 列奥纳多·达·芬奇道了谢，推开门回去了。
+    en: Leonardo da Vinci said thanks and went back through the door.
+    zh-TW: 列奧納多·達·芬奇道了謝，推開門回去了。
+    ja: レオナルド・ダ・ヴィンチはお礼を言い、扉をくぐって帰っていった。
+    ko: 레오나르도 다 빈치은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Léonard de Vinci remercia et repassa la porte.
+    es: Leonardo da Vinci dio las gracias y volvió a cruzar la puerta.
+    de: Leonardo da Vinci bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他从右往左写字，字是反过来的，要对着镜子才读得懂。, en: 'He wrote from right to left, mirrored, so you needed a mirror to read it.', zh-TW: 他從右往左寫字，字是反過來的，要對著鏡子才讀得懂。, ja: 彼は右から左へ、鏡文字で書くので、読むには鏡が必要だった。, ko: '그는 오른쪽에서 왼쪽으로, 거울에 비친 글씨로 썼기 때문에 읽으려면 거울이 필요했습니다.', fr: 'Il écrivait de droite à gauche, en miroir, de sorte qu''il fallait un miroir pour le lire.', es: 'Escribía de derecha a izquierda, en espejo, así que hacía falta un espejo para leerlo.', de: 'Er schrieb von rechts nach links, spiegelverkehrt, sodass man einen Spiegel zum Lesen brauchte.'}
+    - {zh-CN: 他盯着天上的鸟看了很久，说想知道它们怎么停在风里。, en: 'He watched the birds for a long time, wondering how they rest on the wind.', zh-TW: 他盯著天上的鳥看了很久，說想知道它們怎麼停在風裡。, ja: 彼は鳥を長いこと眺め、どうして風の上で休めるのだろうと考えていた。, ko: '그는 새를 한참 바라보며, 어떻게 바람 위에서 쉬는지 궁금해했습니다.', fr: 'Il regarda longtemps les oiseaux, se demandant comment ils se reposent sur le vent.', es: 'Estuvo mucho rato mirando los pájaros, preguntándose cómo descansan sobre el viento.', de: 'Er sah den Vögeln lange zu und fragte sich, wie sie auf dem Wind ruhen.'}
+said:
+  zh-CN: 学习从不会让头脑疲惫。
+  en: Learning never exhausts the mind.
+  zh-TW: 學習從不會讓頭腦疲憊。
+  ja: 学ぶことは、心を疲れさせない。
+  ko: 배움은 결코 정신을 지치게 하지 않는다.
+  fr: Apprendre n'épuise jamais l'esprit.
+  es: Aprender nunca agota la mente.
+  de: Lernen erschöpft den Geist nie.

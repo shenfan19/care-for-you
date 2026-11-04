@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: ibn_al_nafis
+order: 320
+official: true
+region: Syria / Egypt
+age: 50
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - medkit
+  - notebook
+controllable: false
+area: wa
+field: med
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#7c8fb0'
+souvenir:
+  id: ibn_al_nafis_keepsake
+  icon: 🫀
+src: Encyclopaedia Britannica, Ibn al-Nafis; description of the pulmonary transit of blood, commentary on Avicenna's Canon.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 伊本·纳菲斯
+    en: Ibn al-Nafis
+    zh-TW: 伊本·納菲斯
+    ja: イブン・アン＝ナフィース
+    ko: 이븐 알나피스
+    fr: Ibn al-Nafis
+    es: Ibn al-Nafis
+    de: Ibn an-Nafis
+  era:
+    zh-CN: 十三世纪，叙利亚与埃及
+    en: 13th century, Syria and Egypt
+    zh-TW: 十三世紀，敘利亞與埃及
+    ja: 13世紀、シリアとエジプト
+    ko: 13세기, 시리아와 이집트
+    fr: XIIIe siècle, Syrie et Égypte
+    es: Siglo XIII, Siria y Egipto
+    de: 13. Jahrhundert, Syrien und Ägypten
+  souvenir:
+    zh-CN: 一页肺循环的手稿抄本
+    en: A copy of a manuscript page on the lungs and blood
+    zh-TW: 一頁肺迴圈的手稿抄本
+    ja: 肺と血液についての手稿の一ページの写し
+    ko: 폐와 피에 대한 수고 한 쪽의 사본
+    fr: Une copie d'une page de manuscrit sur les poumons et le sang
+    es: Una copia de una página de manuscrito sobre los pulmones y la sangre
+    de: Eine Kopie einer Manuskriptseite über Lunge und Blut
+  arrive_note:
+    zh-CN: 伊本·纳菲斯推开大门走了进来，说想在这里住几天。
+    en: Ibn al-Nafis came in through the front door and asked to stay a few days.
+    zh-TW: 伊本·納菲斯推開大門走了進來，說想在這裡住幾天。
+    ja: イブン・アン＝ナフィースは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 이븐 알나피스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Ibn al-Nafis franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Ibn al-Nafis cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Ibn an-Nafis trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他接过东西，立刻翻开写了起来。
+    en: He took it and opened it to write at once.
+    zh-TW: 他接過東西，立刻翻開寫了起來。
+    ja: 彼はそれを受け取ると、すぐ開いて書きはじめた。
+    ko: 그는 그것을 받아 곧바로 펼치고 쓰기 시작했습니다.
+    fr: Il le prit et l'ouvrit aussitôt pour écrire.
+    es: Lo tomó y lo abrió enseguida para escribir.
+    de: Er nahm es entgegen und schlug es sofort zum Schreiben auf.
+  leave_ok:
+    zh-CN: 伊本·纳菲斯临走前留下一页肺循环的手稿抄本，说：看得仔细，才写得对。
+    en: 'Before leaving, Ibn al-Nafis left a copy of a manuscript page on the lungs and blood and said: Only careful looking leads to careful writing.'
+    zh-TW: 伊本·納菲斯臨走前留下一頁肺迴圈的手稿抄本，說：看得仔細，才寫得對。
+    ja: 帰る前に、イブン・アン＝ナフィースは記念の品を残していった：肺と血液についての手稿の一ページの写し。そして言った。「注意深く見てこそ、注意深く書けるのです。」
+    ko: '떠나기 전에 이븐 알나피스은(는) 기념품을 남겼습니다: 폐와 피에 대한 수고 한 쪽의 사본. 그리고 말했습니다. “꼼꼼히 봐야 꼼꼼히 쓸 수 있습니다.”'
+    fr: 'Avant de partir, Ibn al-Nafis laissa un souvenir : Une copie d''une page de manuscrit sur les poumons et le sang. Et dit : « Ce n''est qu''en regardant avec soin qu''on écrit avec soin. »'
+    es: 'Antes de irse, Ibn al-Nafis dejó un recuerdo: Una copia de una página de manuscrito sobre los pulmones y la sangre. Y dijo: «Solo mirando con cuidado se llega a escribir con cuidado.»'
+    de: 'Vor dem Abschied ließ Ibn an-Nafis etwas zurück: Eine Kopie einer Manuskriptseite über Lunge und Blut. Dazu sagte Ibn an-Nafis: „Nur genaues Hinsehen führt zu genauem Schreiben.“'
+  leave_miss:
+    zh-CN: 伊本·纳菲斯道了谢，推开门回去了。
+    en: Ibn al-Nafis said thanks and went back through the door.
+    zh-TW: 伊本·納菲斯道了謝，推開門回去了。
+    ja: イブン・アン＝ナフィースはお礼を言い、扉をくぐって帰っていった。
+    ko: 이븐 알나피스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Ibn al-Nafis remercia et repassa la porte.
+    es: Ibn al-Nafis dio las gracias y volvió a cruzar la puerta.
+    de: Ibn an-Nafis bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他在纸上画了一个心脏，说血不是直接穿过中间的隔，而是要绕到肺里走一圈。, en: He drew a heart on paper and said the blood does not pass straight through the middle wall but goes around through the lungs., zh-TW: 他在紙上畫了一個心臟，說血不是直接穿過中間的隔，而是要繞到肺裡走一圈。, ja: 彼は紙に心臓を描き、血は真ん中の壁を直接通るのではなく、肺をひとめぐりしてくるのだと言った。, ko: '그는 종이에 심장을 그리며, 피는 가운데 벽을 곧장 통과하지 않고 폐를 한 바퀴 돌아온다고 말했습니다.', fr: 'Il dessina un cœur sur le papier et dit que le sang ne traverse pas directement la cloison du milieu, mais fait un détour par les poumons.', es: 'Dibujó un corazón en el papel y dijo que la sangre no atraviesa directamente la pared del medio, sino que da un rodeo por los pulmones.', de: 'Er zeichnete ein Herz auf Papier und sagte, das Blut gehe nicht direkt durch die Scheidewand, sondern fließe einen Bogen durch die Lunge.'}
+    - {zh-CN: 他说他大半辈子都在医院里，最爱看的是病人慢慢好起来。, en: He said he had spent most of his life in hospitals and loved most to watch patients slowly recover., zh-TW: 他說他大半輩子都在醫院裡，最愛看的是病人慢慢好起來。, ja: 彼は、生涯の大半を病院で過ごし、病人が少しずつ良くなるのを見るのがいちばん好きだと言った。, ko: '그는 평생 대부분을 병원에서 보냈고, 환자가 조금씩 나아지는 모습을 보는 것이 가장 좋다고 말했습니다.', fr: Il dit avoir passé la plus grande partie de sa vie dans les hôpitaux et aimer surtout voir les malades guérir peu à peu., es: Dijo que había pasado la mayor parte de su vida en hospitales y que lo que más le gustaba era ver cómo los enfermos se recuperan poco a poco., de: 'Er sagte, er habe den größten Teil seines Lebens in Krankenhäusern verbracht und sehe am liebsten, wie Kranke langsam gesund werden.'}

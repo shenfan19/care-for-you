@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: du_fu
+order: 90
+official: true
+region: China
+age: 58
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - coat
+  - soup
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#f6d2b4'
+  hairColor: gray
+  hairStyle: bun
+  glasses: none
+  clothes: '#7f9580'
+souvenir:
+  id: du_fu_keepsake
+  icon: 📜
+src: 《茅屋为秋风所破歌》；Encyclopaedia Britannica, Du Fu.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 杜甫
+    en: Du Fu
+    zh-TW: 杜甫
+    ja: 杜甫
+    ko: 두보
+    fr: Du Fu
+    es: Du Fu
+    de: Du Fu
+  era:
+    zh-CN: 唐代，中国
+    en: Tang dynasty, China
+    zh-TW: 唐代，中國
+    ja: 唐代、中国
+    ko: 당나라, 중국
+    fr: Dynastie Tang, Chine
+    es: Dinastía Tang, China
+    de: Tang-Dynastie, China
+  souvenir:
+    zh-CN: 一页诗稿的复印件
+    en: A copy of a page of poems
+    zh-TW: 一頁詩稿的影印件
+    ja: 詩を書いた一ページの写し
+    ko: 시 한 쪽의 사본
+    fr: Une copie d'une page de poèmes
+    es: Una copia de una página de poemas
+    de: Eine Kopie einer Gedichtseite
+  arrive_note:
+    zh-CN: 杜甫推开大门走了进来，说想在这里住几天。
+    en: Du Fu came in through the front door and asked to stay a few days.
+    zh-TW: 杜甫推開大門走了進來，說想在這裡住幾天。
+    ja: 杜甫は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 두보은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Du Fu franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Du Fu cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Du Fu trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他捧着暖和的东西，长长地舒了口气。
+    en: Holding something warm, he let out a long breath.
+    zh-TW: 他捧著暖和的東西，長長地舒了口氣。
+    ja: あたたかいものを手にして、彼は長く息をついた。
+    ko: 따뜻한 것을 손에 쥐고, 그는 길게 한숨을 내쉬었습니다.
+    fr: Tenant quelque chose de chaud, il poussa un long soupir.
+    es: Con algo caliente entre las manos, soltó un largo suspiro.
+    de: Mit etwas Warmem in der Hand stieß er einen langen Atemzug aus.
+  leave_ok:
+    zh-CN: 杜甫临走前留下一页诗稿的复印件，说：暖和了，诗里才有力气。
+    en: 'Before leaving, Du Fu left a copy of a page of poems and said: It is the warmth that gives a poem its strength.'
+    zh-TW: 杜甫臨走前留下一頁詩稿的影印件，說：暖和了，詩裡才有力氣。
+    ja: 帰る前に、杜甫は記念の品を残していった：詩を書いた一ページの写し。そして言った。「詩に力を与えるのは、あたたかさだ。」
+    ko: '떠나기 전에 두보은(는) 기념품을 남겼습니다: 시 한 쪽의 사본. 그리고 말했습니다. “시에 힘을 주는 것은 따뜻함입니다.”'
+    fr: 'Avant de partir, Du Fu laissa un souvenir : Une copie d''une page de poèmes. Et dit : « C''est la chaleur qui donne sa force à un poème. »'
+    es: 'Antes de irse, Du Fu dejó un recuerdo: Una copia de una página de poemas. Y dijo: «Es el calor lo que da fuerza a un poema.»'
+    de: 'Vor dem Abschied ließ Du Fu etwas zurück: Eine Kopie einer Gedichtseite. Dazu sagte Du Fu: „Erst die Wärme gibt einem Gedicht seine Kraft.“'
+  leave_miss:
+    zh-CN: 杜甫道了谢，推开门回去了。
+    en: Du Fu said thanks and went back through the door.
+    zh-TW: 杜甫道了謝，推開門回去了。
+    ja: 杜甫はお礼を言い、扉をくぐって帰っていった。
+    ko: 두보은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Du Fu remercia et repassa la porte.
+    es: Du Fu dio las gracias y volvió a cruzar la puerta.
+    de: Du Fu bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他裹紧了身上的单衣，说今年的冬天特别冷。, en: He pulled his thin robe tighter and said this winter was especially cold., zh-TW: 他裹緊了身上的單衣，說今年的冬天特別冷。, ja: 彼は薄い衣を引き寄せ、今年の冬は特に寒いと言った。, ko: 그는 얇은 옷자락을 여미며 올겨울은 유난히 춥다고 말했습니다., fr: Il resserra sa robe légère et dit que cet hiver était particulièrement froid., es: Se ajustó la túnica fina y dijo que este invierno hacía especialmente frío., de: 'Er zog sein dünnes Gewand enger und sagte, dieser Winter sei besonders kalt.'}
+    - {zh-CN: 他看着你家的灯火说，要是天下人都能有一间暖和的屋子就好了。, en: 'Looking at your lamplight, he said it would be wonderful if everyone had a warm place to live.', zh-TW: 他看著你家的燈火說，要是天下人都能有一間暖和的屋子就好了。, ja: 彼はあなたのランプの灯りを見て、誰もが暖かい住まいを持てたらどんなによいだろうと言った。, ko: '그는 당신의 등불을 바라보며, 모두에게 따뜻한 살 곳이 있다면 얼마나 좋겠느냐고 말했습니다.', fr: 'En regardant la lumière de ta lampe, il dit que ce serait merveilleux si chacun avait un endroit chaud où vivre.', es: 'Mirando la luz de tu lámpara, dijo que sería maravilloso que todos tuvieran un lugar cálido donde vivir.', de: 'Beim Anblick deines Lampenlichts sagte er, es wäre wunderbar, wenn jeder einen warmen Ort zum Wohnen hätte.'}
+said:
+  zh-CN: 安得广厦千万间，大庇天下寒士俱欢颜。
+  en: If only I had ten thousand spacious houses to shelter every poor scholar under heaven, all smiling.
+  zh-TW: 安得廣廈千萬間，大庇天下寒士俱歡顏。
+  ja: 広い家が万軒あって、天下の貧しい書生たちをみな覆い、みな笑顔にできたなら。
+  ko: 넓은 집 천만 칸을 얻어 천하의 가난한 선비들을 모두 덮어 주고 다 함께 웃게 할 수 있다면!
+  fr: Si seulement j'avais dix mille vastes maisons pour abriter tous les lettrés pauvres sous le ciel, tous souriants !
+  es: ¡Ojalá tuviera diez mil casas espaciosas para cobijar a todos los pobres letrados bajo el cielo, todos sonrientes!
+  de: Hätte ich nur zehntausend geräumige Häuser, um alle armen Gelehrten unter dem Himmel zu schützen, alle lächelnd!

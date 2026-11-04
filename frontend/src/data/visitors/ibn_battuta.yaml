@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: ibn_battuta
+order: 230
+official: true
+region: Morocco
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - map
+  - shoes
+controllable: false
+area: af
+field: trv
+look:
+  skin: '#d9a67c'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#d4a24c'
+souvenir:
+  id: ibn_battuta_keepsake
+  icon: 🗺️
+src: Encyclopaedia Britannica, Ibn Battuta; the Rihla.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 伊本·白图泰
+    en: Ibn Battuta
+    zh-TW: 伊本·白圖泰
+    ja: イブン・バットゥータ
+    ko: 이븐 바투타
+    fr: Ibn Battuta
+    es: Ibn Battuta
+    de: Ibn Battuta
+  era:
+    zh-CN: 十四世纪，摩洛哥
+    en: 14th century, Morocco
+    zh-TW: 十四世紀，摩洛哥
+    ja: 14世紀、モロッコ
+    ko: 14세기, 모로코
+    fr: XIVe siècle, Maroc
+    es: Siglo XIV, Marruecos
+    de: 14. Jahrhundert, Marokko
+  souvenir:
+    zh-CN: 一页游记的复印件
+    en: A copy of a page from the travel book
+    zh-TW: 一頁遊記的影印件
+    ja: 旅行記の一ページの写し
+    ko: 여행기 한 쪽의 사본
+    fr: Une copie d'une page du livre de voyage
+    es: Una copia de una página del libro de viajes
+    de: Eine Kopie einer Seite aus dem Reisebuch
+  arrive_note:
+    zh-CN: 伊本·白图泰推开大门走了进来，说想在这里住几天。
+    en: Ibn Battuta came in through the front door and asked to stay a few days.
+    zh-TW: 伊本·白圖泰推開大門走了進來，說想在這裡住幾天。
+    ja: イブン・バットゥータは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 이븐 바투타은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Ibn Battuta franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Ibn Battuta cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Ibn Battuta trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他摊开东西，指着上面某个地方笑了。
+    en: He spread it out and laughed, pointing at a place on it.
+    zh-TW: 他攤開東西，指著上面某個地方笑了。
+    ja: 彼はそれを広げ、その上の一点を指さして笑った。
+    ko: 그는 그것을 펼치고 한 곳을 가리키며 웃었습니다.
+    fr: Il la déplia et rit en pointant un endroit dessus.
+    es: Lo desplegó y rió, señalando un lugar en él.
+    de: Er breitete sie aus und lachte, während er auf eine Stelle darauf zeigte.
+  leave_ok:
+    zh-CN: 伊本·白图泰临走前留下一页游记的复印件，说：走得越远，越明白家在哪里。
+    en: 'Before leaving, Ibn Battuta left a copy of a page from the travel book and said: The farther you go, the better you know where home is.'
+    zh-TW: 伊本·白圖泰臨走前留下一頁遊記的影印件，說：走得越遠，越明白家在哪裡。
+    ja: 帰る前に、イブン・バットゥータは記念の品を残していった：旅行記の一ページの写し。そして言った。「遠くへ行くほど、家のありかがよく分かる。」
+    ko: '떠나기 전에 이븐 바투타은(는) 기념품을 남겼습니다: 여행기 한 쪽의 사본. 그리고 말했습니다. “멀리 갈수록 집이 어디인지 더 잘 알게 됩니다.”'
+    fr: 'Avant de partir, Ibn Battuta laissa un souvenir : Une copie d''une page du livre de voyage. Et dit : « Plus tu vas loin, mieux tu sais où est ta maison. »'
+    es: 'Antes de irse, Ibn Battuta dejó un recuerdo: Una copia de una página del libro de viajes. Y dijo: «Cuanto más lejos vas, mejor sabes dónde está tu hogar.»'
+    de: 'Vor dem Abschied ließ Ibn Battuta etwas zurück: Eine Kopie einer Seite aus dem Reisebuch. Dazu sagte Ibn Battuta: „Je weiter du gehst, desto besser weißt du, wo dein Zuhause ist.“'
+  leave_miss:
+    zh-CN: 伊本·白图泰道了谢，推开门回去了。
+    en: Ibn Battuta said thanks and went back through the door.
+    zh-TW: 伊本·白圖泰道了謝，推開門回去了。
+    ja: イブン・バットゥータはお礼を言い、扉をくぐって帰っていった。
+    ko: 이븐 바투타은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Ibn Battuta remercia et repassa la porte.
+    es: Ibn Battuta dio las gracias y volvió a cruzar la puerta.
+    de: Ibn Battuta bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他讲起一路上见过的城市，说得没完没了。, en: He talked endlessly about the cities he had seen along the way., zh-TW: 他講起一路上見過的城市，說得沒完沒了。, ja: 彼は道中で見た街々の話を、尽きることなく語った。, ko: 그는 길에서 본 도시들 이야기를 끝없이 늘어놓았습니다., fr: Il parlait sans cesse des villes qu'il avait vues en chemin., es: Hablaba sin parar de las ciudades que había visto por el camino., de: 'Er erzählte endlos von den Städten, die er unterwegs gesehen hatte.'}
+    - {zh-CN: 他想知道你这里到底在哪，问了好几遍。, en: He asked several times where exactly your place was., zh-TW: 他想知道你這裡到底在哪，問了好幾遍。, ja: 彼は何度も、あなたの家は正確にはどこにあるのかと尋ねた。, ko: 그는 당신의 집이 정확히 어디냐고 여러 번 물었습니다., fr: Il demanda plusieurs fois où se trouvait exactement ta maison., es: Preguntó varias veces dónde estaba exactamente tu casa., de: 'Er fragte mehrmals, wo genau dein Ort liege.'}

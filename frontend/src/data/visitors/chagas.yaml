@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: chagas
+order: 610
+official: true
+region: Brazil
+age: 45
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - microscope
+  - umbrella
+controllable: false
+area: am
+field: med
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: short
+  glasses: round
+  clothes: '#8aa07a'
+souvenir:
+  id: chagas_keepsake
+  icon: 🔬
+src: Encyclopaedia Britannica, Carlos Chagas; described Chagas disease in 1909.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 卡洛斯·沙加斯
+    en: Carlos Chagas
+    zh-TW: 卡洛斯·沙加斯
+    ja: カルロス・シャガス
+    ko: 카를로스 샤가스
+    fr: Carlos Chagas
+    es: Carlos Chagas
+    de: Carlos Chagas
+  era:
+    zh-CN: 十九至二十世纪，巴西
+    en: 19th-20th century, Brazil
+    zh-TW: 十九至二十世紀，巴西
+    ja: 19〜20世紀、ブラジル
+    ko: 19~20세기, 브라질
+    fr: XIXe et XXe siècles, Brésil
+    es: Siglos XIX y XX, Brasil
+    de: 19. und 20. Jahrhundert, Brasilien
+  souvenir:
+    zh-CN: 一页显微镜下的素描
+    en: A page of sketches seen through a microscope
+    zh-TW: 一頁顯微鏡下的素描
+    ja: 顕微鏡で見たスケッチの一ページ
+    ko: 현미경으로 본 스케치 한 쪽
+    fr: Une page de croquis vus au microscope
+    es: Una página de bocetos vistos al microscopio
+    de: Eine Seite mit Skizzen unter dem Mikroskop
+  arrive_note:
+    zh-CN: 卡洛斯·沙加斯推开大门走了进来，说想在这里住几天。
+    en: Carlos Chagas came in through the front door and asked to stay a few days.
+    zh-TW: 卡洛斯·沙加斯推開大門走了進來，說想在這裡住幾天。
+    ja: カルロス・シャガスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 카를로스 샤가스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Carlos Chagas franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Carlos Chagas cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Carlos Chagas trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他撑开伞挡住日头，凑在镜前看了很久。
+    en: He opened the umbrella against the sun and bent over the lens for a long time.
+    zh-TW: 他撐開傘擋住日頭，湊在鏡前看了很久。
+    ja: 彼は傘を広げて日差しを避け、レンズの上に長いこと身をかがめた。
+    ko: 그는 우산을 펴 햇빛을 가리고 렌즈 위로 오래 몸을 숙였습니다.
+    fr: Il ouvrit le parapluie contre le soleil et se pencha longtemps sur la lentille.
+    es: Abrió el paraguas contra el sol y se inclinó mucho rato sobre la lente.
+    de: Er spannte den Schirm gegen die Sonne und beugte sich lange über die Linse.
+  leave_ok:
+    zh-CN: 卡洛斯·沙加斯临走前留下一页显微镜下的素描，说：病是在日子里长出来的，要到日子里去找。
+    en: 'Before leaving, Carlos Chagas left a page of sketches seen through a microscope and said: Illness grows out of daily life, so go and look for it there.'
+    zh-TW: 卡洛斯·沙加斯臨走前留下一頁顯微鏡下的素描，說：病是在日子裡長出來的，要到日子裡去找。
+    ja: 帰る前に、カルロス・シャガスは記念の品を残していった：顕微鏡で見たスケッチの一ページ。そして言った。「病は暮らしの中から生まれます。だから暮らしの中で探しなさい。」
+    ko: '떠나기 전에 카를로스 샤가스은(는) 기념품을 남겼습니다: 현미경으로 본 스케치 한 쪽. 그리고 말했습니다. “병은 일상에서 자라니, 일상에서 찾으십시오.”'
+    fr: 'Avant de partir, Carlos Chagas laissa un souvenir : Une page de croquis vus au microscope. Et dit : « La maladie naît de la vie quotidienne, alors cherche-la là. »'
+    es: 'Antes de irse, Carlos Chagas dejó un recuerdo: Una página de bocetos vistos al microscopio. Y dijo: «La enfermedad nace de la vida diaria, así que búscala allí.»'
+    de: 'Vor dem Abschied ließ Carlos Chagas etwas zurück: Eine Seite mit Skizzen unter dem Mikroskop. Dazu sagte Carlos Chagas: „Krankheit wächst aus dem Alltag, also such sie dort.“'
+  leave_miss:
+    zh-CN: 卡洛斯·沙加斯道了谢，推开门回去了。
+    en: Carlos Chagas said thanks and went back through the door.
+    zh-TW: 卡洛斯·沙加斯道了謝，推開門回去了。
+    ja: カルロス・シャガスはお礼を言い、扉をくぐって帰っていった。
+    ko: 카를로스 샤가스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Carlos Chagas remercia et repassa la porte.
+    es: Carlos Chagas dio las gracias y volvió a cruzar la puerta.
+    de: Carlos Chagas bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说他在一个小村子里，把一只小虫和一种病联系了起来。, en: He said that in a small village he linked a little insect to an illness., zh-TW: 他說他在一個小村子裡，把一隻小蟲和一種病聯絡了起來。, ja: 彼は、小さな村で、一匹の小さな虫と一つの病を結びつけたと言った。, ko: 그는 작은 마을에서 작은 벌레 한 마리와 한 가지 병을 연결 지었다고 말했습니다., fr: 'Il disait que dans un petit village, il avait relié un minuscule insecte à une maladie.', es: Dijo que en un pueblo pequeño relacionó un insecto diminuto con una enfermedad., de: 'Er sagte, in einem kleinen Dorf habe er ein kleines Insekt mit einer Krankheit in Verbindung gebracht.'}
+    - {zh-CN: 他说要弄懂一种病，就得同时弄懂虫、人和房子。, en: 'He said to understand an illness you must understand the insect, the people and the houses together.', zh-TW: 他說要弄懂一種病，就得同時弄懂蟲、人和房子。, ja: 彼は、病を理解するには、虫と人と家を同時に理解しなければならないと言った。, ko: 그는 병을 이해하려면 벌레와 사람과 집을 함께 이해해야 한다고 말했습니다., fr: 'Il disait que pour comprendre une maladie, il faut comprendre à la fois l''insecte, les gens et les maisons.', es: 'Dijo que para entender una enfermedad hay que entender a la vez el insecto, las personas y las casas.', de: 'Er sagte, um eine Krankheit zu verstehen, müsse man Insekt, Menschen und Häuser zugleich verstehen.'}

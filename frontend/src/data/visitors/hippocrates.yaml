@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: hippocrates
+order: 310
+official: true
+region: Greece
+age: 70
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - aspirin
+  - soup
+controllable: false
+area: eu
+field: med
+look:
+  skin: '#f6d2b4'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#a7b5a0'
+souvenir:
+  id: hippocrates_keepsake
+  icon: 🌿
+src: Encyclopaedia Britannica, Hippocrates; the Hippocratic Corpus on observation, diet and rest. The willow bark remedy is a traditional attribution.
+review: 2026-11-02 AI初核通过，待用户终审：柳树皮疗法是传统说法，文字已标明
+t:
+  name:
+    zh-CN: 希波克拉底
+    en: Hippocrates
+    zh-TW: 希波克拉底
+    ja: ヒポクラテス
+    ko: 히포크라테스
+    fr: Hippocrate
+    es: Hipócrates
+    de: Hippokrates
+  era:
+    zh-CN: 古希腊
+    en: Ancient Greece
+    zh-TW: 古希臘
+    ja: 古代ギリシャ
+    ko: 고대 그리스
+    fr: Grèce antique
+    es: Antigua Grecia
+    de: Antikes Griechenland
+  souvenir:
+    zh-CN: 一片柳叶
+    en: A willow leaf
+    zh-TW: 一片柳葉
+    ja: 柳の葉
+    ko: 버드나무 잎
+    fr: Une feuille de saule
+    es: Una hoja de sauce
+    de: Ein Weidenblatt
+  arrive_note:
+    zh-CN: 希波克拉底推开大门走了进来，说想在这里住几天。
+    en: Hippocrates came in through the front door and asked to stay a few days.
+    zh-TW: 希波克拉底推開大門走了進來，說想在這裡住幾天。
+    ja: ヒポクラテスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 히포크라테스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Hippocrate franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Hipócrates cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Hippokrates trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他嚼了嚼，点点头，说味道和故乡的一样。
+    en: He chewed it, nodded, and said it tasted like home.
+    zh-TW: 他嚼了嚼，點點頭，說味道和故鄉的一樣。
+    ja: 彼はそれを噛み、うなずいて、故郷の味がすると言った。
+    ko: 그는 그것을 씹어 보고 고개를 끄덕이며 고향의 맛이 난다고 말했습니다.
+    fr: Il la mâcha, hocha la tête et dit que cela avait le goût de la maison.
+    es: La masticó, asintió y dijo que sabía a casa.
+    de: Er kaute daran, nickte und sagte, es schmecke wie zu Hause.
+  leave_ok:
+    zh-CN: 希波克拉底临走前留下一片柳叶，说：多看一看，多等一等，身体自己会帮忙。
+    en: 'Before leaving, Hippocrates left a willow leaf and said: Look a little longer, wait a little longer, and the body will help.'
+    zh-TW: 希波克拉底臨走前留下一片柳葉，說：多看一看，多等一等，身體自己會幫忙。
+    ja: 帰る前に、ヒポクラテスは記念の品を残していった：柳の葉。そして言った。「もう少し長く見て、もう少し長く待てば、体は自分で助けてくれます。」
+    ko: '떠나기 전에 히포크라테스은(는) 기념품을 남겼습니다: 버드나무 잎. 그리고 말했습니다. “조금 더 오래 보고, 조금 더 오래 기다리면 몸이 스스로 돕습니다.”'
+    fr: 'Avant de partir, Hippocrate laissa un souvenir : Une feuille de saule. Et dit : « Regarde un peu plus longtemps, attends un peu plus longtemps, et le corps s''aidera lui-même. »'
+    es: 'Antes de irse, Hipócrates dejó un recuerdo: Una hoja de sauce. Y dijo: «Mira un poco más, espera un poco más, y el cuerpo se ayudará a sí mismo.»'
+    de: 'Vor dem Abschied ließ Hippokrates etwas zurück: Ein Weidenblatt. Dazu sagte Hippokrates: „Schau ein wenig länger hin, warte ein wenig länger, und der Körper hilft sich selbst.“'
+  leave_miss:
+    zh-CN: 希波克拉底道了谢，推开门回去了。
+    en: Hippocrates said thanks and went back through the door.
+    zh-TW: 希波克拉底道了謝，推開門回去了。
+    ja: ヒポクラテスはお礼を言い、扉をくぐって帰っていった。
+    ko: 히포크라테스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Hippocrate remercia et repassa la porte.
+    es: Hipócrates dio las gracias y volvió a cruzar la puerta.
+    de: Hippokrates bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他在床边坐了很久，一句话不说，先把人看明白，才开口问昨晚睡得怎么样。, en: 'He sat by the bed for a long while without a word, looking carefully before asking how the night had been.', zh-TW: 他在床邊坐了很久，一句話不說，先把人看明白，才開口問昨晚睡得怎麼樣。, ja: 彼は寝床のそばに長いこと黙って座り、よく観察してから、昨夜はどうでしたかと尋ねた。, ko: 그는 침대 곁에 한참 말없이 앉아 찬찬히 살핀 뒤에야 간밤은 어땠느냐고 물었습니다., fr: 'Il resta longtemps assis près du lit sans un mot, observant attentivement avant de demander comment s''était passée la nuit.', es: 'Se sentó junto a la cama un buen rato sin decir palabra, mirando con atención antes de preguntar cómo había ido la noche.', de: 'Er saß lange am Bett, ohne ein Wort, und sah genau hin, bevor er fragte, wie die Nacht gewesen sei.'}
+    - {zh-CN: 他说传说里自己让人嚼过柳树皮，又说清淡的饮食和休息比什么都要紧。, en: 'He said that, as the story goes, he once had people chew willow bark, and that plain food and rest matter most.', zh-TW: 他說傳說裡自己讓人嚼過柳樹皮，又說清淡的飲食和休息比什麼都要緊。, ja: 彼は、言い伝えでは柳の樹皮を噛ませたことがあり、質素な食事と休息がいちばん大切だと言った。, ko: '그는 전해 오는 이야기로는 버드나무 껍질을 씹게 한 적이 있다고 하며, 소박한 식사와 휴식이 가장 중요하다고 말했습니다.', fr: 'Il dit que, selon la tradition, il avait un jour fait mâcher de l''écorce de saule, et que l''alimentation simple et le repos comptent le plus.', es: 'Dijo que, según cuenta la tradición, una vez hizo masticar corteza de sauce, y que la comida sencilla y el descanso son lo más importante.', de: 'Er sagte, der Überlieferung nach habe er einmal Weidenrinde kauen lassen, und dass einfache Kost und Ruhe am wichtigsten seien.'}
+said:
+  zh-CN: 生命短暂，技艺长久。
+  en: Life is short, the art is long.
+  zh-TW: 生命短暫，技藝長久。
+  ja: 人生は短く、術は長い。
+  ko: 인생은 짧고 기술은 길다.
+  fr: La vie est brève, l'art est long.
+  es: La vida es breve, el arte es largo.
+  de: Das Leben ist kurz, die Kunst ist lang.

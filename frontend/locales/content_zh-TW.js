@@ -1517,7 +1517,7 @@ CY.content.registerPack("zh-TW", {
     "elder"
    ],
    "pronoun": [
-    "他"
+    "he"
    ]
   },
   {
@@ -1532,7 +1532,7 @@ CY.content.registerPack("zh-TW", {
     "elder"
    ],
    "pronoun": [
-    "她"
+    "she"
    ]
   },
   {
@@ -1704,7 +1704,7 @@ CY.content.registerPack("zh-TW", {
     "sibling"
    ],
    "pronoun": [
-    "她"
+    "she"
    ],
    "stage": [
     "adult"
@@ -1722,7 +1722,7 @@ CY.content.registerPack("zh-TW", {
     "sibling"
    ],
    "pronoun": [
-    "她"
+    "she"
    ],
    "stage": [
     "adult"

@@ -6,7 +6,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   CY.i18n.set('zh-CN');
   await G.load();
   G.DAY.enabled = true; G.cfg.time.daynight = 'game'; delete G.cfg.time.speed;
-  for (const m of [{ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }]) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
+  for (const m of [{ arch: 'paternal_grandpa', name: '爷爷', conditions: ['diabetes'] }, { arch: 'toddler', name: '宝宝' }, { arch: 'cat', name: '团子' }]) await G.createPerson({ arch: m.arch, name: m.name, conditions: m.conditions });
   await G.load();
   G.DAY.enabled = true;
   G.setClock(G.DAY.start); G._dayN = G.gameDate().n;
@@ -141,14 +141,14 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     /* 对话关系：来客不参与家人的闲聊和问答，外甥女不叫主角妈妈，邻居老人不讲"你小时候"，来客有自己的名言 */
     {
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
-      await G.createPerson({ arch: 'dad', name: '爸爸' }); await G.createPerson({ arch: 'mom', name: '妈妈' }); await G.createPerson({ arch: 'aunt', name: '姑姑' }); await G.createPerson({ arch: 'uncle', name: '舅舅' }); const nid = await G.createPerson({ arch: 'niece', name: '外甥女' }), gid = await G.createPerson({ arch: 'neighbor', name: '邻居老人' }), kid = await G.createPerson({ arch: 'grandpa', name: '外公' });
+      await G.createPerson({ arch: 'dad', name: '爸爸' }); await G.createPerson({ arch: 'mom', name: '妈妈' }); await G.createPerson({ arch: 'paternal_aunt', name: '姑姑' }); await G.createPerson({ arch: 'maternal_uncle', name: '舅舅' }); const nid = await G.createPerson({ arch: 'maternal_niece', name: '外甥女' }), gid = await G.createPerson({ arch: 'neighbor', name: '邻居老人' }), kid = await G.createPerson({ arch: 'paternal_grandpa', name: '外公' });
       await G.load(); G.DAY.enabled = true;
       const niece = G.get(nid), neighbor = G.get(gid), kin = G.get(kid), mom = G.people.find(q => q.person.archetype === 'mom'), dad = G.people.find(q => q.person.archetype === 'dad');
       check('测试里有爸爸妈妈', !!mom && !!dad);
       if (mom) { G.setProtagonist(mom.id); check('外甥女不叫主角妈妈，叫阿姨', G.titleFor(niece) === '阿姨' && G.fmt('{title}，我饿了', niece) === '阿姨，我饿了' && G.titleFor(baby) === mom.person.name); }
       if (dad) { G.setProtagonist(dad.id); check('主角是爸爸时外甥女叫叔叔', G.titleFor(niece) === '叔叔'); G.world.last_area = null;
         check('亲外公会问小时候的事，邻居老人不会', G.askBank(kin).some(x => x.id === 'ask_e01') && !G.askBank(neighbor).some(x => /^ask_(e01|e06|e08|e10|x20)$/.test(x.id)));
-        check('姑姑只对爸爸讲你小时候，舅舅只对妈妈讲', (() => { const au = G.people.find(q => q.person.archetype === 'aunt'), un = G.people.find(q => q.person.archetype === 'uncle'); if (!au || !un) return true; const r1 = G.askBank(au).some(x => x.id === 'ask_a02') && !G.askBank(un).some(x => x.id === 'ask_a02'); G.setProtagonist(mom.id); const r2 = G.askBank(un).some(x => x.id === 'ask_a02') && !G.askBank(au).some(x => x.id === 'ask_a02'); G.setProtagonist(dad.id); return r1 && r2; })()); }
+        check('姑姑只对爸爸讲你小时候，舅舅只对妈妈讲', (() => { const au = G.people.find(q => q.person.archetype === 'paternal_aunt'), un = G.people.find(q => q.person.archetype === 'maternal_uncle'); if (!au || !un) return true; const r1 = G.askBank(au).some(x => x.id === 'ask_a02') && !G.askBank(un).some(x => x.id === 'ask_a02'); G.setProtagonist(mom.id); const r2 = G.askBank(un).some(x => x.id === 'ask_a02') && !G.askBank(au).some(x => x.id === 'ask_a02'); G.setProtagonist(dad.id); return r1 && r2; })()); }
       if (dad && mom) { G.setProtagonist(dad.id); check('妈妈不对做配偶的爸爸说"钱够不够用"，对成年的孩子才说', !G.pickOptions(mom, 99).some(x => x.id === 'parent04')); }
       await G.arrive('galois', true); const gv = G.visitorPeople()[0];
       for (let i = 0; i < 300; i++) { for (const k in G.req) delete G.req[k]; G.fire(); }
@@ -170,7 +170,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
     }
     check('页面上没有单列的"说过的话"，信息框只剩发生的事；收入率折进舒适度和家人加成', !require('fs').readFileSync(require('path').join(__dirname, '..', 'index.html'), 'utf8').includes('id="said"') && (() => { const r = G.incomeRate(); return r > 0 && r <= G.WAGE * 2 && CY.i18n.has('corner.rate_tip'); })());
-    check('文字里没有死亡，战争，恋爱和性的词', !ids.some(i => /死|葬|战争|杀|决斗|duel|death|dead|war/i.test(Object.values(V.cards[i].t).map(x => Array.isArray(x) ? x.map(y => Object.values(y).join(' ')).join(' ') : Object.values(x).join(' ')).join(' '))));
+    check('文字里没有死亡，战争，恋爱和性的词，只查简体中文和英文，英文按整词', !ids.some(i => /死|葬|战争|杀|决斗|(duel|death|dead|war)/i.test(Object.values(V.cards[i].t).map(x => (Array.isArray(x) ? x : [x]).map(y => [y['zh-CN'], y.en].join(' ')).join(' ')).join(' '))));
   }
   /* 存档被改过的标记 */
   {
@@ -183,7 +183,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   /* 出门和小睡按现实秒算：一天压成五分钟以后，带人去医院，逛街，扶去休息，都要停留得让玩家看得见 */
   {
     CY.world.enforce = false; G.setClock(15 * 60);   /* 逛街只在白天，前面的测试可能已经把钟走到夜里 */
-    const gp = G.people.find(q => q.person.archetype === 'grandpa'); G.world.protagonist = null;
+    const gp = G.people.find(q => q.person.archetype === 'paternal_grandpa'); G.world.protagonist = null;
     gp.state.frailty = 0.1; for (const k in gp.state.needs) gp.state.needs[k] = 0.2;   /* 前面的测试走了很久，需求涨满的人走不动 */
     G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'doctor'); const f = G.flag(gp, 'outing');
     check('带去看医生是出门去医院，待上约五十现实秒', !!f && f.place === 'hospital' && Math.abs((f.until - G.world.game_minutes) - G.realMin(50)) < 1e-6, f && JSON.stringify(f));
@@ -221,7 +221,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   {
     for (const x of G.people) x.person.active = false;
     const mk = async (arch, o = {}) => G.createPerson(Object.assign({ arch, name: arch }, o));
-    const dad = await mk('dad', { age: 36, away: 'work' }), mom = await mk('mom', { age: 34, away: 'work' }), gma = await mk('grandma'), kid = await mk('son', { age: 8, away: 'school' }), tod = await mk('toddler');
+    const dad = await mk('dad', { age: 36, away: 'work' }), mom = await mk('mom', { age: 34, away: 'work' }), gma = await mk('paternal_grandma'), kid = await mk('son', { age: 8, away: 'school' }), tod = await mk('toddler');
     await G.load(); const ids = [dad, mom, gma, kid, tod]; for (const x of G.people) x.person.active = ids.includes(x.id);
     G.setProtagonist(null);
     check('白天离家的人不能当主角，只剩留在家里的人', !G.canLead(G.get(dad)) && !G.canLead(G.get(kid)) && G.canLead(G.get(gma)) && (G.ensurePlayer && (await G.ensurePlayer(), G.protagonist() && G.protagonist().id === gma)));
@@ -245,7 +245,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   {
     for (const x of G.people) x.person.active = false;
     const mk = async (arch, name) => G.createPerson({ arch, name });
-    const dad = await mk('dad', '爸爸'), mom = await mk('mom', '妈妈'), gma = await mk('grandma', '奶奶'), tod = await mk('toddler', '宝宝');
+    const dad = await mk('dad', '爸爸'), mom = await mk('mom', '妈妈'), gma = await mk('paternal_grandma', '奶奶'), tod = await mk('toddler', '宝宝');
     await G.load(); for (const x of G.people) x.person.active = [dad, mom, gma, tod].includes(x.id);
     G.setClock(13 * 60);
     const vis = await G.arrive('curie', true); await G.load();
@@ -305,17 +305,29 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
 
   /* 帮忙概率表：奶奶身体好帮宝宝 60%，不好 20%，爸妈 80%，心情只小幅修正 */
   {
-    const ids = {}; for (const a of ['grandma', 'grandpa', 'mom']) ids[a] = await G.createPerson({ arch: a, name: a });
+    const ids = {}; for (const a of ['paternal_grandma', 'paternal_grandpa', 'mom']) ids[a] = await G.createPerson({ arch: a, name: a });
     const babyArch = CY.content.archetypes.find(a => a.species === 'human' && a.age < 1); ids.baby = await G.createPerson({ arch: babyArch.id, name: 'b2' });
     await G.load(); const by = a => G.people.find(p => p.id === ids[a]), baby2 = by('baby');
     for (const a in ids) { const h = by(a); h.state.mood = 0.5; h.state.needs = {}; h.state.frailty = 0.2; }
     const ch = (a, from) => G.respondChance({ kind: 'care', from: from.id, to: by(a).id });
-    check('奶奶身体好时帮宝宝约六成', Math.abs(ch('grandma', baby2) - 0.6) < 0.02, ch('grandma', baby2).toFixed(3));
-    by('grandma').state.frailty = 0.7;
-    check('奶奶身体不好时帮宝宝约两成', Math.abs(ch('grandma', baby2) - 0.2) < 0.02, ch('grandma', baby2).toFixed(3));
+    check('奶奶身体好时帮宝宝约六成', Math.abs(ch('paternal_grandma', baby2) - 0.6) < 0.02, ch('paternal_grandma', baby2).toFixed(3));
+    by('paternal_grandma').state.frailty = 0.7;
+    check('奶奶身体不好时帮宝宝约两成', Math.abs(ch('paternal_grandma', baby2) - 0.2) < 0.02, ch('paternal_grandma', baby2).toFixed(3));
     check('妈妈在家帮宝宝约八成', Math.abs(ch('mom', baby2) - 0.8) < 0.02, ch('mom', baby2).toFixed(3));
     by('mom').state.needs.hunger = 0.7;
     check('自己有急需时算身体不好', Math.abs(ch('mom', baby2) - 0.4) < 0.02, ch('mom', baby2).toFixed(3));
+  }
+
+  /* 存档被手改过：导入时能看出来 */
+  {
+    G.world.money = 321; G.save(true); await new Promise(r => setTimeout(r, 80));
+    const A = CY.archive, ok = await A.exportSave(), good = await A.inspect(await ok.blob.arrayBuffer());
+    check('没改过的存档导入时不提示已编辑', good.ok && !good.edited);
+    const files = Object.assign({}, good.files); files['world.yaml'] = files['world.yaml'].replace(/money: .*/, 'money: 999999');
+    const names = Object.keys(files), enc = new TextEncoder();
+    const buf = await CY.store.zip(names.map(n => ({ name: 'careforyou-data/' + n, data: enc.encode(files[n]) }))).arrayBuffer();
+    const bad = await A.inspect(buf instanceof ArrayBuffer ? buf : (buf.buffer || buf));
+    check('手改了钱的存档导入时提示已编辑', bad.ok && bad.edited === true);
   }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);

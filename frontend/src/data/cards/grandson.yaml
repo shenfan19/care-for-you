@@ -1,0 +1,26 @@
+# 角色卡源文件，一类典型角色一个文件，由 tools/build_cards.js 打包进 src/data/cards_packed.js。
+# 标识类字段（id，group，species，voice，pronoun，look 的取值）只写英文编码；label 按语言写成对象，八种语言都在这里。
+# order 是添加角色列表里的先后；pronoun 是 he，she 或 it；health，help，prefs，dialogue 是在原型默认值之上的覆盖。
+id: grandson
+order: 500
+group: family
+label:
+  zh-CN: 孙子
+  en: Grandson
+  zh-TW: 孫子
+  ja: 孫息子
+  ko: 손자
+  fr: Petit-fils
+  es: Nieto
+  de: Enkel
+species: human
+age: 6
+voice: child
+pronoun: he
+look:
+  skin: 1
+  hair_style: short
+  hair_color: black
+  glasses: none
+  beard: false
+  cloth: '#7aa5b8'

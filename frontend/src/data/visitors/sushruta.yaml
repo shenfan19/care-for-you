@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: sushruta
+order: 350
+official: true
+region: India
+age: 50
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - medkit
+  - gloves
+controllable: false
+area: sa
+field: med
+look:
+  skin: '#d9a67c'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#c49a5b'
+souvenir:
+  id: sushruta_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica, Sushruta; the Sushruta Samhita. Dates and authorship are debated, so the card only states what the text is traditionally known for.
+review: 2026-11-02 AI初核通过，待用户终审：年代与作者有争议，卡片只写传统说法
+t:
+  name:
+    zh-CN: 妙闻
+    en: Sushruta
+    zh-TW: 妙聞
+    ja: スシュルタ
+    ko: 수슈루타
+    fr: Sushruta
+    es: Sushruta
+    de: Sushruta
+  era:
+    zh-CN: 古印度，传说中的外科医生
+    en: Ancient India, traditionally the author of a surgical text
+    zh-TW: 古印度，傳說中的外科醫生
+    ja: 古代インド、外科書の伝統的な著者
+    ko: 고대 인도, 외과 서적의 전통적 저자
+    fr: Inde antique, auteur traditionnel d'un texte de chirurgie
+    es: India antigua, autor tradicional de un texto de cirugía
+    de: Antikes Indien, überlieferter Verfasser eines chirurgischen Textes
+  souvenir:
+    zh-CN: 一页器械图谱的复印件
+    en: A copy of a page of instrument drawings
+    zh-TW: 一頁器械圖譜的影印件
+    ja: 器具の図の一ページの写し
+    ko: 기구 도판 한 쪽의 사본
+    fr: Une copie d'une page de dessins d'instruments
+    es: Una copia de una página de dibujos de instrumentos
+    de: Eine Kopie einer Seite mit Instrumentenzeichnungen
+  arrive_note:
+    zh-CN: 妙闻推开大门走了进来，说想在这里住几天。
+    en: Sushruta came in through the front door and asked to stay a few days.
+    zh-TW: 妙聞推開大門走了進來，說想在這裡住幾天。
+    ja: スシュルタは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 수슈루타은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Sushruta franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Sushruta cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Sushruta trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他戴上看了看，满意地点点头。
+    en: He tried them on and nodded with satisfaction.
+    zh-TW: 他戴上看了看，滿意地點點頭。
+    ja: 彼はそれをはめて、じっくり眺め、満足そうにうなずいた。
+    ko: 그는 그것을 끼고 살펴본 뒤 만족스럽게 고개를 끄덕였습니다.
+    fr: Il les enfila, les regarda et hocha la tête, satisfait.
+    es: Se los puso, los miró y asintió satisfecho.
+    de: Er zog sie an, sah sie sich an und nickte zufrieden.
+  leave_ok:
+    zh-CN: 妙闻临走前留下一页器械图谱的复印件，说：手要稳，心要静，用之前先想一遍。
+    en: 'Before leaving, Sushruta left a copy of a page of instrument drawings and said: Steady hands, a quiet mind, and think it through once before you begin.'
+    zh-TW: 妙聞臨走前留下一頁器械圖譜的影印件，說：手要穩，心要靜，用之前先想一遍。
+    ja: 帰る前に、スシュルタは記念の品を残していった：器具の図の一ページの写し。そして言った。「手は確かに、心は静かに、始める前に一度よく考えなさい。」
+    ko: '떠나기 전에 수슈루타은(는) 기념품을 남겼습니다: 기구 도판 한 쪽의 사본. 그리고 말했습니다. “손은 흔들림 없이, 마음은 고요하게, 시작 전에 한 번 더 생각하세요.”'
+    fr: 'Avant de partir, Sushruta laissa un souvenir : Une copie d''une page de dessins d''instruments. Et dit : « Mains sûres, esprit calme, et pense-y une fois avant de commencer. »'
+    es: 'Antes de irse, Sushruta dejó un recuerdo: Una copia de una página de dibujos de instrumentos. Y dijo: «Manos firmes, mente serena, y piénsalo una vez antes de empezar.»'
+    de: 'Vor dem Abschied ließ Sushruta etwas zurück: Eine Kopie einer Seite mit Instrumentenzeichnungen. Dazu sagte Sushruta: „Ruhige Hände, ein stiller Geist, und denke es vorher einmal durch.“'
+  leave_miss:
+    zh-CN: 妙闻道了谢，推开门回去了。
+    en: Sushruta said thanks and went back through the door.
+    zh-TW: 妙聞道了謝，推開門回去了。
+    ja: スシュルタはお礼を言い、扉をくぐって帰っていった。
+    ko: 수슈루타은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Sushruta remercia et repassa la porte.
+    es: Sushruta dio las gracias y volvió a cruzar la puerta.
+    de: Sushruta bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说学外科要先在瓜果和皮囊上练手，不能一上来就在人身上试。, en: 'He said surgery must be practised first on gourds and leather bags, never straight on a person.', zh-TW: 他說學外科要先在瓜果和皮囊上練手，不能一上來就在人身上試。, ja: 彼は、外科は最初は瓜や革袋で練習するもので、いきなり人でやってはいけないと言った。, ko: '그는 외과는 먼저 호박이나 가죽 주머니에서 연습해야지, 곧장 사람에게 해서는 안 된다고 말했습니다.', fr: 'Il dit qu''il faut s''exercer à la chirurgie d''abord sur des courges et des outres de cuir, jamais directement sur une personne.', es: 'Dijo que la cirugía hay que practicarla primero en calabazas y bolsas de cuero, nunca directamente en una persona.', de: 'Er sagte, Chirurgie müsse zuerst an Kürbissen und Lederbeuteln geübt werden, nie gleich an einem Menschen.'}
+    - {zh-CN: 他把器具一件件擦干净摆好，说每一步都要先想清楚再动手。, en: 'He wiped each instrument clean and laid them out, saying every step must be thought through before the hand moves.', zh-TW: 他把器具一件件擦乾淨擺好，說每一步都要先想清楚再動手。, ja: 彼は器具をひとつずつ拭いて並べ、手を動かす前に、一手一手をよく考えておくべきだと言った。, ko: '그는 기구를 하나하나 닦아 늘어놓으며, 손을 움직이기 전에 모든 단계를 먼저 생각해야 한다고 말했습니다.', fr: 'Il essuya chaque instrument et les rangea, disant que chaque geste doit être pensé avant que la main ne bouge.', es: 'Limpió cada instrumento y los fue colocando, diciendo que cada paso debe pensarse antes de mover la mano.', de: 'Er wischte jedes Instrument sauber und legte sie aus und sagte, jeder Schritt müsse bedacht sein, bevor die Hand sich bewegt.'}

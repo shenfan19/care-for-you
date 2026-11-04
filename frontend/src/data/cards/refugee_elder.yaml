@@ -1,0 +1,26 @@
+# 角色卡源文件，一类典型角色一个文件，由 tools/build_cards.js 打包进 src/data/cards_packed.js。
+# 标识类字段（id，group，species，voice，pronoun，look 的取值）只写英文编码；label 按语言写成对象，八种语言都在这里。
+# order 是添加角色列表里的先后；pronoun 是 he，she 或 it；health，help，prefs，dialogue 是在原型默认值之上的覆盖。
+id: refugee_elder
+order: 370
+group: family
+label:
+  zh-CN: 逃难来的老人
+  en: An elder who fled
+  zh-TW: 逃難來的老人
+  ja: 逃れてきた高齢者
+  ko: 피란 온 어르신
+  fr: Un aîné qui a fui
+  es: Una persona mayor que huyó
+  de: Ein geflüchteter älterer Mensch
+species: human
+age: 72
+voice: elder
+pronoun: she
+look:
+  skin: 3
+  hair_style: bun
+  hair_color: gray
+  glasses: none
+  beard: false
+  cloth: '#9c8f7a'

@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: finlay
+order: 470
+official: true
+region: Cuba
+age: 55
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - microscope
+  - tea
+controllable: false
+area: am
+field: med
+look:
+  skin: '#f6d2b4'
+  hairColor: gray
+  hairStyle: short
+  glasses: square
+  clothes: '#7a8f6a'
+souvenir:
+  id: finlay_keepsake
+  icon: 🦟
+src: Encyclopaedia Britannica, Carlos Finlay; proposed in 1881 that mosquitoes carry yellow fever.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 卡洛斯·芬莱
+    en: Carlos Finlay
+    zh-TW: 卡洛斯·芬萊
+    ja: カルロス・フィンレー
+    ko: 카를로스 핀레이
+    fr: Carlos Finlay
+    es: Carlos Finlay
+    de: Carlos Finlay
+  era:
+    zh-CN: 十九至二十世纪，古巴
+    en: 19th-20th century, Cuba
+    zh-TW: 十九至二十世紀，古巴
+    ja: 19〜20世紀、キューバ
+    ko: 19~20세기, 쿠바
+    fr: XIXe et XXe siècles, Cuba
+    es: Siglos XIX y XX, Cuba
+    de: 19. und 20. Jahrhundert, Kuba
+  souvenir:
+    zh-CN: 一页蚊子的素描
+    en: A sketch of a mosquito
+    zh-TW: 一頁蚊子的素描
+    ja: 蚊のスケッチ
+    ko: 모기 스케치
+    fr: Un croquis d'un moustique
+    es: Un boceto de un mosquito
+    de: Eine Skizze einer Stechmücke
+  arrive_note:
+    zh-CN: 卡洛斯·芬莱推开大门走了进来，说想在这里住几天。
+    en: Carlos Finlay came in through the front door and asked to stay a few days.
+    zh-TW: 卡洛斯·芬萊推開大門走了進來，說想在這裡住幾天。
+    ja: カルロス・フィンレーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 카를로스 핀레이은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Carlos Finlay franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Carlos Finlay cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Carlos Finlay trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把眼睛凑上去，半天没有抬头。
+    en: He put an eye to it and did not look up for a long time.
+    zh-TW: 他把眼睛湊上去，半天沒有抬頭。
+    ja: 彼は片目を近づけ、しばらく顔を上げなかった。
+    ko: 그는 한쪽 눈을 대고 한참 고개를 들지 않았습니다.
+    fr: Il y colla un œil et ne leva pas la tête pendant longtemps.
+    es: Acercó un ojo y no levantó la vista en mucho rato.
+    de: Er setzte ein Auge daran und sah lange nicht auf.
+  leave_ok:
+    zh-CN: 卡洛斯·芬莱临走前留下一页蚊子的素描，说：耐心比争论管用。
+    en: 'Before leaving, Carlos Finlay left a sketch of a mosquito and said: Patience works better than argument.'
+    zh-TW: 卡洛斯·芬萊臨走前留下一頁蚊子的素描，說：耐心比爭論管用。
+    ja: 帰る前に、カルロス・フィンレーは記念の品を残していった：蚊のスケッチ。そして言った。「議論より、辛抱のほうが効きます。」
+    ko: '떠나기 전에 카를로스 핀레이은(는) 기념품을 남겼습니다: 모기 스케치. 그리고 말했습니다. “논쟁보다 인내가 더 잘 통합니다.”'
+    fr: 'Avant de partir, Carlos Finlay laissa un souvenir : Un croquis d''un moustique. Et dit : « La patience marche mieux que la dispute. »'
+    es: 'Antes de irse, Carlos Finlay dejó un recuerdo: Un boceto de un mosquito. Y dijo: «La paciencia funciona mejor que la discusión.»'
+    de: 'Vor dem Abschied ließ Carlos Finlay etwas zurück: Eine Skizze einer Stechmücke. Dazu sagte Carlos Finlay: „Geduld wirkt besser als Streit.“'
+  leave_miss:
+    zh-CN: 卡洛斯·芬莱道了谢，推开门回去了。
+    en: Carlos Finlay said thanks and went back through the door.
+    zh-TW: 卡洛斯·芬萊道了謝，推開門回去了。
+    ja: カルロス・フィンレーはお礼を言い、扉をくぐって帰っていった。
+    ko: 카를로스 핀레이은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Carlos Finlay remercia et repassa la porte.
+    es: Carlos Finlay dio las gracias y volvió a cruzar la puerta.
+    de: Carlos Finlay bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他盯着一只蚊子看了很久，说小东西也可能是大麻烦的源头。, en: He stared at a mosquito for a long time and said a small thing may be the source of a large trouble., zh-TW: 他盯著一隻蚊子看了很久，說小東西也可能是大麻煩的源頭。, ja: 彼は一匹の蚊を長いこと見つめ、小さなものが大きな厄介ごとの源になりうると言った。, ko: '그는 모기 한 마리를 오래 들여다보며, 작은 것이 큰 골칫거리의 근원일 수 있다고 말했습니다.', fr: Il fixa longtemps un moustique et dit qu'une petite chose peut être la source d'un grand ennui., es: Se quedó mirando un mosquito mucho tiempo y dijo que una cosa pequeña puede ser el origen de un gran problema., de: 'Er starrte lange auf eine Stechmücke und sagte, etwas Kleines könne die Quelle großen Ärgers sein.'}
+    - {zh-CN: 他说想法被人笑了很多年也没关系，等证据就是了。, en: He said it did not matter that people had laughed at his idea for years; one simply waits for the evidence., zh-TW: 他說想法被人笑了很多年也沒關係，等證據就是了。, ja: 彼は、自分の考えが何年も笑われても構わない、証拠を待てばよいのだと言った。, ko: '그는 자기 생각이 몇 해 동안 비웃음을 사도 괜찮다고, 증거를 기다리면 될 뿐이라고 말했습니다.', fr: 'Il dit que peu importait qu''on se soit moqué de son idée pendant des années : on attend simplement les preuves.', es: 'Dijo que no importaba que se hubieran reído de su idea durante años: uno espera las pruebas.', de: 'Er sagte, es mache nichts, dass man seine Idee jahrelang belacht habe; man warte einfach auf den Beweis.'}

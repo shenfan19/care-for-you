@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: ibn_khaldun
+order: 410
+official: true
+region: Tunisia
+age: 50
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - book
+  - lamp
+controllable: false
+area: af
+field: edu
+look:
+  skin: '#e8bc92'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#7a7a9a'
+souvenir:
+  id: ibn_khaldun_keepsake
+  icon: 📘
+src: Encyclopaedia Britannica, Ibn Khaldun; the Muqaddimah (1377).
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 伊本·赫勒敦
+    en: Ibn Khaldun
+    zh-TW: 伊本·赫勒敦
+    ja: イブン・ハルドゥーン
+    ko: 이븐 할둔
+    fr: Ibn Khaldoun
+    es: Ibn Jaldún
+    de: Ibn Chaldun
+  era:
+    zh-CN: 十四世纪，突尼斯与埃及
+    en: 14th century, Tunisia and Egypt
+    zh-TW: 十四世紀，突尼西亞與埃及
+    ja: 14世紀、チュニジアとエジプト
+    ko: 14세기, 튀니지와 이집트
+    fr: XIVe siècle, Tunisie et Égypte
+    es: Siglo XIV, Túnez y Egipto
+    de: 14. Jahrhundert, Tunesien und Ägypten
+  souvenir:
+    zh-CN: 一页导言的复印件
+    en: A copy of a page of the Introduction
+    zh-TW: 一頁導言的影印件
+    ja: 『序説』の一ページの写し
+    ko: 《서설》 한 쪽의 사본
+    fr: Une copie d'une page de l'Introduction
+    es: Una copia de una página de la Introducción
+    de: Eine Kopie einer Seite der Einleitung
+  arrive_note:
+    zh-CN: 伊本·赫勒敦推开大门走了进来，说想在这里住几天。
+    en: Ibn Khaldun came in through the front door and asked to stay a few days.
+    zh-TW: 伊本·赫勒敦推開大門走了進來，說想在這裡住幾天。
+    ja: イブン・ハルドゥーンは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 이븐 할둔은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Ibn Khaldoun franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Ibn Jaldún cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Ibn Chaldun trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把灯拨亮，又翻开稿子写了起来。
+    en: He turned the lamp up and went back to his manuscript.
+    zh-TW: 他把燈撥亮，又翻開稿子寫了起來。
+    ja: 彼はランプを明るくして、また原稿に向かった。
+    ko: 그는 램프를 밝게 돋우고 다시 원고로 돌아갔습니다.
+    fr: Il monta la lampe et retourna à son manuscrit.
+    es: Subió la lámpara y volvió a su manuscrito.
+    de: Er drehte die Lampe höher und widmete sich wieder seinem Manuskript.
+  leave_ok:
+    zh-CN: 伊本·赫勒敦临走前留下一页导言的复印件，说：看得远，是因为把前面的事看清了。
+    en: 'Before leaving, Ibn Khaldun left a copy of a page of the Introduction and said: You see far because you have seen clearly what came before.'
+    zh-TW: 伊本·赫勒敦臨走前留下一頁導言的影印件，說：看得遠，是因為把前面的事看清了。
+    ja: 帰る前に、イブン・ハルドゥーンは記念の品を残していった：『序説』の一ページの写し。そして言った。「遠くが見えるのは、前にあったことをはっきり見てきたからです。」
+    ko: '떠나기 전에 이븐 할둔은(는) 기념품을 남겼습니다: 《서설》 한 쪽의 사본. 그리고 말했습니다. “멀리 보는 것은 앞선 일을 똑똑히 보았기 때문입니다.”'
+    fr: 'Avant de partir, Ibn Khaldoun laissa un souvenir : Une copie d''une page de l''Introduction. Et dit : « Tu vois loin parce que tu as vu clairement ce qui a précédé. »'
+    es: 'Antes de irse, Ibn Jaldún dejó un recuerdo: Una copia de una página de la Introducción. Y dijo: «Ves lejos porque has visto con claridad lo que vino antes.»'
+    de: 'Vor dem Abschied ließ Ibn Chaldun etwas zurück: Eine Kopie einer Seite der Einleitung. Dazu sagte Ibn Chaldun: „Du siehst weit, weil du klar gesehen hast, was davor war.“'
+  leave_miss:
+    zh-CN: 伊本·赫勒敦道了谢，推开门回去了。
+    en: Ibn Khaldun said thanks and went back through the door.
+    zh-TW: 伊本·赫勒敦道了謝，推開門回去了。
+    ja: イブン・ハルドゥーンはお礼を言い、扉をくぐって帰っていった。
+    ko: 이븐 할둔은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Ibn Khaldoun remercia et repassa la porte.
+    es: Ibn Jaldún dio las gracias y volvió a cruzar la puerta.
+    de: Ibn Chaldun bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说弄懂一件事，不能只听传说，要看前前后后的缘由。, en: He said to understand a thing you cannot rely on legend alone; look at the causes before and after., zh-TW: 他說弄懂一件事，不能只聽傳說，要看前前後後的緣由。, ja: 彼は、物事を理解するには伝承だけに頼らず、前後の原因を見なければならないと言った。, ko: 그는 무언가를 이해하려면 전설에만 기대지 말고 앞뒤의 원인을 살펴야 한다고 말했습니다., fr: 'Il dit que pour comprendre une chose, on ne peut se fier à la seule légende : il faut regarder les causes avant et après.', es: 'Dijo que para entender algo no se puede depender solo de la leyenda: hay que mirar las causas de antes y de después.', de: 'Er sagte, um eine Sache zu verstehen, dürfe man sich nicht auf Legenden allein verlassen, sondern müsse die Ursachen davor und danach betrachten.'}
+    - {zh-CN: 他随身带着一摞厚厚的书稿，说还要再改。, en: He carried a thick stack of manuscript and said it still needed revising., zh-TW: 他隨身帶著一摞厚厚的書稿，說還要再改。, ja: 彼は分厚い原稿の束を持ち歩き、まだ手直しが要ると言った。, ko: 그는 두툼한 원고 뭉치를 들고 다니며 아직 고칠 곳이 남았다고 말했습니다., fr: Il portait une grosse pile de manuscrit et dit qu'elle devait encore être révisée., es: Llevaba un grueso montón de manuscrito y dijo que aún había que revisarlo., de: 'Er trug einen dicken Stapel Manuskript bei sich und sagte, er müsse es noch überarbeiten.'}

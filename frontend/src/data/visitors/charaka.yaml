@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: charaka
+order: 540
+official: true
+region: India
+age: 55
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - soup
+  - blanket
+controllable: false
+area: sa
+field: med
+look:
+  skin: '#d9a67c'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#d1b25a'
+souvenir:
+  id: charaka_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica, Charaka; the Charaka Samhita. Dates and authorship are debated, so the card only states what the text is traditionally known for.
+review: 2026-11-02 AI初核通过，待用户终审：年代与作者有争议，卡片只写传统说法
+t:
+  name:
+    zh-CN: 遮罗迦
+    en: Charaka
+    zh-TW: 遮羅迦
+    ja: チャラカ
+    ko: 차라카
+    fr: Charaka
+    es: Charaka
+    de: Charaka
+  era:
+    zh-CN: 古印度，传统上被认为是《遮罗迦本集》的作者
+    en: Ancient India, traditionally the author of the Charaka Samhita
+    zh-TW: 古印度，傳統上被認為是《遮羅迦本集》的作者
+    ja: 古代インド、『チャラカ・サンヒター』の伝統的な著者
+    ko: 고대 인도, 《차라카 상히타》의 전통적 저자
+    fr: Inde antique, auteur traditionnel de la Charaka Samhita
+    es: India antigua, autor tradicional de la Charaka Samhita
+    de: Antikes Indien, überlieferter Verfasser der Charaka Samhita
+  souvenir:
+    zh-CN: 一页问诊要点的复印件
+    en: A copy of a page of consultation notes
+    zh-TW: 一頁問診要點的影印件
+    ja: 問診の要点の一ページの写し
+    ko: 문진 요점 한 쪽의 사본
+    fr: Une copie d'une page de notes de consultation
+    es: Una copia de una página de notas de consulta
+    de: Eine Kopie einer Seite mit Anamnese-Notizen
+  arrive_note:
+    zh-CN: 遮罗迦推开大门走了进来，说想在这里住几天。
+    en: Charaka came in through the front door and asked to stay a few days.
+    zh-TW: 遮羅迦推開大門走了進來，說想在這裡住幾天。
+    ja: チャラカは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 차라카은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Charaka franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Charaka cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Charaka trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他捧着热汤，说先暖了身子，才好说话。
+    en: He held the hot soup and said one should warm up before talking.
+    zh-TW: 他捧著熱湯，說先暖了身子，才好說話。
+    ja: 彼は熱いスープを両手で持ち、話す前にまず体を温めるものだと言った。
+    ko: 그는 뜨거운 수프를 두 손으로 감싸고, 말하기 전에 먼저 몸을 덥혀야 한다고 말했습니다.
+    fr: Il tenait la soupe chaude et dit qu'il faut d'abord se réchauffer avant de parler.
+    es: Sostuvo la sopa caliente y dijo que primero hay que entrar en calor y luego hablar.
+    de: Er hielt die heiße Suppe und sagte, man solle sich erst aufwärmen, bevor man spricht.
+  leave_ok:
+    zh-CN: 遮罗迦临走前留下一页问诊要点的复印件，说：多问一句，胜过多开一方。
+    en: 'Before leaving, Charaka left a copy of a page of consultation notes and said: One more question is worth more than one more prescription.'
+    zh-TW: 遮羅迦臨走前留下一頁問診要點的影印件，說：多問一句，勝過多開一方。
+    ja: 帰る前に、チャラカは記念の品を残していった：問診の要点の一ページの写し。そして言った。「処方をもう一つ出すより、質問をもう一つしなさい。」
+    ko: '떠나기 전에 차라카은(는) 기념품을 남겼습니다: 문진 요점 한 쪽의 사본. 그리고 말했습니다. “처방을 하나 더 내기보다 질문을 하나 더 하십시오.”'
+    fr: 'Avant de partir, Charaka laissa un souvenir : Une copie d''une page de notes de consultation. Et dit : « Une question de plus vaut plus qu''une ordonnance de plus. »'
+    es: 'Antes de irse, Charaka dejó un recuerdo: Una copia de una página de notas de consulta. Y dijo: «Una pregunta más vale más que una receta más.»'
+    de: 'Vor dem Abschied ließ Charaka etwas zurück: Eine Kopie einer Seite mit Anamnese-Notizen. Dazu sagte Charaka: „Eine Frage mehr ist mehr wert als ein Rezept mehr.“'
+  leave_miss:
+    zh-CN: 遮罗迦道了谢，推开门回去了。
+    en: Charaka said thanks and went back through the door.
+    zh-TW: 遮羅迦道了謝，推開門回去了。
+    ja: チャラカはお礼を言い、扉をくぐって帰っていった。
+    ko: 차라카은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Charaka remercia et repassa la porte.
+    es: Charaka dio las gracias y volvió a cruzar la puerta.
+    de: Charaka bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说医生要常常问病人：吃了什么，睡得怎么样，心里想些什么。, en: 'He said a physician should ask patients again and again: what have you eaten, how have you slept, what is on your mind.', zh-TW: 他說醫生要常常問病人：吃了什麼，睡得怎麼樣，心裡想些什麼。, ja: 彼は、医者は何を食べたか、よく眠れたか、何を考えているかを何度も尋ねるべきだと言った。, ko: '그는 의사는 무엇을 먹었는지, 잘 잤는지, 무슨 생각을 하는지 거듭 물어야 한다고 말했습니다.', fr: 'Il disait qu''un médecin doit demander encore et encore : qu''as-tu mangé, comment as-tu dormi, qu''as-tu en tête ?', es: 'Dijo que un médico debe preguntar una y otra vez: ¿qué has comido, cómo has dormido, qué tienes en la cabeza?', de: 'Er sagte, ein Arzt solle immer wieder fragen: Was hast du gegessen, wie hast du geschlafen, was beschäftigt dich?'}
+    - {zh-CN: 他说好医生要像朋友一样陪在病人身边。, en: He said a good physician stays beside the patient like a friend., zh-TW: 他說好醫生要像朋友一樣陪在病人身邊。, ja: 彼は、よい医者は友人のように患者のそばにいると言った。, ko: 그는 좋은 의사는 친구처럼 환자 곁에 머문다고 말했습니다., fr: Il disait qu'un bon médecin reste auprès du malade comme un ami., es: Dijo que un buen médico se queda junto al paciente como un amigo., de: 'Er sagte, ein guter Arzt bleibt wie ein Freund an der Seite des Kranken.'}

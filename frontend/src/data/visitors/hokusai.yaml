@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: hokusai
+order: 200
+official: true
+region: Japan
+age: 75
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - paints
+  - brush
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#f6d2b4'
+  hairColor: white
+  hairStyle: bald
+  glasses: none
+  clothes: '#4f6d8f'
+souvenir:
+  id: hokusai_keepsake
+  icon: 🌊
+src: Encyclopaedia Britannica, Hokusai; The Great Wave off Kanagawa.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 葛饰北斋
+    en: Katsushika Hokusai
+    zh-TW: 葛飾北齋
+    ja: 葛飾北斎
+    ko: 가쓰시카 호쿠사이
+    fr: Katsushika Hokusai
+    es: Katsushika Hokusai
+    de: Katsushika Hokusai
+  era:
+    zh-CN: 江户时代，日本
+    en: Edo period, Japan
+    zh-TW: 江戶時代，日本
+    ja: 江戸時代、日本
+    ko: 에도 시대, 일본
+    fr: Période d'Edo, Japon
+    es: Período Edo, Japón
+    de: Edo-Zeit, Japan
+  souvenir:
+    zh-CN: 一幅浪的小画
+    en: A small painting of a wave
+    zh-TW: 一幅浪的小畫
+    ja: 小さな波の絵
+    ko: 작은 파도 그림
+    fr: Une petite peinture d'une vague
+    es: Una pequeña pintura de una ola
+    de: Ein kleines Gemälde einer Welle
+  arrive_note:
+    zh-CN: 葛饰北斋推开大门走了进来，说想在这里住几天。
+    en: Katsushika Hokusai came in through the front door and asked to stay a few days.
+    zh-TW: 葛飾北齋推開大門走了進來，說想在這裡住幾天。
+    ja: 葛飾北斎は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 가쓰시카 호쿠사이은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Katsushika Hokusai franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Katsushika Hokusai cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Katsushika Hokusai trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他铺开纸，笑着画了第一笔。
+    en: He spread the paper and laughed as he made the first stroke.
+    zh-TW: 他鋪開紙，笑著畫了第一筆。
+    ja: 彼は紙を広げ、最初の一筆を引きながら笑った。
+    ko: 그는 종이를 펴고 첫 획을 그으며 웃었습니다.
+    fr: Il étala le papier et rit en traçant le premier trait.
+    es: Extendió el papel y rió al dar la primera pincelada.
+    de: Er breitete das Papier aus und lachte beim ersten Strich.
+  leave_ok:
+    zh-CN: 葛饰北斋临走前留下一幅浪的小画，说：画到老，也还是个学生。
+    en: 'Before leaving, Katsushika Hokusai left a small painting of a wave and said: Painting to the end, you are still a student.'
+    zh-TW: 葛飾北齋臨走前留下一幅浪的小畫，說：畫到老，也還是個學生。
+    ja: 帰る前に、葛飾北斎は記念の品を残していった：小さな波の絵。そして言った。「最後まで描き続ける者は、いつまでも弟子です。」
+    ko: '떠나기 전에 가쓰시카 호쿠사이은(는) 기념품을 남겼습니다: 작은 파도 그림. 그리고 말했습니다. “끝까지 그리는 사람은 언제까지나 제자입니다.”'
+    fr: 'Avant de partir, Katsushika Hokusai laissa un souvenir : Une petite peinture d''une vague. Et dit : « En peignant jusqu''au bout, on reste un élève. »'
+    es: 'Antes de irse, Katsushika Hokusai dejó un recuerdo: Una pequeña pintura de una ola. Y dijo: «Pintando hasta el final, sigues siendo un alumno.»'
+    de: 'Vor dem Abschied ließ Katsushika Hokusai etwas zurück: Ein kleines Gemälde einer Welle. Dazu sagte Katsushika Hokusai: „Wer bis zum Ende malt, bleibt immer ein Schüler.“'
+  leave_miss:
+    zh-CN: 葛饰北斋道了谢，推开门回去了。
+    en: Katsushika Hokusai said thanks and went back through the door.
+    zh-TW: 葛飾北齋道了謝，推開門回去了。
+    ja: 葛飾北斎はお礼を言い、扉をくぐって帰っていった。
+    ko: 가쓰시카 호쿠사이은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Katsushika Hokusai remercia et repassa la porte.
+    es: Katsushika Hokusai dio las gracias y volvió a cruzar la puerta.
+    de: Katsushika Hokusai bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说自己画了一辈子，还想再多活几年，把画学得更好。, en: He said he had painted all his life and wanted a few more years to get better at it., zh-TW: 他說自己畫了一輩子，還想再多活幾年，把畫學得更好。, ja: 彼は、生涯描き続けてきたが、上達するためにあと数年ほしいと言った。, ko: 그는 평생 그림을 그렸지만 더 나아지려면 몇 해가 더 필요하다고 말했습니다., fr: Il dit avoir peint toute sa vie et vouloir encore quelques années pour s'améliorer., es: Dijo que había pintado toda su vida y que quería unos años más para mejorar., de: 'Er sagte, er habe sein ganzes Leben gemalt und wünsche sich noch ein paar Jahre, um besser zu werden.'}
+    - {zh-CN: 他盯着你的窗外看，说想画一朵浪。, en: He looked out your window and said he wanted to paint a wave., zh-TW: 他盯著你的窗外看，說想畫一朵浪。, ja: 彼はあなたの家の窓から外を見て、波を描きたいと言った。, ko: 그는 당신의 창밖을 내다보며 파도를 그리고 싶다고 말했습니다., fr: Il regarda par ta fenêtre et dit qu'il voulait peindre une vague., es: Miró por tu ventana y dijo que quería pintar una ola., de: 'Er sah aus deinem Fenster und sagte, er wolle eine Welle malen.'}
+said:
+  zh-CN: 七十三岁，我才对鸟兽草木鱼虫的真正结构略有所悟。
+  en: At seventy-three I learned a little about the real structure of animals, plants, trees, birds, fishes and insects.
+  zh-TW: 七十三歲，我才對鳥獸草木魚蟲的真正結構略有所悟。
+  ja: 七十三歳で、鳥獣草木魚虫の本当の仕組みが少し分かった。
+  ko: 일흔셋에야 새와 짐승, 풀과 나무, 물고기와 벌레의 참된 구조를 조금 깨달았다.
+  fr: À soixante-treize ans, j'ai appris un peu de la vraie structure des animaux, des plantes, des arbres, des oiseaux, des poissons et des insectes.
+  es: A los setenta y tres años aprendí algo de la verdadera estructura de animales, plantas, árboles, aves, peces e insectos.
+  de: Mit dreiundsiebzig begriff ich ein wenig vom wahren Bau der Tiere, Pflanzen, Bäume, Vögel, Fische und Insekten.

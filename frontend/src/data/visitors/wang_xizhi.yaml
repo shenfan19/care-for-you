@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: wang_xizhi
+order: 280
+official: true
+region: China
+age: 45
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - brush
+  - tea
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#5f8a7a'
+souvenir:
+  id: wang_xizhi_keepsake
+  icon: 📜
+src: 《晋书·王羲之传》；《兰亭集序》；Encyclopaedia Britannica, Wang Xizhi.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 王羲之
+    en: Wang Xizhi
+    zh-TW: 王羲之
+    ja: 王羲之
+    ko: 왕희지
+    fr: Wang Xizhi
+    es: Wang Xizhi
+    de: Wang Xizhi
+  era:
+    zh-CN: 东晋，中国
+    en: Eastern Jin dynasty, China
+    zh-TW: 東晉，中國
+    ja: 東晋、中国
+    ko: 동진, 중국
+    fr: Dynastie des Jin orientaux, Chine
+    es: Dinastía Jin Oriental, China
+    de: Östliche Jin-Dynastie, China
+  souvenir:
+    zh-CN: 一页字帖的复印件
+    en: A copy of a calligraphy page
+    zh-TW: 一頁字帖的影印件
+    ja: 書の一ページの写し
+    ko: 서예 한 쪽의 사본
+    fr: Une copie d'une page de calligraphie
+    es: Una copia de una página de caligrafía
+    de: Eine Kopie einer Kalligrafieseite
+  arrive_note:
+    zh-CN: 王羲之推开大门走了进来，说想在这里住几天。
+    en: Wang Xizhi came in through the front door and asked to stay a few days.
+    zh-TW: 王羲之推開大門走了進來，說想在這裡住幾天。
+    ja: 王羲之は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 왕희지은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Wang Xizhi franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Wang Xizhi cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Wang Xizhi trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他铺开纸，深吸一口气，落了第一笔。
+    en: He spread the paper, drew a deep breath, and set down the first stroke.
+    zh-TW: 他鋪開紙，深吸一口氣，落了第一筆。
+    ja: 彼は紙を広げ、深く息を吸って、最初の一画を書いた。
+    ko: 그는 종이를 펴고 숨을 깊이 들이쉰 뒤 첫 획을 그었습니다.
+    fr: Il étala le papier, respira profondément et posa le premier trait.
+    es: Extendió el papel, respiró hondo y trazó el primer trazo.
+    de: Er breitete das Papier aus, atmete tief durch und setzte den ersten Strich.
+  leave_ok:
+    zh-CN: 王羲之临走前留下一页字帖的复印件，说：字写得好不好，看的是心静不静。
+    en: 'Before leaving, Wang Xizhi left a copy of a calligraphy page and said: Whether the writing is good depends on how calm the mind is.'
+    zh-TW: 王羲之臨走前留下一頁字帖的影印件，說：字寫得好不好，看的是心靜不靜。
+    ja: 帰る前に、王羲之は記念の品を残していった：書の一ページの写し。そして言った。「字が良いかどうかは、心がどれだけ静かかによる。」
+    ko: '떠나기 전에 왕희지은(는) 기념품을 남겼습니다: 서예 한 쪽의 사본. 그리고 말했습니다. “글씨가 좋은지는 마음이 얼마나 고요한가에 달렸습니다.”'
+    fr: 'Avant de partir, Wang Xizhi laissa un souvenir : Une copie d''une page de calligraphie. Et dit : « Que l''écriture soit belle dépend du calme de l''esprit. »'
+    es: 'Antes de irse, Wang Xizhi dejó un recuerdo: Una copia de una página de caligrafía. Y dijo: «Que la escritura sea buena depende de lo sereno que esté el ánimo.»'
+    de: 'Vor dem Abschied ließ Wang Xizhi etwas zurück: Eine Kopie einer Kalligrafieseite. Dazu sagte Wang Xizhi: „Ob die Schrift gut ist, hängt davon ab, wie ruhig das Herz ist.“'
+  leave_miss:
+    zh-CN: 王羲之道了谢，推开门回去了。
+    en: Wang Xizhi said thanks and went back through the door.
+    zh-TW: 王羲之道了謝，推開門回去了。
+    ja: 王羲之はお礼を言い、扉をくぐって帰っていった。
+    ko: 왕희지은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Wang Xizhi remercia et repassa la porte.
+    es: Wang Xizhi dio las gracias y volvió a cruzar la puerta.
+    de: Wang Xizhi bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说起一次春天的聚会，大家在溪边写诗。, en: He recalled a spring gathering where everyone wrote poems by the stream., zh-TW: 他說起一次春天的聚會，大家在溪邊寫詩。, ja: 彼は、みんなが小川のほとりで詩を書いた春の集いを思い出した。, ko: 그는 모두가 시냇가에서 시를 짓던 봄날의 모임을 떠올렸습니다., fr: Il se rappela une réunion de printemps où chacun écrivait des poèmes au bord du ruisseau., es: Recordó una reunión de primavera en que todos escribían poemas junto al arroyo., de: 'Er erinnerte sich an ein Frühlingsfest, bei dem alle am Bach Gedichte schrieben.'}
+    - {zh-CN: 他问你的桌子够不够大，铺得下一张纸。, en: He asked whether your table was big enough for a sheet of paper., zh-TW: 他問你的桌子夠不夠大，鋪得下一張紙。, ja: 彼は、あなたの机は紙一枚を広げるのに十分な大きさかと尋ねた。, ko: 그는 당신의 탁자가 종이 한 장을 펼칠 만큼 크냐고 물었습니다., fr: Il demanda si ta table était assez grande pour une feuille de papier., es: Preguntó si tu mesa era lo bastante grande para una hoja de papel., de: 'Er fragte, ob dein Tisch groß genug für ein Blatt Papier sei.'}
+said:
+  zh-CN: 仰观宇宙之大，俯察品类之盛。
+  en: Looking up, I see how vast the universe is; looking down, how rich the myriad things.
+  zh-TW: 仰觀宇宙之大，俯察品類之盛。
+  ja: 仰いでは宇宙の大きさを見、俯しては万物の豊かさを察する。
+  ko: 고개를 들어 우주의 광대함을 보고, 숙여서 만물의 풍성함을 살핀다.
+  fr: En levant les yeux, je vois combien l'univers est vaste ; en les baissant, combien les choses sont riches.
+  es: Al mirar arriba veo lo vasto que es el universo; al mirar abajo, lo rica que es la multitud de cosas.
+  de: Blicke ich auf, sehe ich, wie weit das Universum ist; blicke ich hinab, wie reich die Dinge.

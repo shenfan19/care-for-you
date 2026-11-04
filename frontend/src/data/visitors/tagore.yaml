@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: tagore
+order: 190
+official: true
+region: India
+age: 70
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - pen
+  - paints
+controllable: false
+area: sa
+field: art
+look:
+  skin: '#d9a67c'
+  hairColor: white
+  hairStyle: long
+  glasses: round
+  clothes: '#f0f0f0'
+souvenir:
+  id: tagore_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica, Rabindranath Tagore.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 拉宾德拉纳特·泰戈尔
+    en: Rabindranath Tagore
+    zh-TW: 拉賓德拉納特·泰戈爾
+    ja: ラビンドラナート・タゴール
+    ko: 라빈드라나트 타고르
+    fr: Rabindranath Tagore
+    es: Rabindranath Tagore
+    de: Rabindranath Tagore
+  era:
+    zh-CN: 十九至二十世纪，印度
+    en: 19th-20th century, India
+    zh-TW: 十九至二十世紀，印度
+    ja: 19〜20世紀、インド
+    ko: 19~20세기, 인도
+    fr: XIXe et XXe siècles, Inde
+    es: Siglos XIX y XX, India
+    de: 19. und 20. Jahrhundert, Indien
+  souvenir:
+    zh-CN: 一页诗稿的复印件
+    en: A copy of a page of poems
+    zh-TW: 一頁詩稿的影印件
+    ja: 詩を書いた一ページの写し
+    ko: 시 한 쪽의 사본
+    fr: Une copie d'une page de poèmes
+    es: Una copia de una página de poemas
+    de: Eine Kopie einer Gedichtseite
+  arrive_note:
+    zh-CN: 拉宾德拉纳特·泰戈尔推开大门走了进来，说想在这里住几天。
+    en: Rabindranath Tagore came in through the front door and asked to stay a few days.
+    zh-TW: 拉賓德拉納特·泰戈爾推開大門走了進來，說想在這裡住幾天。
+    ja: ラビンドラナート・タゴールは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 라빈드라나트 타고르은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Rabindranath Tagore franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Rabindranath Tagore cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Rabindranath Tagore trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他接过东西，眼睛望向了雨里。
+    en: He took it, gazing out into the rain.
+    zh-TW: 他接過東西，眼睛望向了雨裡。
+    ja: 彼はそれを受け取り、外の雨を見つめた。
+    ko: 그는 그것을 받고 창밖의 비를 바라보았습니다.
+    fr: Il le prit en contemplant la pluie dehors.
+    es: Lo tomó, contemplando la lluvia afuera.
+    de: Er nahm es und schaute hinaus in den Regen.
+  leave_ok:
+    zh-CN: 拉宾德拉纳特·泰戈尔临走前留下一页诗稿的复印件，说：别急着长大，也别急着变老。
+    en: 'Before leaving, Rabindranath Tagore left a copy of a page of poems and said: Do not be in a hurry to grow up, nor to grow old.'
+    zh-TW: 拉賓德拉納特·泰戈爾臨走前留下一頁詩稿的影印件，說：別急著長大，也別急著變老。
+    ja: 帰る前に、ラビンドラナート・タゴールは記念の品を残していった：詩を書いた一ページの写し。そして言った。「大人になることも、年を取ることも、急がないで。」
+    ko: '떠나기 전에 라빈드라나트 타고르은(는) 기념품을 남겼습니다: 시 한 쪽의 사본. 그리고 말했습니다. “어른이 되는 것도, 늙는 것도 서두르지 마세요.”'
+    fr: 'Avant de partir, Rabindranath Tagore laissa un souvenir : Une copie d''une page de poèmes. Et dit : « Ne te presse ni de grandir, ni de vieillir. »'
+    es: 'Antes de irse, Rabindranath Tagore dejó un recuerdo: Una copia de una página de poemas. Y dijo: «No tengas prisa por crecer, ni por envejecer.»'
+    de: 'Vor dem Abschied ließ Rabindranath Tagore etwas zurück: Eine Kopie einer Gedichtseite. Dazu sagte Rabindranath Tagore: „Beeile dich weder, erwachsen zu werden, noch, alt zu werden.“'
+  leave_miss:
+    zh-CN: 拉宾德拉纳特·泰戈尔道了谢，推开门回去了。
+    en: Rabindranath Tagore said thanks and went back through the door.
+    zh-TW: 拉賓德拉納特·泰戈爾道了謝，推開門回去了。
+    ja: ラビンドラナート・タゴールはお礼を言い、扉をくぐって帰っていった。
+    ko: 라빈드라나트 타고르은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Rabindranath Tagore remercia et repassa la porte.
+    es: Rabindranath Tagore dio las gracias y volvió a cruzar la puerta.
+    de: Rabindranath Tagore bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他望着窗外的雨，说想写一首短诗。, en: He watched the rain at the window and said he wanted to write a short poem., zh-TW: 他望著窗外的雨，說想寫一首短詩。, ja: 彼は窓辺で雨を眺め、短い詩を書きたいと言った。, ko: 그는 창가에서 비를 바라보며 짧은 시를 쓰고 싶다고 말했습니다., fr: Il regardait la pluie à la fenêtre et dit qu'il voulait écrire un court poème., es: Miraba la lluvia en la ventana y dijo que quería escribir un poema corto., de: 'Er sah dem Regen am Fenster zu und sagte, er wolle ein kurzes Gedicht schreiben.'}
+    - {zh-CN: 他说自己到了晚年才开始画画，觉得很快乐。, en: 'He said he only took up painting late in life, and loved it.', zh-TW: 他說自己到了晚年才開始畫畫，覺得很快樂。, ja: 彼は、絵を描きはじめたのは晩年になってからで、とても好きだと言った。, ko: 그는 그림은 늦게야 시작했는데 무척 좋아한다고 말했습니다., fr: 'Il dit qu''il ne s''était mis à la peinture que tard dans la vie, et qu''il l''aimait.', es: 'Dijo que solo había empezado a pintar tarde en la vida, y que lo amaba.', de: 'Er sagte, er habe erst spät im Leben mit dem Malen begonnen und liebe es.'}
+said:
+  zh-CN: 愿你的生命像露珠，在时间的叶尖上轻轻起舞。
+  en: Let your life lightly dance on the edges of Time like dew on the tip of a leaf.
+  zh-TW: 願你的生命像露珠，在時間的葉尖上輕輕起舞。
+  ja: あなたの命が、時の縁で、葉先の露のように軽やかに踊りますように。
+  ko: 그대의 삶이 시간의 가장자리에서, 잎끝의 이슬처럼 가볍게 춤추기를.
+  fr: Que ta vie danse légèrement au bord du Temps, comme la rosée au bout d'une feuille.
+  es: Que tu vida baile ligera al borde del Tiempo como el rocío en la punta de una hoja.
+  de: Möge dein Leben leicht tanzen am Rande der Zeit wie Tau auf der Spitze eines Blattes.

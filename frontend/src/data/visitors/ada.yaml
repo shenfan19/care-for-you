@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: ada
+order: 170
+official: true
+region: Britain
+age: 30
+pronoun: she
+stay:
+  - 2
+  - 3
+wants:
+  - book
+  - pen
+controllable: false
+area: eu
+field: sci
+look:
+  skin: '#fffaf6'
+  hairColor: brown
+  hairStyle: bun
+  glasses: none
+  clothes: '#9a8fc0'
+souvenir:
+  id: ada_keepsake
+  icon: 📓
+src: Encyclopaedia Britannica, Ada Lovelace; Notes on the Analytical Engine (1843).
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 阿达·洛芙莱斯
+    en: Ada Lovelace
+    zh-TW: 阿達·洛芙萊斯
+    ja: エイダ・ラブレス
+    ko: 에이다 러브레이스
+    fr: Ada Lovelace
+    es: Ada Lovelace
+    de: Ada Lovelace
+  era:
+    zh-CN: 十九世纪，英国
+    en: 19th century, Britain
+    zh-TW: 十九世紀，英國
+    ja: 19世紀、イギリス
+    ko: 19세기, 영국
+    fr: XIXe siècle, Royaume-Uni
+    es: Siglo XIX, Reino Unido
+    de: 19. Jahrhundert, Großbritannien
+  souvenir:
+    zh-CN: 一页笔记的复印件
+    en: A copy of a page of notes
+    zh-TW: 一頁筆記的影印件
+    ja: メモの一ページの写し
+    ko: 메모 한 쪽의 사본
+    fr: Une copie d'une page de notes
+    es: Una copia de una página de notas
+    de: Eine Kopie einer Notizseite
+  arrive_note:
+    zh-CN: 阿达·洛芙莱斯推开大门走了进来，说想在这里住几天。
+    en: Ada Lovelace came in through the front door and asked to stay a few days.
+    zh-TW: 阿達·洛芙萊斯推開大門走了進來，說想在這裡住幾天。
+    ja: エイダ・ラブレスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 에이다 러브레이스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Ada Lovelace franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Ada Lovelace cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Ada Lovelace trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她拿起笔，立刻在笔记上添了一行。
+    en: She picked up the pen and added a line to her notes at once.
+    zh-TW: 她拿起筆，立刻在筆記上添了一行。
+    ja: 彼女はペンを取り、すぐにメモに一行書き足した。
+    ko: 그녀는 펜을 집어 들고 곧바로 메모에 한 줄을 덧붙였습니다.
+    fr: Elle prit la plume et ajouta aussitôt une ligne à ses notes.
+    es: Cogió la pluma y añadió enseguida una línea a sus notas.
+    de: Sie nahm die Feder und ergänzte sofort eine Zeile in ihren Notizen.
+  leave_ok:
+    zh-CN: 阿达·洛芙莱斯临走前留下一页笔记的复印件，说：想象力和算术，其实是一回事。
+    en: 'Before leaving, Ada Lovelace left a copy of a page of notes and said: Imagination and arithmetic are really the same thing.'
+    zh-TW: 阿達·洛芙萊斯臨走前留下一頁筆記的影印件，說：想象力和算術，其實是一回事。
+    ja: 帰る前に、エイダ・ラブレスは記念の品を残していった：メモの一ページの写し。そして言った。「想像力と算術は、じつは同じものです。」
+    ko: '떠나기 전에 에이다 러브레이스은(는) 기념품을 남겼습니다: 메모 한 쪽의 사본. 그리고 말했습니다. “상상력과 산술은 사실 같은 것입니다.”'
+    fr: 'Avant de partir, Ada Lovelace laissa un souvenir : Une copie d''une page de notes. Et dit : « L''imagination et l''arithmétique sont en réalité la même chose. »'
+    es: 'Antes de irse, Ada Lovelace dejó un recuerdo: Una copia de una página de notas. Y dijo: «La imaginación y la aritmética son en realidad lo mismo.»'
+    de: 'Vor dem Abschied ließ Ada Lovelace etwas zurück: Eine Kopie einer Notizseite. Dazu sagte Ada Lovelace: „Fantasie und Rechnen sind eigentlich dasselbe.“'
+  leave_miss:
+    zh-CN: 阿达·洛芙莱斯道了谢，推开门回去了。
+    en: Ada Lovelace said thanks and went back through the door.
+    zh-TW: 阿達·洛芙萊斯道了謝，推開門回去了。
+    ja: エイダ・ラブレスはお礼を言い、扉をくぐって帰っていった。
+    ko: 에이다 러브레이스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Ada Lovelace remercia et repassa la porte.
+    es: Ada Lovelace dio las gracias y volvió a cruzar la puerta.
+    de: Ada Lovelace bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她说机器也许有一天能谱写音乐。, en: She said that perhaps one day machines could compose music., zh-TW: 她說機器也許有一天能譜寫音樂。, ja: 彼女は、いつか機械が音楽を作曲できるようになるかもしれないと言った。, ko: 그녀는 언젠가 기계가 음악을 작곡할 수 있을지도 모른다고 말했습니다., fr: Elle dit que peut-être un jour les machines pourraient composer de la musique., es: Dijo que quizá algún día las máquinas pudieran componer música., de: 'Sie sagte, vielleicht könnten Maschinen eines Tages Musik komponieren.'}
+    - {zh-CN: 她问你有没有一支好用的笔，笔记还没整理完。, en: 'She asked for a good pen, since her notes were not yet finished.', zh-TW: 她問你有沒有一支好用的筆，筆記還沒整理完。, ja: 彼女は、メモがまだ書き終わっていないので、良いペンがほしいと頼んだ。, ko: 그녀는 메모가 아직 끝나지 않았으니 좋은 펜이 필요하다고 청했습니다., fr: 'Elle demanda une bonne plume, car ses notes n''étaient pas encore terminées.', es: 'Pidió una buena pluma, porque sus notas aún no estaban terminadas.', de: 'Sie bat um eine gute Feder, denn ihre Notizen waren noch nicht fertig.'}
+said:
+  zh-CN: 想象力是发现的能力，它能穿透我们周围看不见的世界。
+  en: Imagination is the discovering faculty. It penetrates the unseen worlds around us.
+  zh-TW: 想象力是發現的能力，它能穿透我們周圍看不見的世界。
+  ja: 想像力は発見の能力です。私たちの周りの見えない世界に入り込みます。
+  ko: 상상력은 발견하는 능력입니다. 우리 둘레의 보이지 않는 세계를 꿰뚫지요.
+  fr: L'imagination est la faculté de découvrir. Elle pénètre les mondes invisibles qui nous entourent.
+  es: La imaginación es la facultad de descubrir. Penetra en los mundos invisibles que nos rodean.
+  de: Die Fantasie ist die Fähigkeit zu entdecken. Sie dringt in die unsichtbaren Welten um uns vor.

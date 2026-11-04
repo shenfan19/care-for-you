@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: le_huu_trac
+order: 370
+official: true
+region: Vietnam
+age: 55
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - seeds
+  - medkit
+controllable: false
+area: sa
+field: med
+look:
+  skin: '#e8bc92'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#7a9a6a'
+souvenir:
+  id: le_huu_trac_keepsake
+  icon: 🌿
+src: Encyclopaedia Britannica and Vietnamese historical sources on Le Huu Trac (Hai Thuong Lan Ong), physician and author of Hai Thuong y tong tam linh.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 黎有晫（海上懒翁）
+    en: Le Huu Trac (Hai Thuong Lan Ong)
+    zh-TW: 黎有晫（海上懶翁）
+    ja: レ・フウ・チャク（海上懶翁）
+    ko: 레 흐우 짝(해상랑옹)
+    fr: Lê Hữu Trác (Hải Thượng Lãn Ông)
+    es: Lê Hữu Trác (Hải Thượng Lãn Ông)
+    de: Lê Hữu Trác (Hải Thượng Lãn Ông)
+  era:
+    zh-CN: 十八世纪，越南
+    en: 18th century, Vietnam
+    zh-TW: 十八世紀，越南
+    ja: 18世紀、ベトナム
+    ko: 18세기, 베트남
+    fr: XVIIIe siècle, Viêt Nam
+    es: Siglo XVIII, Vietnam
+    de: 18. Jahrhundert, Vietnam
+  souvenir:
+    zh-CN: 一包晒干的草药
+    en: A bundle of dried herbs
+    zh-TW: 一包曬乾的草藥
+    ja: 乾燥させた薬草の束
+    ko: 말린 약초 다발
+    fr: Un fagot d'herbes séchées
+    es: Un manojo de hierbas secas
+    de: Ein Bündel getrockneter Kräuter
+  arrive_note:
+    zh-CN: 黎有晫（海上懒翁）推开大门走了进来，说想在这里住几天。
+    en: Le Huu Trac (Hai Thuong Lan Ong) came in through the front door and asked to stay a few days.
+    zh-TW: 黎有晫（海上懶翁）推開大門走了進來，說想在這裡住幾天。
+    ja: レ・フウ・チャク（海上懶翁）は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 레 흐우 짝(해상랑옹)은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Lê Hữu Trác (Hải Thượng Lãn Ông) franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Lê Hữu Trác (Hải Thượng Lãn Ông) cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Lê Hữu Trác (Hải Thượng Lãn Ông) trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他捻了捻种子，说这一把种下去，来年就够用了。
+    en: He rolled the seeds between his fingers and said a handful planted now would be enough next year.
+    zh-TW: 他捻了捻種子，說這一把種下去，來年就夠用了。
+    ja: 彼は種を指の間で転がし、いま一握り蒔けば来年には足りるだろうと言った。
+    ko: 그는 씨앗을 손가락 사이로 굴려 보며 지금 한 줌 뿌리면 내년에 충분하겠다고 말했습니다.
+    fr: Il fit rouler les graines entre ses doigts et dit qu'une poignée semée maintenant suffirait l'an prochain.
+    es: Frotó las semillas entre los dedos y dijo que un puñado sembrado ahora bastaría el año próximo.
+    de: Er rieb die Samen zwischen den Fingern und sagte, eine Handvoll, jetzt gesät, reiche nächstes Jahr.
+  leave_ok:
+    zh-CN: 黎有晫（海上懒翁）临走前留下一包晒干的草药，说：医者的心，比药更要紧。
+    en: 'Before leaving, Le Huu Trac (Hai Thuong Lan Ong) left a bundle of dried herbs and said: A healer''s heart matters more than the medicine.'
+    zh-TW: 黎有晫（海上懶翁）臨走前留下一包曬乾的草藥，說：醫者的心，比藥更要緊。
+    ja: 帰る前に、レ・フウ・チャク（海上懶翁）は記念の品を残していった：乾燥させた薬草の束。そして言った。「医者の心は、薬より大切です。」
+    ko: '떠나기 전에 레 흐우 짝(해상랑옹)은(는) 기념품을 남겼습니다: 말린 약초 다발. 그리고 말했습니다. “의원의 마음이 약보다 중요합니다.”'
+    fr: 'Avant de partir, Lê Hữu Trác (Hải Thượng Lãn Ông) laissa un souvenir : Un fagot d''herbes séchées. Et dit : « Le cœur d''un guérisseur compte plus que le remède. »'
+    es: 'Antes de irse, Lê Hữu Trác (Hải Thượng Lãn Ông) dejó un recuerdo: Un manojo de hierbas secas. Y dijo: «El corazón de un sanador importa más que la medicina.»'
+    de: 'Vor dem Abschied ließ Lê Hữu Trác (Hải Thượng Lãn Ông) etwas zurück: Ein Bündel getrockneter Kräuter. Dazu sagte Lê Hữu Trác (Hải Thượng Lãn Ông): „Das Herz eines Heilers zählt mehr als die Medizin.“'
+  leave_miss:
+    zh-CN: 黎有晫（海上懒翁）道了谢，推开门回去了。
+    en: Le Huu Trac (Hai Thuong Lan Ong) said thanks and went back through the door.
+    zh-TW: 黎有晫（海上懶翁）道了謝，推開門回去了。
+    ja: レ・フウ・チャク（海上懶翁）はお礼を言い、扉をくぐって帰っていった。
+    ko: 레 흐우 짝(해상랑옹)은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Lê Hữu Trác (Hải Thượng Lãn Ông) remercia et repassa la porte.
+    es: Lê Hữu Trác (Hải Thượng Lãn Ông) dio las gracias y volvió a cruzar la puerta.
+    de: Lê Hữu Trác (Hải Thượng Lãn Ông) bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说药不一定贵，田埂边的草，用对了也是药。, en: 'He said medicine need not be costly: a plant at the edge of a field is medicine too, if used well.', zh-TW: 他說藥不一定貴，田埂邊的草，用對了也是藥。, ja: 彼は、薬は高価でなくてよい、田んぼのあぜの草も、うまく使えば薬になると言った。, ko: '그는 약이 꼭 비쌀 필요는 없고, 밭두렁의 풀도 제대로 쓰면 약이 된다고 말했습니다.', fr: 'Il dit que les remèdes n''ont pas à être chers : une plante au bord d''un champ est aussi un remède, si on l''emploie bien.', es: 'Dijo que la medicina no tiene por qué ser cara: una planta al borde de un campo también es medicina, si se usa bien.', de: 'Er sagte, Medizin müsse nicht teuer sein: Eine Pflanze am Feldrand ist auch Medizin, wenn man sie richtig einsetzt.'}
+    - {zh-CN: 他说给穷人看病不必收钱，药材可以自己种。, en: 'He said there is no need to charge the poor, and you can grow the herbs yourself.', zh-TW: 他說給窮人看病不必收錢，藥材可以自己種。, ja: 彼は、貧しい人からお金を取る必要はなく、薬草は自分で育てられると言った。, ko: '그는 가난한 이에게는 돈을 받을 필요가 없고, 약초는 직접 기르면 된다고 말했습니다.', fr: Il dit qu'il n'est pas nécessaire de faire payer les pauvres et que l'on peut cultiver soi-même les herbes., es: Dijo que no hace falta cobrar a los pobres y que las hierbas se pueden cultivar uno mismo., de: 'Er sagte, Arme müsse man nicht bezahlen lassen, und die Kräuter könne man selbst anbauen.'}

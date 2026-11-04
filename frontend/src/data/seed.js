@@ -306,7 +306,7 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
-  F['templates/system.yaml'] = `version: 6
+  F['templates/system.yaml'] = `version: 7
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
@@ -347,9 +347,9 @@ agents:
     well_frailty: 0.5         # 虚弱度低于这个值，并且自己没有急需，算身体好
     well_need: 0.6            # 自己最急的需求不超过这个值才算没有急需
     table:                    # 帮忙概率表：帮手的身份，被帮的对象，身体好和不好时愿意帮的几率，从上到下第一行匹配的生效，没有匹配的用 base
-      - { helper: { arch: [grandma] }, target: baby, well: 0.6, poor: 0.2 }
-      - { helper: { arch: [grandpa] }, target: baby, well: 0.5, poor: 0.15 }
-      - { helper: { arch: [dad, mom, husband, wife, man25, woman25] }, target: baby, well: 0.8, poor: 0.4 }
+      - { helper: { arch: [paternal_grandma] }, target: baby, well: 0.6, poor: 0.2 }
+      - { helper: { arch: [paternal_grandpa] }, target: baby, well: 0.5, poor: 0.15 }
+      - { helper: { arch: [dad, mom, husband, wife, young_man, young_woman] }, target: baby, well: 0.8, poor: 0.4 }
       - { helper: { stage: [teen] }, target: baby, well: 0.3, poor: 0.15 }
       - { helper: { stage: [elder] }, target: pet, well: 0.4, poor: 0.15 }
       - { helper: { stage: [teen, adult] }, target: pet, well: 0.5, poor: 0.25 }
@@ -951,7 +951,7 @@ rules:
     },
   };
 
-  const CV = 4;   /* 内容文件的版本，内置内容更新了就加一，数据文件夹里旧版本的会被覆盖，旧的留在 _backup */
+  const CV = 5;   /* 内容文件的版本，内置内容更新了就加一，数据文件夹里旧版本的会被覆盖，旧的留在 _backup */
   const HEAD = {
     voice: '# 这种声线的角色默认会说的话。角色自己的 person.yaml 里 lines 写了同名项时，以角色自己的为准。\n',
     sayings: '# 可挑选的“说过的话”。游戏偶尔会问你：某某会对你说哪句。你选了哪句就记哪句的编号和原文。\n',
@@ -966,7 +966,7 @@ rules:
      prefs 是爱待在哪些房间（rooms 是权重）和爱不爱动（restless，0 到 1，越大越爱换地方）；
      help 是主动帮忙：proactive 为真就会隔一阵自己走过去照顾最需要的人，threshold 是需求超过多少才出手，efficiency 是效果比例，interval 是间隔的现实秒数范围；
      dialogue 是对话：voice 指向声线，lines 里写的话优先于声线。 */
-  const CARD_V = 5;
+  const CARD_V = 6;
   /* 各类角色在各个房间的喜好权重，卡里的 prefs.rooms 写了就以卡为准。需求会另外把人推向厨房、卧室这些地方 */
   const PREFS = {
     elder: { living: 3, yard: 2, kitchen: 1.5 }, adult: { living: 3, kitchen: 1.5, yard: 1, study: 0.6 }, teen: { kids: 3, living: 1.5, study: 1.5, kitchen: 0.6 },
@@ -976,17 +976,9 @@ rules:
   };
   const RESTLESS = { elder: 0.35, adult: 0.6, teen: 0.5, child: 0.9, toddler: 0.9, cat: 0.5, dog: 0.9 };
   const SCORE = { infant: 0.85, toddler: 0.9, child: 0.95, teen: 0.95, adult: 0.9, elder: 0.65 };
-  const HELPERS = ['mom', 'dad', 'wife', 'husband', 'woman25', 'man25'];
-  const CARD_EXTRA = {
-    elder: { health: { score: 0.6 }, lines: { request: { thirst: ['……有点渴，倒杯水吧。'], rest: ['我坐一会儿，不碍事。'] }, thanks: { default: ['好，好，难为你了。'] } } },
-    child12: { help: { proactive: true, efficiency: 0.3, interval: [50, 80] }, lines: { request: { hunger: ['{title}，我饿了，有吃的吗？'] }, thanks: { default: ['嗯！我也可以帮你。'] } } },
-    toddler1: { lines: { request: { hunger: ['啊——啊——'] } } },
-    toddler2: { lines: { request: { hunger: ['饿饿。'] } } },
-    toddler3: { lines: { request: { hunger: ['{title}，我饿了。'] } } },
-    toddler4: { lines: { request: { hunger: ['{title}，我要吃饭，我自己吃。'] } } },
-    woman25: { lines: { thanks: { default: ['谢啦。'] } } },
-    popo: { health: { score: 0.6 } },
-  };
+  const HELPERS = ['mom', 'dad', 'wife', 'husband', 'young_woman', 'young_man'];
+  /* 各类角色在原型之上的覆盖，来自 cards/*.yaml，由 tools/build_cards.js 打包进 C.cardExtra */
+  const CARD_EXTRA = C.cardExtra;
   let cardCache = null;
   const cardFiles = () => {
     if (cardCache) return cardCache;

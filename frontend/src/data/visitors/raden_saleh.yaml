@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: raden_saleh
+order: 380
+official: true
+region: Indonesia
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - paints
+  - notebook
+controllable: false
+area: sa
+field: art
+look:
+  skin: '#d9a67c'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#9a6a4b'
+souvenir:
+  id: raden_saleh_keepsake
+  icon: 🖼️
+src: Encyclopaedia Britannica, Raden Saleh; regarded as the first modern Indonesian painter, trained in Europe.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 拉登·萨利赫
+    en: Raden Saleh
+    zh-TW: 拉登·薩利赫
+    ja: ラデン・サレー
+    ko: 라덴 살레
+    fr: Raden Saleh
+    es: Raden Saleh
+    de: Raden Saleh
+  era:
+    zh-CN: 十九世纪，爪哇
+    en: 19th century, Java
+    zh-TW: 十九世紀，爪哇
+    ja: 19世紀、ジャワ
+    ko: 19세기, 자바
+    fr: XIXe siècle, Java
+    es: Siglo XIX, Java
+    de: 19. Jahrhundert, Java
+  souvenir:
+    zh-CN: 一幅小画的复印件
+    en: A copy of a small painting
+    zh-TW: 一幅小畫的影印件
+    ja: 小さな絵の写し
+    ko: 작은 그림의 사본
+    fr: Une copie d'un petit tableau
+    es: Una copia de una pintura pequeña
+    de: Eine Kopie eines kleinen Gemäldes
+  arrive_note:
+    zh-CN: 拉登·萨利赫推开大门走了进来，说想在这里住几天。
+    en: Raden Saleh came in through the front door and asked to stay a few days.
+    zh-TW: 拉登·薩利赫推開大門走了進來，說想在這裡住幾天。
+    ja: ラデン・サレーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 라덴 살레은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Raden Saleh franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Raden Saleh cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Raden Saleh trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他打开颜料，对着窗口调起了颜色。
+    en: He opened the paints and began mixing colours facing the window.
+    zh-TW: 他開啟顏料，對著視窗調起了顏色。
+    ja: 彼は絵の具を開き、窓に向かって色を混ぜはじめた。
+    ko: 그는 물감을 열고 창문을 향해 색을 섞기 시작했습니다.
+    fr: Il ouvrit les couleurs et se mit à les mélanger face à la fenêtre.
+    es: Abrió las pinturas y empezó a mezclar colores frente a la ventana.
+    de: Er öffnete die Farben und begann, mit Blick zum Fenster Töne zu mischen.
+  leave_ok:
+    zh-CN: 拉登·萨利赫临走前留下一幅小画的复印件，说：光是怎么落下来的，要一直看着才画得对。
+    en: 'Before leaving, Raden Saleh left a copy of a small painting and said: To paint the way light falls, you have to keep watching it.'
+    zh-TW: 拉登·薩利赫臨走前留下一幅小畫的影印件，說：光是怎麼落下來的，要一直看著才畫得對。
+    ja: 帰る前に、ラデン・サレーは記念の品を残していった：小さな絵の写し。そして言った。「光がどう落ちるかは、見続けてこそ描けます。」
+    ko: '떠나기 전에 라덴 살레은(는) 기념품을 남겼습니다: 작은 그림의 사본. 그리고 말했습니다. “빛이 어떻게 내리는지는 계속 바라봐야 그릴 수 있습니다.”'
+    fr: 'Avant de partir, Raden Saleh laissa un souvenir : Une copie d''un petit tableau. Et dit : « Pour peindre la façon dont tombe la lumière, il faut continuer à la regarder. »'
+    es: 'Antes de irse, Raden Saleh dejó un recuerdo: Una copia de una pintura pequeña. Y dijo: «Para pintar cómo cae la luz, hay que seguir mirándola.»'
+    de: 'Vor dem Abschied ließ Raden Saleh etwas zurück: Eine Kopie eines kleinen Gemäldes. Dazu sagte Raden Saleh: „Wie das Licht fällt, malt man nur richtig, wenn man es ständig beobachtet.“'
+  leave_miss:
+    zh-CN: 拉登·萨利赫道了谢，推开门回去了。
+    en: Raden Saleh said thanks and went back through the door.
+    zh-TW: 拉登·薩利赫道了謝，推開門回去了。
+    ja: ラデン・サレーはお礼を言い、扉をくぐって帰っていった。
+    ko: 라덴 살레은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Raden Saleh remercia et repassa la porte.
+    es: Raden Saleh dio las gracias y volvió a cruzar la puerta.
+    de: Raden Saleh bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他随身带着速写本，在院子里一坐就是一下午。, en: He carried a sketchbook and could sit in the yard the whole afternoon., zh-TW: 他隨身帶著速寫本，在院子裡一坐就是一下午。, ja: 彼はスケッチブックを持ち歩き、庭に一日じゅう座っていられた。, ko: 그는 스케치북을 들고 다니며 마당에 오후 내내 앉아 있을 수 있었습니다., fr: Il portait un carnet de croquis et pouvait rester assis toute l'après-midi dans la cour., es: Llevaba un cuaderno de bocetos y podía pasar toda la tarde sentado en el patio., de: Er trug ein Skizzenbuch bei sich und konnte den ganzen Nachmittag im Hof sitzen.}
+    - {zh-CN: 他喜欢画动物和天气的变化，问你家的猫愿不愿意坐着不动。, en: 'He liked to paint animals and changes in the weather, and asked whether your cat would sit still.', zh-TW: 他喜歡畫動物和天氣的變化，問你家的貓願不願意坐著不動。, ja: 彼は動物や天気の移ろいを描くのが好きで、あなたの猫がじっと座っていてくれるかと尋ねた。, ko: '그는 동물과 날씨의 변화를 그리기를 좋아해, 당신의 고양이가 가만히 앉아 있어 줄지 물었습니다.', fr: 'Il aimait peindre les animaux et les changements de temps, et demanda si ton chat resterait immobile.', es: 'Le gustaba pintar animales y los cambios del tiempo, y preguntó si tu gato se quedaría quieto.', de: 'Er malte gern Tiere und wechselndes Wetter und fragte, ob deine Katze stillsitzen würde.'}

@@ -1,0 +1,29 @@
+# 角色卡源文件，一类典型角色一个文件，由 tools/build_cards.js 打包进 src/data/cards_packed.js。
+# 标识类字段（id，group，species，voice，pronoun，look 的取值）只写英文编码；label 按语言写成对象，八种语言都在这里。
+# order 是添加角色列表里的先后；pronoun 是 he，she 或 it；health，help，prefs，dialogue 是在原型默认值之上的覆盖。
+id: young_woman
+order: 610
+group: family
+label:
+  zh-CN: 25岁女性
+  en: Woman, 25
+  zh-TW: 25歲女性
+  ja: 25歳の女性
+  ko: 25세 여성
+  fr: Femme de 25 ans
+  es: Mujer de 25 años
+  de: Frau, 25
+species: human
+age: 25
+voice: sibling
+pronoun: she
+look:
+  skin: 1
+  hair_style: long
+  hair_color: black
+  glasses: none
+  beard: false
+  cloth: '#c58a8f'
+dialogue:
+  lines:
+    thanks: {default: [谢啦。]}

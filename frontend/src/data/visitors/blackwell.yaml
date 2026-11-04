@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: blackwell
+order: 600
+official: true
+region: United States / Britain
+age: 40
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - spectacles
+  - coat
+controllable: false
+area: am
+field: med
+look:
+  skin: '#fde3d0'
+  hairColor: brown
+  hairStyle: bun
+  glasses: none
+  clothes: '#6a6a8a'
+souvenir:
+  id: blackwell_keepsake
+  icon: 🎓
+src: Encyclopaedia Britannica, Elizabeth Blackwell; the first woman to receive a medical degree in the United States, 1849.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 伊丽莎白·布莱克威尔
+    en: Elizabeth Blackwell
+    zh-TW: 伊麗莎白·布萊克威爾
+    ja: エリザベス・ブラックウェル
+    ko: 엘리자베스 블랙웰
+    fr: Elizabeth Blackwell
+    es: Elizabeth Blackwell
+    de: Elizabeth Blackwell
+  era:
+    zh-CN: 十九世纪，英国与美国
+    en: 19th century, Britain and the United States
+    zh-TW: 十九世紀，英國與美國
+    ja: 19世紀、イギリスとアメリカ
+    ko: 19세기, 영국과 미국
+    fr: XIXe siècle, Royaume-Uni et États-Unis
+    es: Siglo XIX, Reino Unido y Estados Unidos
+    de: 19. Jahrhundert, Großbritannien und die Vereinigten Staaten
+  souvenir:
+    zh-CN: 一张入学通知书的复印件
+    en: A copy of an admission letter
+    zh-TW: 一張入學通知書的影印件
+    ja: 入学許可の手紙の写し
+    ko: 입학 허가서의 사본
+    fr: Une copie d'une lettre d'admission
+    es: Una copia de una carta de admisión
+    de: Eine Kopie eines Zulassungsschreibens
+  arrive_note:
+    zh-CN: 伊丽莎白·布莱克威尔推开大门走了进来，说想在这里住几天。
+    en: Elizabeth Blackwell came in through the front door and asked to stay a few days.
+    zh-TW: 伊麗莎白·布萊克威爾推開大門走了進來，說想在這裡住幾天。
+    ja: エリザベス・ブラックウェルは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 엘리자베스 블랙웰은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Elizabeth Blackwell franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Elizabeth Blackwell cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Elizabeth Blackwell trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她披上外套，眼睛亮了一下，说今晚要读到很晚。
+    en: She put on the coat, her eyes brightened, and she said she would read late tonight.
+    zh-TW: 她披上外套，眼睛亮了一下，說今晚要讀到很晚。
+    ja: 彼女はコートを羽織り、目を輝かせ、今夜は遅くまで読むと言った。
+    ko: 그녀는 외투를 걸치고 눈을 빛내며, 오늘 밤은 늦게까지 읽겠다고 말했습니다.
+    fr: Elle enfila le manteau, ses yeux s'éclairèrent, et elle dit qu'elle lirait tard cette nuit.
+    es: Se puso el abrigo, se le iluminaron los ojos y dijo que esta noche leería hasta tarde.
+    de: Sie zog den Mantel an, ihre Augen leuchteten auf, und sie sagte, heute Nacht werde sie lange lesen.
+  leave_ok:
+    zh-CN: 伊丽莎白·布莱克威尔临走前留下一张入学通知书的复印件，说：门打开一次，后面的人就都进得来。
+    en: 'Before leaving, Elizabeth Blackwell left a copy of an admission letter and said: Once a door is opened, those behind can come through.'
+    zh-TW: 伊麗莎白·布萊克威爾臨走前留下一張入學通知書的影印件，說：門開啟一次，後面的人就都進得來。
+    ja: 帰る前に、エリザベス・ブラックウェルは記念の品を残していった：入学許可の手紙の写し。そして言った。「一度扉が開けば、後ろの人たちも通れます。」
+    ko: '떠나기 전에 엘리자베스 블랙웰은(는) 기념품을 남겼습니다: 입학 허가서의 사본. 그리고 말했습니다. “문이 한 번 열리면 뒤따르는 이들도 지나갈 수 있습니다.”'
+    fr: 'Avant de partir, Elizabeth Blackwell laissa un souvenir : Une copie d''une lettre d''admission. Et dit : « Une fois la porte ouverte, ceux qui suivent peuvent passer. »'
+    es: 'Antes de irse, Elizabeth Blackwell dejó un recuerdo: Una copia de una carta de admisión. Y dijo: «Una vez abierta una puerta, pueden pasar los que vienen detrás.»'
+    de: 'Vor dem Abschied ließ Elizabeth Blackwell etwas zurück: Eine Kopie eines Zulassungsschreibens. Dazu sagte Elizabeth Blackwell: „Ist eine Tür einmal geöffnet, können die dahinter hindurchgehen.“'
+  leave_miss:
+    zh-CN: 伊丽莎白·布莱克威尔道了谢，推开门回去了。
+    en: Elizabeth Blackwell said thanks and went back through the door.
+    zh-TW: 伊麗莎白·布萊克威爾道了謝，推開門回去了。
+    ja: エリザベス・ブラックウェルはお礼を言い、扉をくぐって帰っていった。
+    ko: 엘리자베스 블랙웰은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Elizabeth Blackwell remercia et repassa la porte.
+    es: Elizabeth Blackwell dio las gracias y volvió a cruzar la puerta.
+    de: Elizabeth Blackwell bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她说她被许多学校拒绝过，最后有一所肯收她。, en: 'She said many schools turned her away, and at last one agreed to take her.', zh-TW: 她說她被許多學校拒絕過，最後有一所肯收她。, ja: 彼女は、多くの学校に断られ、ついにある学校が受け入れてくれたと言った。, ko: '그녀는 많은 학교에서 거절당했고, 마침내 한 곳이 받아 주었다고 말했습니다.', fr: 'Elle disait que de nombreuses écoles l''avaient refusée, jusqu''à ce qu''une finisse par l''accepter.', es: 'Dijo que muchas escuelas la rechazaron, hasta que una por fin la aceptó.', de: 'Sie sagte, viele Schulen hätten sie abgewiesen, bis eine sie schließlich aufnahm.'}
+    - {zh-CN: 她说女子也能当好医生，只要有人肯给她一个机会。, en: 'She said women can make good physicians, if only someone will give them a chance.', zh-TW: 她說女子也能當好醫生，只要有人肯給她一個機會。, ja: 彼女は、機会さえ与えられれば、女性もよい医者になれると言った。, ko: 그녀는 기회만 주어진다면 여성도 좋은 의사가 될 수 있다고 말했습니다., fr: 'Elle disait que les femmes peuvent faire de bonnes médecins, si seulement on leur donne leur chance.', es: 'Dijo que las mujeres pueden ser buenas médicas, si alguien les da una oportunidad.', de: 'Sie sagte, Frauen könnten gute Ärztinnen sein, wenn ihnen nur jemand eine Chance gebe.'}

@@ -7,7 +7,7 @@ CY.i18n.register('en', {
   'ask.own': 'Say your own…', 'ask.send': 'Say', 'pick.reroll': 'None of these', 'nudge.yes': 'OK, I will', 'nudge.no': 'Later', 'unit.sec': '{n}s',
 
   'clock.dh': '{d} d {h} h', 'clock.hm': '{h} h {m} min', 'clock.m': '{m} min',
-        
+
   'bar.away': '{name} stepped away', 'bar.recall': 'call back',
   'feed.title': 'What happened', 'feed.all': 'Everyone', 'feed.quiet': 'Hide everyday chatter', 'feed.stat': 'Cared {care} times, talked {talk} times, missed {missed} times',
   'feed.stat_back': ', {n} kindnesses from {name}', 'feed.day': 'Day {n}', 'feed.empty': 'Nothing has happened yet.', 'feed.more': 'Show more',
@@ -22,14 +22,13 @@ CY.i18n.register('en', {
   'hair.short': 'Short', 'hair.long': 'Long', 'hair.bob': 'Bob', 'hair.ponytail': 'Ponytail', 'hair.bun': 'Bun', 'hair.curly': 'Curly', 'hair.bald': 'Bald',
   'theme.auto': 'Follow system', 'theme.light': 'Light', 'theme.dark': 'Dark',
   'bg.warm': 'Warm', 'bg.mint': 'Mint', 'bg.sky': 'Sky', 'bg.rose': 'Rose', 'bg.gray': 'Gray', 'lang.auto': 'Follow browser',
-  'arch.grandpa': 'Grandpa', 'arch.grandma': 'Grandma', 'arch.waigong': 'Grandpa (maternal)', 'arch.waipo': 'Grandma (maternal)', 'arch.dad': 'Dad', 'arch.mom': 'Mom', 'arch.aunt': 'Aunt', 'arch.uncle': 'Uncle', 'arch.me': 'Me',
-  'arch.brother': 'Brother', 'arch.sister': 'Sister', 'arch.daughter': 'Daughter', 'arch.son': 'Son', 'arch.nephew': 'Nephew', 'arch.friend': 'Friend', 'arch.cat': 'Cat', 'arch.dog': 'Dog', 'arch.snake': 'Snake',
+  'arch.me': 'Me',
 
   'ob.title': 'Who do you have to take care of?', 'ob.sub': 'Pick one to begin. You can add more at any time.',   'ob.added': 'Added: {names}', 'ob.start': 'Start', 'ob.skip': 'Just look around for now', 'sep.list': ', ',
   'preset.trio.label': 'Try it: Grandpa, a little one and a cat', 'preset.trio.note': 'Three different rhythms to get a feel for it',
   'preset.elder.label': 'An elder who needs company', 'preset.elder.note': 'Has diabetes, with small choices about medicine and meals',
   'preset.pet.label': 'Just one cat', 'preset.pet.note': 'The lightest start',
-  'preset.name.grandpa': 'Grandpa', 'preset.name.daughter': 'Little one', 'preset.name.cat': 'Mochi',
+  'preset.name.paternal_grandpa': 'Grandpa', 'preset.name.daughter': 'Little one', 'preset.name.cat': 'Mochi',
 
   'sec.interrupt': 'Interruptions', 'sec.time': 'Time', 'sec.player': 'Names', 'sec.interaction': 'Interaction', 'sec.ui': 'Interface', 'sec.privacy': 'Privacy', 'sec.account': 'Account', 'sec.ai': 'AI',
   'set.title': 'Settings', 'set.look': 'Look and language', 'set.theme': 'Theme', 'set.bg': 'Background', 'set.lang': 'Language',
@@ -75,7 +74,7 @@ CY.i18n.register('en', {
     'cred.p1': 'The interface and logic are a static web page with no backend. Data files are YAML, parsed with js-yaml under the MIT license.',
   'cred.p2': 'Artificial intelligence assistance tools were used in developing this project.',
   'cred.p3': 'Character art, animations and text are original. The open source license has not been decided yet and will be stated here and in the repository once it is.',
-  'ver.line': '{app} {v}, data schema {schema}, released {date}', 
+  'ver.line': '{app} {v}, data schema {schema}, released {date}',
   'log.frail': '{name} is very frail and needs someone nearby', 'log.recovered': '{name} is slowly recovering', 'toast.weak': 'No strength today.',
   'log.bedrest': '{name} is too weak to get up and now stays in bed', 'log.bedrest_end': '{name} is strong enough to get up again', 'toast.bedrest': '{ta} cannot get out of bed today.', 'act.wheel': 'Push the wheelchair outside',
   'req.need_fallback': '{name} needs: {need}', 'line.reveal_fallback': 'Has been watching over you all along.', 'line.glance_fallback': '{name} glanced at you.', 'line.ok': 'Mm.',
@@ -129,7 +128,7 @@ CY.i18n.register('en', {
 CY.i18n.register("en", {
      "unit.min": "{n} min",
  "unit.hour": "{n} h",
- 
+
  "sec.play": "Experience",
  "sec.economy": "Work and money",
  "add.group_plant": "Plants",
@@ -155,17 +154,7 @@ CY.i18n.register("en", {
  "preset.name.baby": "Baby",
  "preset.name.succulent": "Succulent",
  "preset.name.flower": "Daisy",
- "arch.baby": "Baby",
- "arch.toddler": "Toddler",
- "arch.teen": "Teen",
- "arch.rabbit": "Rabbit",
- "arch.hamster": "Hamster",
- "arch.bird": "Bird",
- "arch.fish": "Goldfish",
- "arch.turtle": "Turtle",
- "arch.succulent": "Succulent",
- "arch.flower": "Flowering plant",
- "arch.tree": "Potted tree",
+
  "class.infant": "Infant",
  "class.toddler": "Toddler",
  "class.child": "Child",
@@ -185,18 +174,15 @@ CY.i18n.register("en", {
  "class.tree": "Tree",
  "type.cry": "Crying",
  "type.self": "On their own",
-    
-     
- 
- 
+
              "toast.busy": "You are busy: {what}.",
  "toast.started": "Started {what}; it takes {min} min.",
- 
+
  "toast.nobody": "…",
  "log.self": "Nobody came, so {name} handled it alone: {need}",
  "log.cry": "{name} started crying: {need}",
  "log.healed": "{name} recovered from {cond}",
- 
+
  "log.missed_need_helpless": "You missed it. {name} could not manage alone: {text}",
  "line.cry": "Waaah…",
  "need.diaper": "Wet diaper",
@@ -245,9 +231,6 @@ CY.i18n.register("en", {
  "cond.asthma": "Asthma",
  "cond.forgetful": "Memory loss",
 
- 
-
- 
  "ini.play.economy": "true is the full experience: work for money, care uses items, nannies available; false is the light experience with hold only",
  "ini.economy.wage": "Money earned per game hour during work hours",
  "ini.economy.work_hours": "Daily work window, on the day clock",
@@ -336,12 +319,7 @@ CY.i18n.register("en", {
  "pron.sub.m": "he",
  "pron.sub.f": "she",
  "pron.sub.n": "it",
- "arch.husband": "Husband",
- "arch.wife": "Wife",
- "arch.neighbor": "Elderly neighbor",
- "arch.roommate": "Roommate",
- "arch.parrot": "Parrot",
- "arch.cactus": "Cactus",
+
  "class.cactus": "Cactus",
  "need.hygiene": "Wants a wash",
  "need.oxygen": "Needs air",
@@ -365,7 +343,7 @@ CY.i18n.register("en", {
  "act.selfmed": "Take pills alone",
  "act.selfbp": "Check blood pressure alone",
  "act.selfheat": "Use a heat pack alone",
- 
+
  "ini.ui.clock_12h": "When true, times on screen use a 12-hour clock; the default is 24-hour", "lbl.ui.clock_12h": "12-hour clock", "ini.ui.scene": "Room background: auto is living room by day and bedroom at night; living, bedroom, kitchen, lawn, balcony; none is plain",
  "ini.play.last_mode": "The mode you were in before pausing, reality or fast. Rarely needs changing.",
  "ini.time.mode": "real is Reality mode, following the real clock; compressed is Fast mode with time sped up; paused stops. The top bar switch changes this"
@@ -375,7 +353,7 @@ CY.i18n.register("en", {"player.title": "Dad", "player.name": "you"});
 
 CY.i18n.register("en", {"btn.edit": "Edit", "btn.archive": "Archive", "btn.delete": "Delete", "btn.restore": "Restore", "del.title": "Delete {name}?", "del.note": "Deleting removes the records, sayings and state of {name} from this device and cannot be undone. To just set them aside, choose Archive and the records stay."});
 
-CY.i18n.register("en", {"hdr.share": "Share card", "share.title": "Share card", "share.note": "A picture made only on your device with the numbers you choose, no names by default. Nothing is uploaded, and the game never nudges you to share.", "share.f_time": "Time together", "share.f_care": "Times cared", "share.f_talk": "Chats", "share.f_called": "Times called", "share.f_back": "Kindnesses received", "share.f_names": "Show names", "share.save": "Save image", "share.send": "Share", "share.line_time": "Together for {t}", "share.line_care": "Cared {n} times", "share.line_talk": "Chatted {n} times", "share.line_back": "Received {n} kindnesses", "share.foot": "Care for You · No score, just company", "cond.heart": "Heart condition", "cond.parkinson": "Parkinson’s", "cond.depress": "Low mood", "cond.nocturia": "Frequent night urination", "cond.eczema": "Eczema", "cond.fracture": "Fracture recovery", "cond.trauma": "Waking in fear after trauma", "cond.allergy": "Allergy", "need.chest": "Chest feels tight", "need.tremor": "Hands trembling", "need.lowmood": "Feeling low", "need.toilet": "Needs the toilet", "need.itch": "Skin is itchy", "need.pain": "Hurts where injured", "need.nightmare": "Restless", "need.sneeze": "Sneezing, watery eyes", "need.veg": "Wants fresh greens", "need.humid": "Needs misting", "act.restsit": "Help sit and rest", "act.steady": "Steady the hands", "act.listen": "Listen quietly", "act.walkout": "Walk outside together", "act.lead": "Help to the toilet", "act.nightlight": "Turn on a night light", "act.selftoilet": "Go to the toilet alone", "selfact.selftoilet": "Go to the toilet alone", "act.ointment": "Apply ointment", "act.trimnails": "Trim nails", "act.support": "Help walk a few steps", "act.painkill": "Take painkillers", "act.rehab": "Do rehab exercises together", "act.stayclose": "Stay close in silence", "act.warmdrink": "Hand over a warm drink", "act.antihist": "Take allergy medicine", "act.airclean": "Clean and dust", "act.veggie": "Feed fresh greens", "act.mist": "Mist with water", "act.train": "Teach a command", "act.teach": "Teach a word", "class.guineapig": "Guinea pig", "class.gecko": "Gecko", "arch.guineapig": "Guinea pig", "arch.gecko": "Gecko", "arch.refugee_elder": "An elder who fled", "arch.refugee_mother": "A mother who fled", "arch.refugee_child": "A child who fled", "arch.wheelchair": "A family member in a wheelchair", "preset.host.label": "Hosting a family who fled", "preset.host.note": "An elder, a mother and a child, newly arrived in an unfamiliar place, who need time to settle and feel safe", "preset.name.refugee_elder": "Elder", "preset.name.refugee_mother": "Mama", "preset.name.refugee_child": "Child", "preset.night.label": "Grandpa who gets up at night", "preset.night.note": "Frequent night trips to the toilet and a bit frail by day, so someone needs to keep an eye out"});
+CY.i18n.register("en", {"hdr.share": "Share card", "share.title": "Share card", "share.note": "A picture made only on your device with the numbers you choose, no names by default. Nothing is uploaded, and the game never nudges you to share.", "share.f_time": "Time together", "share.f_care": "Times cared", "share.f_talk": "Chats", "share.f_called": "Times called", "share.f_back": "Kindnesses received", "share.f_names": "Show names", "share.save": "Save image", "share.send": "Share", "share.line_time": "Together for {t}", "share.line_care": "Cared {n} times", "share.line_talk": "Chatted {n} times", "share.line_back": "Received {n} kindnesses", "share.foot": "Care for You · No score, just company", "cond.heart": "Heart condition", "cond.parkinson": "Parkinson’s", "cond.depress": "Low mood", "cond.nocturia": "Frequent night urination", "cond.eczema": "Eczema", "cond.fracture": "Fracture recovery", "cond.trauma": "Waking in fear after trauma", "cond.allergy": "Allergy", "need.chest": "Chest feels tight", "need.tremor": "Hands trembling", "need.lowmood": "Feeling low", "need.toilet": "Needs the toilet", "need.itch": "Skin is itchy", "need.pain": "Hurts where injured", "need.nightmare": "Restless", "need.sneeze": "Sneezing, watery eyes", "need.veg": "Wants fresh greens", "need.humid": "Needs misting", "act.restsit": "Help sit and rest", "act.steady": "Steady the hands", "act.listen": "Listen quietly", "act.walkout": "Walk outside together", "act.lead": "Help to the toilet", "act.nightlight": "Turn on a night light", "act.selftoilet": "Go to the toilet alone", "selfact.selftoilet": "Go to the toilet alone", "act.ointment": "Apply ointment", "act.trimnails": "Trim nails", "act.support": "Help walk a few steps", "act.painkill": "Take painkillers", "act.rehab": "Do rehab exercises together", "act.stayclose": "Stay close in silence", "act.warmdrink": "Hand over a warm drink", "act.antihist": "Take allergy medicine", "act.airclean": "Clean and dust", "act.veggie": "Feed fresh greens", "act.mist": "Mist with water", "act.train": "Teach a command", "act.teach": "Teach a word", "class.guineapig": "Guinea pig", "class.gecko": "Gecko", "preset.host.label": "Hosting a family who fled", "preset.host.note": "An elder, a mother and a child, newly arrived in an unfamiliar place, who need time to settle and feel safe", "preset.name.refugee_elder": "Elder", "preset.name.refugee_mother": "Mama", "preset.name.refugee_child": "Child", "preset.night.label": "Grandpa who gets up at night", "preset.night.note": "Frequent night trips to the toilet and a bit frail by day, so someone needs to keep an eye out"});
 
 CY.i18n.register("en", {"loc.home": "Home", "loc.office": "Office", "loc.hospital": "Hospital", "loc.bedroom": "Bedroom", "loc.market": "Market", "loc.aisle": "Aisle", "act.groceries": "Go grocery shopping", "log.groceries": "Back from the market with {n} meals of groceries", "loc.guest": "Guest room", "loc.elder": "Elders’ room", "loc.toilet": "Bathroom", "loc.study": "Study", "loc.living": "Living room", "loc.kitchen": "Kitchen", "loc.yard": "Yard", "loc.ward": "Ward", "loc.desk": "Desk", "nav.here": "You are at {place}", "nav.travel_hold": "Go to {place}, hold {n} s", "toast.offsite": "{name} is at {place}, go there first", "toast.walking": "Walking over, it will start on arrival", "log.fall_minor": "{name} slipped during a night trip to the toilet, but it is nothing serious.", "log.fall_serious": "{name} fell during a night trip to the toilet and was taken to the hospital.", "log.discharge": "{name} is out of the hospital and back home.", "log.night_wc": "{name} got up in the night to use the toilet.", "room.edit": "Edit {name}", "ini.play.auto_return": "When true, after caring with nothing else to do, you walk back to your post by yourself, and the travel time still counts. When false you stay where you are until you move.", "ini.play.fall_scale": "Multiplier for the chance of a fall on a night trip, for testing. It will come from the Life Matters nocturia model once connected.", "ini.play.model_provider": "Provider for models such as nocturia. Only the built-in default exists for now; look-up tables, Life Matters or others can be added later."});
 
@@ -385,11 +363,9 @@ CY.i18n.register("en", {"backend.error": "The remote backend is unreachable, so 
 
 CY.i18n.register("en", {"trait.shy": "Shy", "trait.shy_tip": "Speaks little and rarely starts a conversation, wants company more slowly and copes alone better", "trait.chatty": "Chatty", "trait.chatty_tip": "Talks a lot, wants company faster and tends to be in a better mood", "trait.curious": "Curious", "trait.curious_tip": "Wants to look into everything, wants to play faster", "trait.stubborn": "Stubborn", "trait.stubborn_tip": "Does not change a settled mind, care works a little less well, mood runs slightly lower", "trait.gentle": "Gentle", "trait.gentle_tip": "Easygoing, mood runs higher, slightly sturdier body", "trait.playful": "Playful", "trait.playful_tip": "Wants to play very fast, mood runs higher", "trait.anxious": "Anxious", "trait.anxious_tip": "Wants company faster, slightly frailer, mood runs lower", "trait.proud": "Proud", "trait.proud_tip": "Hates troubling others, does more alone, wants company more slowly", "trait.sentimental": "Sentimental", "trait.sentimental_tip": "Loves remembering the past, wants company somewhat faster"});
 
-CY.i18n.register("en", {"arch.hedgehog": "Hedgehog", "arch.duck": "Duck", "arch.ferret": "Ferret", "arch.axolotl": "Axolotl", "arch.chicken": "Chicken", "arch.orchid": "Orchid", "arch.bamboo": "Bamboo", "arch.gongong": "Father-in-law", "arch.popo": "Mother-in-law", "arch.grandson": "Grandson", "arch.granddaughter": "Granddaughter", "arch.younger_brother": "Younger brother", "arch.younger_sister": "Younger sister", "arch.niece": "Niece", "arch.classmate": "Classmate", "class.hedgehog": "Hedgehog", "class.duck": "Duck", "class.ferret": "Ferret", "class.axolotl": "Axolotl", "class.chicken": "Chicken", "class.orchid": "Orchid", "class.bamboo": "Bamboo", "preset.threegen.label": "Three generations", "preset.threegen.note": "Grandpa, Grandma, Mom and a baby, each on a different rhythm", "preset.solo.label": "Living alone, a cat and some plants", "preset.solo.note": "Quiet days, little needed, but worth a look every day", "preset.zoo.label": "A houseful of small animals", "preset.zoo.note": "A cat, a dog, a rabbit and a hedgehog, each with its own temper", "preset.garden.label": "A corner of plants", "preset.garden.note": "Silent, only needing water and sun in time", "preset.name.grandma": "Grandma", "preset.name.mom": "Mom", "preset.name.dog": "Buddy", "preset.name.rabbit": "Mochi", "preset.name.hedgehog": "Spike", "preset.name.orchid": "Lily", "preset.name.bamboo": "Green", "preset.name.cactus": "Prickle"});
+CY.i18n.register("en", {"class.hedgehog": "Hedgehog", "class.duck": "Duck", "class.ferret": "Ferret", "class.axolotl": "Axolotl", "class.chicken": "Chicken", "class.orchid": "Orchid", "class.bamboo": "Bamboo", "preset.threegen.label": "Three generations", "preset.threegen.note": "Grandpa, Grandma, Mom and a baby, each on a different rhythm", "preset.solo.label": "Living alone, a cat and some plants", "preset.solo.note": "Quiet days, little needed, but worth a look every day", "preset.zoo.label": "A houseful of small animals", "preset.zoo.note": "A cat, a dog, a rabbit and a hedgehog, each with its own temper", "preset.garden.label": "A corner of plants", "preset.garden.note": "Silent, only needing water and sun in time", "preset.name.paternal_grandma": "Grandma", "preset.name.mom": "Mom", "preset.name.dog": "Buddy", "preset.name.rabbit": "Mochi", "preset.name.hedgehog": "Spike", "preset.name.orchid": "Lily", "preset.name.bamboo": "Green", "preset.name.cactus": "Prickle"});
 
-CY.i18n.register("en", {});
 
-CY.i18n.register("en", {});
 
 CY.i18n.register("en", {"me.work_start": "Work hours began, and you settled in at the desk.", "me.work_end": "Work ended and you stepped away from the desk.", "me.go": "You went to {place}.", "me.back": "You came back home."});
 
@@ -397,11 +373,10 @@ CY.i18n.register("en", {"loc.park": "Park", "loc.street": "Street", "loc.lawn": 
 
 CY.i18n.register("en", {"add.helper": "Works from home, earns on their own and shares the care"});
 
-CY.i18n.register("en", {});
 
 CY.i18n.register("en", {"people.lead": "Control this one", "people.lead_on": "Controlled, tap to clear"});
 
-CY.i18n.register("en", {"arch.elder": "Typical elder", "arch.toddler1": "1-year-old", "arch.toddler2": "2-year-old", "arch.toddler3": "3-year-old", "arch.toddler4": "4-year-old", "arch.child12": "12-year-old", "arch.woman25": "Woman, 25", "arch.man25": "Man, 25", "add.helper": "At home, shares the care on their own"});
+CY.i18n.register("en", {"add.helper": "At home, shares the care on their own"});
 
 CY.i18n.register("en", {"social.chat": "{a} and {b} had a little chat.", "social.play": "{a} played with {b} for a while.", "social.pet": "{a} stroked {b}."});
 
@@ -418,8 +393,6 @@ CY.i18n.register("en", {"card.title": "Role card", "card.note": "Everything abou
 CY.i18n.register("en", {"badge.help": "Going to help"});
 
 CY.i18n.register("en", {"social.pets": "{a} and {b} chased each other around for a bit."});
-CY.i18n.register("en", {});
-CY.i18n.register("en", {});
 CY.i18n.register("en", {"corner.day": "Day {n}", "share.note": "A picture made only on your device. You choose what goes on it, names included. Nothing is uploaded, and the game never nudges you to share.", "brand.name": "Care for You", "tag.1": "Stop for a moment and look after the people at home.", "tag.2": "Nothing here is urgent. Someone just wants you to look up.", "tag.3": "A small excuse to step away from work for five minutes.", "tag.4": "No score. Nobody keeps count of how you did.", "tag.5": "You look after them, and they quietly look after you.", "tag.6": "Slow down. They will wait."});
 CY.i18n.register("en", {"corner.day": "Month {m} · Day {d}"});
 CY.i18n.register("en", {"ini.audio.music_volume": "Background music volume, 0 to 100, 0 is off. Quiet synthesized music, lower and slower at night. Browsers only play sound after one click on the page.", "ini.audio.mute": "When true, music and sound effects are all muted without changing the two volume values", "lbl.audio.mute": "Mute all", "ini.audio.sfx_volume": "Sound effect volume, 0 to 100, 0 is off. Soft sounds for taps, someone speaking, a check mark, something happening."});
@@ -433,7 +406,6 @@ CY.i18n.register("en", {"cred.p3": "Furniture art: Kenney's Furniture Kit (CC0 1
 CY.i18n.register("en", {"add.model": "Look", "add.model_auto": "Automatic"});
 CY.i18n.register("en", {"cred.p3": "Art: Kenney's Furniture Kit and Mini Characters (both CC0 1.0, kenney.nl). CC0 does not require credit, and we credit them anyway. This project renders the 3D models into isometric images, and character skin tones are recolored in the game according to the player's choice. The rendering uses three.js (MIT license), which is not shipped with the game. Animals, plants, animations and text are original. The code is open source under the MIT license, see LICENSE in the repository."});
 CY.i18n.register("en", {"corner.eff_tip": "Work efficiency is {n}% right now. A better mood earns more. Working and people at home going unattended pull your mood down; looking after others and being cared for lift it."});
-CY.i18n.register("en", {});
 CY.i18n.register("en", {"shop.title": "Shop", "shop.note": "What you buy stays. No time limits, no discounts, and the game is complete without buying anything.", "shop.owned": "Owned", "shop.locked": "Buy the previous tier first", "shop.toy": "Toy", "shop.toy_fx": "Babies and toddlers need play a quarter more slowly, and a teddy bear appears in the living room.", "shop.bed": "A better bed", "shop.bed_fx": "Rest recovers 30% faster while sleeping; a nightstand and lamp appear in the bedroom.", "shop.stroller": "Stroller", "shop.stroller_fx": "Babies and toddlers enjoy outings more.", "shop.wheelchair": "Wheelchair", "shop.wheelchair_fx": "Elders need mobility 30% more slowly, and a wheelchair appears in the elder room.", "shop.decor1": "Decor, tier 1", "shop.decor1_fx": "A plant in the living room, mood target +0.02 for everyone.", "shop.decor2": "Decor, tier 2", "shop.decor2_fx": "A rug and a floor lamp, mood target another +0.02.", "shop.decor3": "Decor, tier 3", "shop.decor3_fx": "A radio and more greenery, mood target another +0.02.", "shop.house2": "Bigger house", "shop.house2_fx": "Move to a bigger home: a guest room, three more beds, more space, and the mood target rises by 0.03.", "shop.bed2": "Better bedding", "shop.bed2_fx": "Rest recovers a bit faster while sleeping; a night light appears in the elder room.", "shop.books": "Bookshelf", "shop.books_fx": "A bookshelf in the living room; the need to play grows slower and the mood target rises by 0.01.", "shop.fruit": "Fruit bowl", "shop.fruit_fx": "Fruit and bread stay on the table; hunger grows 10% slower.", "arc.diabetes.first": "{name} says the blood sugar numbers have been a little higher these days and would like you to keep an eye on them.", "arc.diabetes.habit": "{name} put the pill box in a spot on the table where it is hard to miss, saying this way nothing gets forgotten.", "arc.diabetes.checkup": "{name} is back from the checkup. The doctor says it is well controlled, and {name} is in good spirits.", "log.bought": "Bought {item}."});
 CY.i18n.register("en", {"cred.p3": "Art: Kenney's Furniture Kit, Mini Characters and Cube Pets (all CC0 1.0, kenney.nl). CC0 does not require credit, and we credit them anyway. This project renders the 3D models into isometric images; character skin, hair and clothes colors are recolored in the game according to the player's choice. Plants are enlarged plant models from the Furniture Kit, and animals without an exact match use the closest-looking one. The rendering uses three.js (MIT license), which is not shipped with the game. Animations and text are original. The code is open source under the MIT license, see LICENSE in the repository."});
 CY.i18n.register("en", {"cred.p3": "Art: Kenney's Furniture Kit, Mini Characters, Cube Pets and Car Kit (all CC0 1.0, kenney.nl). CC0 does not require credit, and we credit them anyway. This project renders the 3D models into isometric images; character skin, hair and clothes colors are recolored in the game according to the player's choice. Plants are enlarged plant models from the Furniture Kit, and animals without an exact match use the closest-looking one. The rendering uses three.js (MIT license), which is not shipped with the game. Animations and text are original. The code is open source under the MIT license, see LICENSE in the repository."});

@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: dickinson
+order: 270
+official: true
+region: United States
+age: 35
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - lamp
+  - notebook
+controllable: false
+area: am
+field: art
+look:
+  skin: '#fffaf6'
+  hairColor: brown
+  hairStyle: bun
+  glasses: none
+  clothes: '#f0f0f0'
+souvenir:
+  id: dickinson_keepsake
+  icon: 📓
+src: Encyclopaedia Britannica, Emily Dickinson.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 艾米莉·狄金森
+    en: Emily Dickinson
+    zh-TW: 艾米莉·狄金森
+    ja: エミリー・ディキンソン
+    ko: 에밀리 디킨슨
+    fr: Emily Dickinson
+    es: Emily Dickinson
+    de: Emily Dickinson
+  era:
+    zh-CN: 十九世纪，美国
+    en: 19th century, United States
+    zh-TW: 十九世紀，美國
+    ja: 19世紀、アメリカ
+    ko: 19세기, 미국
+    fr: XIXe siècle, États-Unis
+    es: Siglo XIX, Estados Unidos
+    de: 19. Jahrhundert, Vereinigte Staaten
+  souvenir:
+    zh-CN: 一页短诗的复印件
+    en: A copy of a page of short poems
+    zh-TW: 一頁短詩的影印件
+    ja: 短い詩の一ページの写し
+    ko: 짧은 시 한 쪽의 사본
+    fr: Une copie d'une page de courts poèmes
+    es: Una copia de una página de poemas cortos
+    de: Eine Kopie einer Seite mit kurzen Gedichten
+  arrive_note:
+    zh-CN: 艾米莉·狄金森推开大门走了进来，说想在这里住几天。
+    en: Emily Dickinson came in through the front door and asked to stay a few days.
+    zh-TW: 艾米莉·狄金森推開大門走了進來，說想在這裡住幾天。
+    ja: エミリー・ディキンソンは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 에밀리 디킨슨은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Emily Dickinson franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Emily Dickinson cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Emily Dickinson trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她轻轻翻开本子，没说话，笑了。
+    en: She opened the notebook gently and smiled without a word.
+    zh-TW: 她輕輕翻開本子，沒說話，笑了。
+    ja: 彼女は黙ってそっとノートを開き、微笑んだ。
+    ko: 그녀는 공책을 조심스레 펼치고 말없이 미소 지었습니다.
+    fr: Elle ouvrit le carnet avec délicatesse et sourit sans un mot.
+    es: Abrió el cuaderno con delicadeza y sonrió sin decir palabra.
+    de: Sie schlug das Heft behutsam auf und lächelte, ohne ein Wort.
+  leave_ok:
+    zh-CN: 艾米莉·狄金森临走前留下一页短诗的复印件，说：希望是长着羽毛的东西。
+    en: 'Before leaving, Emily Dickinson left a copy of a page of short poems and said: Hope is the thing with feathers.'
+    zh-TW: 艾米莉·狄金森臨走前留下一頁短詩的影印件，說：希望是長著羽毛的東西。
+    ja: 帰る前に、エミリー・ディキンソンは記念の品を残していった：短い詩の一ページの写し。そして言った。「希望とは、羽のあるものです。」
+    ko: '떠나기 전에 에밀리 디킨슨은(는) 기념품을 남겼습니다: 짧은 시 한 쪽의 사본. 그리고 말했습니다. “희망은 깃털 달린 것입니다.”'
+    fr: 'Avant de partir, Emily Dickinson laissa un souvenir : Une copie d''une page de courts poèmes. Et dit : « L''espoir est cette chose à plumes. »'
+    es: 'Antes de irse, Emily Dickinson dejó un recuerdo: Una copia de una página de poemas cortos. Y dijo: «La esperanza es esa cosa con plumas.»'
+    de: 'Vor dem Abschied ließ Emily Dickinson etwas zurück: Eine Kopie einer Seite mit kurzen Gedichten. Dazu sagte Emily Dickinson: „Hoffnung ist das Ding mit Federn.“'
+  leave_miss:
+    zh-CN: 艾米莉·狄金森道了谢，推开门回去了。
+    en: Emily Dickinson said thanks and went back through the door.
+    zh-TW: 艾米莉·狄金森道了謝，推開門回去了。
+    ja: エミリー・ディキンソンはお礼を言い、扉をくぐって帰っていった。
+    ko: 에밀리 디킨슨은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Emily Dickinson remercia et repassa la porte.
+    es: Emily Dickinson dio las gracias y volvió a cruzar la puerta.
+    de: Emily Dickinson bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她安静地说，夜里写些短短的句子最合适。, en: She said quietly that short lines at night suited her best., zh-TW: 她安靜地說，夜裡寫些短短的句子最合適。, ja: 彼女は小声で、夜には短い詩行がいちばん合うと言った。, ko: 그녀는 밤에는 짧은 시행이 가장 잘 맞는다고 조용히 말했습니다., fr: 'Elle dit doucement que les vers courts, la nuit, lui convenaient le mieux.', es: Dijo en voz baja que de noche le iban mejor los versos cortos., de: 'Sie sagte leise, kurze Zeilen bei Nacht lägen ihr am besten.'}
+    - {zh-CN: 她问你有没有小本子，装得下一首诗就行。, en: 'She asked for a little notebook, just big enough for a poem.', zh-TW: 她問你有沒有小本子，裝得下一首詩就行。, ja: 彼女は、ちょうど詩一篇が書ける大きさの小さなノートがほしいと頼んだ。, ko: 그녀는 시 한 편 쓰기에 딱 맞는 작은 공책을 청했습니다., fr: 'Elle demanda un petit carnet, juste assez grand pour un poème.', es: 'Pidió un cuadernito, justo del tamaño de un poema.', de: 'Sie bat um ein kleines Heft, gerade groß genug für ein Gedicht.'}
+said:
+  zh-CN: 我是无名小卒！你是谁？
+  en: I'm nobody! Who are you?
+  zh-TW: 我是無名小卒！你是誰？
+  ja: 私は誰でもない！ あなたは誰？
+  ko: 나는 아무도 아니에요! 당신은 누구세요?
+  fr: Je ne suis personne ! Et toi, qui es-tu ?
+  es: ¡No soy nadie! ¿Quién eres tú?
+  de: Ich bin Niemand! Wer bist du?

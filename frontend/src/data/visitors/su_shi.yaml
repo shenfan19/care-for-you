@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: su_shi
+order: 100
+official: true
+region: China
+age: 52
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - soup
+  - tea
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#c28a6e'
+souvenir:
+  id: su_shi_keepsake
+  icon: 📜
+src: 《猪肉颂》；Encyclopaedia Britannica, Su Shi.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 苏轼
+    en: Su Shi
+    zh-TW: 蘇軾
+    ja: 蘇軾
+    ko: 소식
+    fr: Su Shi
+    es: Su Shi
+    de: Su Shi
+  era:
+    zh-CN: 宋代，中国
+    en: Song dynasty, China
+    zh-TW: 宋代，中國
+    ja: 宋代、中国
+    ko: 송나라, 중국
+    fr: Dynastie Song, Chine
+    es: Dinastía Song, China
+    de: Song-Dynastie, China
+  souvenir:
+    zh-CN: 一页菜谱和诗稿
+    en: A page of recipe and verse
+    zh-TW: 一頁菜譜和詩稿
+    ja: レシピと詩の一ページ
+    ko: 요리법과 시 한 쪽
+    fr: Une page de recette et de vers
+    es: Una página con receta y verso
+    de: Eine Seite mit Rezept und Vers
+  arrive_note:
+    zh-CN: 苏轼推开大门走了进来，说想在这里住几天。
+    en: Su Shi came in through the front door and asked to stay a few days.
+    zh-TW: 蘇軾推開大門走了進來，說想在這裡住幾天。
+    ja: 蘇軾は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 소식은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Su Shi franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Su Shi cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Su Shi trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他喝了一口，满意地眯起了眼睛。
+    en: He took a sip and narrowed his eyes in contentment.
+    zh-TW: 他喝了一口，滿意地眯起了眼睛。
+    ja: 彼は一口すすり、満足そうに目を細めた。
+    ko: 그는 한 모금 마시고 흡족하게 눈을 가늘게 떴습니다.
+    fr: Il but une gorgée et plissa les yeux de contentement.
+    es: Dio un sorbo y entornó los ojos de contento.
+    de: Er nahm einen Schluck und kniff genießerisch die Augen zusammen.
+  leave_ok:
+    zh-CN: 苏轼临走前留下一页菜谱和诗稿，说：日子好不好，先看这一顿。
+    en: 'Before leaving, Su Shi left a page of recipe and verse and said: How the day went depends on this one meal.'
+    zh-TW: 蘇軾臨走前留下一頁菜譜和詩稿，說：日子好不好，先看這一頓。
+    ja: 帰る前に、蘇軾は記念の品を残していった：レシピと詩の一ページ。そして言った。「一日がどうなるかは、この一食にかかっている。」
+    ko: '떠나기 전에 소식은(는) 기념품을 남겼습니다: 요리법과 시 한 쪽. 그리고 말했습니다. “하루가 어떻게 흘러갈지는 이 한 끼에 달렸습니다.”'
+    fr: 'Avant de partir, Su Shi laissa un souvenir : Une page de recette et de vers. Et dit : « La façon dont la journée se passe dépend de ce seul repas. »'
+    es: 'Antes de irse, Su Shi dejó un recuerdo: Una página con receta y verso. Y dijo: «Cómo salga el día depende de esta comida.»'
+    de: 'Vor dem Abschied ließ Su Shi etwas zurück: Eine Seite mit Rezept und Vers. Dazu sagte Su Shi: „Wie der Tag wird, hängt von dieser einen Mahlzeit ab.“'
+  leave_miss:
+    zh-CN: 苏轼道了谢，推开门回去了。
+    en: Su Shi said thanks and went back through the door.
+    zh-TW: 蘇軾道了謝，推開門回去了。
+    ja: 蘇軾はお礼を言い、扉をくぐって帰っていった。
+    ko: 소식은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Su Shi remercia et repassa la porte.
+    es: Su Shi dio las gracias y volvió a cruzar la puerta.
+    de: Su Shi bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他吸了吸鼻子，问厨房里炖的是什么，说自己也琢磨过一道炖肉。, en: 'He sniffed the air and asked what was simmering in the kitchen, saying he had once worked out a braise himself.', zh-TW: 他吸了吸鼻子，問廚房裡燉的是什麼，說自己也琢磨過一道燉肉。, ja: 彼は空気のにおいを嗅ぎ、台所で何が煮えているのかと尋ね、自分でも煮込み料理を考案したことがあると言った。, ko: '그는 공기 냄새를 맡으며 부엌에서 무엇이 끓고 있느냐고 묻고, 자신도 조림 요리를 만들어 본 적이 있다고 말했습니다.', fr: 'Il huma l''air et demanda ce qui mijotait à la cuisine, disant avoir un jour inventé lui-même un braisé.', es: 'Olfateó el aire y preguntó qué se cocía en la cocina, diciendo que una vez inventó un guiso él mismo.', de: 'Er schnupperte und fragte, was in der Küche köchelte, und sagte, er habe einmal selbst einen Schmorbraten erfunden.'}
+    - {zh-CN: 他说诗可以晚点写，先吃饭。, en: 'He said poems could wait, but dinner could not.', zh-TW: 他說詩可以晚點寫，先吃飯。, ja: 彼は、詩は待てるが夕食は待てないと言った。, ko: 그는 시는 기다려도 되지만 저녁은 기다릴 수 없다고 말했습니다., fr: 'Il dit que les poèmes pouvaient attendre, mais pas le dîner.', es: 'Dijo que los poemas podían esperar, pero la cena no.', de: 'Er sagte, Gedichte könnten warten, das Abendessen aber nicht.'}
+said:
+  zh-CN: 人间有味是清欢。
+  en: The truest taste in this world is a simple, quiet joy.
+  zh-TW: 人間有味是清歡。
+  ja: この世の本当の味わいは、質素で静かな喜びだ。
+  ko: 이 세상의 참맛은 소박하고 고요한 즐거움이다.
+  fr: La vraie saveur de ce monde est une joie simple et tranquille.
+  es: El verdadero sabor de este mundo es una alegría sencilla y tranquila.
+  de: Der wahre Geschmack dieser Welt ist eine schlichte, stille Freude.

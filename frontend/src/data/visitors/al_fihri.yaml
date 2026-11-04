@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: al_fihri
+order: 400
+official: true
+region: Morocco
+age: 45
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - book
+  - lamp
+controllable: false
+area: af
+field: edu
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#6f9a8a'
+souvenir:
+  id: al_fihri_keepsake
+  icon: 📚
+src: Encyclopaedia Britannica, University of al-Qarawiyyin; traditional accounts credit Fatima al-Fihri with founding it in 859. Some details are traditional.
+review: 2026-11-02 AI初核通过，待用户终审：只写办学，不涉及宗教内容
+t:
+  name:
+    zh-CN: 法蒂玛·菲赫里
+    en: Fatima al-Fihri
+    zh-TW: 法蒂瑪·菲赫裡
+    ja: ファーティマ・アル＝フィフリー
+    ko: 파티마 알피흐리
+    fr: Fatima al-Fihri
+    es: Fátima al-Fihri
+    de: Fatima al-Fihri
+  era:
+    zh-CN: 九世纪，摩洛哥
+    en: 9th century, Morocco
+    zh-TW: 九世紀，摩洛哥
+    ja: 9世紀、モロッコ
+    ko: 9세기, 모로코
+    fr: IXe siècle, Maroc
+    es: Siglo IX, Marruecos
+    de: 9. Jahrhundert, Marokko
+  souvenir:
+    zh-CN: 一页学堂的图样
+    en: A sketch of a school
+    zh-TW: 一頁學堂的圖樣
+    ja: 学び舎のスケッチ
+    ko: 학교 스케치
+    fr: Un croquis d'une école
+    es: Un boceto de una escuela
+    de: Eine Skizze einer Schule
+  arrive_note:
+    zh-CN: 法蒂玛·菲赫里推开大门走了进来，说想在这里住几天。
+    en: Fatima al-Fihri came in through the front door and asked to stay a few days.
+    zh-TW: 法蒂瑪·菲赫裡推開大門走了進來，說想在這裡住幾天。
+    ja: ファーティマ・アル＝フィフリーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 파티마 알피흐리은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Fatima al-Fihri franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Fátima al-Fihri cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Fatima al-Fihri trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她把灯放在桌上，翻开了一本书。
+    en: She put the lamp on the table and opened a book.
+    zh-TW: 她把燈放在桌上，翻開了一本書。
+    ja: 彼女はランプを机に置き、本を開いた。
+    ko: 그녀는 램프를 탁자에 놓고 책을 펼쳤습니다.
+    fr: Elle posa la lampe sur la table et ouvrit un livre.
+    es: Puso la lámpara sobre la mesa y abrió un libro.
+    de: Sie stellte die Lampe auf den Tisch und schlug ein Buch auf.
+  leave_ok:
+    zh-CN: 法蒂玛·菲赫里临走前留下一页学堂的图样，说：能让人读书的地方，就是最好的家产。
+    en: 'Before leaving, Fatima al-Fihri left a sketch of a school and said: A place where people can study is the best inheritance.'
+    zh-TW: 法蒂瑪·菲赫裡臨走前留下一頁學堂的圖樣，說：能讓人讀書的地方，就是最好的家產。
+    ja: 帰る前に、ファーティマ・アル＝フィフリーは記念の品を残していった：学び舎のスケッチ。そして言った。「人が学べる場所こそ、最高の財産です。」
+    ko: '떠나기 전에 파티마 알피흐리은(는) 기념품을 남겼습니다: 학교 스케치. 그리고 말했습니다. “사람들이 공부할 수 있는 곳이 가장 좋은 유산입니다.”'
+    fr: 'Avant de partir, Fatima al-Fihri laissa un souvenir : Un croquis d''une école. Et dit : « Un lieu où les gens peuvent étudier est le plus bel héritage. »'
+    es: 'Antes de irse, Fátima al-Fihri dejó un recuerdo: Un boceto de una escuela. Y dijo: «Un lugar donde la gente pueda estudiar es la mejor herencia.»'
+    de: 'Vor dem Abschied ließ Fatima al-Fihri etwas zurück: Eine Skizze einer Schule. Dazu sagte Fatima al-Fihri: „Ein Ort, an dem Menschen lernen können, ist das beste Erbe.“'
+  leave_miss:
+    zh-CN: 法蒂玛·菲赫里道了谢，推开门回去了。
+    en: Fatima al-Fihri said thanks and went back through the door.
+    zh-TW: 法蒂瑪·菲赫裡道了謝，推開門回去了。
+    ja: ファーティマ・アル＝フィフリーはお礼を言い、扉をくぐって帰っていった。
+    ko: 파티마 알피흐리은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Fatima al-Fihri remercia et repassa la porte.
+    es: Fátima al-Fihri dio las gracias y volvió a cruzar la puerta.
+    de: Fatima al-Fihri bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她问你家孩子在读什么书，说有个地方能读书，比什么都重要。, en: She asked what the children were reading and said a place to study matters more than almost anything., zh-TW: 她問你家孩子在讀什麼書，說有個地方能讀書，比什麼都重要。, ja: 彼女は子どもたちが何を読んでいるのかと尋ね、学べる場所はほとんど何よりも大切だと言った。, ko: '그녀는 아이들이 무슨 책을 읽느냐고 물으며, 공부할 곳이 있는 것은 거의 무엇보다 중요하다고 말했습니다.', fr: Elle demanda ce que lisaient les enfants et dit qu'un lieu pour étudier compte plus que presque tout., es: Preguntó qué leían los niños y dijo que un lugar para estudiar importa más que casi cualquier otra cosa., de: 'Sie fragte, was die Kinder lasen, und sagte, ein Ort zum Lernen sei wichtiger als fast alles andere.'}
+    - {zh-CN: 她说，她把家里留下的钱，都用来盖一座能读书的地方。, en: She said she spent what her family left her on building a place where people could study., zh-TW: 她說，她把家裡留下的錢，都用來蓋一座能讀書的地方。, ja: 彼女は、家族が遺してくれたものを、人が学べる場所を建てるために使ったと言った。, ko: 그녀는 가족이 남겨 준 것을 사람들이 공부할 수 있는 곳을 짓는 데 썼다고 말했습니다., fr: Elle dit avoir employé ce que sa famille lui avait laissé à construire un lieu où l'on pût étudier., es: Dijo que había gastado lo que su familia le dejó en construir un lugar donde la gente pudiera estudiar., de: 'Sie sagte, sie habe, was ihre Familie ihr hinterließ, für den Bau eines Ortes ausgegeben, an dem Menschen lernen können.'}

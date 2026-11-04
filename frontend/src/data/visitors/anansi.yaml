@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: anansi
+order: 430
+official: true
+region: Ghana (folklore)
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - gloves
+  - scarf
+controllable: false
+area: af
+field: art
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#c08a3a'
+souvenir:
+  id: anansi_keepsake
+  icon: 🕸️
+src: Akan folktales of Anansi, Encyclopaedia Britannica, Anansi.
+review: 2026-11-02 AI初核通过，待用户终审：民间故事形象，不涉及宗教
+t:
+  name:
+    zh-CN: 阿南西
+    en: Anansi
+    zh-TW: 阿南西
+    ja: アナンシ
+    ko: 아난시
+    fr: Anansi
+    es: Anansi
+    de: Anansi
+  era:
+    zh-CN: 西非阿肯人的民间故事
+    en: West African Akan folktales
+    zh-TW: 西非阿肯人的民間故事
+    ja: 西アフリカ・アカン人の昔話
+    ko: 서아프리카 아칸족의 옛이야기
+    fr: Contes akan d'Afrique de l'Ouest
+    es: Cuentos akan de África occidental
+    de: Westafrikanische Märchen der Akan
+  souvenir:
+    zh-CN: 一小段银丝
+    en: A short strand of silver thread
+    zh-TW: 一小段銀絲
+    ja: 短い銀の糸
+    ko: 은실 한 가닥
+    fr: Un court brin d'argent
+    es: Una hebra corta de plata
+    de: Ein kurzer Silberfaden
+  arrive_note:
+    zh-CN: 阿南西推开大门走了进来，说想在这里住几天。
+    en: Anansi came in through the front door and asked to stay a few days.
+    zh-TW: 阿南西推開大門走了進來，說想在這裡住幾天。
+    ja: アナンシは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 아난시은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Anansi franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Anansi cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Anansi trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他把东西往手上一套，高兴地摆弄起来。
+    en: He pulled them on and happily flexed his fingers.
+    zh-TW: 他把東西往手上一套，高興地擺弄起來。
+    ja: 彼はそれをはめて、うれしそうに指を動かした。
+    ko: 그는 그것을 끼고 기쁘게 손가락을 움직여 보았습니다.
+    fr: Il les enfila et remua joyeusement les doigts.
+    es: Se los puso y movió los dedos, contento.
+    de: Er streifte sie über und bewegte zufrieden die Finger.
+  leave_ok:
+    zh-CN: 阿南西临走前留下一小段银丝，说：故事是织出来的，一针一线，慢慢来。
+    en: 'Before leaving, Anansi left a short strand of silver thread and said: Stories are woven, thread by thread, so take your time.'
+    zh-TW: 阿南西臨走前留下一小段銀絲，說：故事是織出來的，一針一線，慢慢來。
+    ja: 帰る前に、アナンシは記念の品を残していった：短い銀の糸。そして言った。「物語は織るもの。一本ずつ、ゆっくりと。」
+    ko: '떠나기 전에 아난시은(는) 기념품을 남겼습니다: 은실 한 가닥. 그리고 말했습니다. “이야기는 한 올 한 올 짜는 것이니, 서두르지 마세요.”'
+    fr: 'Avant de partir, Anansi laissa un souvenir : Un court brin d''argent. Et dit : « Les histoires se tissent, fil après fil, alors prends ton temps. »'
+    es: 'Antes de irse, Anansi dejó un recuerdo: Una hebra corta de plata. Y dijo: «Las historias se tejen, hilo a hilo, así que tómate tu tiempo.»'
+    de: 'Vor dem Abschied ließ Anansi etwas zurück: Ein kurzer Silberfaden. Dazu sagte Anansi: „Geschichten werden gewebt, Faden für Faden, also nimm dir Zeit.“'
+  leave_miss:
+    zh-CN: 阿南西道了谢，推开门回去了。
+    en: Anansi said thanks and went back through the door.
+    zh-TW: 阿南西道了謝，推開門回去了。
+    ja: アナンシはお礼を言い、扉をくぐって帰っていった。
+    ko: 아난시은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Anansi remercia et repassa la porte.
+    es: Anansi dio las gracias y volvió a cruzar la puerta.
+    de: Anansi bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说所有的故事原来都是他的，后来才被带到了世上。, en: 'He said all the stories were once his, and only later were they carried out into the world.', zh-TW: 他說所有的故事原來都是他的，後來才被帶到了世上。, ja: 彼は、すべての物語はもともと自分のものだったが、のちに世界へ運び出されたのだと言った。, ko: 그는 모든 이야기가 원래 자기 것이었는데 나중에야 세상에 전해졌다고 말했습니다., fr: Il dit que toutes les histoires lui avaient appartenu autrefois et n'avaient été emportées dans le monde que plus tard., es: Dijo que todas las historias fueron suyas en un principio y que solo después se llevaron al mundo., de: 'Er sagte, alle Geschichten hätten einst ihm gehört und seien erst später in die Welt hinausgetragen worden.'}
+    - {zh-CN: 他八只手一起忙，还嫌不够用，问你有没有多的手套。, en: 'He kept eight hands busy and still found them too few, and asked if you had spare gloves.', zh-TW: 他八隻手一起忙，還嫌不夠用，問你有沒有多的手套。, ja: 彼は八本の手をいつも動かしていて、それでも足りないと言い、余分な手袋はないかと尋ねた。, ko: '그는 팔 여덟 개를 늘 바쁘게 놀리고도 모자라다며, 남는 장갑이 없느냐고 물었습니다.', fr: 'Il occupait huit mains et les trouvait encore trop peu, et demanda si tu avais des gants en trop.', es: 'Mantenía ocupadas ocho manos y aun así le parecían pocas, y preguntó si tenías unos guantes de sobra.', de: 'Er hielt acht Hände beschäftigt und fand sie immer noch zu wenige, und fragte, ob du Ersatzhandschuhe hättest.'}

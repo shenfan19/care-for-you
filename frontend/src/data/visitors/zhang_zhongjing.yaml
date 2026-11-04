@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: zhang_zhongjing
+order: 290
+official: true
+region: China
+age: 55
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - medkit
+  - tea
+controllable: false
+area: ea
+field: med
+look:
+  skin: '#e8bc92'
+  hairColor: gray
+  hairStyle: bun
+  glasses: none
+  clothes: '#7f9580'
+souvenir:
+  id: zhang_zhongjing_keepsake
+  icon: 📜
+src: 《后汉书》；《伤寒杂病论》；Encyclopaedia Britannica, Zhang Zhongjing.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 张仲景
+    en: Zhang Zhongjing
+    zh-TW: 張仲景
+    ja: 張仲景
+    ko: 장중경
+    fr: Zhang Zhongjing
+    es: Zhang Zhongjing
+    de: Zhang Zhongjing
+  era:
+    zh-CN: 东汉，中国
+    en: Eastern Han dynasty, China
+    zh-TW: 東漢，中國
+    ja: 後漢、中国
+    ko: 후한, 중국
+    fr: Dynastie des Han orientaux, Chine
+    es: Dinastía Han Oriental, China
+    de: Östliche Han-Dynastie, China
+  souvenir:
+    zh-CN: 一页医书的复印件
+    en: A copy of a page from the medical book
+    zh-TW: 一頁醫書的影印件
+    ja: 医書の一ページの写し
+    ko: 의서 한 쪽의 사본
+    fr: Une copie d'une page du livre de médecine
+    es: Una copia de una página del libro de medicina
+    de: Eine Kopie einer Seite aus dem medizinischen Buch
+  arrive_note:
+    zh-CN: 张仲景推开大门走了进来，说想在这里住几天。
+    en: Zhang Zhongjing came in through the front door and asked to stay a few days.
+    zh-TW: 張仲景推開大門走了進來，說想在這裡住幾天。
+    ja: 張仲景は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 장중경은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Zhang Zhongjing franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Zhang Zhongjing cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Zhang Zhongjing trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他认真地看了看东西，点了点头。
+    en: He looked at it carefully and nodded.
+    zh-TW: 他認真地看了看東西，點了點頭。
+    ja: 彼はそれを注意深く見て、うなずいた。
+    ko: 그는 그것을 찬찬히 살펴보고 고개를 끄덕였습니다.
+    fr: Il le regarda attentivement et hocha la tête.
+    es: Lo miró con atención y asintió.
+    de: Er sah es sich genau an und nickte.
+  leave_ok:
+    zh-CN: 张仲景临走前留下一页医书的复印件，说：把见过的写下来，就是留给后人的药。
+    en: 'Before leaving, Zhang Zhongjing left a copy of a page from the medical book and said: What you have seen, written down, is medicine for those who follow.'
+    zh-TW: 張仲景臨走前留下一頁醫書的影印件，說：把見過的寫下來，就是留給後人的藥。
+    ja: 帰る前に、張仲景は記念の品を残していった：医書の一ページの写し。そして言った。「あなたが見て書き留めたことは、後に続く人の薬になる。」
+    ko: '떠나기 전에 장중경은(는) 기념품을 남겼습니다: 의서 한 쪽의 사본. 그리고 말했습니다. “당신이 보고 적어 둔 것이 뒤에 오는 이들의 약이 됩니다.”'
+    fr: 'Avant de partir, Zhang Zhongjing laissa un souvenir : Une copie d''une page du livre de médecine. Et dit : « Ce que tu as vu et noté est un remède pour ceux qui viendront après. »'
+    es: 'Antes de irse, Zhang Zhongjing dejó un recuerdo: Una copia de una página del libro de medicina. Y dijo: «Lo que has visto y anotado es medicina para quienes vienen después.»'
+    de: 'Vor dem Abschied ließ Zhang Zhongjing etwas zurück: Eine Kopie einer Seite aus dem medizinischen Buch. Dazu sagte Zhang Zhongjing: „Was du gesehen und aufgeschrieben hast, ist Medizin für die, die danach kommen.“'
+  leave_miss:
+    zh-CN: 张仲景道了谢，推开门回去了。
+    en: Zhang Zhongjing said thanks and went back through the door.
+    zh-TW: 張仲景道了謝，推開門回去了。
+    ja: 張仲景はお礼を言い、扉をくぐって帰っていった。
+    ko: 장중경은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Zhang Zhongjing remercia et repassa la porte.
+    es: Zhang Zhongjing dio las gracias y volvió a cruzar la puerta.
+    de: Zhang Zhongjing bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说想把见过的病症整理成书，让后来人少走些弯路。, en: He said he wanted to compile the illnesses he had seen into a book to spare those who come after., zh-TW: 他說想把見過的病症整理成書，讓後來人少走些彎路。, ja: 彼は、自分が診た病を一冊の本にまとめて、後の人の苦しみを減らしたいと言った。, ko: 그는 자신이 본 병들을 한 권의 책으로 엮어 뒷사람의 고생을 덜어 주고 싶다고 말했습니다., fr: Il dit vouloir réunir dans un livre les maladies qu'il avait vues pour épargner des peines à ceux qui suivront., es: Dijo que quería reunir en un libro las enfermedades que había visto para ahorrar penas a los que vengan después., de: 'Er sagte, er wolle die Krankheiten, die er gesehen habe, in einem Buch sammeln, um den Nachkommen Leid zu ersparen.'}
+    - {zh-CN: 他闻了闻你的茶，说得看看是什么茶。, en: He sniffed your tea and said he would need to know what kind it was., zh-TW: 他聞了聞你的茶，說得看看是什麼茶。, ja: 彼はあなたのお茶のにおいを嗅ぎ、どんな種類のお茶か知りたいと言った。, ko: 그는 당신의 차 냄새를 맡고 어떤 종류인지 알아야겠다고 말했습니다., fr: Il huma ton thé et dit qu'il lui faudrait savoir de quelle sorte il s'agissait., es: Olió tu té y dijo que necesitaba saber de qué clase era., de: 'Er roch an deinem Tee und sagte, er müsse wissen, was für einer es sei.'}
+said:
+  zh-CN: 勤求古训，博采众方。
+  en: Seek the old teachings diligently, and gather every prescription widely.
+  zh-TW: 勤求古訓，博採眾方。
+  ja: 古い教えを熱心に求め、広く処方を集めよ。
+  ko: 옛 가르침을 부지런히 구하고 처방을 널리 모아라.
+  fr: Cherche avec ardeur les enseignements anciens et rassemble largement toutes les recettes.
+  es: Busca con diligencia las enseñanzas antiguas y reúne ampliamente todas las recetas.
+  de: Suche eifrig die alten Lehren und sammle weithin alle Rezepte.

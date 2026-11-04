@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: jenner
+order: 590
+official: true
+region: Britain
+age: 50
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - umbrella
+  - shoes
+controllable: false
+area: eu
+field: med
+look:
+  skin: '#fde3d0'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#6a7f9a'
+souvenir:
+  id: jenner_keepsake
+  icon: 🐄
+src: Encyclopaedia Britannica, Edward Jenner; the 1796 smallpox vaccination.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 詹纳
+    en: Edward Jenner
+    zh-TW: 詹納
+    ja: エドワード・ジェンナー
+    ko: 에드워드 제너
+    fr: Edward Jenner
+    es: Edward Jenner
+    de: Edward Jenner
+  era:
+    zh-CN: 十八至十九世纪，英国
+    en: 18th-19th century, Britain
+    zh-TW: 十八至十九世紀，英國
+    ja: 18〜19世紀、イギリス
+    ko: 18~19세기, 영국
+    fr: XVIIIe et XIXe siècles, Royaume-Uni
+    es: Siglos XVIII y XIX, Reino Unido
+    de: 18. und 19. Jahrhundert, Großbritannien
+  souvenir:
+    zh-CN: 一幅奶牛的素描
+    en: A sketch of a cow
+    zh-TW: 一幅奶牛的素描
+    ja: 牛のスケッチ
+    ko: 소 스케치
+    fr: Un croquis d'une vache
+    es: Un boceto de una vaca
+    de: Eine Skizze einer Kuh
+  arrive_note:
+    zh-CN: 詹纳推开大门走了进来，说想在这里住几天。
+    en: Edward Jenner came in through the front door and asked to stay a few days.
+    zh-TW: 詹納推開大門走了進來，說想在這裡住幾天。
+    ja: エドワード・ジェンナーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 에드워드 제너은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Edward Jenner franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Edward Jenner cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Edward Jenner trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他换上鞋，说要去乡间走一走，看看牛。
+    en: He put on the shoes and said he would walk through the countryside to look at the cows.
+    zh-TW: 他換上鞋，說要去鄉間走一走，看看牛。
+    ja: 彼は靴を履き、田舎を歩いて牛を見てくると言った。
+    ko: 그는 신발을 신고, 시골길을 걸으며 소들을 보고 오겠다고 말했습니다.
+    fr: Il enfila les chaussures et dit qu'il irait marcher à la campagne pour regarder les vaches.
+    es: Se puso los zapatos y dijo que iría a caminar por el campo a mirar las vacas.
+    de: Er zog die Schuhe an und sagte, er wolle über Land gehen und sich die Kühe ansehen.
+  leave_ok:
+    zh-CN: 詹纳临走前留下一幅奶牛的素描，说：先看，再想，最后才动手。
+    en: 'Before leaving, Edward Jenner left a sketch of a cow and said: First watch, then think, and only at last act.'
+    zh-TW: 詹納臨走前留下一幅奶牛的素描，說：先看，再想，最後才動手。
+    ja: 帰る前に、エドワード・ジェンナーは記念の品を残していった：牛のスケッチ。そして言った。「まず観察し、次に考え、最後にやっと手を動かしなさい。」
+    ko: '떠나기 전에 에드워드 제너은(는) 기념품을 남겼습니다: 소 스케치. 그리고 말했습니다. “먼저 관찰하고, 다음에 생각하고, 마지막에 비로소 손을 쓰십시오.”'
+    fr: 'Avant de partir, Edward Jenner laissa un souvenir : Un croquis d''une vache. Et dit : « D''abord observer, ensuite réfléchir, et seulement à la fin agir. »'
+    es: 'Antes de irse, Edward Jenner dejó un recuerdo: Un boceto de una vaca. Y dijo: «Primero observa, luego piensa, y solo al final actúa.»'
+    de: 'Vor dem Abschied ließ Edward Jenner etwas zurück: Eine Skizze einer Kuh. Dazu sagte Edward Jenner: „Erst beobachten, dann nachdenken und erst zuletzt handeln.“'
+  leave_miss:
+    zh-CN: 詹纳道了谢，推开门回去了。
+    en: Edward Jenner said thanks and went back through the door.
+    zh-TW: 詹納道了謝，推開門回去了。
+    ja: エドワード・ジェンナーはお礼を言い、扉をくぐって帰っていった。
+    ko: 에드워드 제너은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Edward Jenner remercia et repassa la porte.
+    es: Edward Jenner dio las gracias y volvió a cruzar la puerta.
+    de: Edward Jenner bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说他留意到，挤牛奶的姑娘很少得天花，这值得好好琢磨。, en: 'He said he had noticed that milkmaids rarely caught smallpox, and that this deserved careful thought.', zh-TW: 他說他留意到，擠牛奶的姑娘很少得天花，這值得好好琢磨。, ja: 彼は、乳搾りの娘たちが天然痘にかかることが少ないのに気づき、それはよく考える価値があると言った。, ko: '그는 젖 짜는 처녀들은 천연두에 잘 걸리지 않는다는 것을 알아챘고, 이는 곰곰이 생각해 볼 만하다고 말했습니다.', fr: 'Il disait avoir remarqué que les trayeuses attrapaient rarement la variole, et que cela méritait réflexion.', es: 'Dijo que había notado que las lecheras rara vez contraían la viruela, y que eso merecía pensarse con cuidado.', de: 'Er sagte, ihm sei aufgefallen, dass Milchmädchen selten die Pocken bekämen, und das verdiene sorgfältiges Nachdenken.'}
+    - {zh-CN: 他说好办法常常就藏在日常的观察里。, en: He said good answers are often hidden in everyday observation., zh-TW: 他說好辦法常常就藏在日常的觀察裡。, ja: 彼は、よい答えは日々の観察の中に隠れていることが多いと言った。, ko: 그는 좋은 답은 일상의 관찰 속에 숨어 있는 경우가 많다고 말했습니다., fr: Il disait que les bonnes réponses se cachent souvent dans l'observation de tous les jours., es: Dijo que las buenas respuestas suelen estar escondidas en la observación cotidiana., de: 'Er sagte, gute Antworten stecken oft in der alltäglichen Beobachtung.'}

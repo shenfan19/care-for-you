@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: sor_juana
+order: 450
+official: true
+region: Mexico
+age: 40
+pronoun: she
+stay:
+  - 2
+  - 3
+wants:
+  - book
+  - spectacles
+controllable: false
+area: am
+field: art
+look:
+  skin: '#e8bc92'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#6a7a9a'
+souvenir:
+  id: sor_juana_keepsake
+  icon: 🖋️
+src: Encyclopaedia Britannica, Sor Juana Ines de la Cruz; poet and scholar of New Spain, her Reply to Sor Filotea.
+review: 2026-11-02 AI初核通过，待用户终审：只写读书和写作，不涉及宗教生活
+t:
+  name:
+    zh-CN: 胡安娜修女
+    en: Sor Juana Ines de la Cruz
+    zh-TW: 胡安娜修女
+    ja: ソル・フアナ・イネス・デ・ラ・クルス
+    ko: 소르 후아나 이네스 데 라 크루스
+    fr: Sœur Juana Inés de la Cruz
+    es: Sor Juana Inés de la Cruz
+    de: Sor Juana Inés de la Cruz
+  era:
+    zh-CN: 十七世纪，新西班牙（今墨西哥）
+    en: 17th century, New Spain (now Mexico)
+    zh-TW: 十七世紀，新西班牙（今墨西哥）
+    ja: 17世紀、ヌエバ・エスパーニャ（現在のメキシコ）
+    ko: 17세기, 누에바 에스파냐(오늘날의 멕시코)
+    fr: XVIIe siècle, Nouvelle-Espagne (Mexique actuel)
+    es: Siglo XVII, Nueva España (hoy México)
+    de: 17. Jahrhundert, Neuspanien (heute Mexiko)
+  souvenir:
+    zh-CN: 一页诗稿的复印件
+    en: A copy of a page of verse
+    zh-TW: 一頁詩稿的影印件
+    ja: 詩の一ページの写し
+    ko: 시 한 쪽의 사본
+    fr: Une copie d'une page de vers
+    es: Una copia de una página de versos
+    de: Eine Kopie einer Gedichtseite
+  arrive_note:
+    zh-CN: 胡安娜修女推开大门走了进来，说想在这里住几天。
+    en: Sor Juana Ines de la Cruz came in through the front door and asked to stay a few days.
+    zh-TW: 胡安娜修女推開大門走了進來，說想在這裡住幾天。
+    ja: ソル・フアナ・イネス・デ・ラ・クルスは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 소르 후아나 이네스 데 라 크루스은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Sœur Juana Inés de la Cruz franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Sor Juana Inés de la Cruz cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Sor Juana Inés de la Cruz trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她捧着书，翻到第一页，安静地读了起来。
+    en: She held the book, turned to the first page and began to read in silence.
+    zh-TW: 她捧著書，翻到第一頁，安靜地讀了起來。
+    ja: 彼女は本を抱えて最初のページを開き、静かに読みはじめた。
+    ko: 그녀는 책을 안고 첫 쪽을 펼쳐 조용히 읽기 시작했습니다.
+    fr: Elle tint le livre, tourna à la première page et se mit à lire en silence.
+    es: Sostuvo el libro, pasó a la primera página y empezó a leer en silencio.
+    de: Sie hielt das Buch, schlug die erste Seite auf und begann still zu lesen.
+  leave_ok:
+    zh-CN: 胡安娜修女临走前留下一页诗稿的复印件，说：想读的书，值得好好等。
+    en: 'Before leaving, Sor Juana Ines de la Cruz left a copy of a page of verse and said: A book you want to read is worth waiting for.'
+    zh-TW: 胡安娜修女臨走前留下一頁詩稿的影印件，說：想讀的書，值得好好等。
+    ja: 帰る前に、ソル・フアナ・イネス・デ・ラ・クルスは記念の品を残していった：詩の一ページの写し。そして言った。「読みたい本は、待つ価値があります。」
+    ko: '떠나기 전에 소르 후아나 이네스 데 라 크루스은(는) 기념품을 남겼습니다: 시 한 쪽의 사본. 그리고 말했습니다. “읽고 싶은 책은 기다릴 만한 가치가 있습니다.”'
+    fr: 'Avant de partir, Sœur Juana Inés de la Cruz laissa un souvenir : Une copie d''une page de vers. Et dit : « Un livre qu''on a envie de lire vaut la peine d''attendre. »'
+    es: 'Antes de irse, Sor Juana Inés de la Cruz dejó un recuerdo: Una copia de una página de versos. Y dijo: «Un libro que quieres leer merece la espera.»'
+    de: 'Vor dem Abschied ließ Sor Juana Inés de la Cruz etwas zurück: Eine Kopie einer Gedichtseite. Dazu sagte Sor Juana Inés de la Cruz: „Ein Buch, das man lesen will, ist das Warten wert.“'
+  leave_miss:
+    zh-CN: 胡安娜修女道了谢，推开门回去了。
+    en: Sor Juana Ines de la Cruz said thanks and went back through the door.
+    zh-TW: 胡安娜修女道了謝，推開門回去了。
+    ja: ソル・フアナ・イネス・デ・ラ・クルスはお礼を言い、扉をくぐって帰っていった。
+    ko: 소르 후아나 이네스 데 라 크루스은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Sœur Juana Inés de la Cruz remercia et repassa la porte.
+    es: Sor Juana Inés de la Cruz dio las gracias y volvió a cruzar la puerta.
+    de: Sor Juana Inés de la Cruz bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她书架上的书比谁都多，她说一整面墙也不够放。, en: 'Her shelf held more books than anyone''s, and she said a whole wall was not enough.', zh-TW: 她書架上的書比誰都多，她說一整面牆也不夠放。, ja: 彼女の本棚には誰のものよりも多くの本があり、壁一面でも足りないと言った。, ko: '그녀의 책장에는 누구보다 많은 책이 있었고, 벽 하나로는 모자란다고 말했습니다.', fr: 'Son étagère contenait plus de livres que celle de n''importe qui, et elle dit qu''un mur entier ne suffisait pas.', es: 'Su estante tenía más libros que el de nadie, y dijo que una pared entera no bastaba.', de: 'Auf ihrem Regal standen mehr Bücher als bei irgendjemandem, und sie sagte, eine ganze Wand reiche nicht.'}
+    - {zh-CN: 她说女子也有读书的权利，说这话时很平静。, en: 'She said women have the right to read too, and said it very calmly.', zh-TW: 她說女子也有讀書的權利，說這話時很平靜。, ja: 彼女は、女性にも読む権利があると言った。とても穏やかな口調だった。, ko: 그녀는 여성에게도 읽을 권리가 있다고 말했습니다. 아주 차분한 목소리였습니다., fr: 'Elle dit que les femmes aussi ont le droit de lire, et le dit très calmement.', es: 'Dijo que las mujeres también tienen derecho a leer, y lo dijo con mucha calma.', de: 'Sie sagte, auch Frauen hätten das Recht zu lesen, und sagte es ganz ruhig.'}
+said:
+  zh-CN: 我读书，不是为了知道得更多，而是为了少一些无知。
+  en: I do not study to know more, but to ignore less.
+  zh-TW: 我讀書，不是為了知道得更多，而是為了少一些無知。
+  ja: 私が学ぶのは、多く知るためではなく、無知を少なくするためです。
+  ko: 나는 더 많이 알려고 공부하는 것이 아니라 덜 무지해지려고 공부합니다.
+  fr: Je n'étudie pas pour en savoir plus, mais pour en ignorer moins.
+  es: No estudio para saber más, sino para ignorar menos.
+  de: Ich studiere nicht, um mehr zu wissen, sondern um weniger zu ignorieren.

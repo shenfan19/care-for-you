@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: sunthorn_phu
+order: 390
+official: true
+region: Thailand
+age: 50
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - pen
+  - shoes
+controllable: false
+area: sa
+field: art
+look:
+  skin: '#d9a67c'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#c9a05a'
+souvenir:
+  id: sunthorn_phu_keepsake
+  icon: 📜
+src: Encyclopaedia Britannica and UNESCO, Sunthorn Phu, Thai poet, author of Phra Aphai Mani; honoured by UNESCO in 1986.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 顺吞蒲
+    en: Sunthorn Phu
+    zh-TW: 順吞蒲
+    ja: スントーン・プー
+    ko: 순턴 푸
+    fr: Sunthorn Phu
+    es: Sunthorn Phu
+    de: Sunthorn Phu
+  era:
+    zh-CN: 十八至十九世纪，泰国
+    en: 18th-19th century, Thailand
+    zh-TW: 十八至十九世紀，泰國
+    ja: 18〜19世紀、タイ
+    ko: 18~19세기, 태국
+    fr: XVIIIe et XIXe siècles, Thaïlande
+    es: Siglos XVIII y XIX, Tailandia
+    de: 18. und 19. Jahrhundert, Thailand
+  souvenir:
+    zh-CN: 一页诗稿的抄本
+    en: A copy of a page of verse
+    zh-TW: 一頁詩稿的抄本
+    ja: 詩の一ページの写し
+    ko: 시 한 쪽의 사본
+    fr: Une copie d'une page de vers
+    es: Una copia de una página de versos
+    de: Eine Abschrift einer Gedichtseite
+  arrive_note:
+    zh-CN: 顺吞蒲推开大门走了进来，说想在这里住几天。
+    en: Sunthorn Phu came in through the front door and asked to stay a few days.
+    zh-TW: 順吞蒲推開大門走了進來，說想在這裡住幾天。
+    ja: スントーン・プーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 순턴 푸은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Sunthorn Phu franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Sunthorn Phu cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Sunthorn Phu trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他换上鞋，在屋里走了一圈，嘴里念出了一句新的。
+    en: He put on the shoes, took a turn around the room, and murmured a new line.
+    zh-TW: 他換上鞋，在屋裡走了一圈，嘴裡念出了一句新的。
+    ja: 彼は靴を履き、部屋をひとまわりして、新しい一行をつぶやいた。
+    ko: 그는 신을 신고 방 안을 한 바퀴 돌며 새 구절을 중얼거렸습니다.
+    fr: Il mit les chaussures, fit un tour de la pièce et murmura un nouveau vers.
+    es: Se puso los zapatos, dio una vuelta por la habitación y murmuró un verso nuevo.
+    de: Er zog die Schuhe an, ging eine Runde durchs Zimmer und murmelte eine neue Zeile.
+  leave_ok:
+    zh-CN: 顺吞蒲临走前留下一页诗稿的抄本，说：路是读不完的书，写下来才算走过。
+    en: 'Before leaving, Sunthorn Phu left a copy of a page of verse and said: The road is a book you never finish; you have walked it only once you write it down.'
+    zh-TW: 順吞蒲臨走前留下一頁詩稿的抄本，說：路是讀不完的書，寫下來才算走過。
+    ja: 帰る前に、スントーン・プーは記念の品を残していった：詩の一ページの写し。そして言った。「道は読み終わらない本。書き留めてはじめて、歩いたことになる。」
+    ko: '떠나기 전에 순턴 푸은(는) 기념품을 남겼습니다: 시 한 쪽의 사본. 그리고 말했습니다. “길은 다 읽을 수 없는 책입니다. 적어 두어야 걸은 것이 됩니다.”'
+    fr: 'Avant de partir, Sunthorn Phu laissa un souvenir : Une copie d''une page de vers. Et dit : « La route est un livre qu''on ne finit jamais : on ne l''a parcourue que lorsqu''on l''a écrite. »'
+    es: 'Antes de irse, Sunthorn Phu dejó un recuerdo: Una copia de una página de versos. Y dijo: «El camino es un libro que nunca terminas; solo lo has recorrido cuando lo escribes.»'
+    de: 'Vor dem Abschied ließ Sunthorn Phu etwas zurück: Eine Abschrift einer Gedichtseite. Dazu sagte Sunthorn Phu: „Der Weg ist ein Buch, das man nie ausliest. Gegangen ist man ihn erst, wenn man ihn aufschreibt.“'
+  leave_miss:
+    zh-CN: 顺吞蒲道了谢，推开门回去了。
+    en: Sunthorn Phu said thanks and went back through the door.
+    zh-TW: 順吞蒲道了謝，推開門回去了。
+    ja: スントーン・プーはお礼を言い、扉をくぐって帰っていった。
+    ko: 순턴 푸은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Sunthorn Phu remercia et repassa la porte.
+    es: Sunthorn Phu dio las gracias y volvió a cruzar la puerta.
+    de: Sunthorn Phu bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说走到哪里就写到哪里，沿路的风景都能写成诗。, en: 'He said he wrote wherever he walked, and any scenery along the way could become a poem.', zh-TW: 他說走到哪裡就寫到哪裡，沿路的風景都能寫成詩。, ja: 彼は、歩くところどこででも書くので、道中の景色はどれも詩になると言った。, ko: '그는 걷는 곳마다 글을 쓰며, 길가의 어떤 풍경도 시가 될 수 있다고 말했습니다.', fr: Il dit qu'il écrivait partout où il marchait et que n'importe quel paysage du chemin pouvait devenir un poème., es: Dijo que escribía dondequiera que caminara y que cualquier paisaje del camino podía convertirse en un poema., de: 'Er sagte, er schreibe, wo immer er gehe, und jede Landschaft am Weg könne ein Gedicht werden.'}
+    - {zh-CN: 他说话爱押韵，一句话说到一半就变成了诗。, en: 'He liked to rhyme, and half a sentence would turn into verse.', zh-TW: 他說話愛押韻，一句話說到一半就變成了詩。, ja: 彼は韻を踏むのが好きで、話の途中でそのまま詩になった。, ko: '그는 운을 맞추기를 좋아해서, 말하던 문장이 반쯤에서 곧 시로 바뀌곤 했습니다.', fr: 'Il aimait rimer, et une demi-phrase se changeait en vers.', es: 'Le gustaba rimar, y media frase se volvía verso.', de: 'Er reimte gern, und ein halber Satz wurde zu Versen.'}

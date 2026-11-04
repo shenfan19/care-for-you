@@ -69,9 +69,13 @@ python frontend/tests/backend_compare.py 1 3
 
 `logic_test.js` covers loading, characters, rules, time, dialogue, saves and language completeness. `sim_eval.js` runs a household for a few virtual days with a simple attention strategy and checks invariants. The interface itself has no automated tests yet.
 
+## Characters and visitors
+
+Every character type and every visitor is one plain YAML file. Identifiers such as `id`, `species`, `voice` and `pronoun` (`he`, `she`, `it`) are English codes, and every name or line of text is an object with one entry per interface language: `frontend/src/data/cards` for the household types and `frontend/src/data/visitors` for the visitors. Edit or add a file, then run `node tools/build_cards.js` to pack them into the scripts the page loads. The page has no build step of its own and still opens straight from `index.html`.
+
 ## Project layout
 
-- `frontend`: the game. `src/core` is the game itself, `src/world` the rooms and drawing, `src/backend` the protocol and built-in backend, `src/data` the starting data, `src/ui` the interface, `locales` the language packs, `tests` the tests.
+- `frontend`: the game. `src/core` is the game itself, `src/world` the rooms and drawing, `src/backend` the protocol and built-in backend, `src/data` the starting data and the card sources, `src/ui` the interface, `locales` the language packs, `tests` the tests.
 - `backend_basic`: a minimal remote backend.
 - `media`: screenshots and action previews.
 - `android`: reserved, on hold.

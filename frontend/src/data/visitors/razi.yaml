@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: razi
+order: 550
+official: true
+region: Persia
+age: 55
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - microscope
+  - spectacles
+controllable: false
+area: wa
+field: med
+look:
+  skin: '#e8bc92'
+  hairColor: gray
+  hairStyle: short
+  glasses: none
+  clothes: '#7a6a9a'
+souvenir:
+  id: razi_keepsake
+  icon: 📒
+src: Encyclopaedia Britannica, al-Razi (Rhazes); clinical case records, the distinction between smallpox and measles.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 拉齐
+    en: Al-Razi
+    zh-TW: 拉齊
+    ja: ラーズィー
+    ko: 라지
+    fr: Al-Razi
+    es: Al-Razi
+    de: Al-Razi
+  era:
+    zh-CN: 九至十世纪，波斯与巴格达
+    en: 9th-10th century, Persia and Baghdad
+    zh-TW: 九至十世紀，波斯與巴格達
+    ja: 9〜10世紀、ペルシャとバグダード
+    ko: 9~10세기, 페르시아와 바그다드
+    fr: IXe et Xe siècles, Perse et Bagdad
+    es: Siglos IX y X, Persia y Bagdad
+    de: 9. und 10. Jahrhundert, Persien und Bagdad
+  souvenir:
+    zh-CN: 一页病例记录的复印件
+    en: A copy of a page of case records
+    zh-TW: 一頁病例記錄的影印件
+    ja: 症例記録の一ページの写し
+    ko: 증례 기록 한 쪽의 사본
+    fr: Une copie d'une page de dossiers de cas
+    es: Una copia de una página de registros de casos
+    de: Eine Kopie einer Seite mit Fallaufzeichnungen
+  arrive_note:
+    zh-CN: 拉齐推开大门走了进来，说想在这里住几天。
+    en: Al-Razi came in through the front door and asked to stay a few days.
+    zh-TW: 拉齊推開大門走了進來，說想在這裡住幾天。
+    ja: ラーズィーは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 라지은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Al-Razi franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Al-Razi cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Al-Razi trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他架起来凑近看，半天没有说话。
+    en: He leaned in close and said nothing for a long while.
+    zh-TW: 他架起來湊近看，半天沒有說話。
+    ja: 彼はぐっと身を乗り出し、しばらく何も言わなかった。
+    ko: 그는 가까이 몸을 기울이고 한참 아무 말도 하지 않았습니다.
+    fr: Il se pencha tout près et ne dit rien pendant un long moment.
+    es: Se inclinó muy cerca y no dijo nada durante un buen rato.
+    de: Er beugte sich nah heran und sagte lange nichts.
+  leave_ok:
+    zh-CN: 拉齐临走前留下一页病例记录的复印件，说：看得多，记得清，才敢说话。
+    en: 'Before leaving, Al-Razi left a copy of a page of case records and said: Look often, record carefully, and only then speak.'
+    zh-TW: 拉齊臨走前留下一頁病例記錄的影印件，說：看得多，記得清，才敢說話。
+    ja: 帰る前に、ラーズィーは記念の品を残していった：症例記録の一ページの写し。そして言った。「よく見て、丁寧に記し、それから初めて語りなさい。」
+    ko: '떠나기 전에 라지은(는) 기념품을 남겼습니다: 증례 기록 한 쪽의 사본. 그리고 말했습니다. “자주 보고, 꼼꼼히 적고, 그러고 나서 말하십시오.”'
+    fr: 'Avant de partir, Al-Razi laissa un souvenir : Une copie d''une page de dossiers de cas. Et dit : « Regarder souvent, noter avec soin, et seulement alors parler. »'
+    es: 'Antes de irse, Al-Razi dejó un recuerdo: Una copia de una página de registros de casos. Y dijo: «Mirar a menudo, anotar con cuidado y solo entonces hablar.»'
+    de: 'Vor dem Abschied ließ Al-Razi etwas zurück: Eine Kopie einer Seite mit Fallaufzeichnungen. Dazu sagte Al-Razi: „Oft hinsehen, sorgfältig aufzeichnen, und erst dann sprechen.“'
+  leave_miss:
+    zh-CN: 拉齐道了谢，推开门回去了。
+    en: Al-Razi said thanks and went back through the door.
+    zh-TW: 拉齊道了謝，推開門回去了。
+    ja: ラーズィーはお礼を言い、扉をくぐって帰っていった。
+    ko: 라지은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Al-Razi remercia et repassa la porte.
+    es: Al-Razi dio las gracias y volvió a cruzar la puerta.
+    de: Al-Razi bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说他把每个病人的情况都写下来，一个病例胜过一本书。, en: 'He said he wrote down every patient''s case, and one case is worth more than a book.', zh-TW: 他說他把每個病人的情況都寫下來，一個病例勝過一本書。, ja: 彼は、患者の症例を一つ残らず書き留め、一つの症例は一冊の本に勝ると言った。, ko: '그는 환자의 증례를 하나도 빠짐없이 적어 두며, 증례 하나가 책 한 권보다 낫다고 말했습니다.', fr: 'Il disait noter le cas de chaque malade, et qu''un cas vaut plus qu''un livre.', es: 'Dijo que anotaba el caso de cada paciente, y que un caso vale más que un libro.', de: 'Er sagte, er schreibe jeden Fall eines Kranken auf, und ein Fall sei mehr wert als ein Buch.'}
+    - {zh-CN: 他说面对病人，要信自己的观察，而不是只信古书。, en: 'He said that at the bedside you trust your own observation, not only the old books.', zh-TW: 他說面對病人，要信自己的觀察，而不是隻信古書。, ja: 彼は、病床では古い本だけでなく自分の観察を信じるものだと言った。, ko: 그는 병상에서는 옛 책만이 아니라 자신의 관찰을 믿어야 한다고 말했습니다., fr: 'Il disait qu''au chevet on se fie à sa propre observation, pas seulement aux vieux livres.', es: 'Dijo que junto a la cama se confía en la propia observación, no solo en los libros antiguos.', de: 'Er sagte, am Krankenbett vertraue man der eigenen Beobachtung, nicht nur den alten Büchern.'}

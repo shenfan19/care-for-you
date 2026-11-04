@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: lin_daiyu
+order: 130
+official: true
+region: China (fiction)
+age: 17
+pronoun: she
+stay:
+  - 1
+  - 2
+wants:
+  - aspirin
+  - soup
+controllable: false
+area: ea
+field: art
+look:
+  skin: '#fffaf6'
+  hairColor: black
+  hairStyle: long
+  glasses: none
+  clothes: '#e7a6a1'
+souvenir:
+  id: lin_daiyu_keepsake
+  icon: 🌸
+src: 曹雪芹《红楼梦》；虚构人物，不涉及真实人物的健康。
+review: 2026-11-02 通过：虚构人物，纪念品为绢花
+t:
+  name:
+    zh-CN: 林黛玉
+    en: Lin Daiyu
+    zh-TW: 林黛玉
+    ja: 林黛玉
+    ko: 임대옥
+    fr: Lin Daiyu
+    es: Lin Daiyu
+    de: Lin Daiyu
+  era:
+    zh-CN: 《红楼梦》中的人物
+    en: A character from Dream of the Red Chamber
+    zh-TW: 《紅樓夢》中的人物
+    ja: 『紅楼夢』の登場人物
+    ko: 《홍루몽》의 인물
+    fr: Un personnage du « Rêve dans le pavillon rouge »
+    es: Un personaje de «Sueño en el pabellón rojo»
+    de: Eine Figur aus „Der Traum der Roten Kammer“
+  souvenir:
+    zh-CN: 一朵绢花
+    en: A silk flower
+    zh-TW: 一朵絹花
+    ja: 絹の花
+    ko: 비단 꽃
+    fr: Une fleur de soie
+    es: Una flor de seda
+    de: Eine Seidenblume
+  arrive_note:
+    zh-CN: 林黛玉推开大门走了进来，说想在这里住几天。
+    en: Lin Daiyu came in through the front door and asked to stay a few days.
+    zh-TW: 林黛玉推開大門走了進來，說想在這裡住幾天。
+    ja: 林黛玉は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 임대옥은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Lin Daiyu franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Lin Daiyu cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Lin Daiyu trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她接过东西，轻轻说了声谢谢。
+    en: She took it and said a soft thank you.
+    zh-TW: 她接過東西，輕輕說了聲謝謝。
+    ja: 彼女はそれを受け取り、小さな声でありがとうと言った。
+    ko: 그녀는 그것을 받고 작은 목소리로 고맙다고 말했습니다.
+    fr: Elle le prit et dit un doux merci.
+    es: Lo tomó y dijo un suave gracias.
+    de: Sie nahm es und sagte leise danke.
+  leave_ok:
+    zh-CN: 林黛玉临走前留下一朵绢花，说：能被人记挂着，就是福气。
+    en: 'Before leaving, Lin Daiyu left a silk flower and said: It is a blessing to be remembered.'
+    zh-TW: 林黛玉臨走前留下一朵絹花，說：能被人記掛著，就是福氣。
+    ja: 帰る前に、林黛玉は記念の品を残していった：絹の花。そして言った。「誰かに思い出してもらえるのは、幸せなことです。」
+    ko: '떠나기 전에 임대옥은(는) 기념품을 남겼습니다: 비단 꽃. 그리고 말했습니다. “누군가 기억해 준다는 건 복이에요.”'
+    fr: 'Avant de partir, Lin Daiyu laissa un souvenir : Une fleur de soie. Et dit : « C''est une chance que quelqu''un se souvienne de toi. »'
+    es: 'Antes de irse, Lin Daiyu dejó un recuerdo: Una flor de seda. Y dijo: «Es una suerte que alguien se acuerde de ti.»'
+    de: 'Vor dem Abschied ließ Lin Daiyu etwas zurück: Eine Seidenblume. Dazu sagte Lin Daiyu: „Es ist ein Segen, dass jemand an einen denkt.“'
+  leave_miss:
+    zh-CN: 林黛玉道了谢，推开门回去了。
+    en: Lin Daiyu said thanks and went back through the door.
+    zh-TW: 林黛玉道了謝，推開門回去了。
+    ja: 林黛玉はお礼を言い、扉をくぐって帰っていった。
+    ko: 임대옥은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Lin Daiyu remercia et repassa la porte.
+    es: Lin Daiyu dio las gracias y volvió a cruzar la puerta.
+    de: Lin Daiyu bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她轻轻咳了两声，说夜里风有些凉。, en: She coughed softly and said the night wind was a little cold., zh-TW: 她輕輕咳了兩聲，說夜裡風有些涼。, ja: 彼女は小さく咳をして、夜風が少し冷たいと言った。, ko: 그녀는 가볍게 기침하며 밤바람이 조금 차다고 말했습니다., fr: Elle toussa doucement et dit que le vent de la nuit était un peu froid., es: Tosió suavemente y dijo que el viento de la noche era un poco frío., de: 'Sie hustete leise und sagte, der Nachtwind sei ein wenig kalt.'}
+    - {zh-CN: 她捧着一本书，问你有没有能让人好受一点的东西。, en: 'Holding a book, she asked whether you had anything that might make a person feel a little better.', zh-TW: 她捧著一本書，問你有沒有能讓人好受一點的東西。, ja: 彼女は本を手に、少し気分が良くなるようなものはないかと尋ねた。, ko: '그녀는 책을 들고, 마음이 조금 나아질 만한 것이 없느냐고 물었습니다.', fr: 'Un livre à la main, elle demanda si tu avais quelque chose qui puisse faire du bien à quelqu''un.', es: 'Con un libro en las manos, preguntó si tenías algo que hiciera sentir un poco mejor a una persona.', de: 'Mit einem Buch in der Hand fragte sie, ob du etwas hättest, das einem ein wenig besser fühlen lässt.'}

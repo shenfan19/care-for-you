@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: mozart
+order: 50
+official: true
+region: Austria
+age: 30
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - flute
+  - tea
+controllable: false
+area: eu
+field: art
+look:
+  skin: '#fde3d0'
+  hairColor: brown
+  hairStyle: ponytail
+  glasses: none
+  clothes: '#c07a6b'
+souvenir:
+  id: mozart_keepsake
+  icon: 🎼
+src: Encyclopaedia Britannica, Wolfgang Amadeus Mozart; The Magic Flute (1791).
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 沃尔夫冈·莫扎特
+    en: Wolfgang Amadeus Mozart
+    zh-TW: 沃爾夫岡·莫扎特
+    ja: ヴォルフガング・アマデウス・モーツァルト
+    ko: 볼프강 아마데우스 모차르트
+    fr: Wolfgang Amadeus Mozart
+    es: Wolfgang Amadeus Mozart
+    de: Wolfgang Amadeus Mozart
+  era:
+    zh-CN: 十八世纪，奥地利
+    en: 18th century, Austria
+    zh-TW: 十八世紀，奧地利
+    ja: 18世紀、オーストリア
+    ko: 18세기, 오스트리아
+    fr: XVIIIe siècle, Autriche
+    es: Siglo XVIII, Austria
+    de: 18. Jahrhundert, Österreich
+  souvenir:
+    zh-CN: 一页乐谱的复印件
+    en: A copy of a page of music
+    zh-TW: 一頁樂譜的影印件
+    ja: 楽譜の一ページの写し
+    ko: 악보 한 쪽의 사본
+    fr: Une copie d'une page de musique
+    es: Una copia de una página de música
+    de: Eine Kopie einer Notenseite
+  arrive_note:
+    zh-CN: 沃尔夫冈·莫扎特推开大门走了进来，说想在这里住几天。
+    en: Wolfgang Amadeus Mozart came in through the front door and asked to stay a few days.
+    zh-TW: 沃爾夫岡·莫扎特推開大門走了進來，說想在這裡住幾天。
+    ja: ヴォルフガング・アマデウス・モーツァルトは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 볼프강 아마데우스 모차르트은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Wolfgang Amadeus Mozart franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Wolfgang Amadeus Mozart cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Wolfgang Amadeus Mozart trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他试了两个音，眼睛亮了起来。
+    en: He tried two notes and his eyes lit up.
+    zh-TW: 他試了兩個音，眼睛亮了起來。
+    ja: 彼は二つ音を試し、目を輝かせた。
+    ko: 그는 음을 두 개 불어 보고 눈을 반짝였습니다.
+    fr: Il essaya deux notes et ses yeux s'illuminèrent.
+    es: Probó dos notas y se le iluminaron los ojos.
+    de: Er spielte zwei Töne, und seine Augen leuchteten auf.
+  leave_ok:
+    zh-CN: 沃尔夫冈·莫扎特临走前留下一页乐谱的复印件，说：音乐是送给听的人的，谢谢你听。
+    en: 'Before leaving, Wolfgang Amadeus Mozart left a copy of a page of music and said: Music is for those who listen. Thank you for listening.'
+    zh-TW: 沃爾夫岡·莫扎特臨走前留下一頁樂譜的影印件，說：音樂是送給聽的人的，謝謝你聽。
+    ja: 帰る前に、ヴォルフガング・アマデウス・モーツァルトは記念の品を残していった：楽譜の一ページの写し。そして言った。「音楽は聴く人のためにあります。聴いてくれてありがとう。」
+    ko: '떠나기 전에 볼프강 아마데우스 모차르트은(는) 기념품을 남겼습니다: 악보 한 쪽의 사본. 그리고 말했습니다. “음악은 들어 주는 사람을 위한 것입니다. 들어 줘서 고마워요.”'
+    fr: 'Avant de partir, Wolfgang Amadeus Mozart laissa un souvenir : Une copie d''une page de musique. Et dit : « La musique est pour ceux qui écoutent. Merci d''avoir écouté. »'
+    es: 'Antes de irse, Wolfgang Amadeus Mozart dejó un recuerdo: Una copia de una página de música. Y dijo: «La música es para quien escucha. Gracias por escuchar.»'
+    de: 'Vor dem Abschied ließ Wolfgang Amadeus Mozart etwas zurück: Eine Kopie einer Notenseite. Dazu sagte Wolfgang Amadeus Mozart: „Musik ist für die, die zuhören. Danke fürs Zuhören.“'
+  leave_miss:
+    zh-CN: 沃尔夫冈·莫扎特道了谢，推开门回去了。
+    en: Wolfgang Amadeus Mozart said thanks and went back through the door.
+    zh-TW: 沃爾夫岡·莫扎特道了謝，推開門回去了。
+    ja: ヴォルフガング・アマデウス・モーツァルトはお礼を言い、扉をくぐって帰っていった。
+    ko: 볼프강 아마데우스 모차르트은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Wolfgang Amadeus Mozart remercia et repassa la porte.
+    es: Wolfgang Amadeus Mozart dio las gracias y volvió a cruzar la puerta.
+    de: Wolfgang Amadeus Mozart bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他随口哼着一段旋律，说要写进新的歌剧里。, en: He hummed a tune and said it would go into a new opera., zh-TW: 他隨口哼著一段旋律，說要寫進新的歌劇裡。, ja: 彼は旋律を口ずさみ、新しいオペラに入れるのだと言った。, ko: 그는 가락을 흥얼거리며 새 오페라에 넣을 거라고 말했습니다., fr: Il fredonna un air et dit qu'il irait dans un nouvel opéra., es: Tarareó una melodía y dijo que iría a parar a una nueva ópera., de: 'Er summte eine Melodie und sagte, sie werde in eine neue Oper kommen.'}
+    - {zh-CN: 他问你家里有没有会吹响的东西，哪怕只有一支。, en: 'He asked whether there was anything in the house that could be blown into, even just one.', zh-TW: 他問你家裡有沒有會吹響的東西，哪怕只有一支。, ja: 彼は、この家に吹いて鳴らせるものはないかと尋ねた。ひとつだけでもいいから、と。, ko: 그는 집에 불면 소리가 나는 것이 있느냐고 물었습니다. 하나라도 좋다면서요., fr: 'Il demanda s''il y avait dans la maison quelque chose dans quoi on puisse souffler, ne serait-ce qu''un seul objet.', es: 'Preguntó si había en la casa algo en lo que se pudiera soplar, aunque fuera una sola cosa.', de: 'Er fragte, ob es im Haus etwas gebe, in das man blasen könne, und sei es nur eines.'}
+said:
+  zh-CN: 我从不理会别人的称赞或责备，只听我自己的感觉。
+  en: I pay no attention to anyone's praise or blame. I simply follow my own feelings.
+  zh-TW: 我從不理會別人的稱讚或責備，只聽我自己的感覺。
+  ja: 人の称賛も非難も気にしない。ただ自分の感覚に従うだけだ。
+  ko: 남의 칭찬이나 비난에는 신경 쓰지 않아요. 나는 그저 내 느낌을 따를 뿐이에요.
+  fr: Je ne prête aucune attention aux louanges ni aux blâmes de personne. Je suis simplement mes propres sentiments.
+  es: No hago caso de los elogios ni de las censuras de nadie. Simplemente sigo mis propios sentimientos.
+  de: Lob und Tadel anderer beachte ich nicht. Ich folge einfach meinem eigenen Gefühl.

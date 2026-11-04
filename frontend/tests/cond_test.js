@@ -199,7 +199,7 @@ check('不带病的人完全不被疾病引擎碰', (() => { const s = person([]
 (async () => {
   const { ctx, CY, G } = require('./harness');
   CY.i18n.set('zh-CN'); await G.load();
-  await G.createPerson({ arch: 'grandpa', name: '爷爷', conditions: ['diabetes'], cond_set: { diabetes: { severity: 'advanced' } } });
+  await G.createPerson({ arch: 'paternal_grandpa', name: '爷爷', conditions: ['diabetes'], cond_set: { diabetes: { severity: 'advanced' } } });
   await G.createPerson({ arch: 'mom', name: '妈妈' });
   await G.load(); await CY.lm.load();
   const gp = G.people.find(p => p.person.name === '爷爷'), mom = G.people.find(p => p.person.name === '妈妈');

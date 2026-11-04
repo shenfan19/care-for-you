@@ -50,7 +50,7 @@
   const hashId = x => { let h = 0; for (const ch of String(x)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
   G.lookOf = c => {
     const O = CY.avatarOptions || {}, l = c.look || {}, sk = (O.skin || []).indexOf(l.skin), keys = CY.charKeys || [];
-    const pool = keys.filter(k => k.startsWith(c.pronoun === '她' ? 'female' : 'male'));
+    const pool = keys.filter(k => k.startsWith(CY.content.pron(c.pronoun) === 'she' ? 'female' : 'male'));
     const model = keys.includes(l.model) ? l.model : pool.length ? pool[hashId(c.id) % pool.length] : undefined;
     return { skin: sk < 0 ? 2 : sk, hair_color: l.hairColor, hair_style: l.hairStyle, glasses: l.glasses, cloth: l.clothes, model };
   };

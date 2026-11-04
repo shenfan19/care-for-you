@@ -1,0 +1,21 @@
+# 角色卡源文件，一类典型角色一个文件，由 tools/build_cards.js 打包进 src/data/cards_packed.js。
+# 标识类字段（id，group，species，voice，pronoun，look 的取值）只写英文编码；label 按语言写成对象，八种语言都在这里。
+# order 是添加角色列表里的先后；pronoun 是 he，she 或 it；health，help，prefs，dialogue 是在原型默认值之上的覆盖。
+id: cat
+order: 220
+group: animal
+label:
+  zh-CN: 猫
+  en: Cat
+  zh-TW: 貓
+  ja: ねこ
+  ko: 고양이
+  fr: Chat
+  es: Gato
+  de: Katze
+species: cat
+age: 3
+voice: cat
+pronoun: it
+look:
+  coat: orange

@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: seacole
+order: 260
+official: true
+region: Jamaica / Britain
+age: 50
+pronoun: she
+stay:
+  - 2
+  - 3
+wants:
+  - medkit
+  - soup
+controllable: false
+area: am
+field: med
+look:
+  skin: '#a8714b'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#e7a6a1'
+souvenir:
+  id: seacole_keepsake
+  icon: 🌿
+src: Encyclopaedia Britannica, Mary Seacole; Wonderful Adventures of Mrs. Seacole in Many Lands (1857).
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 玛丽·西科尔
+    en: Mary Seacole
+    zh-TW: 瑪麗·西科爾
+    ja: メアリー・シーコール
+    ko: 메리 시콜
+    fr: Mary Seacole
+    es: Mary Seacole
+    de: Mary Seacole
+  era:
+    zh-CN: 十九世纪，牙买加与英国
+    en: 19th century, Jamaica and Britain
+    zh-TW: 十九世紀，牙買加與英國
+    ja: 19世紀、ジャマイカとイギリス
+    ko: 19세기, 자메이카와 영국
+    fr: XIXe siècle, Jamaïque et Royaume-Uni
+    es: Siglo XIX, Jamaica y Reino Unido
+    de: 19. Jahrhundert, Jamaika und Großbritannien
+  souvenir:
+    zh-CN: 一小包草药
+    en: A small pouch of herbs
+    zh-TW: 一小包草藥
+    ja: 薬草の小さな袋
+    ko: 약초 주머니
+    fr: Un petit sachet d'herbes
+    es: Una bolsita de hierbas
+    de: Ein kleiner Beutel mit Kräutern
+  arrive_note:
+    zh-CN: 玛丽·西科尔推开大门走了进来，说想在这里住几天。
+    en: Mary Seacole came in through the front door and asked to stay a few days.
+    zh-TW: 瑪麗·西科爾推開大門走了進來，說想在這裡住幾天。
+    ja: メアリー・シーコールは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 메리 시콜은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Mary Seacole franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Mary Seacole cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Mary Seacole trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 她点点头，把东西收进了自己的包里。
+    en: She nodded and put it into her own bag.
+    zh-TW: 她點點頭，把東西收進了自己的包裡。
+    ja: 彼女はうなずき、それを自分の袋にしまった。
+    ko: 그녀는 고개를 끄덕이며 그것을 자기 주머니에 넣었습니다.
+    fr: Elle hocha la tête et le rangea dans son propre sac.
+    es: Asintió y lo guardó en su propia bolsa.
+    de: Sie nickte und steckte es in ihre eigene Tasche.
+  leave_ok:
+    zh-CN: 玛丽·西科尔临走前留下一小包草药，说：哪里有人需要，哪里就是我的地方。
+    en: 'Before leaving, Mary Seacole left a small pouch of herbs and said: Wherever someone needs me, that is my place.'
+    zh-TW: 瑪麗·西科爾臨走前留下一小包草藥，說：哪裡有人需要，哪裡就是我的地方。
+    ja: 帰る前に、メアリー・シーコールは記念の品を残していった：薬草の小さな袋。そして言った。「誰かが私を必要とするところが、私の居場所です。」
+    ko: '떠나기 전에 메리 시콜은(는) 기념품을 남겼습니다: 약초 주머니. 그리고 말했습니다. “누군가 나를 필요로 하는 곳이 내 자리입니다.”'
+    fr: 'Avant de partir, Mary Seacole laissa un souvenir : Un petit sachet d''herbes. Et dit : « Partout où quelqu''un a besoin de moi, c''est là ma place. »'
+    es: 'Antes de irse, Mary Seacole dejó un recuerdo: Una bolsita de hierbas. Y dijo: «Dondequiera que alguien me necesite, ese es mi sitio.»'
+    de: 'Vor dem Abschied ließ Mary Seacole etwas zurück: Ein kleiner Beutel mit Kräutern. Dazu sagte Mary Seacole: „Wo immer mich jemand braucht, ist mein Platz.“'
+  leave_miss:
+    zh-CN: 玛丽·西科尔道了谢，推开门回去了。
+    en: Mary Seacole said thanks and went back through the door.
+    zh-TW: 瑪麗·西科爾道了謝，推開門回去了。
+    ja: メアリー・シーコールはお礼を言い、扉をくぐって帰っていった。
+    ko: 메리 시콜은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Mary Seacole remercia et repassa la porte.
+    es: Mary Seacole dio las gracias y volvió a cruzar la puerta.
+    de: Mary Seacole bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 她提着一个自己配的草药包，说走到哪里都带着。, en: 'She carried a bag of herbs she had mixed herself, saying she took it everywhere.', zh-TW: 她提著一個自己配的草藥包，說走到哪裡都帶著。, ja: 彼女は自分で調合した薬草の袋を持ち歩き、どこへでも持っていくと言った。, ko: 그녀는 직접 섞은 약초 주머니를 가지고 다니며 어디든 들고 간다고 말했습니다., fr: Elle portait un sac d'herbes qu'elle avait mélangées elle-même et disait l'emporter partout., es: Llevaba una bolsa de hierbas mezcladas por ella misma y decía que la llevaba a todas partes., de: 'Sie trug einen Beutel mit selbst gemischten Kräutern bei sich und sagte, sie nehme ihn überallhin mit.'}
+    - {zh-CN: 她说，遇到不舒服的人，她总是先端上一碗热汤。, en: 'She said that when someone felt unwell, she always began with a bowl of hot soup.', zh-TW: 她說，遇到不舒服的人，她總是先端上一碗熱湯。, ja: 具合の悪い人がいると、まず温かいスープを一杯出すのだと彼女は言った。, ko: 몸이 좋지 않은 사람이 있으면 늘 따뜻한 국 한 그릇부터 내놓는다고 그녀는 말했습니다., fr: 'Elle disait que, devant quelqu''un qui se sentait mal, elle commençait toujours par un bol de soupe chaude.', es: 'Dijo que, cuando alguien se sentía mal, ella siempre empezaba con un cuenco de sopa caliente.', de: 'Sie sagte, bei jemandem, dem es nicht gut gehe, beginne sie immer mit einer Schüssel heißer Suppe.'}

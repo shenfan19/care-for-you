@@ -1,0 +1,105 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: zhang_heng
+order: 110
+official: true
+region: China
+age: 45
+pronoun: he
+stay:
+  - 2
+  - 3
+wants:
+  - telescope
+  - clock
+controllable: false
+area: ea
+field: sci
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: bun
+  glasses: none
+  clothes: '#6f86a0'
+souvenir:
+  id: zhang_heng_keepsake
+  icon: 🌌
+src: 《后汉书·张衡传》；Encyclopaedia Britannica, Zhang Heng.
+review: 2026-11-02 通过：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 张衡
+    en: Zhang Heng
+    zh-TW: 張衡
+    ja: 張衡
+    ko: 장형
+    fr: Zhang Heng
+    es: Zhang Heng
+    de: Zhang Heng
+  era:
+    zh-CN: 东汉，中国
+    en: Eastern Han dynasty, China
+    zh-TW: 東漢，中國
+    ja: 後漢、中国
+    ko: 후한, 중국
+    fr: Dynastie des Han orientaux, Chine
+    es: Dinastía Han Oriental, China
+    de: Östliche Han-Dynastie, China
+  souvenir:
+    zh-CN: 一幅星图的复印件
+    en: A copy of a star chart
+    zh-TW: 一幅星圖的影印件
+    ja: 星図の写し
+    ko: 별자리 지도의 사본
+    fr: Une copie d'une carte du ciel
+    es: Una copia de un mapa estelar
+    de: Eine Kopie einer Sternkarte
+  arrive_note:
+    zh-CN: 张衡推开大门走了进来，说想在这里住几天。
+    en: Zhang Heng came in through the front door and asked to stay a few days.
+    zh-TW: 張衡推開大門走了進來，說想在這裡住幾天。
+    ja: 張衡は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 장형은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Zhang Heng franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Zhang Heng cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Zhang Heng trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他对着东西调了又调，嘴角带着笑。
+    en: He adjusted it again and again, smiling.
+    zh-TW: 他對著東西調了又調，嘴角帶著笑。
+    ja: 彼は何度も微調整しながら、にこにこしていた。
+    ko: 그는 몇 번이고 다시 맞추며 웃었습니다.
+    fr: Il la régla encore et encore, en souriant.
+    es: Lo ajustó una y otra vez, sonriendo.
+    de: Er stellte sie immer wieder nach und lächelte.
+  leave_ok:
+    zh-CN: 张衡临走前留下一幅星图的复印件，说：天上的事，要一点一点量。
+    en: 'Before leaving, Zhang Heng left a copy of a star chart and said: The heavens have to be measured bit by bit.'
+    zh-TW: 張衡臨走前留下一幅星圖的影印件，說：天上的事，要一點一點量。
+    ja: 帰る前に、張衡は記念の品を残していった：星図の写し。そして言った。「天は、少しずつ測らなければならない。」
+    ko: '떠나기 전에 장형은(는) 기념품을 남겼습니다: 별자리 지도의 사본. 그리고 말했습니다. “하늘은 조금씩 재어 나가야 합니다.”'
+    fr: 'Avant de partir, Zhang Heng laissa un souvenir : Une copie d''une carte du ciel. Et dit : « Le ciel se mesure peu à peu. »'
+    es: 'Antes de irse, Zhang Heng dejó un recuerdo: Una copia de un mapa estelar. Y dijo: «Hay que medir el cielo poco a poco.»'
+    de: 'Vor dem Abschied ließ Zhang Heng etwas zurück: Eine Kopie einer Sternkarte. Dazu sagte Zhang Heng: „Den Himmel muss man Stück für Stück vermessen.“'
+  leave_miss:
+    zh-CN: 张衡道了谢，推开门回去了。
+    en: Zhang Heng said thanks and went back through the door.
+    zh-TW: 張衡道了謝，推開門回去了。
+    ja: 張衡はお礼を言い、扉をくぐって帰っていった。
+    ko: 장형은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Zhang Heng remercia et repassa la porte.
+    es: Zhang Heng dio las gracias y volvió a cruzar la puerta.
+    de: Zhang Heng bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他仰头看着夜空，说想把星星的位置一颗颗记下来。, en: 'He tilted his head back to the night sky, saying he wanted to record the stars one by one.', zh-TW: 他仰頭看著夜空，說想把星星的位置一顆顆記下來。, ja: 彼は頭をのけぞらせて夜空を仰ぎ、星をひとつずつ記録したいと言った。, ko: '그는 고개를 젖혀 밤하늘을 올려다보며, 별을 하나하나 기록하고 싶다고 말했습니다.', fr: Il renversa la tête vers le ciel nocturne et dit qu'il voulait consigner les étoiles une à une., es: 'Echó la cabeza hacia atrás, mirando el cielo nocturno, y dijo que quería registrar las estrellas una por una.', de: 'Er legte den Kopf in den Nacken zum Nachthimmel und sagte, er wolle die Sterne einen nach dem anderen aufzeichnen.'}
+    - {zh-CN: 他盯着你的钟看了很久，问它是怎么走得这么准的。, en: He studied your clock for a long time and asked how it kept such good time., zh-TW: 他盯著你的鐘看了很久，問它是怎麼走得這麼準的。, ja: 彼はあなたの時計を長いこと眺め、どうしてこんなに正確に時を刻めるのかと尋ねた。, ko: '그는 당신의 시계를 한참 들여다보며, 어떻게 이렇게 정확히 가는지 물었습니다.', fr: Il étudia longtemps ta pendule et demanda comment elle pouvait donner si bien l'heure., es: Estudió tu reloj mucho rato y preguntó cómo marcaba tan bien la hora., de: 'Er betrachtete deine Uhr lange und fragte, wie sie so genau gehe.'}
+said:
+  zh-CN: 浑天如鸡子，地如鸡子中黄。
+  en: The heavens are like an egg, and the earth is the yolk inside it.
+  zh-TW: 渾天如雞子，地如雞子中黃。
+  ja: 天は卵のようで、地はその中の黄身のようだ。
+  ko: 하늘은 달걀 같고, 땅은 그 안의 노른자 같다.
+  fr: Le ciel est comme un œuf, et la terre est le jaune qu'il contient.
+  es: El cielo es como un huevo, y la tierra es la yema que hay dentro.
+  de: Der Himmel ist wie ein Ei, und die Erde ist das Eigelb darin.

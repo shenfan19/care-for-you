@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: aryabhata
+order: 360
+official: true
+region: India
+age: 40
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - telescope
+  - notebook
+controllable: false
+area: sa
+field: sci
+look:
+  skin: '#d9a67c'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#d1b25a'
+souvenir:
+  id: aryabhata_keepsake
+  icon: 🔢
+src: Encyclopaedia Britannica, Aryabhata; the Aryabhatiya, an approximation of pi and the explanation of the apparent motion of the stars by the rotation of the Earth.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写习惯与爱好
+t:
+  name:
+    zh-CN: 阿耶波多
+    en: Aryabhata
+    zh-TW: 阿耶波多
+    ja: アーリヤバタ
+    ko: 아리아바타
+    fr: Aryabhata
+    es: Aryabhata
+    de: Aryabhata
+  era:
+    zh-CN: 五至六世纪，印度
+    en: 5th-6th century, India
+    zh-TW: 五至六世紀，印度
+    ja: 5〜6世紀、インド
+    ko: 5~6세기, 인도
+    fr: Ve et VIe siècles, Inde
+    es: Siglos V y VI, India
+    de: 5. und 6. Jahrhundert, Indien
+  souvenir:
+    zh-CN: 一页圆周率的算稿
+    en: A page of calculations of pi
+    zh-TW: 一頁圓周率的算稿
+    ja: 円周率の計算の一ページ
+    ko: 원주율 계산 한 쪽
+    fr: Une page de calculs de pi
+    es: Una página de cálculos de pi
+    de: Eine Seite mit Berechnungen von Pi
+  arrive_note:
+    zh-CN: 阿耶波多推开大门走了进来，说想在这里住几天。
+    en: Aryabhata came in through the front door and asked to stay a few days.
+    zh-TW: 阿耶波多推開大門走了進來，說想在這裡住幾天。
+    ja: アーリヤバタは玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 아리아바타은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Aryabhata franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Aryabhata cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Aryabhata trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他架好看了看，认真记下了几个数字。
+    en: He set it up, looked through it, and carefully noted a few numbers.
+    zh-TW: 他架好看了看，認真記下了幾個數字。
+    ja: 彼はそれを据えて覗き込み、いくつかの数字を丁寧に書き留めた。
+    ko: 그는 그것을 세워 들여다보고 숫자 몇 개를 꼼꼼히 적었습니다.
+    fr: Il l'installa, regarda à travers et nota soigneusement quelques chiffres.
+    es: Lo montó, miró por él y anotó con cuidado unos números.
+    de: Er baute es auf, sah hindurch und notierte sorgfältig ein paar Zahlen.
+  leave_ok:
+    zh-CN: 阿耶波多临走前留下一页圆周率的算稿，说：数字不会骗人，只要你肯再算一遍。
+    en: 'Before leaving, Aryabhata left a page of calculations of pi and said: Numbers do not lie, as long as you are willing to count once more.'
+    zh-TW: 阿耶波多臨走前留下一頁圓周率的算稿，說：數字不會騙人，只要你肯再算一遍。
+    ja: 帰る前に、アーリヤバタは記念の品を残していった：円周率の計算の一ページ。そして言った。「数は嘘をつきません。もう一度数える気があれば。」
+    ko: '떠나기 전에 아리아바타은(는) 기념품을 남겼습니다: 원주율 계산 한 쪽. 그리고 말했습니다. “숫자는 거짓말하지 않습니다. 다시 한 번 세어 볼 마음만 있다면요.”'
+    fr: 'Avant de partir, Aryabhata laissa un souvenir : Une page de calculs de pi. Et dit : « Les nombres ne mentent pas, pourvu que tu acceptes de compter encore une fois. »'
+    es: 'Antes de irse, Aryabhata dejó un recuerdo: Una página de cálculos de pi. Y dijo: «Los números no mienten, siempre que estés dispuesto a contar una vez más.»'
+    de: 'Vor dem Abschied ließ Aryabhata etwas zurück: Eine Seite mit Berechnungen von Pi. Dazu sagte Aryabhata: „Zahlen lügen nicht, solange du bereit bist, noch einmal zu zählen.“'
+  leave_miss:
+    zh-CN: 阿耶波多道了谢，推开门回去了。
+    en: Aryabhata said thanks and went back through the door.
+    zh-TW: 阿耶波多道了謝，推開門回去了。
+    ja: アーリヤバタはお礼を言い、扉をくぐって帰っていった。
+    ko: 아리아바타은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Aryabhata remercia et repassa la porte.
+    es: Aryabhata dio las gracias y volvió a cruzar la puerta.
+    de: Aryabhata bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他指着天说，星星看上去在转，也可能是我们脚下的地在转。, en: 'He pointed at the sky and said the stars seem to turn, but perhaps it is the ground under our feet that turns.', zh-TW: 他指著天說，星星看上去在轉，也可能是我們腳下的地在轉。, ja: 彼は空を指さし、星は回っているように見えるが、回っているのは足元の大地かもしれないと言った。, ko: 그는 하늘을 가리키며 별이 도는 것처럼 보이지만 어쩌면 발밑의 땅이 도는 것인지도 모른다고 말했습니다., fr: 'Il montra le ciel et dit que les étoiles semblent tourner, mais que c''est peut-être le sol sous nos pieds qui tourne.', es: 'Señaló el cielo y dijo que las estrellas parecen girar, pero quizá sea el suelo bajo nuestros pies el que gira.', de: 'Er zeigte zum Himmel und sagte, die Sterne schienen sich zu drehen, doch vielleicht drehe sich der Boden unter unseren Füßen.'}
+    - {zh-CN: 他算出圆周和直径的比大约是三点一四一六，一遍又一遍地核对。, en: 'He worked out that the circle to its diameter is about 3.1416, and checked it again and again.', zh-TW: 他算出圓周和直徑的比大約是三點一四一六，一遍又一遍地核對。, ja: 彼は、円周と直径の比がおよそ3.1416になると計算し、何度も確かめた。, ko: 그는 원주와 지름의 비가 대략 3.1416이라고 계산해 내고 몇 번이고 다시 확인했습니다., fr: 'Il calcula que le rapport de la circonférence au diamètre vaut environ 3,1416, et le vérifia encore et encore.', es: 'Calculó que la razón entre la circunferencia y su diámetro es de unos 3,1416, y lo comprobó una y otra vez.', de: 'Er rechnete aus, dass der Kreis zu seinem Durchmesser etwa 3,1416 beträgt, und prüfte es immer wieder nach.'}

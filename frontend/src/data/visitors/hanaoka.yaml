@@ -1,0 +1,96 @@
+# 来客卡源文件，一位来客一个文件，由 tools/build_cards.js 打包进 src/data/visitors_packed.js。
+# 文字按语言写成对象，八种语言都在这里：zh-CN，en，zh-TW，ja，ko，fr，es，de。除简体中文和英文，其余是机器辅助翻译，未经母语者校对。
+# hint 是两条需求暗示，said 是这个人广为流传的一句话，排在暗示后面；wrong_late 只有送错礼物后才有话说的卡才写。
+id: hanaoka
+order: 530
+official: true
+region: Japan
+age: 55
+pronoun: he
+stay:
+  - 1
+  - 2
+wants:
+  - gloves
+  - aspirin
+controllable: false
+area: ea
+field: med
+look:
+  skin: '#f6d2b4'
+  hairColor: black
+  hairStyle: short
+  glasses: none
+  clothes: '#8a7a6a'
+souvenir:
+  id: hanaoka_keepsake
+  icon: 📝
+src: Encyclopaedia Britannica, Hanaoka Seishu; general anaesthesia used in surgery in 1804.
+review: 2026-11-02 AI初核通过，待用户终审：无政治与宗教争议，只写医德与习惯
+t:
+  name:
+    zh-CN: 华冈青洲
+    en: Hanaoka Seishu
+    zh-TW: 華岡青洲
+    ja: 華岡青洲
+    ko: 하나오카 세이슈
+    fr: Hanaoka Seishu
+    es: Hanaoka Seishu
+    de: Hanaoka Seishu
+  era:
+    zh-CN: 江户时代，日本
+    en: Edo period, Japan
+    zh-TW: 江戶時代，日本
+    ja: 江戸時代、日本
+    ko: 에도 시대, 일본
+    fr: Période d'Edo, Japon
+    es: Período Edo, Japón
+    de: Edo-Zeit, Japan
+  souvenir:
+    zh-CN: 一页配方笔记的复印件
+    en: A copy of a page of formula notes
+    zh-TW: 一頁配方筆記的影印件
+    ja: 処方メモの一ページの写し
+    ko: 처방 메모 한 쪽의 사본
+    fr: Une copie d'une page de notes de formules
+    es: Una copia de una página de notas de fórmulas
+    de: Eine Kopie einer Seite mit Rezepturnotizen
+  arrive_note:
+    zh-CN: 华冈青洲推开大门走了进来，说想在这里住几天。
+    en: Hanaoka Seishu came in through the front door and asked to stay a few days.
+    zh-TW: 華岡青洲推開大門走了進來，說想在這裡住幾天。
+    ja: 華岡青洲は玄関をくぐり、しばらく泊めてほしいと頼んだ。
+    ko: 하나오카 세이슈은(는) 현관문을 지나 들어와 며칠 묵어도 되겠냐고 물었습니다.
+    fr: Hanaoka Seishu franchit la porte d'entrée et demanda à rester quelques jours.
+    es: Hanaoka Seishu cruzó la puerta principal y preguntó si podía quedarse unos días.
+    de: Hanaoka Seishu trat durch die Haustür und bat darum, ein paar Tage bleiben zu dürfen.
+  ok_line:
+    zh-CN: 他戴上看了看，说手指暖了，心就稳了。
+    en: He put them on and said that once the fingers are warm, the mind is steady.
+    zh-TW: 他戴上看了看，說手指暖了，心就穩了。
+    ja: 彼はそれをはめて、指が温まれば心も落ち着くと言った。
+    ko: 그는 장갑을 끼고, 손가락이 따뜻하면 마음도 고요해진다고 말했습니다.
+    fr: Il les enfila et dit que lorsque les doigts sont chauds, l'esprit est calme.
+    es: Se los puso y dijo que, cuando los dedos están calientes, la mente está tranquila.
+    de: Er zog sie an und sagte, sind die Finger warm, so ist auch der Geist ruhig.
+  leave_ok:
+    zh-CN: 华冈青洲临走前留下一页配方笔记的复印件，说：让人不疼，是医者的第一份心意。
+    en: 'Before leaving, Hanaoka Seishu left a copy of a page of formula notes and said: To spare a person pain is a healer''s first kindness.'
+    zh-TW: 華岡青洲臨走前留下一頁配方筆記的影印件，說：讓人不疼，是醫者的第一份心意。
+    ja: 帰る前に、華岡青洲は記念の品を残していった：処方メモの一ページの写し。そして言った。「人から痛みを取り除くのが、医者の最初の思いやりです。」
+    ko: '떠나기 전에 하나오카 세이슈은(는) 기념품을 남겼습니다: 처방 메모 한 쪽의 사본. 그리고 말했습니다. “사람에게서 고통을 덜어 주는 것이 의원의 첫 번째 마음입니다.”'
+    fr: 'Avant de partir, Hanaoka Seishu laissa un souvenir : Une copie d''une page de notes de formules. Et dit : « Épargner la douleur à une personne est la première bonté d''un guérisseur. »'
+    es: 'Antes de irse, Hanaoka Seishu dejó un recuerdo: Una copia de una página de notas de fórmulas. Y dijo: «Ahorrar el dolor a una persona es la primera bondad de un sanador.»'
+    de: 'Vor dem Abschied ließ Hanaoka Seishu etwas zurück: Eine Kopie einer Seite mit Rezepturnotizen. Dazu sagte Hanaoka Seishu: „Einem Menschen den Schmerz zu ersparen, ist die erste Güte eines Heilers.“'
+  leave_miss:
+    zh-CN: 华冈青洲道了谢，推开门回去了。
+    en: Hanaoka Seishu said thanks and went back through the door.
+    zh-TW: 華岡青洲道了謝，推開門回去了。
+    ja: 華岡青洲はお礼を言い、扉をくぐって帰っていった。
+    ko: 하나오카 세이슈은(는) 고맙다고 인사하고 문을 지나 돌아갔습니다.
+    fr: Hanaoka Seishu remercia et repassa la porte.
+    es: Hanaoka Seishu dio las gracias y volvió a cruzar la puerta.
+    de: Hanaoka Seishu bedankte sich und ging zurück durch die Tür.
+  hint:
+    - {zh-CN: 他说他花了许多年配一种让人睡着的药，要先确认安全，才敢用在病人身上。, en: 'He said he spent many years preparing a draught that lets a patient sleep, and would only use it once it was safe.', zh-TW: 他說他花了許多年配一種讓人睡著的藥，要先確認安全，才敢用在病人身上。, ja: 彼は、患者を眠らせる薬を何年もかけて調合し、安全だと確かめてからでなければ使わないと言った。, ko: '그는 환자를 잠들게 하는 약을 여러 해에 걸쳐 만들었고, 안전하다고 확인한 뒤에야 쓰겠다고 말했습니다.', fr: 'Il disait avoir passé de longues années à préparer un breuvage qui fait dormir le malade, et ne l''employer qu''une fois sûr de son innocuité.', es: 'Dijo que pasó muchos años preparando una poción que deja dormir al paciente, y que solo la usaría cuando fuera segura.', de: 'Er sagte, er habe viele Jahre an einem Trank gearbeitet, der den Kranken schlafen lässt, und werde ihn erst einsetzen, wenn er sicher sei.'}
+    - {zh-CN: 他说动手之前，先要让病人不害怕。, en: 'He said that before the hands begin, the patient must first stop being afraid.', zh-TW: 他說動手之前，先要讓病人不害怕。, ja: 彼は、手を動かす前に、まず患者の怖さを消さなければならないと言った。, ko: 그는 손을 움직이기 전에 먼저 환자가 두려움을 잊게 해야 한다고 말했습니다., fr: 'Il disait qu''avant que les mains ne commencent, le malade doit d''abord cesser d''avoir peur.', es: 'Dijo que antes de que empiecen las manos, el paciente debe perder el miedo.', de: 'Er sagte, bevor die Hände zu arbeiten beginnen, müsse der Kranke zuerst seine Angst verlieren.'}
