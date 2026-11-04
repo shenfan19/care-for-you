@@ -62,7 +62,7 @@ sequenceDiagram
 ```
 
 1. Ask: every 20 seconds the front end sends a snapshot and asks for a state table and strategy.
-2. Send: each character whose need is above the threshold sends requests at a per-hour probability. The receiver is drawn by weight from the others, or from themselves.
+2. Send: each character whose need level is below the threshold (`request.below`) sends requests at a per-hour probability. The receiver is drawn by weight from the others, or from themselves.
 3. Check: the front end checks the character card again. Babies cannot act, so they never receive a request meant for themselves.
 4. Wait: a few seconds, so the player can look after the person first.
 5. Respond: the receiver rolls from the current state. Sleeping, away, in hospital or in need themselves means no response, and a refusal is remembered.

@@ -21,7 +21,7 @@
     for (const c of p.person.conditions || []) {
       if (!G.arcOf(c).length) continue;
       const needs = (G.tpl.conditions[c] || {}).needs || {};
-      if (Object.keys(a.effect || {}).some(k => k in needs && a.effect[k] < 0)) G.arcEnsure(p, c).cares++;
+      if (Object.keys(a.effect || {}).some(k => k in needs && a.effect[k] > 0)) G.arcEnsure(p, c).cares++;
     }
   };
   G.arcTick = () => {

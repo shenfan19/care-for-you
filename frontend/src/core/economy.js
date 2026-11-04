@@ -152,13 +152,13 @@
     if (W && W.moveTo) W.moveTo(W.WORK.place, W.workRoom());
     G.logK(G.youId(), 'event', 'log.groceries', { n: tr.meals });
   };
-  G.GROCERY_BONUS = { hunger: -0.15, mood: 0.02, table_minutes: 90 };
+  G.GROCERY_BONUS = { hunger: 0.15, mood: 0.02, table_minutes: 90 };
   G.useGroceries = (p, a) => {
     if (!G.groceries()) return false;
     G.world.groceries--; G.world.fed_until = G.world.game_minutes + G.GROCERY_BONUS.table_minutes;
     for (const q of G.activePeople()) {
       if (!G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (CY.world && CY.world.locationOf(q).place !== 'home')) continue;
-      if (q !== p && 'hunger' in q.state.needs) G.setNeed(q, 'hunger', Math.max(0, G.need(q, 'hunger') + G.GROCERY_BONUS.hunger));
+      if (q !== p && 'hunger' in q.state.needs) q.state.needs.hunger = Math.min(1, q.state.needs.hunger + G.GROCERY_BONUS.hunger);
       if (q === p && 'hunger' in q.state.needs) G.setNeed(q, 'hunger', Math.max(0, G.need(q, 'hunger') + G.GROCERY_BONUS.hunger));
       q.state.mood = Math.min(1, q.state.mood + G.GROCERY_BONUS.mood);
     }

@@ -462,7 +462,7 @@
   /* 这个动作能不能解决角色现在的某个需求 */
   /* 头顶的需求图标和环里亮起的行动用同一个门槛，也是宝宝和宠物开始催人的线 */
   U.NEED_LIT = 0.5;   /* 需求压力超过这个值，也就是水平低于 1 减它，就亮起来 */
-  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && G.need(p, k) > U.NEED_LIT);
+  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] > 0 && G.need(p, k) > U.NEED_LIT);
   const ringOff = () => { if (U.room) { U.room.classList.remove('ring-open'); U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); } };
   /* 操作结束，选中的状态跟着清掉：画面上的名字和左下的卡片都回到默认，选中只存在于操作面板开着的时候 */
   U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; U.sel = null; ringOff(); U.room.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); };

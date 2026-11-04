@@ -105,7 +105,7 @@
   /* ---------- 人和人之间：在同一个房间的两个人，偶尔自己聊几句、玩一会儿、逗逗宠物，需求会降一点，发生的事里留一句 ---------- */
   const socialCd = {}, SMALL = ['infant', 'toddler', 'child'];
   let socialT = 20;
-  const lower = (p, k, v) => { if (k in p.state.needs) G.setNeed(p, k, G.need(p, k) - v); };
+  const lower = (p, k, v) => { if (k in p.state.needs) p.state.needs[k] = clamp(p.state.needs[k] + v); };   /* 名字沿用，意思是这一项需求缓解了 v，也就是水平升 v */
   G.socialTick = dt => {
     socialT -= dt; if (socialT > 0) return;
     socialT = 20 + Math.random() * 20;

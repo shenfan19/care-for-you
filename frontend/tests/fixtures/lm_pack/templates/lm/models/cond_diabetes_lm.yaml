@@ -105,8 +105,8 @@ equations:
 drives:
   sugar:
     state: dmlm_need_sugar
-    lo: 0.0
-    hi: 1.0
+    lo: 1.0
+    hi: 0.0
     kinds: [human]
 care:
   fixed_step_minutes: 1.0

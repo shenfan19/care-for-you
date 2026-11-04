@@ -9,31 +9,31 @@ actions:
     label: 陪吃药
     hold: 5
     min: 5
-    effect: {medicine: -1}
+    effect: {medicine: 1}
   bp:
     label: 量血压
     hold: 3
     min: 5
-    effect: {bp: -1}
+    effect: {bp: 1}
   labtest:
     label: 陪着去抽血化验
     hold: 8
     min: 30
-    effect: {lab: -1}
+    effect: {lab: 1}
   selfmed:
     label: 自己吃药
     selfonly: true
     self: [adult, elder]
     hold: 1
     min: 3
-    effect: {medicine: -0.8}
+    effect: {medicine: 0.8}
   selfbp:
     label: 自己量血压
     selfonly: true
     self: [adult, elder]
     hold: 1
     min: 5
-    effect: {bp: -0.7}
+    effect: {bp: 0.7}
 lines:
   request:
     medicine: [药，是不是该吃了？, '{ta}看了看药盒。']

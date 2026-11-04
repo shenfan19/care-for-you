@@ -65,7 +65,7 @@
     for (const a of acts) {
       if (a.outing) { if (!a.manual) go.push(a.id); continue; }   /* manual 的外出，比如看医生，只由玩家带去，不进家人自己想去的清单 */
       if (a.selfonly || a.away) continue;
-      for (const k in a.effect || {}) if (a.effect[k] < 0) care.add(k);
+      for (const k in a.effect || {}) if (a.effect[k] > 0) care.add(k);
     }
     for (const k of Object.keys(p.state.needs)) if (G.selfActFor(p, k)) self.add(k);
     const can = G.canHelp ? G.canHelp(p) : false;

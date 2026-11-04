@@ -580,14 +580,14 @@
   function applyEffects(p, a, scale) {
     const s = p.state, mods = G.traitMods(p);
     G.pulse(p.id, a.id);
-    for (const k in a.effect || {}) if (k in s.needs) G.setNeed(p, k, G.need(p, k) + a.effect[k] * scale * (a.effect[k] < 0 ? (mods.effect[k] || 1) : 1));
+    for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] > 0 ? (mods.effect[k] || 1) : 1));   /* 效果是水平的增量，正数是补上 */
     if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
   }
   /* 这个动作这个角色自己做得了吗：卡里写了名单就按名单，没写就按年龄阶段 */
   G.canSelf = (p, a) => !!a.self && (p.person.self_actions ? p.person.self_actions.includes(a.id) : a.self === true || a.self.includes(G.stage(p)));
   /* 角色自己能做的动作：需求落在动作的效果里，并且这个阶段的角色自己做得了 */
   function selfActionFor(p, need) {
-    return Object.values(G.allActionsOf(p)).find(a => G.canSelf(p, a) && a.effect && need in a.effect && a.effect[need] < 0);
+    return Object.values(G.allActionsOf(p)).find(a => G.canSelf(p, a) && a.effect && need in a.effect && a.effect[need] > 0);
   }
   /* 角色自己动手：效果打折，行动记进日志 */
   function selfAct(p, a, need, offline) {
@@ -907,7 +907,7 @@
     let n = 0;
     for (const q of G.activePeople()) {
       if (q === cook || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;
-      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) G.setNeed(q, k, G.need(q, k) + v * scale);
+      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v * scale);
       n++;
     }
     G.logK(cook.id, 'event', 'log.meal_all', {});

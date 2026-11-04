@@ -92,7 +92,7 @@ Request:
 
 ```json
 { "v": 1, "kind": "drive", "trigger": "action", "world": { }, "minutes": 0,
-  "person": { }, "action": { "id": "feed", "label": "Feed", "min": 25, "effect": { "hunger": -0.9 } } }
+  "person": { }, "action": { "id": "feed", "label": "Feed", "min": 25, "effect": { "hunger": 0.9 } } }
 ```
 
 The player did an action. The response is the same as for tick. If a say directive in it has kind speech, the game uses it as the cared-for person's reply to this action. A response to an action trigger should be fast, because the game waits for it. When the backend's handles.events is false, the game does not send action to it and uses the built-in result directly.

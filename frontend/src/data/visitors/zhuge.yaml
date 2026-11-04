@@ -13,7 +13,7 @@ stay:
   - 1
 wants: []
 care: invite_rest
-tired: 0.85
+energy: 0.15
 controllable: false
 area: ea
 field: pol

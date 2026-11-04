@@ -555,7 +555,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
-  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 6 && Object.keys(G.tpl.species.human.needs).length > 5);
+  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 7 && Object.keys(G.tpl.species.human.needs).length > 5);
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */
@@ -908,7 +908,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('英法西德的台词库没有缺的或残留的中文', bad.length === 0, bad.slice(0, 4).join(' '));
     const jp = await mk('mom', '语言妈妈'); G.setNeed(jp, 'hunger', 0.9); G.act[jp.id] = 'awake';
     for (const x of G.people) x.person.active = x === jp;
-    CY.i18n.set('zh-CN'); const act = Object.values(G.actionsOf(jp)).find(a => a.effect && a.effect.hunger < 0);
+    CY.i18n.set('zh-CN'); const act = Object.values(G.actionsOf(jp)).find(a => a.effect && a.effect.hunger > 0);
     G.perform(jp.id, act.id);
     const ent = Object.values(G.journal[jp.id]).flat().filter(e => e.type === 'care').pop();
     const zhText = G.entryText(ent); CY.i18n.set('en'); const enText = G.entryText(ent); CY.i18n.set('zh-CN');

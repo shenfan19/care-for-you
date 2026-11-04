@@ -22,8 +22,8 @@
     for (const a of Object.values(G.actionsOf(p))) {
       if (a.selfonly || NO_AUTO.has(a.id) || a.away || a.outing) continue;
       const e = a.effect && a.effect[need];
-      if (!(e < 0)) continue;
-      let g = 0; for (const k in a.effect) if (a.effect[k] < 0) g += G.need(p, k) * -a.effect[k];
+      if (!(e > 0)) continue;
+      let g = 0; for (const k in a.effect) if (a.effect[k] > 0) g += G.need(p, k) * a.effect[k];
       g += Math.random() * 0.05;
       if (g > gain) { gain = g; best = a; }
     }
@@ -69,13 +69,13 @@
     const tk = targetKind(target), arch = helper.person.archetype || helper.person.card || '', st = G.stage(helper);
     return (((cfg().respond || {}).table) || []).find(r => r.target === tk && ((r.helper.arch && r.helper.arch.includes(arch)) || (r.helper.stage && r.helper.stage.includes(st)))) || null;
   };
-  G.helpWell = p => { const R = cfg().respond || {}; return p.state.frailty < (R.well_frailty === undefined ? 0.5 : R.well_frailty) && G.maxNeed(p) <= (R.well_need === undefined ? 0.6 : R.well_need); };
+  G.helpWell = p => { const R = cfg().respond || {}; return p.state.frailty < (R.well_frailty === undefined ? 0.5 : R.well_frailty) && G.maxNeed(p) <= 1 - (R.well_level === undefined ? 0.4 : R.well_level); };
   function respondChance(e) {
     const R = cfg().respond || {}, to = G.get(e.to);
     if (!eligibleTo(to)) return 0;
     if (e.kind === 'self') return R.self === undefined ? 0.5 : R.self;
     if (e.kind === 'go' && e.to === e.from) return (cfg().want || {}).respond_alone === undefined ? 0.6 : cfg().want.respond_alone;
-    if (G.maxNeed(to) > (R.own_need_block || 0.8)) return 0;
+    if (G.maxNeed(to) > 1 - (R.own_level_block === undefined ? 0.2 : R.own_level_block)) return 0;
     const row = e.kind === 'care' && G.get(e.from) ? G.helpRow(to, G.get(e.from)) : null;
     const mw = row ? (R.mood_weight_table === undefined ? 0.3 : R.mood_weight_table) : (R.mood_weight === undefined ? 0.6 : R.mood_weight);
     const base = row ? (G.helpWell(to) ? row.well : row.poor) : (R.base === undefined ? 0.7 : R.base);

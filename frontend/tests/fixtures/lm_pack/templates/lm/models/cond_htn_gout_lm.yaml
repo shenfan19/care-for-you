@@ -148,13 +148,13 @@ equations:
 drives:
   bp:
     state: htgo_need_bp
-    lo: 0.0
-    hi: 1.0
+    lo: 1.0
+    hi: 0.0
     kinds: [human]
   lab:
     state: htgo_need_lab
-    lo: 0.0
-    hi: 1.0
+    lo: 1.0
+    hi: 0.0
     kinds: [human]
 care:
   fixed_step_minutes: 60.0

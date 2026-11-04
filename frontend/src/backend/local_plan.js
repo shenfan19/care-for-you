@@ -22,7 +22,7 @@
     if (row.species && !row.species.includes(ps.species)) return false;
     if (row.stage && !row.stage.includes(ps.stage)) return false;
     if (row.hour_from !== undefined && !(hour >= row.hour_from && hour < (row.hour_to === undefined ? 24 : row.hour_to))) return false;
-    for (const k in row.min_need || {}) if (1 - (ps.needs[k] === undefined ? 1 : ps.needs[k]) < row.min_need[k]) return false;   /* 快照里是水平，规则里的 min_need 是压力 */
+    for (const k in row.max_level || {}) if ((ps.needs[k] === undefined ? 1 : ps.needs[k]) > row.max_level[k]) return false;
     return ps.abilities.go_actions.includes(row.action);
   };
 
@@ -68,7 +68,7 @@
         }
       }
       /* 需求：超过门槛的需求，先挑最急的有人能管的 */
-      const needs = Object.keys(ps.needs).filter(k => 1 - ps.needs[k] > (R.threshold || 0.55)).sort((a, b) => ps.needs[a] - ps.needs[b]);   /* 水平低于 1 - 门槛才算需要，最低的排前面 */
+      const needs = Object.keys(ps.needs).filter(k => ps.needs[k] < (R.below === undefined ? 0.45 : R.below)).sort((a, b) => ps.needs[a] - ps.needs[b]);   /* 水平低于门槛才算需要，最低的排前面 */
       if (!needs.length || Math.random() >= Math.min(1, (R.rate_per_hour || 20) * scale * hours)) continue;
       for (const k of needs) {
         const t = wpick(targets(ps, q => q.id === ps.id ? ps.abilities.self_needs.includes(k) : ps.abilities.care_needs.includes(k) && !has(ps.id, q.id, k)));
