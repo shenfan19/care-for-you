@@ -171,7 +171,7 @@ CY.i18n.register("zh-TW", {
  "about.p1": "手停一停，照看一下家裡人。你在工作，他們會不定時來叫你一聲。沒有分數，也沒有懲罰。",
  "about.p2": "這是一個個人專案，作者是一個人，與任何學校、單位或機構無關，也不代表它們的立場。",
  "about.p3": "遊戲裡的角色都是虛構的。遊戲不提供也不鼓勵複製已故的人。你記起的話，只是你自己對一類人的印象。",
- "about.p4": "目前是早期版本，會有不完善的地方。歡迎提意見：shenfan19@gmail.com，或在 github.com/shenfan19/care-for-you 提 issue。",
+ "about.p4": "目前是早期版本，會有不完善的地方。歡迎提意見：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。",
  "priv.h1": "資料放在哪裡",
  "priv.p1": "所有遊戲資料只儲存在你自己的裝置上，是明文檔案，你可以隨時開啟、修改、複製和刪除。",
  "priv.p2": "目前沒有賬號，沒有伺服器，沒有統計，沒有廣告，也不使用 cookie 或第三方追蹤。",

@@ -59,7 +59,7 @@ CY.i18n.register('zh-CN', {
   'about.p1': '手停一停，照看一下家里人。你在工作，他们会不定时来叫你一声。没有分数，也没有惩罚。',
   'about.p2': '这是一个个人项目，作者是一个人，与任何学校、单位或机构无关，也不代表它们的立场。',
   'about.p3': '游戏里的角色都是虚构的。游戏不提供也不鼓励复制已故的人。你记起的话，只是你自己对一类人的印象。',
-  'about.p4': '目前是早期版本，会有不完善的地方。欢迎提意见：shenfan19@gmail.com，或在 github.com/shenfan19/care-for-you 提 issue。',
+  'about.p4': '目前是早期版本，会有不完善的地方。欢迎提意见：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。',
   'priv.h1': '数据放在哪里',
   'priv.p1': '所有游戏数据只保存在你自己的设备上，是明文文件，你可以随时打开、修改、复制和删除。',
   'priv.p2': '目前没有账号，没有服务器，没有统计，没有广告，也不使用 cookie 或第三方追踪。',

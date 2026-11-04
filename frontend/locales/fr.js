@@ -46,7 +46,7 @@ CY.i18n.register("fr", {
 "about.p1": "Faites une pause et occupez-vous des gens de la maison. Ils vous appellent de temps en temps pendant que vous travaillez. Pas de score, pas de punition.",
 "about.p2": "C'est un projet personnel, d'une seule personne. Il n'est lié à aucune école, aucun employeur ni aucune organisation et ne représente pas leurs opinions.",
 "about.p3": "Tous les personnages sont fictifs. Le jeu ne propose ni n'encourage de recréer une personne disparue. Une phrase dont vous vous souvenez n'est que votre propre impression d'un type de personne.",
-"about.p4": "C'est une version précoce, encore rugueuse par endroits. Vos retours sont bienvenus : shenfan19@gmail.com, ou un ticket sur github.com/shenfan19/care-for-you.",
+"about.p4": "C'est une version précoce, encore rugueuse par endroits. Vos retours sont bienvenus : contact@careforyou.dev, ou un ticket sur github.com/shenfan19/care-for-you.",
 "priv.h1": "Où se trouvent vos données", "priv.p1": "Toutes les données du jeu sont stockées uniquement sur votre appareil, sous forme de fichiers texte que vous pouvez ouvrir, modifier, copier et supprimer à tout moment.",
 "priv.p2": "Il n'y a actuellement ni compte, ni serveur, ni statistiques, ni publicité, ni cookies, ni suivi par des tiers.", "priv.p3": "La page est statique et n'envoie vos données de jeu nulle part pendant son fonctionnement.",
 "priv.h3": "Vos droits", "priv.p6": "Vous pouvez télécharger toutes vos données à tout moment. Les réglages offrent un bouton pour supprimer toutes les données locales, sans retour possible.",

@@ -456,7 +456,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   bb.person.active = true; eld.person.active = true; sis2.person.active = true;
   bb.state.needs.hunger = 0.95; eld.state.needs.hunger = 0.95; eld.state.needs.rest = 0.95;
   G.lastTick = Date.now() - 1000; G.nextAt = Date.now() + 1e9; G.tick();
-  check('婴儿需求严重时哭闹，老人不哭', G.crying[bb.id] && !G.crying[eld.id] && G.toast[bb.id].kind === 'cry');
+  check('婴儿需求严重时哭闹，老人不哭，哭闹不弹气泡', G.crying[bb.id] && !G.crying[eld.id] && !(G.toast[bb.id] && G.toast[bb.id].kind === 'cry'));
   let selfDone = 0, infantSelf = 0; const n0s = eld.state.needs.hunger;
   for (let i = 0; i < 4000; i++) { G.lastTick -= 5000; for (const p of [eld, bb]) p.state.needs.hunger = Math.max(p.state.needs.hunger, 0.9); const h = eld.state.needs.hunger; G.tick(); }
   check('老人没人管会自己解决', G.journal[eld.id] && Object.values(G.journal[eld.id]).flat().some(e => e.type === 'self'));

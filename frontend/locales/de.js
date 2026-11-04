@@ -44,7 +44,7 @@ CY.i18n.register("de", {
 "about.p1": "Kurz innehalten und nach den Menschen zu Hause sehen. Sie rufen dich ab und zu, während du arbeitest. Keine Punkte, keine Strafen.",
 "about.p2": "Dies ist ein persönliches Projekt einer einzelnen Person. Es steht in keiner Verbindung zu einer Schule, einem Arbeitgeber oder einer Organisation und gibt deren Ansichten nicht wieder.",
 "about.p3": "Alle Figuren sind erfunden. Das Spiel bietet nicht an und fördert nicht, einen verstorbenen Menschen nachzubilden. Ein Satz, an den du dich erinnerst, ist nur dein eigener Eindruck von einer Art Mensch.",
-"about.p4": "Dies ist eine frühe Version und an manchen Stellen noch rau. Rückmeldungen sind willkommen: shenfan19@gmail.com, oder ein Issue unter github.com/shenfan19/care-for-you.",
+"about.p4": "Dies ist eine frühe Version und an manchen Stellen noch rau. Rückmeldungen sind willkommen: contact@careforyou.dev, oder ein Issue unter github.com/shenfan19/care-for-you.",
 "priv.h1": "Wo deine Daten liegen", "priv.p1": "Alle Spieldaten werden nur auf deinem eigenen Gerät gespeichert, als einfache Dateien, die du jederzeit öffnen, bearbeiten, kopieren und löschen kannst.",
 "priv.p2": "Derzeit gibt es keine Konten, keine Server, keine Analysen, keine Werbung und weder Cookies noch Tracking durch Dritte.", "priv.p3": "Die Seite selbst ist statisch und sendet deine Spieldaten während des Betriebs nirgendwohin.",
 "priv.h3": "Deine Rechte", "priv.p6": "Du kannst jederzeit alle deine Daten herunterladen. In den Einstellungen gibt es eine Schaltfläche, die alle lokalen Daten löscht; das lässt sich nicht rückgängig machen.",

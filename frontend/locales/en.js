@@ -59,7 +59,7 @@ CY.i18n.register('en', {
   'about.p1': 'Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.',
   'about.p2': 'This is a personal project by one person. It is not affiliated with any school, employer or organization and does not represent their views.',
   'about.p3': 'All characters are fictional. The game does not offer or encourage recreating someone who has passed away. A line you remember is only your own impression of a kind of person.',
-  'about.p4': 'This is an early version and will be rough in places. Feedback is welcome: shenfan19@gmail.com, or open an issue at github.com/shenfan19/care-for-you.',
+  'about.p4': 'This is an early version and will be rough in places. Feedback is welcome: contact@careforyou.dev, or open an issue at github.com/shenfan19/care-for-you.',
   'priv.h1': 'Where your data lives',
   'priv.p1': 'All game data is stored only on your own device, as plain files you can open, edit, copy and delete at any time.',
   'priv.p2': 'There are currently no accounts, no servers, no analytics, no ads, and no cookies or third-party tracking.',

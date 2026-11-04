@@ -1,8 +1,10 @@
 # Care for You
 
-Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no failing, no download, no account.
+Pause for a moment and look after the people at home.
 
 ![Care for You](media/screenshot_home.png)
+
+In work-life balance, the life is the people at home. Care for You is a quiet game in a browser tab, played beside real work, where the cost of looking after them shows up as small interruptions. There are no scores, no failing, no download and no account, and no choice is judged.
 
 ## What it is
 
@@ -18,7 +20,14 @@ It is meant to sit in a tab beside your work. Nothing is urgent, nothing is puni
 - A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a shop where the money you earn at the desk buys beds, daily goods, decorations and gifts for visitors.
 - A front door in the house: historical and literary visitors stay for a few days, you try to work out what they need, and they leave a keepsake for the cabinet. A short summary of every day goes into a calendar you can browse. See [docs/visitors.md](docs/visitors.md).
 - Eight interface languages, with dialogue in each: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch.
-- Everything is data. Characters, rules, probabilities and lines are plain YAML files you can open and edit. Saves are plain files too.
+- Characters, rules and lines are plain files you can open and edit, and so are the saves.
+
+## How to play
+
+- Click a person to see what they want, then press and hold an action until the ring fills.
+- A day runs from the afternoon to midnight and takes about five minutes. At midnight you get a short summary, and the calendar button keeps every day. Settings and sharing are at the top right of the page.
+- The people button opens the household: add, edit, archive or remove characters.
+- You play one adult in the household, and you can switch to anyone grown-up from the people menu. Couples earn money at the desk during work hours, or you do if there is no couple.
 
 ## Run it
 
@@ -32,22 +41,27 @@ URL options for trying it out:
 
 Python 3 is only needed if you want to run one of the optional backends below.
 
-## How to play
-
-- Click a person to see what they want, then press and hold an action until the ring fills.
-- A day runs from the afternoon to midnight and takes about five minutes. At midnight you get a short summary, and the calendar button keeps every day. Settings and sharing are at the top right of the page.
-- The people button opens the household: add, edit, archive or remove characters.
-- You play one adult in the household, and you can switch to anyone grown-up from the people menu. Couples earn money at the desk during work hours, or you do if there is no couple.
-
-## Documentation
-
-Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The front door and visitor cards: [docs/visitors.md](docs/visitors.md). The optional account server: [account_server/README_account_server.md](account_server/README_account_server.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
-
 ## Data and privacy
 
 Everything is stored on your own device as plain files. No account is needed, and there are no analytics and no cookies. By default the page sends your game data nowhere. An optional account and encrypted cloud save exist only when a server address is set in the advanced settings; see [account_server](account_server/README_account_server.md). Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Saves can be downloaded, imported and deleted from the settings.
 
-## Data-driven by design
+## Status
+
+Early version, currently 0.69. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
+
+## Not a health product
+
+This is a game. It is not a medical, psychological or care product and gives no diagnosis, treatment or medication advice. Conditions in the game are simple scenarios, not medical judgments. If you are having a hard time, please reach out to someone you trust or to a local professional service.
+
+## For developers
+
+The game does not hard-code who speaks or what happens. The front end sends a snapshot of each character to a backend and carries out what comes back, so the front end can be driven by another backend, including one that uses AI. The backend interface is in [README_backend_protocol.md](README_backend_protocol.md).
+
+### Documentation
+
+Mechanics that matter to players and people writing backends are described in `docs`. How the parts fit together and how data flows: [docs/architecture.md](docs/architecture.md). Outings: [docs/outings.md](docs/outings.md). Actions for yourself and for others: [docs/actions.md](docs/actions.md). State bars, work efficiency and money: [docs/state_and_income.md](docs/state_and_income.md). The front door and visitor cards: [docs/visitors.md](docs/visitors.md). The optional account server: [account_server/README_account_server.md](account_server/README_account_server.md). The backend interface: [README_backend_protocol.md](README_backend_protocol.md).
+
+### Data-driven by design
 
 The game does not hard-code who speaks or what happens. It sends a snapshot of each character's state to a backend and carries out the instructions that come back. Three ways of driving it are planned:
 
@@ -57,7 +71,11 @@ The game does not hard-code who speaks or what happens. It sends a snapshot of e
 
 All backends use the same JSON interface, described in [README_backend_protocol.md](README_backend_protocol.md). `backend_basic` is a minimal example you can replace with your own model. A remote backend that fails falls back to the built-in one.
 
-## Tests
+### Characters and visitors
+
+Every character type and every visitor is one plain YAML file. Identifiers such as `id`, `species`, `voice` and `pronoun` (`he`, `she`, `it`) are English codes, and every name or line of text is an object with one entry per interface language: `frontend/src/data/cards` for the household types and `frontend/src/data/visitors` for the visitors. Edit or add a file, then run `node tools/build_cards.js` to pack them into the scripts the page loads. The page has no build step of its own and still opens straight from `index.html`.
+
+### Tests
 
 ```
 cd frontend
@@ -69,24 +87,12 @@ python frontend/tests/backend_compare.py 1 3
 
 `logic_test.js` covers loading, characters, rules, time, dialogue, saves and language completeness. `sim_eval.js` runs a household for a few virtual days with a simple attention strategy and checks invariants. The interface itself has no automated tests yet.
 
-## Characters and visitors
-
-Every character type and every visitor is one plain YAML file. Identifiers such as `id`, `species`, `voice` and `pronoun` (`he`, `she`, `it`) are English codes, and every name or line of text is an object with one entry per interface language: `frontend/src/data/cards` for the household types and `frontend/src/data/visitors` for the visitors. Edit or add a file, then run `node tools/build_cards.js` to pack them into the scripts the page loads. The page has no build step of its own and still opens straight from `index.html`.
-
-## Project layout
+### Project layout
 
 - `frontend`: the game. `src/core` is the game itself, `src/world` the rooms and drawing, `src/backend` the protocol and built-in backend, `src/data` the starting data and the card sources, `src/ui` the interface, `locales` the language packs, `tests` the tests.
 - `backend_basic`: a minimal remote backend.
 - `media`: screenshots and action previews.
 - `android`: reserved, on hold.
-
-## Status
-
-Early version, currently 0.69. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
-
-## Not a health product
-
-This is a game. It is not a medical, psychological or care product and gives no diagnosis, treatment or medication advice. Conditions in the game are simple scenarios, not medical judgments. If you are having a hard time, please reach out to someone you trust or to a local professional service.
 
 ## License and credits
 

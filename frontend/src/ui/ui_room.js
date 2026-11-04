@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><div class="dlgcard" id="dlgCard"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -78,9 +78,9 @@
   function onHover(e) {
     if (e.pointerType && e.pointerType !== 'mouse') return;
     if (U.holdPid || e.buttons) return;
-    if (e.target.closest('.bubble, .away, .info, .edit, #placeNav, #roster, .cornerbox')) { clearTimeout(hoverT); hoverT = null; setHov(null); return; }
+    if (e.target.closest('.bubble, #dlgCard, #placeNav, #roster, .cornerbox')) { clearTimeout(hoverT); hoverT = null; setHov(null); return; }
     const ring = $r('#ringLayer'), g = ring && U.ringGeom;
-    const overRing = ring && (e.target.closest('#ringLayer') || (g && Math.hypot(e.clientX - g.x, e.clientY - g.y) <= g.r));
+    const overRing = ring && (e.target.closest('#ringLayer') || (g && e.clientX >= g.l - 12 && e.clientX <= g.r + 12 && e.clientY >= g.t - 12 && e.clientY <= g.b + 12));
     const hit = overRing && e.target.closest('#ringLayer') ? null : U.pickAt(e.clientX, e.clientY), id = hit ? hit.dataset.id : null;
     setHov(id);
     if (id && ring && U.sel === id) { clearTimeout(hoverT); hoverT = null; clearTimeout(closeT); closeT = null; return; }
@@ -176,15 +176,16 @@
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
     $r('#roomEmpty') && $r('#roomEmpty').remove();
     if (!all.length) { const d = doc().createElement('div'); d.id = 'roomEmpty'; d.className = 'mute'; d.textContent = t('room.empty'); stage.appendChild(d); }
-    /* 同时摊开的气泡最多两个，窄屏一个，取最新的，加上玩家自己点开过的；其余收成小气泡，免得盖住一屋子人 */
-    const openIds = new Set(people.filter(p => G.req[p.id] && !G.req[p.id].folded).sort((a, b) => G.req[b.id].since - G.req[a.id].since).slice(0, (U.room && U.room.clientWidth < 560) ? 1 : 2).map(p => p.id));
+    /* 对话卡一次只开一张：沿用手上这张，没有了才换最新的请求；其余请求收成头顶的小标，点了才换过去 */
+    const cands = people.filter(p => G.req[p.id] && !G.req[p.id].folded);
+    if (!cands.some(p => p.id === U.cardPid)) U.cardPid = (cands.sort((a, b) => G.req[b.id].since - G.req[a.id].since)[0] || {}).id || null;
     for (const p of people) {
       let c = stage.querySelector(`.cx[data-id="${p.id}"]`);
       if (!c) {
         c = doc().createElement('div'); c.className = 'cx'; c.dataset.id = p.id;
         c.innerHTML = '<div class="body"></div><div class="fx"></div><div class="pops"></div><div class="tears"><svg viewBox="0 0 100 130"><path class="drop" d="M34 58 q-4 7 0 10 q4 -3 0 -10Z"/><path class="drop d2" d="M66 58 q-4 7 0 10 q4 -3 0 -10Z"/></svg></div><div class="badges"></div><div class="nm"></div><div class="slot"></div>';
         /* 单击弹出操作圈，鼠标移上去只高亮。重叠的人由 pickAt 按指针离谁近选 */
-        c.onclick = e => { if (e.target.closest('.bubble') || e.target.closest('.away') || e.target.closest('.info') || e.target.closest('.edit')) return; if ($r('#ringLayer') && U.sel === p.id) return; U.sel = p.id; U.ringByHover = false; U.openRing(p.id); };
+        c.onclick = e => { if (e.target.closest('.bubble')) return; if ($r('#ringLayer') && U.sel === p.id) return; U.sel = p.id; U.ringByHover = false; U.openRing(p.id); };
         c.style.transition = 'none';
         stage.appendChild(c);
         win().requestAnimationFrame(() => { if (!c._frozen) c.style.transition = ''; });
@@ -212,80 +213,54 @@
       if (c.dataset.nm !== nmSig) {
         c.dataset.nm = nmSig;
         const pct = v => Math.round(v * 100);
-        c.querySelector('.nm').innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span class="zzz" title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${(p.person.conditions || []).length ? '<span class="sick" title="' + esc((p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ')) + '">🩺</span>' : ''}<span class="edit" title="${esc(t('room.edit', { name: p.person.name }))}">✎</span><span class="info" title="${esc(t('room.info', { name: p.person.name }))}">ⓘ</span><span class="away" title="${esc(t('room.away', { name: p.person.name }))}">×</span>
+        c.querySelector('.nm').innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>
           <div class="bar mood" title="${esc(t('room.bar', { mood: pct(p.state.mood), frail: pct(p.state.frailty) }))}"><i style="width:${pct(p.state.mood)}%"></i></div>`;
-        c.querySelector('.away').onclick = e => { e.stopPropagation(); G.setActive(p.id, false); };
-        c.querySelector('.info').onclick = e => { e.stopPropagation(); U.statusDialog(p.id); };
-        c.querySelector('.edit').onclick = e => { e.stopPropagation(); U.addDialog(null, () => {}, p.id); };
       }
       /* 动作动画 */
       const fx = G.fx[p.id];
       if (fx && Date.now() - fx.t < U.fxDuration) {
         if (c.dataset.fxt !== String(fx.t)) { c.dataset.fxt = String(fx.t); c.dataset.fx = fx.act; c.querySelector('.fx').innerHTML = U.fxMarkup(fx.act, p.species.id); }
       } else if (c.dataset.fx) { delete c.dataset.fx; delete c.dataset.fxt; c.querySelector('.fx').innerHTML = ''; }
-      /* 头上弹出的事件：有人开口、完成打勾、发生了事情 */
+      /* 头顶只留一个槽：打勾是短暂插队，其余按轻重只显示最要紧的一件，其他的在操作面板里看 */
       {
-        const pops = c.querySelector('.pops'), nowT = Date.now();
         if (c._popN === undefined) c._popN = 0;
-        for (const e of G.pops) if (e.pid === p.id && e.n > c._popN) {
-          c._popN = e.n;
-          if (nowT - e.t > 3000) continue;
-          const k = pops.children.length, sp = doc().createElement('span');
-          sp.className = 'pop ' + e.kind; sp.textContent = e.icon;
-          sp.style.marginLeft = ((k % 2 ? 1 : -1) * Math.ceil(k / 2) * 26) + 'px';
-          pops.appendChild(sp); setTimeout(() => sp.remove(), 4200);
-        }
+        for (const e of G.pops) if (e.pid === p.id && e.n > c._popN) { c._popN = e.n; if (e.kind === 'done' && Date.now() - e.t < 3000) c._doneUntil = Date.now() + 1300; }
       }
-      /* 徽标 */
-      const defs = G.needsOf(p), b = [];
-      for (const k in defs) if (p.state.needs[k] > U.NEED_LIT) b.push(`<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(k, defs[k]))}">${defs[k].icon || '•'}</span>`);
-      if (CY.world.errandOf(p) === 'help') b.unshift('<span title="' + esc(t('badge.help')) + '">🤝</span>');
-      if (G.flag(p, 'hospital')) b.unshift('<span title="' + esc(t('loc.hospital')) + '">🏥</span>');
-      if (G.flag(p, 'hurt')) b.unshift('<span class="urgent" title="' + esc(t('log.fall_minor', { name: p.person.name })) + '">❗</span>');
-      const bs = b.join('');
-      if (c.dataset.bd !== bs) { c.querySelector('.badges').innerHTML = bs; c.dataset.bd = bs; }
-      /* 气泡 */
-      const req = G.req[p.id], toast = G.toast[p.id], hid = !!req && (req.folded || (!req.pinned && !openIds.has(p.id)));
-      c.classList.toggle('calling', !!req && !hid && (req.kind === 'need' || req.kind === 'ask'));
-      const sig = req ? 'r' + req.kind + (hid ? 'f' : '') + req.text + (req.options ? req.options.map(o => o.id).join() : '') + CY.i18n.lang : toast ? 't' + toast.text : '';
+      const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => p.state.needs[k] > U.NEED_LIT).sort((a, b) => p.state.needs[b] - p.state.needs[a]);
+      const req = G.req[p.id], toast = G.toast[p.id], hid = !!req && (req.folded || U.cardPid !== p.id);
+      const done = c._doneUntil > Date.now();
+      let lane = '';
+      if (done) lane = '<span class="done">✓</span>';
+      else if (!req) {
+        const one = (ic, tt, urgent, n) => `<span class="${urgent ? 'urgent' : ''}" title="${esc(tt)}">${ic}${n ? '<i class="n">+' + n + '</i>' : ''}</span>`;
+        if (G.flag(p, 'hurt')) lane = one('❗', t('log.fall_minor', { name: p.person.name }), true);
+        else if (G.crying[p.id]) lane = one('😭', lit.map(k => G.needLabel(k, defs[k])).join(' '), true);
+        else if (G.flag(p, 'hospital')) lane = one('🏥', t('loc.hospital'));
+        else if (CY.world.errandOf(p) === 'help') lane = one('🤝', t('badge.help'));
+        else if (lit.length) lane = one(defs[lit[0]].icon || '•', lit.map(k => G.needLabel(k, defs[k])).join(' '), p.state.needs[lit[0]] > 0.85, lit.length - 1);
+        else if (G.isSleeping(p)) lane = one('💤', t('act.sleeping'));
+      }
+      if (c.dataset.bd !== lane) { c.querySelector('.badges').innerHTML = lane; c.dataset.bd = lane; }
+      c.classList.toggle('donenow', done);
+      /* 身体上一次只演一种持续的动画：做动作 > 哭 > 有事找人 > 虚弱 */
+      c.dataset.st = (fx && Date.now() - fx.t < U.fxDuration) ? 'act' : G.crying[p.id] ? 'cry' : (req || G.needy(p)) ? 'need' : p.state.frailty >= 0.7 ? 'frail' : '';
+      /* 头顶槽：有请求就是一个小标，点了在底部的对话卡里展开；闲聊是一个小气泡；哭闹不弹气泡，只有身体和头顶的图标；揭示和送礼走对话卡 */
+      const big = !!toast && (toast.kind === 'reveal' || toast.kind === 'gift');
+      const icon = req ? (req.kind === 'need' ? (defs[req.need] || {}).icon || '💬' : '💬') : '';
+      const sig = req ? 'c' + icon + (hid ? '' : 'o') + CY.i18n.lang : toast && toast.kind !== 'cry' && !(big && !U.cardPid) ? 't' + toast.kind + toast.text : '';
       c.classList.toggle('talk', !!sig);
       const slot = c.querySelector('.slot');
       if (c.dataset.sig !== sig) {
         c.dataset.sig = sig;
         if (!sig) slot.innerHTML = '';
-        else if (req && hid) {
-          slot.innerHTML = '<div class="bubble chip" role="button" tabindex="0">' + (req.kind === 'need' ? esc(((G.needsOf(p) || {})[req.need] || {}).icon || '💬') : '💬') + '</div>';
-          const open = e => { e.stopPropagation(); req.folded = false; req.pinned = true; if (req.kind !== 'need') req.deadline = 0; c.dataset.sig = ''; U.renderRoom(true); };
+        else if (req) {
+          slot.innerHTML = '<div class="bubble chip' + (hid ? '' : ' on') + '" role="button" tabindex="0">' + esc(icon) + '</div>';
+          const open = e => { e.stopPropagation(); req.folded = false; req.pinned = true; if (req.kind !== 'need') req.deadline = 0; U.cardPid = p.id; c.dataset.sig = ''; U.renderRoom(true); };
           const ch = slot.querySelector('.chip'); ch.onclick = open; ch.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') open(e); };
-        } else if (req) {
-          let btn = '';
-          if (req.kind === 'ask') btn = req.answers.map((a, i) => `<button class="opt" data-a="an${i}">${esc(a)}</button>`).join('') +
-            `<div class="own"><input maxlength="120" placeholder="${esc(t('ask.own'))}"><button data-a="send" class="primary">${esc(t('ask.send'))}</button></div>`;
-          else if (req.kind === 'choice') btn = req.choices.map((ch, i) => `<button data-a="ch${i}">${esc(ch.label)}</button>`).join('');
-          else if (req.kind === 'pick') btn = req.options.map((o, i) => `<button class="opt" data-a="pk${i}">${esc(G.fmt(o.text, p))}</button>`).join('') + `<div class="row2"><button data-a="later">${esc(t('pick.reroll'))}</button></div>`;
-          else if (req.kind === 'nudge') btn = `<button data-a="yes">${esc(t('nudge.yes'))}</button><button data-a="no">${esc(t('nudge.no'))}</button>`;
-          else btn = `<button data-a="later">${esc(t('btn.later'))}</button>`;
-          slot.innerHTML = `<div class="bubble ${req.kind}"><div>${esc(req.text)}</div><div class="btns">${btn}</div>${req.deadline ? '<div class="cd"></div>' : ''}</div>`;
-          slot.querySelectorAll('button').forEach(bt => bt.onclick = e => {
-            e.stopPropagation();
-            const a = bt.dataset.a;
-            if (a === 'later') G.dismiss(p.id);
-            else if (a === 'send') { const v = slot.querySelector('.own input').value; if (v.trim()) G.answerAsk(p.id, null, v); }
-            else if (a.startsWith('an')) G.answerAsk(p.id, +a.slice(2));
-            else if (a === 'yes') G.answerNudge(p.id, true);
-            else if (a === 'no') G.answerNudge(p.id, false);
-            else if (a.startsWith('ch')) G.choose(p.id, +a.slice(2));
-            else if (a.startsWith('pk')) G.pickSaying(p.id, +a.slice(2));
-          });
-          const inp = slot.querySelector('.own input');
-          if (inp) inp.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter' && inp.value.trim()) G.answerAsk(p.id, null, inp.value); };
-        } else slot.innerHTML = `<div class="bubble ${toast.kind}">${esc(toast.text)}</div>`;
-      }
-      if (req && req.deadline) {
-        const cd = slot.querySelector('.cd');
-        if (cd) cd.style.width = Math.max(0, (req.deadline - Date.now()) / (req.deadline - req.since) * 100) + '%';
+        } else slot.innerHTML = `<div class="bubble ${toast.kind}" title="${esc(toast.text)}">${esc(toast.text)}</div>`;
       }
     }
+    U.renderCard(people);
     U.fitBubbles(U.room);
     U.syncFreeze(); U.renderPlayer(); U.renderNav(); U.renderRoster();
   };
@@ -392,43 +367,116 @@
   /* 头顶的需求图标和环里亮起的行动用同一个门槛，也是宝宝和宠物开始催人的线 */
   U.NEED_LIT = 0.5;
   U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > U.NEED_LIT);
-  const ringOff = () => { if (U.room) U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); };
-  /* 操作结束，选中的状态跟着清掉：画面上的名字和左下的卡片都回到默认，选中只存在于操作圈开着的时候 */
+  const ringOff = () => { if (U.room) { U.room.classList.remove('ring-open'); U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); } };
+  /* 操作结束，选中的状态跟着清掉：画面上的名字和左下的卡片都回到默认，选中只存在于操作面板开着的时候 */
   U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; U.sel = null; ringOff(); U.room.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); };
+  /* 操作面板：贴在角色旁边，人本身完全露出来。名字和状态在上，现在的需求在中间，动作图标按急不急排，更多里是编辑、详情、让他离开。
+     面板开着时场景里其他人的头顶标记和闲聊都收起，只剩底部的对话卡。窄屏变成贴底的抽屉。 */
   U.openRing = function (pid, anchor) {
     U.closeRing();
     const p = G.get(pid), acts = Object.values(G.actionsOf(p));
     const fig = $r(`.cx[data-id="${pid}"]`);
     if (fig) fig.classList.add('ring-on');
+    U.room.classList.add('ring-open');
     const cx = (anchor || fig || U.room).getBoundingClientRect();
-    const n = acts.length, R = Math.max(58, Math.round(n * 6.6 + 14)), half = 18 + 4;
-    const vw = win().innerWidth, vh = win().innerHeight;
-    /* 圈心在角色中间，圈整个落在窗口里 */
-    let ox = cx.left + cx.width / 2, oy = cx.top + cx.height * 0.45;
-    ox = Math.min(vw - R - half - 4, Math.max(R + half + 4, ox)); oy = Math.min(vh - R - half - 4, Math.max(R + half + 4, oy));
+    const vw = win().innerWidth, vh = win().innerHeight, narrow = vw < 640, W = narrow ? vw - 16 : 244;
     const layer = doc().createElement('div');
-    layer.id = 'ringLayer'; layer.className = 'ring';
-    layer.style.left = ox + 'px'; layer.style.top = oy + 'px';
-    U.ringGeom = { x: ox, y: oy, r: R + half + 14 };
-    const label = doc().createElement('div'); label.className = 'ringlabel';
-    const home = () => { label.innerHTML = `<b>${esc(p.person.name)}</b>`; };
-    home(); layer.appendChild(label);
-    acts.forEach((a, i) => {
-      const ang = (-90 + 360 * i / n) * Math.PI / 180;
-      const sec = G.holdSeconds(a), cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec }), urgent = U.actUrgent(p, a);
+    layer.id = 'ringLayer'; layer.className = 'opanel' + (narrow ? ' sheet' : '');
+    layer.style.width = W + 'px';
+    const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => p.state.needs[k] > U.NEED_LIT).sort((a, b) => p.state.needs[b] - p.state.needs[a]);
+    const conds = (p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ');
+    const head = doc().createElement('div'); head.className = 'ophead';
+    head.innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${conds ? '<span title="' + esc(conds) + '">🩺</span>' : ''}<button class="x" aria-label="×">×</button>`;
+    head.querySelector('.x').onclick = () => { U.closeRing(); U.renderRoom(true); };
+    layer.appendChild(head);
+    if (lit.length) {
+      const nd = doc().createElement('div'); nd.className = 'opneeds';
+      nd.innerHTML = lit.map(k => `<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}">${defs[k].icon || '•'} ${esc(G.needLabel(k, defs[k]))}</span>`).join('');
+      layer.appendChild(nd);
+    }
+    const label = doc().createElement('div'); label.className = 'oplabel'; label.innerHTML = '&nbsp;';
+    const home = () => { label.innerHTML = '&nbsp;'; };
+    layer.appendChild(label);
+    const grid = doc().createElement('div'); grid.className = 'opgrid';
+    acts.map(a => ({ a, urgent: U.actUrgent(p, a) })).sort((x, y) => (y.urgent ? 1 : 0) - (x.urgent ? 1 : 0)).forEach(({ a, urgent }) => {
+      const sec = G.holdSeconds(a), cost = t('unit.sec', { n: sec % 1 ? sec.toFixed(1) : sec });
       const text = a.label + ' · ' + cost;
       const b = doc().createElement('button');
       b.className = 'ico ' + (urgent ? 'urgent' : 'calm');
-      b.style.left = (R * Math.cos(ang)) + 'px'; b.style.top = (R * Math.sin(ang)) + 'px';
       b.title = text; b.setAttribute('aria-label', text);
       b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>`;
       const show = () => { label.innerHTML = `<b>${esc(a.label)}</b><small>${esc(cost)}</small>`; };
       b.onpointerenter = show; b.onfocus = show; b.onpointerleave = home; b.onblur = home;
       b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); const r = b.getBoundingClientRect(); U.startHold(pid, a, r.left + r.width / 2, r.top + r.height / 2); };
       b.onpointerup = b.onpointercancel = () => U.endHold(false);
-      layer.appendChild(b);
+      grid.appendChild(b);
     });
+    layer.appendChild(grid);
+    const more = doc().createElement('div'); more.className = 'opmore';
+    more.innerHTML = `<button class="tog" aria-label="⋯">⋯</button><span class="items"><button data-a="info">${esc(t('room.info', { name: p.person.name }))}</button><button data-a="edit">${esc(t('room.edit', { name: p.person.name }))}</button><button data-a="away">${esc(t('room.away', { name: p.person.name }))}</button></span>`;
+    more.querySelector('.tog').onclick = () => more.classList.toggle('open');
+    more.querySelector('[data-a=info]').onclick = () => { U.closeRing(); U.renderRoom(true); U.statusDialog(pid); };
+    more.querySelector('[data-a=edit]').onclick = () => { U.closeRing(); U.renderRoom(true); U.addDialog(null, () => {}, pid); };
+    more.querySelector('[data-a=away]').onclick = () => { if (!win().confirm(t('room.away', { name: p.person.name }) + '?')) return; U.closeRing(); G.setActive(pid, false); U.renderRoom(true); };
+    layer.appendChild(more);
+    layer.style.left = '0px'; layer.style.top = '0px';
     U.room.appendChild(layer);
+    /* 先量一下容器的原点和面板的高度，再摆：右边放得下放右边，否则放左边；窄屏贴底 */
+    const o = layer.getBoundingClientRect(), H = layer.offsetHeight;
+    let x = cx.right + 10, y = cx.top - 10;
+    if (x + W > vw - 8) x = cx.left - 10 - W;
+    x = Math.min(vw - W - 8, Math.max(8, x));
+    y = Math.min(vh - H - 8, Math.max(8, y));
+    if (narrow) { x = 8; y = vh - H - 8; }
+    layer.style.left = (x - o.left) + 'px'; layer.style.top = (y - o.top) + 'px';
+    U.ringGeom = { l: x, t: y, r: x + W, b: y + H };
+  };
+
+  /* 对话卡：固定在房间底部，一次一张。请求在这里回答，揭示和送礼的话也在这里；场景里只留头顶的小标 */
+  U.renderCard = function (people) {
+    const host = $r('#dlgCard'); if (!host) return;
+    const rp = U.cardPid && people.find(q => q.id === U.cardPid), req = rp && G.req[rp.id];
+    let p = null, kind = '', sig = '';
+    if (rp && req && !req.folded) { p = rp; kind = 'req'; sig = 'q' + p.id + req.kind + req.text + (req.options ? req.options.map(o => o.id).join() : '') + CY.i18n.lang; }
+    else {
+      const q = people.find(x => G.toast[x.id] && (G.toast[x.id].kind === 'reveal' || G.toast[x.id].kind === 'gift'));
+      if (q) { p = q; kind = 'say'; sig = 'x' + q.id + G.toast[q.id].text; }
+    }
+    if (host.dataset.sig !== sig) {
+      host.dataset.sig = sig;
+      if (!p) host.innerHTML = '';
+      else if (kind === 'say') {
+        const to = G.toast[p.id];
+        host.innerHTML = `<div class="bubble card ${to.kind}"><b>${esc(p.person.name)}</b><div>${esc(to.text)}</div><div class="btns"><button data-a="x" aria-label="×">×</button></div></div>`;
+        host.querySelector('button').onclick = e => { e.stopPropagation(); delete G.toast[p.id]; U.renderRoom(true); };
+      } else {
+        let btn = '';
+        if (req.kind === 'ask') btn = req.answers.map((a, i) => `<button class="opt" data-a="an${i}">${esc(a)}</button>`).join('') +
+          `<div class="own"><input maxlength="120" placeholder="${esc(t('ask.own'))}"><button data-a="send" class="primary">${esc(t('ask.send'))}</button></div>`;
+        else if (req.kind === 'choice') btn = req.choices.map((ch, i) => `<button data-a="ch${i}">${esc(ch.label)}</button>`).join('');
+        else if (req.kind === 'pick') btn = req.options.map((o, i) => `<button class="opt" data-a="pk${i}">${esc(G.fmt(o.text, p))}</button>`).join('') + `<div class="row2"><button data-a="later">${esc(t('pick.reroll'))}</button></div>`;
+        else if (req.kind === 'nudge') btn = `<button data-a="yes">${esc(t('nudge.yes'))}</button><button data-a="no">${esc(t('nudge.no'))}</button>`;
+        else btn = `<button data-a="later">${esc(t('btn.later'))}</button>`;
+        host.innerHTML = `<div class="bubble card ${req.kind}"><b>${esc(p.person.name)}</b><div>${esc(req.text)}</div><div class="btns">${btn}</div>${req.deadline ? '<div class="cd"></div>' : ''}</div>`;
+        host.querySelectorAll('button').forEach(bt => bt.onclick = e => {
+          e.stopPropagation();
+          const a = bt.dataset.a;
+          if (a === 'later') G.dismiss(p.id);
+          else if (a === 'send') { const v = host.querySelector('.own input').value; if (v.trim()) G.answerAsk(p.id, null, v); }
+          else if (a.startsWith('an')) G.answerAsk(p.id, +a.slice(2));
+          else if (a === 'yes') G.answerNudge(p.id, true);
+          else if (a === 'no') G.answerNudge(p.id, false);
+          else if (a.startsWith('ch')) G.choose(p.id, +a.slice(2));
+          else if (a.startsWith('pk')) G.pickSaying(p.id, +a.slice(2));
+        });
+        const inp = host.querySelector('.own input');
+        if (inp) inp.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter' && inp.value.trim()) G.answerAsk(p.id, null, inp.value); };
+      }
+    }
+    if (kind === 'req' && req.deadline) {
+      const cd = host.querySelector('.cd');
+      if (cd) cd.style.width = Math.max(0, (req.deadline - Date.now()) / (req.deadline - req.since) * 100) + '%';
+    }
   };
 
   /* 长按：按住这么多秒，动作才做完。要照顾的人在别的地点，先去那里。同一个地点，主角直接出现在他旁边。

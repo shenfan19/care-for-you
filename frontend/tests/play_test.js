@@ -287,8 +287,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.toast = {}; G.req = {}; G.toastQ = []; G.toastGapUntil = 0;
     const ps = G.activePeople().filter(p => !p.person.visitor).slice(0, 5);
     for (const p of ps) G.toastFor(p, '说话', 'soft');
-    check('同一屏说话气泡不超过上限，多的排队', Object.keys(G.toast).length <= 2 && G.toastQ.length >= ps.length - 2, Object.keys(G.toast).length + ' 个，队里 ' + G.toastQ.length);
-    G.toastGapUntil = 0; for (const id in G.toast) G.toast[id].until = 0; G.toastTick();
+    check('同一屏说话气泡不超过上限，多的排队', Object.keys(G.toast).length <= 1 && G.toastQ.length >= ps.length - 1, Object.keys(G.toast).length + ' 个，队里 ' + G.toastQ.length);
+    G.toastGapUntil = 0; for (const id in G.toast) delete G.toast[id]; G.toastTick();
     check('前一个说完后排队的冒出来', G.toastQ.length < ps.length - 1);
   }
 

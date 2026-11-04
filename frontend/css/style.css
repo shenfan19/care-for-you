@@ -73,9 +73,6 @@ body.pip { margin:0; } body.pip .room { border:none; border-radius:0; min-height
 .bubble:not(.chip)::after { content:''; position:absolute; left:calc(50% - var(--dx, 0px)); bottom:-6px; width:10px; height:10px; background:var(--card); border-right:1px solid var(--line); border-bottom:1px solid var(--line); transform:translateX(-50%) rotate(45deg); }
 .bubble.chip { width:auto; padding:3px 9px; cursor:pointer; font-size:14px; }
 .bubble .cd { height:2px; background:var(--accent); margin-top:6px; border-radius:1px; }
-.ring { position:fixed; width:0; height:0; z-index:40; }
-.ring button { position:absolute; transform:translate(-50%,-50%); white-space:nowrap; padding:4px 10px; font-size:13px; box-shadow:0 2px 8px #0002; touch-action:none; }
-.ring button small { color:var(--mute); margin-left:4px; }
 #hold { position:fixed; width:64px; height:64px; margin:-32px 0 0 -32px; pointer-events:none; z-index:50; display:none; }
 #hold circle { fill:none; stroke-width:5; } #hold .bg { stroke:var(--line); } #hold .fg { stroke:var(--accent); stroke-linecap:round; transform:rotate(-90deg); transform-origin:32px 32px; }
 
@@ -136,7 +133,6 @@ body.pip .bubble { width:170px; }
 .cx[data-fx=feed] .av { animation:chew .35s ease-in-out 8; }
 .cx[data-fx=talk] .av, .cx[data-fx=medicine] .av { animation:nod .6s ease-in-out 3; }
 .cx[data-fx=soothe] .av, .cx[data-fx=rest] .av { animation:sway 2s ease-in-out 2; }
-.cx.calling .av { animation:bob 1.2s ease-in-out infinite; }
 @keyframes squish { 50% { transform:scale(1.04,.94); } }
 @keyframes hop { 50% { transform:translateY(-8px); } }
 @keyframes sip { 50% { transform:rotate(-3deg); } }
@@ -165,10 +161,8 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .stagenote { font-size:12px; margin:-2px 0 6px; }
 .cx .tears { display:none; position:absolute; left:0; right:0; top:0; height:178px; pointer-events:none; z-index:3; }
 .cx .tears svg { width:100%; height:100%; } .cx .tears .drop { fill:#7ec0ee; animation:tear 1s ease-in infinite; } .cx .tears .d2 { animation-delay:.4s; }
-.cx.crying .tears { display:block; } .cx.crying .av { animation:shake .35s ease-in-out infinite; }
 .cx.top .nm b::after { content:" ●"; color:var(--accent); font-size:10px; }
 .cx.nanny .nm b::before { content:"👩 "; font-size:11px; }
-.bubble.cry { border-color:#7ec0ee; }
 @keyframes tear { 0% { transform:translateY(0); opacity:0; } 20% { opacity:1; } 100% { transform:translateY(26px); opacity:0; } }
 @keyframes shake { 25% { transform:translateX(-1.5px) rotate(-1deg); } 75% { transform:translateX(1.5px) rotate(1deg); } }
 
@@ -182,7 +176,7 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .room::after { z-index:3; }
 .cx.sleeping .eyes { animation:none; transform:scaleY(.12); }
 .cx.sleeping .av { animation:none; filter:brightness(.92); }
-.cx .zzz, .cx .sick, .cx .info { font-size:11px; margin-left:3px; } .cx .info { display:none; color:var(--mute); cursor:pointer; } .cx:hover .info { display:inline; }
+.cx .zzz, .cx .sick { font-size:11px; margin-left:3px; }
 .bubble.self { border-style:dashed; font-style:italic; color:var(--mute); }
 .cx .nm { text-shadow:0 0 3px var(--card), 0 0 3px var(--card); }
 /* 现实、故事、暂停 */
@@ -205,9 +199,8 @@ button.danger { color:#b3261e; }
 .room.iso .stage { position:absolute; inset:0; display:block; pointer-events:none; z-index:4; }
 .room.iso .cx { position:absolute; width:8cqw; transform:translate(-50%, -88%); pointer-events:auto; z-index:calc(10 + var(--z, 0)); }
 .room.iso .cx.talk { z-index:calc(1000 + var(--z, 0)); }
-.room.iso .cx .body { height:10.4cqw; } .room.iso .cx .tears { display:none !important; }
+.room.iso .cx .body { height:10.4cqw; } 
 .room.iso .cx .nm { font-size:clamp(9px, 1.35cqw, 12px); padding:0 2px; white-space:nowrap; }
-.room.iso .cx .nm .edit, .room.iso .cx .nm .info, .room.iso .cx .nm .away { display:none !important; }
 .room.iso .cx .badges { top:-8px; } .room.iso .cx .badges span { width:18px; height:18px; font-size:11px; }
 .room.iso .cx.player { pointer-events:none; } .room.iso .cx.player .nm { color:var(--mute); }
 .room:not(.iso) .placenav .here, .room:not(.iso) .roster { display:none; }
@@ -230,8 +223,6 @@ button.danger { color:#b3261e; }
 .rcard .rb { position:absolute; left:-4px; top:-4px; font-size:11px; background:var(--card); border:1px solid var(--line); border-radius:50%; width:17px; height:17px; display:grid; place-items:center; } .rcard .rb.urgent { border-color:var(--accent); }
 .rcard .ri { position:absolute; right:1px; top:0; font-size:10px; color:var(--mute); } .rcard .ri:hover { color:var(--accent); }
 .taskrow[draggable=true] { cursor:grab; }
-.cx .edit, .cx .info { display:inline !important; font-size:11px; margin-left:3px; color:var(--mute); cursor:pointer; }
-.cx .edit:hover, .cx .info:hover { color:var(--accent); }
 .fftag { background:var(--soft); border:1px solid var(--line); border-radius:8px; padding:1px 8px; font-size:13px; }
 
 .plist { max-height:50vh; overflow:auto; }
@@ -251,15 +242,6 @@ button.danger { color:#b3261e; }
 }
 
 /* 环形菜单：图标一圈，需求对应的是彩色，其余灰色但也能点，中间显示名字 */
-.ring button.ico { padding:0; width:36px; height:36px; border-radius:50%; font-size:19px; line-height:1; display:grid; place-items:center; background:var(--card); position:absolute; }
-.ring button.ico .e { display:block; transition:filter .15s, opacity .15s; }
-.ring button.ico.calm .e { filter:grayscale(1); opacity:.55; }
-.ring button.ico.calm:hover .e, .ring button.ico.calm:focus-visible .e { filter:none; opacity:1; }
-.ring button.ico.urgent { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent), 0 2px 8px #0002; }
-.ring button.ico.dim { opacity:.6; }
-.ringlabel { position:absolute; transform:translate(-50%,-50%); min-width:84px; max-width:150px; text-align:center; font-size:13px; line-height:1.3; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:4px 8px; pointer-events:none; box-shadow:0 2px 8px #0002; }
-.ringlabel small { display:block; color:var(--mute); font-size:11px; }
-.cx.ring-on .badges { visibility:hidden; }
 
 /* 标题：一颗被托着的心，斜体衬线，for 小一点，用主题色 */
 header h1.brand { display:flex; align-items:center; gap:10px; margin:0; font-family:Georgia, "Palatino Linotype", "Songti SC", "Noto Serif CJK SC", serif; font-style:italic; font-weight:600; font-size:38px; letter-spacing:.5px; line-height:1.1; }
@@ -269,8 +251,6 @@ header h1.brand em { font-size:.58em; color:var(--accent); font-weight:500; marg
 header { align-items:center; }
 
 /* 宝宝这类一直要人的角色，需求超过一半就一直亮着 */
-.cx.needy .body { filter:drop-shadow(0 0 7px var(--accent)); animation:needyglow 1.4s ease-in-out infinite; }
-@keyframes needyglow { 0%, 100% { filter:drop-shadow(0 0 3px var(--accent)); } 50% { filter:drop-shadow(0 0 11px var(--accent)); } }
 
 /* 角色在房间里慢慢走：位置变化是一段长的滑动，主角跟着你的操作走得快些 */
 .room.iso .cx { transition:left 7s ease-in-out, top 7s ease-in-out; }
@@ -376,3 +356,57 @@ button.corner.unread { position:relative; }
 .gift > div:first-child { font-size:1.5em; }
 .gift.pick { cursor:pointer; }
 .gift.pick.on { border-color:var(--accent); }
+
+/* 头顶只有一个槽：一个图标，多的需求用 +N 表示，完整的在操作面板里 */
+.badges span { position:relative; }
+.badges span.done { background:#6fae78; border-color:#5a9a63; color:#fff; font-weight:700; animation:donepop 1.3s ease-out both; }
+@keyframes donepop { 0% { transform:scale(.3); opacity:0; } 20% { transform:scale(1.25); opacity:1; } 35% { transform:scale(1); } 85% { opacity:1; } 100% { opacity:0; } }
+.badges .n { position:absolute; right:-9px; top:-6px; font-size:10px; font-style:normal; line-height:1; background:var(--accent); color:#fff; border-radius:8px; padding:1px 4px; }
+.cx.donenow .slot .chip { visibility:hidden; }
+.bubble.chip.on { border-color:var(--accent); }
+.bubble:not(.chip):not(.card) { max-width:150px; width:max-content; font-size:12px; line-height:1.4; padding:5px 8px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.bubble:not(.chip):not(.card)::after { display:none; }
+
+/* 身体上一次只演一种持续的动画：做动作 > 哭 > 有事找人 > 虚弱。有事找人是柔和的光，隔几秒才闪一下，不一直闪 */
+.cx[data-st=cry] .av { animation:shake .35s ease-in-out infinite; }
+.cx[data-st=cry] .tears { display:block; }
+.cx[data-st=need] .body { animation:needyglow 6s ease-in-out infinite; }
+.cx[data-st=act] .av, .cx[data-st=act] .body { animation:none; filter:none; }
+@keyframes needyglow { 0%, 62%, 100% { filter:none; } 78% { filter:drop-shadow(0 0 9px var(--accent)); } }
+.room.iso .cx .tears { height:10.4cqw; }
+@media (prefers-reduced-motion: reduce) { .cx[data-st=need] .body, .cx[data-st=cry] .av { animation:none; } }
+
+/* 对话卡：固定在房间底部，一次一张 */
+.dlgcard { position:absolute; left:50%; bottom:10px; transform:translateX(-50%); width:min(420px, calc(100% - 24px)); z-index:30; }
+.dlgcard:empty { display:none; }
+.dlgcard .bubble { position:static; transform:none; width:auto; max-width:none; font-size:14px; padding:10px 12px; display:block; overflow:visible; }
+.dlgcard .bubble::after { display:none; }
+.dlgcard .bubble > b { display:block; font-size:12px; color:var(--mute); margin-bottom:2px; }
+.dlgcard .bubble.ask { width:auto; }
+.dlgcard .bubble .btns button { font-size:13px; padding:3px 12px; }
+.dlgcard .bubble .btns button.opt { width:100%; }
+
+/* 操作面板：贴在角色旁边，不盖住人 */
+.opanel { position:fixed; z-index:40; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:8px 10px; box-shadow:0 4px 18px #0003; }
+.opanel .ophead { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.opanel .ophead b { flex:1; font-size:15px; }
+.opanel .ophead .x { padding:0 8px; font-size:16px; line-height:1.3; border:none; background:none; color:var(--mute); }
+.opanel .opneeds { display:flex; flex-wrap:wrap; gap:4px 8px; font-size:12px; color:var(--mute); margin-bottom:4px; }
+.opanel .opneeds .urgent { color:var(--accent); font-weight:600; }
+.opanel .oplabel { min-height:20px; font-size:13px; line-height:1.5; } .opanel .oplabel small { color:var(--mute); margin-left:6px; }
+.opanel .opgrid { display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; justify-items:center; }
+.opanel button.ico { padding:0; width:38px; height:38px; border-radius:50%; font-size:20px; line-height:1; display:grid; place-items:center; background:var(--card); touch-action:none; }
+.opanel button.ico .e { display:block; transition:filter .15s, opacity .15s; }
+.opanel button.ico.calm .e { filter:grayscale(1); opacity:.55; }
+.opanel button.ico.calm:hover .e, .opanel button.ico.calm:focus-visible .e { filter:none; opacity:1; }
+.opanel button.ico.urgent { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.opanel .opmore { margin-top:6px; border-top:1px solid var(--line); padding-top:4px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.opanel .opmore .tog { border:none; background:none; color:var(--mute); padding:0 6px; }
+.opanel .opmore .items { display:none; gap:4px; flex-wrap:wrap; } .opanel .opmore.open .items { display:flex; }
+.opanel .opmore .items button { font-size:12px; padding:2px 8px; }
+.opanel.sheet { border-radius:16px; }
+.opanel.sheet .opgrid { grid-template-columns:repeat(6, 1fr); }
+/* 面板开着：场景里别人的头顶标记和闲聊都收起，只留底部的对话卡 */
+.room.ring-open .cx .badges, .room.ring-open .cx .slot { visibility:hidden; }
+
+@media (max-width:640px) { .dlgcard { position:fixed; left:8px; right:8px; bottom:8px; transform:none; width:auto; max-height:55vh; overflow:auto; } }

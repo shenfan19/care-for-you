@@ -696,12 +696,11 @@
     const s = G.nextGapSeconds();
     G.nextAt = isFinite(s) ? Date.now() + s * 1000 : Date.now() + 5000;
   }
-  /* 说话气泡不能太密：画面上说话气泡加打开的请求气泡合计不超过上限，超出的排队，前一个出现或消失后隔几秒再冒出来。哭闹和揭示这类要紧的不排队 */
+  /* 闲聊气泡不能太密：画面上同时只有上限那么多个，请求在底部的对话卡里，不占这个数；超出的排队，前一个出现或消失后隔几秒再冒出来。揭示这类要紧的不排队 */
   const bub = () => (G.tpl && G.tpl.system && G.tpl.system.bubbles) || {};
   const liveToasts = () => Object.values(G.toast).filter(x => x.kind !== 'cry').length;
   const narrow = () => typeof document !== 'undefined' && !!(CY.ui && CY.ui.room && CY.ui.room.clientWidth && CY.ui.room.clientWidth < 560);   /* 窄屏上界面只开一个请求气泡，说话气泡的上限也只有一个 */
-  const cap = () => Math.max(0, (narrow() ? bub().narrow || 1 : bub().total || 2) - openReqs());
-  const openReqs = () => Math.min(narrow() ? 1 : 2, Object.values(G.req).filter(r => !r.folded).length);
+  const cap = () => (CY.ui && CY.ui.sel ? 0 : (narrow() ? bub().narrow || 1 : bub().total || 1));   /* 操作面板开着时闲聊先不冒 */
   const showToast = (p, text, kind) => { G.toast[p.id] = { text, kind, until: Date.now() + (kind === 'reveal' ? 16000 : kind === 'cry' ? 6500 : kind === 'self' ? 7000 : 9000) }; };
   const gapMs = () => { const g = bub().gap_seconds || [1.5, 3.5]; return (g[0] + Math.random() * (g[1] - g[0])) * 1000; };
   G.toastQ = []; G.toastGapUntil = 0;
@@ -1060,7 +1059,6 @@
       if (!G.classOf(p).cries || G.maxNeed(p) <= 0.8 || G.isSleeping(p)) continue;
       G.crying[p.id] = true;
       if (!was[p.id]) G.logK(p.id, 'cry', 'log.cry', { name: p.person.name, need: G.refNeed(G.topNeed(p), G.needsOf(p)[G.topNeed(p)]) });
-      if (!G.toast[p.id] || G.toast[p.id].kind !== 'cry') if (!G.req[p.id] || G.req[p.id].kind !== 'ask') G.toastFor(p, line(p, 'cry', null, t('line.cry')), 'cry');
     }
     if (now >= G.nextAt) { if (G.activePeople().length) fire(); scheduleNext(); }
     const wk = G.isWorkTime();
