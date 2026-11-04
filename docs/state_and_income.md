@@ -19,7 +19,9 @@ This page explains the bar under every character, how it relates to your income,
 ## Money
 
 - Money comes from work. Only a couple in the household earns, or you do if there is no couple.
-- Pay is 20 per game hour multiplied by the efficiency and the family bonus, and only while you are sitting at the desk during work hours. Time spent caring for someone away from the desk, or on an outing, does not earn.
+- Pay is the wage per game hour multiplied by work focus, the efficiency and the family bonus, and only while you are sitting at the desk during work hours. Time spent caring for someone away from the desk, or on an outing, does not earn.
+- Work focus is not instant. Sitting down starts it at 10% and it climbs in a straight line to 100% over 20 game minutes. Being called away drops it back to 10% at once. So one long stretch at the desk earns more than many short ones. A partner who is away at work, or on a trip, works without interruption at full focus; the efficiency and family bonus still apply.
+- The 20 minutes is a game setting. The direction comes from research on attention residue after interruptions (Leroy 2009); no reliable source gives a number of minutes. The in-game Knowledge page (Settings) lists every rhythm in the game with its source or says it is a setting.
 - An elder you play receives a fixed pension of 2 per game hour.
 - Money has no penalty. There are no debts and no deadlines. Saving is meant to be slow, so the game works as well for a few focused minutes as for leaving it open.
 
@@ -36,5 +38,5 @@ Prices follow a play day of about five minutes: a toy 80, fruit 200, a bookshelf
 
 ## Where it is defined
 
-- `G.efficiency`, `G.burden`, `G.capacity`, `G.householdBonus`, and the shop table are in `frontend/src/core/economy.js`.
+- `G.focus`, `G.focusStep`, `G.efficiency`, `G.burden`, `G.capacity`, `G.householdBonus`, and the shop table are in `frontend/src/core/economy.js`.
 - The tests are in `frontend/tests/logic_test.js`.

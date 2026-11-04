@@ -36,7 +36,7 @@
       <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
-      <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button>${CY.account.configured(G.cfg) ? `<button id="dacct">${esc(t('acct.title'))}</button>` : ''}</div>
+      <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button><button id="dknow">${esc(t('set.know'))}</button>${CY.account.configured(G.cfg) ? `<button id="dacct">${esc(t('acct.title'))}</button>` : ''}</div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
       <details class="adv"><summary>${esc(t('set.advanced'))}</summary><div class="sform">${advForm}</div></details>
@@ -63,6 +63,7 @@
       await G.load(); alert(t('set.restored', { n })); U.afterPeopleChange();
     };
     dlg.querySelector('#dwipe').onclick = () => U.wipeDialog();
+    dlg.querySelector('#dknow').onclick = () => U.knowledgeDialog();
   };
 
   /* 删除全部本地数据：先建议下载存档，再要求明确确认 */

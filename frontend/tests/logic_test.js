@@ -972,6 +972,23 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
       check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
     }
+    {   /* 参考文献：每个人类需求都有条目，有出处的写了出处，没有的明说是游戏设定 */
+      const R = CY.references, rows = R.rows();
+      check('每个人类需求的每个阶段都有一行，不留空', rows.length >= 9 && rows.every(r => r.item), rows.filter(r => !r.item).map(r => r.need).join());
+      check('所有引用的出处都存在，带 cite', R.items.every(i => (i.refs || []).every(id => R.sources[id] && R.sources[id].cite.length > 20)));
+      check('标了有出处或由出处换算的，必须带至少一条出处', R.items.filter(i => i.status !== 'setting').every(i => (i.refs || []).length >= 1));
+      check('状态只能是三种', R.items.every(i => ['sourced', 'derived', 'setting'].includes(i.status)));
+      check('每条都有中英文的现实说明', R.items.every(i => i.real && i.real.en && i.real['zh-CN']));
+      check('医疗声明有中英文', !!(R.medical.en && R.medical['zh-CN']) && /not medical advice/.test(R.medical.en));
+      const th = R.intervals('thirst'), inf = R.intervals('hunger').find(x => x.stage === 'infant');
+      check('游戏间隔按速率算：口渴 0.08 到亮起 6.25 小时，婴儿饥饿 0.22 约 2.3 小时', Math.abs(th.find(x => x.stage === 'adult').h - 6.25) < 0.01 && Math.abs(inf.h - 0.5 / 0.22) < 0.01, JSON.stringify(th) + JSON.stringify(inf));
+      const gap = R.items.filter(i => i.status === 'sourced' && i.real_h).map(i => { const k = i.key.split(':'), iv = R.intervals(k[0]).find(x => x.stage === (k[1] || x.stage)); return iv ? iv.h / ((i.real_h[0] + i.real_h[1]) / 2) : 1; });
+      check('有出处的需求，游戏间隔和现实区间中点相差不超过一倍半', gap.every(g => g > 0.66 && g < 1.5), JSON.stringify(gap));
+      /* 每种语言都有知识页要用的键，否则知识页在这种语言里会露出键名 */
+      const kk = ['set.know', 'know.intro', 'know.checked', 'know.sec_needs', 'know.sec_focus', 'know.sec_cond', 'know.sec_other', 'know.cond_note', 'know.other', 'know.game', 'know.real_short', 'know.focus', 'know.sourced', 'know.derived', 'know.setting', 'know.stage_all', 'know.stage_infant', 'know.stage_toddler', 'know.stage_child', 'know.stage_teen', 'know.stage_adult', 'know.stage_elder'];
+      const miss = []; for (const lang of ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'fr', 'es', 'de']) { CY.i18n.set(lang); for (const k of kk) if (!CY.i18n.hasOwn(k)) miss.push(lang + ':' + k); } CY.i18n.set('zh-CN');
+      check('八种语言都有知识页的键', miss.length === 0, miss.slice(0, 5).join());
+    }
     for (let i = 0; i < 6; i++) G.applyAction(id, 'medicine');
     G.world.game_minutes += 4 * 1440; G.arcTick();
     check('走完三个阶段，标记完成，之后不再触发', st().stage === 3 && st().done && arcLogs().length === 3);

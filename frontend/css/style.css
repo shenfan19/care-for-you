@@ -441,3 +441,12 @@ button.corner.unread { position:relative; }
 .navarrow.call::after { content:""; position:absolute; right:3px; top:3px; width:9px; height:9px; border-radius:50%; background:var(--accent); border:2px solid var(--card); animation:pulseRing 1.4s infinite; }
 .rcard.away { opacity:.8; }
 .rcard .rl { display:block; font-size:9px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* 知识页 */
+.kn { border-top:1px solid var(--line); padding:6px 0; }
+.kn summary { cursor:pointer; }
+.kn .kbody { padding:4px 0 2px 14px; font-size:13px; }
+.kn .krefs { margin:4px 0 0; padding-left:18px; font-size:12px; color:var(--mute); }
+.kbadge { font-size:11px; padding:0 6px; border-radius:8px; border:1px solid var(--line); margin-left:4px; }
+.kbadge.sourced { border-color:var(--accent); color:var(--accent); }
+.kbadge.derived { border-color:var(--accent); }
