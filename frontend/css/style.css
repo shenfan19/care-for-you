@@ -214,7 +214,7 @@ button.danger { color:#b3261e; }
 @media (max-width:520px) { .navarrow { width:34px; height:80px; font-size:28px; } }
 .placenav .here { color:var(--mute); margin-left:6px; background:var(--card); border-radius:8px; padding:1px 8px; }
 .placenav .travel { position:relative; overflow:hidden; background:linear-gradient(90deg, var(--accent) calc(var(--k, 0) * 100%), var(--card) calc(var(--k, 0) * 100%)); }
-.roster { position:absolute; left:8px; bottom:8px; z-index:30; display:flex; flex-wrap:wrap; gap:5px; max-width:46%; max-height:38%; overflow-y:auto; overflow-x:hidden; padding:5px 5px 2px 5px; }   /* 呼叫时的提示用外圈光晕，不放大，所以不会撑出滚动条 */
+.roster { position:absolute; left:8px; bottom:8px; z-index:30; display:flex; flex-wrap:wrap; gap:5px; max-width:46%; max-height:38%; overflow-y:auto; overflow-x:hidden; padding:5px 5px 2px 5px; }   /* 呼叫时的提示用外圈光晕，不放大，所以不会被裁掉 */
 .rcard { position:relative; width:52px; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:2px 3px 3px; text-align:center; cursor:pointer; font-size:10px; line-height:1.25; opacity:.96; }
 .rcard:hover { border-color:var(--accent); } .rcard.sel { border-color:var(--accent); } .rcard.calling { animation:pulseRing 1.4s infinite; border-color:var(--accent); }
 @keyframes pulseRing { 0%,100% { box-shadow:0 0 0 0 transparent; } 50% { box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent); } }
@@ -376,15 +376,16 @@ button.corner.unread { position:relative; }
 .room.iso .cx .tears { height:10.4cqw; }
 @media (prefers-reduced-motion: reduce) { .cx[data-st=need] .body, .cx[data-st=cry] .av { animation:none; } }
 
-/* 对话卡：固定在房间底部，一次一张 */
-.dlgcard { position:absolute; left:50%; bottom:10px; transform:translateX(-50%); width:min(420px, calc(100% - 24px)); z-index:30; }
+/* 对话卡：固定在房间底部，一次一张，选项横着排，不盖住太多场景 */
+.dlgcard { position:absolute; right:10px; bottom:10px; width:clamp(300px, 54%, 520px); z-index:30; }
 .dlgcard:empty { display:none; }
-.dlgcard .bubble { position:static; transform:none; width:auto; max-width:none; font-size:14px; padding:10px 12px; display:block; overflow:visible; }
+.dlgcard .bubble { position:static; transform:none; width:auto; max-width:none; font-size:14px; line-height:1.45; padding:8px 12px 10px; display:block; overflow:visible; background:color-mix(in srgb, var(--card) 96%, transparent); }
 .dlgcard .bubble::after { display:none; }
-.dlgcard .bubble > b { display:block; font-size:12px; color:var(--mute); margin-bottom:2px; }
-.dlgcard .bubble.ask { width:auto; }
-.dlgcard .bubble .btns button { font-size:13px; padding:3px 12px; }
-.dlgcard .bubble .btns button.opt { width:100%; }
+.dlgcard .bubble > b { font-size:12px; color:var(--mute); margin-right:8px; font-weight:600; }
+.dlgcard .bubble > div:first-of-type { display:inline; }
+.dlgcard .bubble .btns { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.dlgcard .bubble .btns button, .dlgcard .bubble .btns button.opt { width:auto; font-size:13px; padding:3px 12px; text-align:left; }
+.dlgcard .bubble .own { flex:1 1 180px; width:auto; }
 
 /* 操作面板：贴在角色旁边，不盖住人 */
 .opanel { position:fixed; z-index:40; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:8px 10px; box-shadow:0 4px 18px #0003; }
@@ -410,3 +411,33 @@ button.corner.unread { position:relative; }
 .room.ring-open .cx .badges, .room.ring-open .cx .slot { visibility:hidden; }
 
 @media (max-width:640px) { .dlgcard { position:fixed; left:8px; right:8px; bottom:8px; transform:none; width:auto; max-height:55vh; overflow:auto; } }
+
+/* 房间镜头：场景和舞台各有一层外壳负责裁剪，里面的层做缩放平移。人和字不跟着放大 */
+.room:not(.iso) .scenewrap, .room:not(.iso) .stagewrap { display:contents; }
+.room.iso .scenewrap { position:absolute; inset:0; overflow:hidden; border-radius:inherit; z-index:0; }
+.room.iso .stagewrap { position:absolute; inset:0; overflow:hidden; border-radius:inherit; z-index:4; pointer-events:none; }
+.room.iso .scene, .room.iso .stage { transform-origin:0 0; transition:transform .8s ease-in-out; will-change:transform; }
+.room.iso .cx .nm .bar { display:none; }
+.room.iso .cx .nm { transform:scale(calc(1 / var(--zoom, 1))); transform-origin:50% 0; }
+.room.iso .cx .nm b { font-weight:600; color:var(--mute); }
+.room.iso .cx.sel .nm b, .room.iso .cx.hov .nm b { color:var(--ink); }
+.room.iso .cx .badges { top:calc(var(--hd, 0) * 10.4cqw - 6px); transform:scale(calc(1 / var(--zoom, 1))); transform-origin:50% 100%; }
+.room.iso .cx .slot { margin-bottom:calc(var(--hd, 0) * -10.4cqw); transform:scale(calc(1 / var(--zoom, 1))); transform-origin:0 100%; }
+.placenav .zones { display:inline-flex; gap:4px; margin-left:4px; }
+.placenav .zone { position:relative; padding:1px 8px; font-size:15px; line-height:1.4; background:var(--card); }
+.placenav .zone.on { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 16%, var(--card)); }
+.placenav .zone i { font-style:normal; font-size:10px; color:var(--mute); margin-left:3px; }
+.placenav .zone.call::after { content:""; position:absolute; right:-2px; top:-2px; width:9px; height:9px; border-radius:50%; background:var(--accent); border:2px solid var(--card); }
+.room.iso .scene svg image { filter:saturate(.8); }
+.room.iso .cx .body { --ol:drop-shadow(0 0 .6px #4a3320aa) drop-shadow(0 0 .6px #4a3320aa); filter:var(--ol); }
+.room.iso .cx.hov .body { filter:var(--ol) drop-shadow(0 0 6px var(--accent)); }
+.cx[data-st=need] .body { animation-name:needyglow2; }
+@keyframes needyglow2 { 0%, 62%, 100% { filter:var(--ol, none); } 78% { filter:var(--ol, none) drop-shadow(0 0 9px var(--accent)); } }
+.cx[data-st=act] .body { filter:var(--ol, none); }
+
+/* 翻页的时候旧页的复制，滑走后删掉 */
+.room.iso .ghost { pointer-events:none; }
+/* 别处有人在叫：箭头上亮一个点，名单里不在这一页的人标上所在的页 */
+.navarrow.call::after { content:""; position:absolute; right:3px; top:3px; width:9px; height:9px; border-radius:50%; background:var(--accent); border:2px solid var(--card); animation:pulseRing 1.4s infinite; }
+.rcard.away { opacity:.8; }
+.rcard .rl { display:block; font-size:9px; color:var(--accent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

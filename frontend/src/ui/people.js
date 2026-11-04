@@ -79,8 +79,9 @@
       ${U.observeHtml(p)}
       <h3>${esc(t('status.needs'))}</h3>${bars}
       <h3>${esc(t('status.selfdo', { n: Math.round(st.self_care * 100) }))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
-      <div class="row" style="justify-content:space-between;margin-top:12px"><span><button id="stedit">${esc(t('btn.edit'))}</button> <button id="stcard">${esc(t('card.title'))}</button> <button id="starch">${esc(t('btn.archive'))}</button> <button id="stdel">${esc(t('btn.delete'))}</button></span><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
+      <div class="row" style="justify-content:space-between;margin-top:12px"><span>${p.person.visitor && G.visitorCard(p) ? `<button id="stvisit">${esc(t('visitor.intro'))}</button> ` : ''}<button id="stedit">${esc(t('btn.edit'))}</button> <button id="stcard">${esc(t('card.title'))}</button> <button id="starch">${esc(t('btn.archive'))}</button> <button id="stdel">${esc(t('btn.delete'))}</button></span><button id="stclose">${esc(t('btn.close'))}</button></div></div></div>`, true);
     dlg.querySelector('#stclose').onclick = U.closeDialog;
+    const sv = dlg.querySelector('#stvisit'); if (sv) sv.onclick = () => U.visitorIntro(pid);
     dlg.querySelector('#stedit').onclick = () => U.addDialog(null, () => {}, pid);
     dlg.querySelector('#stcard').onclick = () => U.cardDialog(pid);
     dlg.querySelector('#starch').onclick = async () => { await G.archivePerson(pid, true); U.closeDialog(); U.afterPeopleChange(); };

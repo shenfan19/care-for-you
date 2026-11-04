@@ -57,7 +57,12 @@ CY.i18n.register('zh-CN', {
 
   'about.title': '关于 Care for You', 'about.tab_about': '关于', 'about.tab_privacy': '隐私与免责', 'about.tab_credits': '致谢与许可', 'about.tab_version': '版本',
   'about.p1': '手停一停，照看一下家里人。你在工作，他们会不定时来叫你一声。没有分数，也没有惩罚。',
-  'about.p2': '这是一个个人项目，作者是一个人，与任何学校、单位或机构无关，也不代表它们的立场。',
+  'about.p2': '这是沈凡的个人项目，以 MIT 许可证发布。',
+  'set.house_view': '家的显示方式',
+  'house_view.rooms': '分房间',
+  'house_view.house': '整座房子',
+  'visitor.intro': '来客介绍',
+  'visitor.wiki': '在维基百科上了解更多',
   'about.p3': '游戏里的角色都是虚构的。游戏不提供也不鼓励复制已故的人。你记起的话，只是你自己对一类人的印象。',
   'about.p4': '目前是早期版本，会有不完善的地方。欢迎提意见：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。',
   'priv.h1': '数据放在哪里',

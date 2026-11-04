@@ -57,8 +57,8 @@
     draw();
   };
 
-  /* 午夜：不停世界，弹一张到时间自己消失的总结 */
-  G.dayEndHooks.push(info => { if (!info.offline && G.lastSettled && typeof document !== 'undefined') U.dayNotice(G.lastSettled); if (U.renderClock) U.renderClock(); });
+  /* 午夜：世界不停，总结只存进日历，日期格上亮一个未读的点，不再弹卡盖住场景 */
+  G.dayEndHooks.push(() => { if (U.renderClock) U.renderClock(); });
   /* 回来时若追算了几天，打开日历停在最新一天 */
   U.afterStart = () => { U.renderClock && U.renderClock(); };
 })(globalThis.CY = globalThis.CY || {});

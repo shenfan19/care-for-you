@@ -57,7 +57,12 @@ CY.i18n.register('en', {
 
   'about.title': 'About Care for You', 'about.tab_about': 'About', 'about.tab_privacy': 'Privacy and disclaimer', 'about.tab_credits': 'Credits and license', 'about.tab_version': 'Version',
   'about.p1': 'Pause for a moment and look after the people at home. They call for you now and then while you work. No scores, no penalties.',
-  'about.p2': 'This is a personal project by one person. It is not affiliated with any school, employer or organization and does not represent their views.',
+  'about.p2': 'A personal project by Fan Shen, released under the MIT License.',
+  'set.house_view': 'Home view',
+  'house_view.rooms': 'Room by room',
+  'house_view.house': 'Whole house',
+  'visitor.intro': 'About this visitor',
+  'visitor.wiki': 'Read more on Wikipedia',
   'about.p3': 'All characters are fictional. The game does not offer or encourage recreating someone who has passed away. A line you remember is only your own impression of a kind of person.',
   'about.p4': 'This is an early version and will be rough in places. Feedback is welcome: contact@careforyou.dev, or open an issue at github.com/shenfan19/care-for-you.',
   'priv.h1': 'Where your data lives',
@@ -344,7 +349,7 @@ CY.i18n.register("en", {
  "act.selfbp": "Check blood pressure alone",
  "act.selfheat": "Use a heat pack alone",
 
- "ini.ui.clock_12h": "When true, times on screen use a 12-hour clock; the default is 24-hour", "lbl.ui.clock_12h": "12-hour clock", "ini.ui.scene": "Room background: auto is living room by day and bedroom at night; living, bedroom, kitchen, lawn, balcony; none is plain",
+ "ini.ui.house_view": "How the home is shown: rooms is one small scene per area, house is the whole house in one picture", "lbl.ui.house_view": "Home view", "ini.ui.clock_12h": "When true, times on screen use a 12-hour clock; the default is 24-hour", "lbl.ui.clock_12h": "12-hour clock", "ini.ui.scene": "Room background: auto is living room by day and bedroom at night; living, bedroom, kitchen, lawn, balcony; none is plain",
  "ini.play.last_mode": "The mode you were in before pausing, reality or fast. Rarely needs changing.",
  "ini.time.mode": "real is Reality mode, following the real clock; compressed is Fast mode with time sped up; paused stops. The top bar switch changes this"
 });

@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scene" id="scene"></div><div class="stage" id="stage"></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><div class="dlgcard" id="dlgCard"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scenewrap"><div class="scene" id="scene"></div></div><div class="stagewrap"><div class="stage" id="stage"></div></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><div class="dlgcard" id="dlgCard"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -98,22 +98,60 @@
 
   /* 页面：家，办公室，医院是斜视的房子，最后一页是全家总览，原来的大头像加状态 */
   U.viewPlace = 'home';
-  U.PAGES = () => { const L = CY.world.occupiedPlaces(); return G.activePeople().length ? L.concat('family') : []; };
-  U.cyclePlace = function (d) { const L = U.PAGES(); if (L.length < 2) return; const i = L.indexOf(U.viewPlace); U.viewPlace = L[(i + d + L.length) % L.length]; U.renderRoom(true); };
+  /* 家的全局图在最前面，后面是每个房间自己的一页，只画这一页的房间，别的地方接在后面。viewPlace 是 home 或 home:区域 或别的地方 */
+  U.basePlace = () => String(U.viewPlace).split(':')[0];
+  U.viewZone = () => (String(U.viewPlace).includes(':') ? String(U.viewPlace).split(':')[1] : null);
+  U.zoneDef = id => U.ZONES.find(z => z.id === id);
+  U.houseView = () => (ini.get(G.cfg, 'ui', 'house_view') === 'house' ? 'house' : 'rooms');
+  U.PAGES = () => {
+    if (!G.activePeople().length) return [];
+    const out = [], rooms = U.houseView() === 'rooms';
+    for (const p of CY.world.occupiedPlaces()) {
+      if (p !== 'home') { out.push(p); continue; }
+      if (rooms) for (const z of U.ZONES) out.push('home:' + z.id); else out.push('home');
+    }
+    return out;
+  };
+  /* 换到另一页，d 是方向：1 新页从右边滑进来，-1 从左边。旧页的画面复制一份滑出去；镜头不做过渡，免得斜着飞过去 */
+  U.goPage = function (page, d) {
+    const room = U.room, motion = d && room.classList.contains('iso') && !(win().matchMedia && win().matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const ghosts = [];
+    if ($r('#ringLayer') && U.closeRing) U.closeRing();   /* 操作圈属于上一页的人，换页先收起，名单跳转会在新页重新打开 */
+    if (motion) for (const w of room.querySelectorAll('.scenewrap:not(.ghost), .stagewrap:not(.ghost)')) {
+      const g = w.cloneNode(true); g.classList.add('ghost'); g.querySelectorAll('[id]').forEach(n => n.removeAttribute('id')); room.insertBefore(g, w.nextSibling); ghosts.push(g);
+    }
+    U.camJump = true; U.viewPlace = page; U.renderRoom(true); U.camJump = false;
+    if (!motion) return;
+    const mv = (el, from, to, done) => { if (!el.animate) { if (done) done(); return; } const an = el.animate([{ transform: `translateX(${from}%)` }, { transform: `translateX(${to}%)` }], { duration: 360, easing: 'ease-in-out' }); if (done) an.onfinish = done; };
+    for (const g of ghosts) mv(g, 0, -d * 100, () => g.remove());
+    for (const w of room.querySelectorAll('.scenewrap:not(.ghost), .stagewrap:not(.ghost)')) mv(w, d * 100, 0);
+    win().setTimeout(() => ghosts.forEach(g => g.remove()), 700);
+  };
+  U.cyclePlace = function (d) { const L = U.PAGES(); if (L.length < 2) return; const i = L.indexOf(U.viewPlace); U.goPage(L[(i + d + L.length) % L.length], d); };
+  /* 一页的名字，家里的区域页用里面的房间名 */
+  U.pageName = pg => { const z = String(pg).includes(':') ? U.zoneDef(String(pg).split(':')[1]) : null; return z ? z.rooms.map(r => t('loc.' + r)).join(' · ') : pg ? t('loc.' + pg) : ''; };
+  /* 这个人现在在哪一页 */
+  U.pageOf = p => {
+    const W = CY.world, loc = W.driven(p) ? W.player() : W.locationOf(p);
+    if (loc.place !== 'home' || U.houseView() !== 'rooms') return loc.place;
+    const z = U.ZONES.find(q => q.rooms.includes(loc.room));
+    return z ? 'home:' + z.id : 'home';
+  };
+  U.calling = p => !!(G.req[p.id] || G.needy(p) || G.crying[p.id]);
   U.renderScene = function () {
     const el = $r('#scene'); if (!el) return;
     const pages = U.PAGES();
     if (pages.length && !pages.includes(U.viewPlace)) U.viewPlace = pages[0];
     const h = G.dayMinutes() / 60, fam = U.viewPlace === 'family' || !pages.length;
     U.room.classList.toggle('iso', !fam);
-    if (!fam) U.room.style.aspectRatio = CY.world.vw(U.viewPlace) + ' / ' + CY.world.vh(U.viewPlace);   /* 画面比例随房子大小变，小人按百分比摆才对得上 */
+    if (!fam) U.room.style.aspectRatio = CY.world.vw(U.basePlace()) + ' / ' + CY.world.vh(U.basePlace());   /* 画面比例随房子大小变，小人按百分比摆才对得上 */
     else U.room.style.aspectRatio = '';
     let sig, html;
     if (fam) {
       const id = CY.scenes.resolve(ini.get(G.cfg, 'ui', 'scene'), h);
       sig = 'f|' + (id || 'none') + '|' + CY.scenes.phase(h); html = () => (id ? CY.scenes.svg(id, h) : '');
       U.room.classList.toggle('hasscene', !!id);
-    } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey() + '|' + (CY.game.tableFood() ? 'f' : '') + (CY.game.itemAway('stroller') ? 's' : '') + (CY.game.itemAway('wheelchair') ? 'w' : '') + '|' + (CY.game.world.owned ? Object.keys(CY.game.world.owned).join() : ''); html = () => CY.iso.svg(U.viewPlace, h); U.room.classList.add('hasscene'); }
+    } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey() + '|' + (CY.game.tableFood() ? 'f' : '') + (CY.game.itemAway('stroller') ? 's' : '') + (CY.game.itemAway('wheelchair') ? 'w' : '') + '|' + (CY.game.world.owned ? Object.keys(CY.game.world.owned).join() : ''); html = () => CY.iso.svg(U.basePlace(), h, U.viewZone() ? U.zoneDef(U.viewZone()).rooms : null); U.room.classList.add('hasscene'); }
     if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html(); }
   };
 
@@ -171,7 +209,8 @@
     if (!stage) return;
     U.renderTint(); U.renderScene();
     const pages = U.PAGES(), fam = U.viewPlace === 'family' || !pages.length;
-    const all = G.activePeople(), laid = fam ? null : new Map(CY.world.layout(U.viewPlace).map(l => [l.id, l])), people = fam ? all : all.filter(p => laid.has(p.id));
+    const zr = U.viewZone() ? U.zoneDef(U.viewZone()).rooms : null;
+    const all = G.activePeople(), laid = fam ? null : new Map(CY.world.layout(U.basePlace()).filter(l => !zr || zr.includes(l.room)).map(l => [l.id, l])), people = fam ? all : all.filter(p => laid.has(p.id));
     const topP = people.slice().sort((a, b) => G.urgency(b) - G.urgency(a))[0], topId = topP && G.urgency(topP) > 0.7 ? topP.id : null;
     for (const c of [...stage.querySelectorAll('.cx')]) if (!people.some(p => p.id === c.dataset.id)) c.remove();
     $r('#roomEmpty') && $r('#roomEmpty').remove();
@@ -194,7 +233,7 @@
       if (fam) { c.style.left = ''; c.style.top = ''; c.style.removeProperty('--z'); c._pos = null; }
       else {
         const lp = laid.get(p.id);
-        U.moveFig(c, U.viewPlace, lp.gx, lp.gy);
+        U.moveFig(c, U.basePlace(), lp.gx, lp.gy);
       }
       const W0 = CY.world, working = !fam && (W0.isWorking(p) || (W0.driven(p) && W0.atWork() && laid.get(p.id).room === 'study'));
       /* 站着不动的人按朝向规则看向某处，走的时候朝着走的方向 */
@@ -202,7 +241,7 @@
       const dir = fam ? '' : c._dir || (working ? 'ne' : face);
       c.classList.toggle('working', working && !c._dir);
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, G.isSleeping(p) && c._dir ? 'awake' : working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; }
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, G.isSleeping(p) && c._dir ? 'awake' : working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; const ims = [...c.querySelectorAll('.body image')].map(im => parseFloat(im.getAttribute('y'))).filter(v => !isNaN(v)); c.style.setProperty('--hd', ims.length ? Math.max(0, Math.min(...ims) / 130).toFixed(3) : 0); }
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p) && !c._dir);
@@ -260,6 +299,7 @@
         } else slot.innerHTML = `<div class="bubble ${toast.kind}" title="${esc(toast.text)}">${esc(toast.text)}</div>`;
       }
     }
+    U.updateCam(fam ? null : laid, people);
     U.renderCard(people);
     U.fitBubbles(U.room);
     U.syncFreeze(); U.renderPlayer(); U.renderNav(); U.renderRoster();
@@ -301,18 +341,68 @@
   /* ---------- 主角，地点导航，角上的名单 ---------- */
   /* 玩家没有自己的小人：操纵对象是家里一个真角色，画面上就是他，所以这里只清理旧版本留下的"你" */
   U.renderPlayer = function () { const old = $r('#stage').querySelector('.cx.player'); if (old) old.remove(); };
+  /* ---------- 房间镜头 ----------
+     家是一整张图，镜头每次框住一个区域，自动跟着操纵对象走；点房间条可以去别处看，操纵对象换了区域就跟回来。
+     别的区域里有人在叫，房间条上那个区域亮一个点。其余的地方不是平铺的，镜头只是裁剪和放大，数据和位置都不变。 */
+  U.ZONES = [
+    { id: 'living', icon: '🛋️', rooms: ['living', 'kitchen'] },
+    { id: 'sleep', icon: '🛏️', rooms: ['bedroom', 'kids', 'elder'] },
+    { id: 'work', icon: '💻', rooms: ['study', 'toilet'] },
+    { id: 'yard', icon: '🌳', rooms: ['yard'] },
+    { id: 'guest', icon: '🛌', rooms: ['guest'] },
+  ];
+  U.CAM_ZMAX = 2.2;
+  U.camZone = null;
+  /* 一个区域在画面里的取景：用房间的菱形外框，高度算上墙，放大倍数不超过上限 */
+  U.camFrame = id => {
+    const W = CY.world, P = W.PLACES.home, z = U.ZONES.find(q => q.id === id), VW = W.vw('home'), VH = W.vh('home');
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const rn of z.rooms) {
+      const r = P.rooms[rn]; if (!r) continue;
+      for (const [gx, gy] of [[r.gx, r.gy], [r.gx + r.w, r.gy], [r.gx, r.gy + r.h], [r.gx + r.w, r.gy + r.h]]) { const q = W.project('home', gx, gy); x0 = Math.min(x0, q.x); x1 = Math.max(x1, q.x); y0 = Math.min(y0, q.y - 80); y1 = Math.max(y1, q.y + 24); }
+    }
+    if (x0 > x1) return { s: 1, x: 0, y: 0 };
+    x0 -= 24; x1 += 24;
+    const s = Math.max(1, Math.min(U.CAM_ZMAX, VW / (x1 - x0), VH / (y1 - y0))), w = VW / s, h = VH / s;
+    const left = Math.max(0, Math.min(VW - w, (x0 + x1) / 2 - w / 2)), top = Math.max(0, Math.min(VH - h, (y0 + y1) / 2 - h / 2));
+    return { s, x: left / VW, y: top / VH };
+  };
+  U.updateCam = function (laid, people) {
+    U._laid = laid;
+    const sc = $r('#scene'), st = $r('#stage'); if (!sc || !st) return;
+    const z = laid ? U.viewZone() : null;
+    const f = z ? U.camFrame(z) : { s: 1, x: 0, y: 0 };
+    U.camZone = z;
+    const sig = f.s.toFixed(3) + ',' + f.x.toFixed(4) + ',' + f.y.toFixed(4);
+    if (U.room.dataset.cam === sig) return;
+    const first = U.room.dataset.cam === undefined || U.camJump;
+    U.room.dataset.cam = sig;
+    const tf = f.s === 1 && !f.x && !f.y ? '' : `scale(${f.s.toFixed(4)}) translate(${(-f.x * 100).toFixed(3)}%, ${(-f.y * 100).toFixed(3)}%)`;
+    for (const el of [sc, st]) { el.style.transition = first ? 'none' : ''; el.style.transform = tf; }
+    U.room.style.setProperty('--zoom', f.s.toFixed(3));
+  };
   U.renderNav = function () {
     const nav = $r('#placeNav'); if (!nav) return;
     const W = CY.world, at = W.where(), pages = U.PAGES(), fam = U.viewPlace === 'family';
     nav.style.display = pages.length ? '' : 'none';
     for (const id of ['#navL', '#navR']) { const b = $r(id); if (b) { b.style.display = pages.length > 1 ? '' : 'none'; b.onclick = e => { e.stopPropagation(); U.cyclePlace(id === '#navL' ? -1 : 1); }; } }
+    {
+      const n = pages.length, i = pages.indexOf(U.viewPlace), dirCall = { '-1': false, 1: false };
+      if (n > 1 && i >= 0) for (const p of G.activePeople()) {
+        if (!U.calling(p)) continue;
+        const j = pages.indexOf(U.pageOf(p)); if (j < 0 || j === i) continue;
+        const fwd = (j - i + n) % n; dirCall[fwd <= n - fwd ? 1 : -1] = true;
+      }
+      for (const [id, d] of [['#navL', -1], ['#navR', 1]]) { const b = $r(id); if (b) b.classList.toggle('call', !!dirCall[d]); }
+    }
     const here = t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
-    const away = !fam && at.place !== U.viewPlace && ['hospital', 'office', 'school'].includes(U.viewPlace);
+    const away = !fam && at.place !== U.viewPlace && ['hospital', 'office', 'school'].includes(U.viewPlace);   /* 家里的区域页不算出门，viewPlace 带冒号 */
     const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
-    const sig = [U.viewPlace, here, away, min, pages.join(), CY.i18n.lang].join('|');
+    const zs = '';
+    const sig = [U.viewPlace, here, away, min, pages.join(), CY.i18n.lang, zs].join('|');
     if (nav.dataset.sig === sig) return;
     nav.dataset.sig = sig;
-    const pn = U.viewPlace ? t('loc.' + U.viewPlace) : '';
+    const pn = U.pageName(U.viewPlace);
     nav.innerHTML = `<b>${esc(pn)}</b>` + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
       (away ? `<button class="travel" id="travelBtn">${esc(t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
     nav.querySelectorAll('[data-d]').forEach(b => b.onclick = e => { e.stopPropagation(); U.cyclePlace(+b.dataset.d); });
@@ -332,19 +422,25 @@
     const people = G.activePeople(), fam = U.viewPlace === 'family' || !U.PAGES().length;
     box.style.display = fam || !people.length ? 'none' : '';
     if (fam) return;
-    const sig = people.map(p => [p.id, p.person.name, Math.round(p.state.mood * 10), Math.round(G.maxNeed(p) * 10), !!G.req[p.id], G.needy(p), G.topNeed(p), G.isSleeping(p), !!G.flag(p, 'hospital'), !!G.flag(p, 'hurt')].join(':')).join('|') + CY.i18n.lang;
+    const sig = U.viewPlace + '|' + people.map(p => [U.pageOf(p), p.id, p.person.name, Math.round(p.state.mood * 10), Math.round(G.maxNeed(p) * 10), !!G.req[p.id], G.needy(p), G.topNeed(p), G.isSleeping(p), !!G.flag(p, 'hospital'), !!G.flag(p, 'hurt')].join(':')).join('|') + CY.i18n.lang;
     if (box.dataset.sig === sig) return;
     box.dataset.sig = sig;
     box.innerHTML = people.map(p => {
       const defs = G.needsOf(p), tn = G.topNeed(p), urgent = p.state.needs[tn] > U.NEED_LIT;
-      return `<div class="rcard ${G.req[p.id] || G.needy(p) ? 'calling' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name)}"><div class="av">${CY.avatar(p)}</div>
+      const pg = U.pageOf(p), away = pg !== U.viewPlace;
+      return `<div class="rcard ${G.req[p.id] || G.needy(p) ? 'calling' : ''} ${away ? 'away' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name + (away ? ' → ' + U.pageName(pg) : ''))}"><div class="av">${CY.avatar(p)}</div>
         <div class="rn">${esc(p.person.name)}${G.isSleeping(p) ? ' 💤' : ''}${G.flag(p, 'hospital') ? ' 🏥' : ''}${G.flag(p, 'hurt') ? ' ❗' : ''}</div>
-        <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${p.state.needs[tn] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
+        <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${p.state.needs[tn] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}${away ? `<span class="rl">→ ${esc(U.pageName(pg))}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
     }).join('');
     box.querySelectorAll('.rcard').forEach(el => el.onclick = e => {
       e.stopPropagation();
       if (e.target.closest('.ri')) { U.statusDialog(el.dataset.id); return; }
-      U.sel = el.dataset.id; U.ringByHover = false; U.openRing(el.dataset.id, el);
+      const pid = el.dataset.id, pp = G.get(pid), pg = pp && U.pageOf(pp);
+      if (pg && pg !== U.viewPlace) {   /* 人在别的页：先过去，再在那里打开操作圈 */
+        const L = U.PAGES(), i = L.indexOf(U.viewPlace), j = L.indexOf(pg), n = L.length, fwd = (j - i + n) % n;
+        U.sel = pid; U.ringByHover = false; U.goPage(pg, fwd <= n - fwd ? 1 : -1); U.openRing(pid); return;
+      }
+      U.sel = pid; U.ringByHover = false; U.openRing(pid, el);
     });
   };
 

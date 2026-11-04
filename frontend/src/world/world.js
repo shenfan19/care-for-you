@@ -65,7 +65,9 @@
   /* 画床用：这个房间摆几张床，就是买到的床位分到这间的数目 */
   W.guestBed = i => ({ x: 1.0 + (i % 2) * 1.9, y: 1.2 + Math.floor(i / 2) * 2.3 });
   W.bedCount = room => W.BED_CAP[room] || 0;
-  W.bedKey = () => W.bedCount('guest') + ',' + CY.houseId();
+  /* 卧室、儿童房、老人房画几张床：就是睡在这间的人数，没人睡的空位留白，由画面补上绿植 */
+  W.bedsIn = room => { const p = W.bedPlan()[room]; return p ? p.length : 0; };
+  W.bedKey = () => W.bedCount('guest') + ',' + CY.houseId() + ',' + ['bedroom', 'kids', 'elder'].map(W.bedsIn).join('');
   W.bedOf = p => { const plan = W.bedPlan(); for (const r in plan) { const i = plan[r].indexOf(p.id); if (i >= 0) return { room: r, i }; } return null; };
   W.slotPoint = (place, room, kind, i) => {
     if (kind === 'sleep' && room === 'guest') { const r0 = W.PLACES[place].rooms.guest; return { gx: r0.gx + W.guestBed(i).x, gy: r0.gy + W.guestBed(i).y + 0.1 }; }   /* 客房的预留床位两列两排 */

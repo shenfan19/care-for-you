@@ -363,7 +363,7 @@ function beanDraw(o, V) {
   /* ---------- 人物精灵：Kenney 的 CC0 小人渲染成四个朝向，站，走，坐，睡四种姿势。肤色在浏览器里按玩家的选择重着色 ----------
      图没加载完，或者没有图像环境（测试），就先画原来的矢量豆子。 */
     const CHAR_KEYS = ['female-a', 'female-b', 'female-c', 'female-d', 'female-e', 'female-f', 'male-a', 'male-b', 'male-c', 'male-d', 'male-e', 'male-f'];
-  const STAGE_K = { infant: 0.5, toddler: 0.62, child: 0.76, teen: 0.9, adult: 1, elder: 0.95 };
+  const STAGE_K = { infant: 0.72, toddler: 0.78, child: 0.86, teen: 0.95, adult: 1, elder: 0.96 };   /* 年龄之间的差距压小，宝宝不至于小得看不清 */
   const ROT = { '': 0, sw: 0, se: 1, ne: 2, nw: 3 };
   const hashOf = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
   const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
@@ -405,7 +405,7 @@ function beanDraw(o, V) {
     const M = (CY.isoSprites || {}).pet; if (!M || typeof document === 'undefined') return null;
     const m = M[p.species.id]; if (!m) return null;
     const pose = !asleep && dir && m.walk ? 'walk' : 'stand', rot = ROT[dir || ''] || 0, e = m[pose] && m[pose][rot]; if (!e) return null;
-    const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 1.1;   /* 宠物比人小，原来和人同样的 1.65 太大 */
+    const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 0.85;   /* 宠物比人小，也不比宝宝大 */
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${Math.max(10, e.w * k * 0.4).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
   };
   /* Blocky Characters：十八个像素风的角色，按编号固定挑一个，不能改颜色，只用来比较效果 */
