@@ -899,10 +899,22 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     const atHour = h => { G.cfg.time.daynight = 'game'; G.world.clock_shift = ((h * 60 - Math.floor(G.world.game_minutes)) % 1440 + 1440) % 1440; };
     CY.world.enforce = false; G.cfg.economy.work_hours = '09:00-18:00'; G.setProtagonist(null);
-    atHour(10); G.world.money = 100; G.economyTick(60, false);
-    check('工作时段每小时赚 G.WAGE', Math.abs(G.world.money - (100 + G.WAGE)) < 0.01, G.world.money);
-    atHour(22); G.economyTick(60, false);
-    check('不是工作时段不赚钱', Math.abs(G.world.money - (100 + G.WAGE)) < 0.01);
+    atHour(10); G.world.money = 100; G.world.focus = undefined; G.economyTick(60, false);
+    /* 专注从 10% 用 20 分钟线性爬到满额：第一个小时的平均专注是 (20 乘 0.55 加 40) 除以 60 */
+    check('工作时段第一个小时按专注曲线赚钱', Math.abs(G.world.money - (100 + G.WAGE * 51 / 60)) < 0.01 && G.focus() === 1, G.world.money + ' ' + G.focus());
+    G.economyTick(60, false);
+    check('专注满额后每小时赚 G.WAGE', Math.abs(G.world.money - (100 + G.WAGE * 51 / 60 + G.WAGE)) < 0.01, G.world.money);
+    const m1 = G.world.money; atHour(22); G.economyTick(60, false);
+    check('不是工作时段不赚钱，专注掉回 10%', Math.abs(G.world.money - m1) < 0.01 && Math.abs(G.focus() - 0.1) < 1e-9, G.focus());
+    atHour(10); G.world.focus = undefined; G.economyTick(10, false);
+    check('坐下 10 分钟专注爬到 55%', Math.abs(G.focus() - 0.55) < 1e-9, G.focus());
+    G.economyTick(10, false); check('再坐 10 分钟到 100%', Math.abs(G.focus() - 1) < 1e-9, G.focus());
+    G.economyTick(30, false); atHour(22);
+    {   /* 被叫走：时段内不在书桌前，立刻掉回 10% */
+      atHour(11); G.world.focus = 1; const lw0 = G.leadWorking; G.leadWorking = () => false; G.economyTick(5, false); G.leadWorking = lw0;
+      check('被叫走专注立刻掉回 10%', Math.abs(G.focus() - 0.1) < 1e-9, G.focus());
+    }
+    atHour(22); G.world.money = m1;
     const pen = (() => { const e = G.people.find(p => p.person.kind === 'human' && G.stage(p) === 'elder'); return e; })();
     if (pen) { G.setProtagonist(pen.id); const m1 = G.world.money; atHour(22); G.economyTick(60, false); check('老人主角领固定退休金，每小时 G.PENSION', Math.abs(G.world.money - m1 - G.PENSION) < 0.01); G.setProtagonist(null); }
     for (const x of G.people) x.person.active = true;
@@ -939,6 +951,27 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     await CY.archive.apply(info, 'replace'); await G.load(); G.act = {};
     check('导出再导入后进度原样回来', JSON.stringify(G.get(id).story.arcs) === before2 && G.world.game_minutes === keep, JSON.stringify(G.get(id).story.arcs));
     G.arcTick(); check('导入后不重复触发', st().stage === 2 && arcLogs().length === 2);
+    {   /* 存档弹性：曲线存成 CSV 往返，旧结构按步骤升级，新结构拒收，新增文件照收，坏文件拒收 */
+      const A = CY.archive, enc = new TextEncoder(), pid0 = id;
+      G.hist[pid0] = []; for (let i = 0; i < 700; i++) G.hist[pid0].push({ t: i * 15, mood: 0.5 + (i % 7) / 100, frailty: 0.1, needs: { thirst: (i % 10) / 10, hunger: 0.25 } });
+      G.wcurve = []; for (let i = 0; i < 5; i++) G.wcurve.push({ t: i * 15, money: 100 + i, focus: 0.1 + 0.2 * i, eff: 0.8, bonus: 1.2 });
+      G._curveRev++; G.save(true); await new Promise(r => setTimeout(r, 50));
+      const csv = await CY.store.read('people/' + pid0 + '/curves.csv');
+      check('曲线存成 CSV，列是 t，心情，虚弱，再是各项需求', /^t,mood,frailty,hunger,thirst\n/.test(csv), csv.slice(0, 60));
+      const ex2 = await A.exportSave(), buf2 = new Uint8Array(await ex2.blob.arrayBuffer()), inf2 = await A.inspect(buf2);
+      check('导出里有曲线和说明，manifest 记着格式和文件清单', inf2.ok && !!inf2.files['people/' + pid0 + '/curves.csv'] && !!inf2.files['curves_world.csv'] && !!inf2.files['README.txt'] && inf2.manifest.format.series === 'csv' && inf2.manifest.files['curves_world.csv'] > 0, JSON.stringify(inf2.manifest && inf2.manifest.format));
+      await A.apply(inf2, 'replace'); await G.load();
+      check('曲线往返后行数按上限只留最近 600 行，最后一行对得上', (G.hist[pid0] || []).length === 600 && G.hist[pid0][599].t === 699 * 15 && Math.abs(G.hist[pid0][599].needs.thirst - 0.9) < 1e-9 && G.wcurve.length === 5 && Math.abs(G.wcurve[4].focus - 0.9) < 1e-9, (G.hist[pid0] || []).length);
+      const mk = extra => { const z = [{ name: 'careforyou-data/manifest.json', data: enc.encode(JSON.stringify(extra.manifest)) }, { name: 'careforyou-data/settings.ini', data: enc.encode('[ui]\nlanguage = en\n') }, { name: 'careforyou-data/world.yaml', data: enc.encode('game_minutes: 5\n') }]; for (const k in extra.files || {}) z.push({ name: 'careforyou-data/' + k, data: typeof extra.files[k] === 'string' ? enc.encode(extra.files[k]) : extra.files[k] }); return CY.store.zip(z).arrayBuffer(); };
+      const old = await A.inspect(await mk({ manifest: { schema: 5, version: '0.60.0' } }));
+      check('旧结构的存档能读，并记下升级了哪几步', old.ok && old.migrated && old.migrated.from === 5 && old.migrated.to === CY.meta.schema && old.migrated.steps.length >= 1, JSON.stringify(old.migrated));
+      const nw = await A.inspect(await mk({ manifest: { schema: CY.meta.schema + 1 } }));
+      check('更新结构的存档拒收，不乱读', !nw.ok && nw.error === 'newer');
+      const ext = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/mood_notes.csv': 't,note\n1,a\n', 'people/x1/future_thing.yaml': 'a: 1\n', 'curves_extra.csv': 't,v\n1,2\n' } }));
+      check('以后新增的 yaml 和 csv 文件照收，不用改导入端', ext.ok && !!ext.files['people/x1/future_thing.yaml'] && !!ext.files['people/x1/mood_notes.csv'] && !!ext.files['curves_extra.csv'] && ext.rejected.length === 0, JSON.stringify(ext.rejected));
+      const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
+      check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
+    }
     for (let i = 0; i < 6; i++) G.applyAction(id, 'medicine');
     G.world.game_minutes += 4 * 1440; G.arcTick();
     check('走完三个阶段，标记完成，之后不再触发', st().stage === 3 && st().done && arcLogs().length === 3);

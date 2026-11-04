@@ -34,8 +34,8 @@
       if (!offline) G.logK(p.id, 'event', 'log.away_' + p.person.away, { name: p.person.name });
     }
   };
-  /* 上班的人在外面挣的钱，每游戏小时是在家办公时薪的一个倍数 */
-  G.awayIncome = hours => G.activePeople().reduce((a, p) => { const f = G.flag(p, 'outing'); return a + (f && f.away === 'work' ? G.WAGE * (awayCfg().wage || 0) * hours : 0); }, 0);
+  /* 上班的人在外面挣的钱，每游戏小时是在家办公时薪的一个倍数；别处没人打断，专注满额，家庭效率和家人加成照乘 */
+  G.awayIncome = hours => G.activePeople().reduce((a, p) => { const f = G.flag(p, 'outing'); return a + (f && f.away === 'work' ? G.WAGE * (awayCfg().wage || 0) * hours * G.efficiency() * G.householdBonus() : 0); }, 0);
   /* 默认的操纵对象：爸爸，妈妈，第一个成年人，再是别的能当主角的人。只有家里没有一个人能当主角时才没有，比如只剩宠物和花草 */
   G.defaultLead = () => {
     const arch = p => p.person.archetype || p.person.card, live = G.activePeople().filter(G.canLead);

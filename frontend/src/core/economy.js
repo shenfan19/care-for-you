@@ -53,13 +53,36 @@
     return G.MOOD.eff_min + (1 - G.MOOD.eff_min) * (1 - share);
   };
   /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
-  G.incomeRate = () => { const lead = G.protagonist(); return lead && G.stage(lead) === 'elder' ? G.PENSION : G.WAGE * G.efficiency() * G.householdBonus(); };
+  /* 工作专注：进入工作不是立刻满额，坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟；离开工作立刻掉回 floor。收入速率 = 工资 乘 专注 乘 家庭效率 乘 家人加成。
+     配偶不在家（出差，去公司）是别处没人打断的工作，专注按满额，家庭效率和加成照乘。参数出处见 CY.references 里的 focus。 */
+  G.FOCUS = { floor: 0.1, minutes: 20 };
+  G.focus = () => (typeof G.world.focus === 'number' ? G.world.focus : G.FOCUS.floor);
+  /* 走过 gmin 分钟，working 为真就爬升，否则掉回 floor；返回这段时间的平均专注，离线大步长也按线性积分，不会少算也不会多算 */
+  G.focusStep = (gmin, working) => {
+    const F = G.FOCUS, f0 = G.focus();
+    if (!working) { G.world.focus = F.floor; return F.floor; }
+    const r = (1 - F.floor) / F.minutes, tf = (1 - f0) / r;
+    if (gmin <= tf) { G.world.focus = f0 + r * gmin; return f0 + r * gmin / 2; }
+    G.world.focus = 1;
+    return (tf * (f0 + 1) / 2 + (gmin - tf)) / gmin;
+  };
+  /* 主角自己的工作：非老人，在工作时段，在书桌前；离线时算在岗；没有世界或不强制就位时只看时段 */
+  G.leadWorking = offline => { const W = CY.world, lead = G.protagonist(); return (!lead || G.stage(lead) !== 'elder') && G.isWorkTime() && (offline || !W || !W.enforce || (!!lead && W.worker(lead) && W.atWork())); };
+  G.incomeRate = () => {
+    const lead = G.protagonist(); if (lead && G.stage(lead) === 'elder') return G.PENSION;
+    const W = CY.world, own = lead && W && W.worker(lead) && G.isWorkTime();
+    return G.WAGE * (own ? G.focus() : 1) * G.efficiency() * G.householdBonus();
+  };
   /* 每次时间推进：赚钱 */
   G.economyTick = (gmin, offline) => {
     const hours = gmin / 60, W = CY.world, lead = G.protagonist();
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
-    if (lead && G.stage(lead) === 'elder') G.world.money += G.PENSION * hours;
-    else if (G.isWorkTime() && (offline || !W || !W.enforce || (lead && W.worker(lead) ? W.atWork() : W.hasWorker()))) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();
+    if (lead && G.stage(lead) === 'elder') { G.world.money += G.PENSION * hours; G.focusStep(gmin, false); }
+    else {
+      const lw = G.leadWorking(offline), k = G.focusStep(gmin, lw);
+      if (lw) G.world.money += G.WAGE * hours * k * G.efficiency() * G.householdBonus();
+      else if (G.isWorkTime() && W && W.enforce && !(lead && W.worker(lead)) && W.hasWorker()) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();   /* 别人在家办公，没人打断，专注满额 */
+    }
     if (G.awayIncome) G.world.money += G.awayIncome(hours);
     if (G.tripTick) G.tripTick();
   };

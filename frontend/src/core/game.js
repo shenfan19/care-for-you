@@ -175,6 +175,7 @@
     await loadContent(files);
     /* 保姆已经取消：旧存档里请过的保姆，整个人从家里拿掉 */
     for (const p of G.people.filter(x => x.person.help && x.person.help.role === 'nanny')) await G.deletePerson(p.id);
+    if (G.loadCurves) await G.loadCurves();
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
 
@@ -267,7 +268,7 @@
   G.deletePerson = async function (pid) {
     const i = G.people.findIndex(p => p.id === pid); if (i < 0) return;
     G.people.splice(i, 1);
-    delete G.journal[pid]; delete G.sayings[pid];
+    delete G.journal[pid]; delete G.sayings[pid]; delete G.hist[pid];
     for (const m of [G.req, G.toast, G.fx, G.crying, G.act]) delete m[pid];
     if (G.world.protagonist === pid) G.world.protagonist = null;
     for (const k of [...G.dirty]) if (k.split('|')[1] === pid) G.dirty.delete(k);
@@ -488,6 +489,7 @@
       }
       G.dirty.clear();
       if (G.saveCalendar) G.saveCalendar();
+      if (G.saveCurves) G.saveCurves();
     };
     if (now) run(); else saveTimer = setTimeout(run, 400);
   };
@@ -628,6 +630,7 @@
       h.push({ t: gm, mood: p.state.mood, frailty: p.state.frailty, needs: Object.assign({}, p.state.needs) });
       if (h.length > G.HIST.keep) h.shift();
     }
+    if (G.sampleWorldCurve) G.sampleWorldCurve(gm);
   }
   function advance(gmin, offline) {
     if (gmin <= 0) return;

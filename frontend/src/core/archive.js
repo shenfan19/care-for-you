@@ -9,10 +9,24 @@
 
   /* 运行包里的文件，测试会核对它和 index.html 里的脚本一致 */
   A.APP_FILES = ['locales/play_zh-CN.js', 'locales/play_en.js', 'locales/play_de.js', 'locales/play_es.js', 'locales/play_fr.js', 'locales/play_ja.js', 'locales/play_ko.js', 'locales/play_zh-TW.js', 'src/core/settle.js', 'src/ui/settle.js', 'src/data/visitors.js', 'src/data/visitors_packed.js', 'src/data/visitors_cards.js', 'src/core/visitors.js', 'src/ui/visitor.js', 'src/ui/account.js', 'index.html', 'css/style.css', 'favicon.svg', 'manifest.webmanifest', 'vendor/js-yaml.min.js',
-    'src/core/meta.js', 'src/core/i18n.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js', 'src/data/content.js', 'src/data/cards_packed.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'src/data/seed.js', 'src/data/lm_seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/arcs.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/household.js', 'src/core/agents.js', 'src/core/clock.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/local_plan.js', 'src/backend/http.js', 'src/backend/lm.js', 'src/backend/index.js', 'src/backend/api.js', 'src/world/avatar.js', 'src/world/world.js', 'assets/iso/manifest.js', 'src/data/houses.js', 'src/world/iso.js', 'src/world/scenes.js', 'src/ui/ui_room.js', 'src/ui/header.js', 'src/ui/feed.js', 'src/ui/people_add.js', 'src/ui/people.js', 'src/ui/life.js', 'src/ui/dialogs.js', 'src/ui/share.js', 'src/ui/sound.js', 'src/ui/main.js',
+    'src/core/meta.js', 'src/core/i18n.js', 'src/core/ini.js', 'src/core/store.js', 'src/core/archive.js', 'src/data/content.js', 'src/data/cards_packed.js', 'src/data/content_more.js', 'src/data/content_en.js', 'src/data/content_pets.js', 'src/data/content_react.js', 'src/data/content_life.js', 'src/data/content_traits.js', 'src/data/content_age.js', 'src/data/seed.js', 'src/data/lm_seed.js', 'src/ai/ai.js', 'src/ai/account.js', 'src/core/game.js', 'src/core/directives.js', 'src/core/arcs.js', 'src/core/time.js', 'src/core/economy.js', 'src/core/household.js', 'src/core/agents.js', 'src/core/clock.js', 'src/core/curves.js', 'src/backend/protocol.js', 'src/backend/local.js', 'src/backend/local_plan.js', 'src/backend/http.js', 'src/backend/lm.js', 'src/backend/index.js', 'src/backend/api.js', 'src/world/avatar.js', 'src/world/world.js', 'assets/iso/manifest.js', 'src/data/houses.js', 'src/world/iso.js', 'src/world/scenes.js', 'src/ui/ui_room.js', 'src/ui/header.js', 'src/ui/feed.js', 'src/ui/people_add.js', 'src/ui/people.js', 'src/ui/life.js', 'src/ui/dialogs.js', 'src/ui/share.js', 'src/ui/sound.js', 'src/ui/main.js',
     'locales/zh-CN.js', 'locales/en.js', 'locales/zh-TW.js', 'locales/fr.js', 'locales/ja.js', 'locales/ko.js', 'locales/es.js', 'locales/de.js', 'locales/content_zh-TW.js', 'locales/content_ja.js', 'locales/content_ko.js', 'locales/content_fr.js', 'locales/content_es.js', 'locales/content_de.js'];
 
-  const DATA_OK = /^(people\/[^/]+\/(person|state|story|sayings)\.yaml|(people\/[^/]+|me)\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|world\.yaml|calendar\.yaml|README\.txt)$/;
+  /* 存档里允许的文件：数据是 YAML，序列是 CSV。人物文件夹里除了固定的几份，任何 小写字母数字下划线 命名的 yaml 或 csv 都收，
+     以后新增一种记录只需要多放一个文件，导入端不用改；根目录同理。路径里不许有 .. 或奇怪字符 */
+  const DATA_OK = /^(people\/[^/]+\/[a-z0-9_]+\.(yaml|csv)|(people\/[^/]+|me)\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|[a-z0-9_]+\.(yaml|csv)|README\.txt)$/;
+  /* 数据结构升级：存档的 schema 比当前低，按顺序跑每一步，把文件改成当前结构。新增字段和新增文件通常不需要写步骤，
+     因为读取时缺的字段都有默认值；只有改名，拆分，换单位这类才写。每一步只改 files 这张 路径到文本 的表 */
+  A.MIGRATIONS = [
+    { from: 5, to: 6, note: 'curves.csv and curves_world.csv added; world.yaml gains focus. All optional, nothing to rewrite.', run: files => files },
+  ];
+  A.migrate = (files, from) => {
+    let v = from, steps = [];
+    for (const m of A.MIGRATIONS.slice().sort((x, y) => x.from - y.from)) if (m.from === v && m.to <= meta.schema) { files = m.run(files) || files; steps.push(m.from + '->' + m.to); v = m.to; }
+    return { files, steps, version: v };
+  };
+  /* 序列文件：第一行是列名，第一列叫 t；至少一列，没有空字符 */
+  const csvOk = text => { const l = text.replace(/^\uFEFF/, '').split(/\r?\n/)[0] || ''; return !text.includes('\u0000') && l.length > 0 && l.length < 2000; };
   const ROOT = 'careforyou-data/';
   const stamp = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`; };
 
@@ -25,6 +39,19 @@
   }
 
   /* ---------- 存档 ---------- */
+  A.README = `Care for You save
+This zip is a plain copy of the game's data folder. Open any file in a text editor.
+- manifest.json: app version, schema (data structure version), file list with sizes.
+- world.yaml, calendar.yaml: the shared world (money, clock, focus, owned things) and the day-by-day calendar.
+- people/<id>/person.yaml, state.yaml, story.yaml, sayings.yaml: one folder per character.
+- people/<id>/curves.csv: mood, frailty and every need, one row per 15 game minutes, last 600 rows.
+- curves_world.csv: money, focus, efficiency and family bonus on the same clock.
+- people/<id>/journal/YYYY-MM.yaml and me/journal: what happened, by real month.
+- templates/: character cards, species, conditions and system settings (editable).
+- settings.ini: preferences. The AI key is left out unless you chose to include it.
+- summary/*.csv: readable tables of sayings and journal. Ignored on import.
+Any new kind of record is simply a new yaml or csv file in these folders. A save from an older schema is upgraded step by step on import; a save from a newer schema is refused.
+`;
   A.exportSave = async function (opts = {}) {
     const G = CY.game, files = [];
     for (const p of await store.list()) {
@@ -34,8 +61,11 @@
     }
     const extra = CY.ui && CY.ui.summaryFiles ? CY.ui.summaryFiles() : {};
     for (const p in extra) files.push({ name: ROOT + p, data: enc.encode(extra[p]) });
+    if (!files.some(f => f.name === ROOT + 'README.txt')) files.push({ name: ROOT + 'README.txt', data: enc.encode(A.README) });
     const manifest = { app: meta.app, version: meta.version, schema: meta.schema, created: new Date().toISOString(), language: CY.i18n.lang,
-      people: G.people.map(p => ({ id: p.id, name: p.person.name, role: p.person.role })), game_minutes: Math.floor(G.world.game_minutes), includes_ai_key: !!opts.keepKey };
+      format: { data: 'yaml', series: 'csv', tables: 'summary/*.csv', encoding: 'utf-8' },
+      people: G.people.map(p => ({ id: p.id, name: p.person.name, role: p.person.role })), game_minutes: Math.floor(G.world.game_minutes), includes_ai_key: !!opts.keepKey,
+      files: Object.fromEntries(files.map(f => [f.name.slice(ROOT.length), f.data.length])) };
     files.push({ name: ROOT + 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
     return { blob: store.zip(files), name: `careforyou-save-${stamp()}.zip` };
   };
@@ -72,9 +102,12 @@
       if (e.data.length > 5 * 1024 * 1024) { rejected.push(name); continue; }
       const text = dec.decode(e.data);
       if (name.endsWith('.yaml')) { try { jsyaml.load(text); } catch (x) { rejected.push(name); continue; } }
+      if (name.endsWith('.csv') && !csvOk(text)) { rejected.push(name); continue; }
       files[name] = text;
     }
     if (manifest && manifest.schema > meta.schema) return { ok: false, error: 'newer', manifest };
+    let migrated = null;
+    { const from = manifest && typeof manifest.schema === 'number' ? manifest.schema : 5; if (from < meta.schema) { const r = A.migrate(files, from); migrated = { from, to: r.version, steps: r.steps }; } }
     /* 疾病包：只有模板，没有存档，例如 Life Matters 的 care_export 插件生成的 zip。导入时写进模板文件夹，不动角色 */
     if (!files['settings.ini'] && !Object.keys(files).some(n => n.startsWith('people/'))) {
       const tpl = Object.keys(files).filter(n => /^templates\/(lm\/models|conditions)\/[^/]+\.yaml$/.test(n));
@@ -92,7 +125,7 @@
       const w = jsyaml.load(files['world.yaml'] || '') || {}, c = jsyaml.load(files['calendar.yaml'] || '') || {};
       if (w.sig && w.sig !== CY.game.sigOf(w.money, Object.keys(w.souv || {}).length, (c.days || []).length)) edited = true;
     } catch (x) {}
-    return { ok: true, files, rejected, manifest, people, edited };
+    return { ok: true, files, rejected, manifest, people, edited, migrated };
   };
 
   /* mode: replace 用存档整体替换当前数据；merge 只加入当前没有的角色 */
