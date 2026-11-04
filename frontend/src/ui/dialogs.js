@@ -8,12 +8,12 @@
   const typeName = k => U.typeName(k);
   /* ---------- 设置（齿轮） ---------- */
   const OPT = { 'play.backend_provider': ['builtin', 'lm', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
-  /* 声音，时间倍率，工作时段，时间制式都在角落按钮的小下拉里，设置里不再重复 */
-  const SKIP = new Set(['audio.music_volume', 'audio.sfx_volume', 'audio.mute', 'economy.work_hours', 'ui.clock_12h', 'time.speed', 'time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'ui.figure', 'ui.house_view', 'play.last_mode']);
+  /* 声音，时间倍率，时间模式，工作时段，时间制式都在角落按钮和日历菜单里，设置里不再重复 */
+  const SKIP = new Set(['audio.music_volume', 'audio.sfx_volume', 'audio.mute', 'economy.work_hours', 'ui.clock_12h', 'time.speed', 'time.mode', 'time.fast_speed', 'time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'ui.figure', 'ui.house_view', 'play.last_mode']);
   const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
   U.settingsDialog = function () {
     /* AI、账号、后端、对外接口都在底部的高级设置里，默认折叠 */
-    const ADV = k => /^(ai|account|interaction)\./.test(k) || /^play\.(backend_|needs_source|api_bridge)/.test(k);
+    const ADV = k => /^(ai|account|interaction)\./.test(k) || /^play\.(backend_|needs_source|api_bridge|condition_models)/.test(k);
     const rows = (list, basic) => { let sec = ''; return list.map(([s, k, d, note]) => {
       const v = ini.get(G.cfg, s, k), key = s + '.' + k;
       const head = s !== sec ? `<h3>${esc(t('sec.' + s))}</h3>` : ''; sec = s;
