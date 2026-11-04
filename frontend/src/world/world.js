@@ -144,7 +144,7 @@
   };
   const block = () => Math.floor(G.dayMinutes() / 20);
   const pickBy = (id, list) => list[hashOf(id + ':' + block()) % list.length];
-  const onMat = q => G.isHuman(q) && ['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (q.state.needs.rest || 0) <= 0.55;
+  const onMat = q => G.isHuman(q) && ['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing') && G.need(q, 'rest') <= 0.55;
   /* ---------- 每个角色自己挑去哪个房间：像一个个小行动者 ----------
      喜好来自角色卡的 prefs，需求会把人往对应的房间推：饿了去厨房，困了去卧室，想有人陪就去书桌边，宝宝哭了大人往宝宝那边去。
      每个人在一个房间停一阵再换，现实里几十秒到几分钟，慢慢地走。鼠标悬停或点选一个人，他就停住，等你操作完才继续。 */
@@ -157,7 +157,7 @@
   const dwellMs = p => (180 + Math.random() * 420) / (0.4 + restlessOf(p)) * 1000;
   /* 一个房间对这个人此刻有多大吸引力 */
   W.scoreRoom = (p, room) => {
-    const n = p.state.needs, hr = G.dayMinutes() / 60, st = G.classKey(p), human = G.isHuman(p);
+    const n = new Proxy({}, { get: (_, k) => G.need(p, k) }), hr = G.dayMinutes() / 60, st = G.classKey(p), human = G.isHuman(p);   /* n 读的是需求压力，状态里存的是水平 */
     let w = (prefsOf(p)[room] || 0);
     const hi = k => Math.max(0, (n[k] || 0) - 0.45) * 2;
     if (room === 'kitchen') w += (hi('hunger') + hi('thirst')) * 5 + (human && st === 'adult' && ((hr >= 7 && hr < 8) || (hr >= 17.5 && hr < 19)) ? 2.5 : 0) + (human && W.isMealTime() ? 3 : 0);
@@ -224,7 +224,7 @@
     const fp = flagPlace(p);
     if (fp) return { place: fp.place, room: fp.room, mode: fp.mode || 'stand' };
     if (!G.isHuman(p)) {
-      const sp = p.species.id, n = p.state.needs;
+      const sp = p.species.id, n = new Proxy({}, { get: (_, k) => G.need(p, k) });
       /* 猫想蹭人，狗想出去玩，它们就跑到书桌边来 */
       if (!G.isSleeping(p) && ((sp === 'cat' && (n.company || 0) > 0.5) || (sp === 'dog' && ((n.play || 0) > 0.5 || (n.company || 0) > 0.6)))) return { place: 'home', room: 'study', mode: 'stand' };
       if (WANDER_PETS.includes(sp) && !G.isSleeping(p)) return { place: 'home', room: agentRoom(p), mode: 'stand' };
@@ -234,8 +234,8 @@
     if (G.bedridden(p)) { const b = W.bedOf(p); return { place: 'home', room: b ? b.room : 'elder', mode: 'sleep' }; }   /* 卧床的人一直躺在自己的床上 */
     if (sleeping) { if (st === 'infant') return { place: 'home', room: 'bedroom', mode: 'cradle' }; const b = W.bedOf(p); return { place: 'home', room: b ? b.room : W.ownRoom(p), mode: 'sleep' }; }
     /* 宝宝困了在婴儿床，醒着就在玩具垫上，自己不会走 */
-    if (st === 'infant') return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
-    if (st === 'toddler' && G.age(p) < 2.5) return (p.state.needs.rest || 0) > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
+    if (st === 'infant') return G.need(p, 'rest') > 0.55 ? { place: 'home', room: 'bedroom', mode: 'cradle' } : { place: 'home', room: 'living', mode: 'mat' };
+    if (st === 'toddler' && G.age(p) < 2.5) return G.need(p, 'rest') > 0.55 ? { place: 'home', room: 'bedroom', mode: 'stand' } : { place: 'home', room: 'living', mode: 'mat' };
     const room = agentRoom(p);
     return { place: 'home', room, mode: W.worker(p) && room === 'study' ? 'work' : 'stand' };
   };
@@ -313,7 +313,7 @@
      夜里在卧室，闲着几秒，也会躺下睡；动手做别的事就醒。别的人睡不睡看作息，主角睡不睡看他在不在床上 */
   W.actPose = () => {
     const pl = W.player(), a = pl && pl.act; if (!a) return null;
-    if (a.pose === 'sleep' && a.rested) { const lead = G.protagonist(); if (!lead || (lead.state.needs.rest || 0) <= 0.05) { pl.act = null; pl.bed = false; return null; } return 'sleep'; }   /* 睡到不累为止 */
+    if (a.pose === 'sleep' && a.rested) { const lead = G.protagonist(); if (!lead || G.need(lead, 'rest') <= 0.05) { pl.act = null; pl.bed = false; return null; } return 'sleep'; }   /* 睡到不累为止 */
     return G.world.game_minutes < a.until ? a.pose : null;
   };
   W.leadSleeping = () => {

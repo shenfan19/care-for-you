@@ -1,6 +1,6 @@
 metadata:
   name: cond_diabetes
-  version: "1.0"
+  version: "1.1"
   lm_format_version: "1.0"
   condition: diabetes
   source: Care for You 手写的二型糖尿病基础模型，结构参照 Life Matters 的 diabetes 与 diabetes_core，数值按游戏的节奏取
@@ -113,8 +113,9 @@ equations:
     dynamics:
       dm_check_debt: "dm_check_debt + step * dm_k_check * speed_sugar * (1.0 + 1.5 * min(1.0, max(0.0, (dm_avg - 140.0) / 100.0))) * (1.0 - 0.7 * asleep)"
 
+# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
 drives:
-  sugar: { state: dm_check_debt, lo: 0.0, hi: 1.0, kinds: [human] }
+  sugar: { state: dm_check_debt, lo: 1.0, hi: 0.0, kinds: [human] }
 
 care:
   max_step_minutes: 5

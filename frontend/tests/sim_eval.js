@@ -68,7 +68,7 @@ const FAMILIES = {
     let best = null, gain = 0;
     for (const a of Object.values(G.actionsOf(p))) {
       if (a.away || a.outing) continue;
-      let g = 0; for (const k in a.effect || {}) if (a.effect[k] < 0) g += (p.state.needs[k] || 0) * -a.effect[k];
+      let g = 0; for (const k in a.effect || {}) if (a.effect[k] < 0) g += (G.need(p, k) || 0) * -a.effect[k];
       if (g > gain) { gain = g; best = a; }
     }
     return gain > 0.15 ? best : null;

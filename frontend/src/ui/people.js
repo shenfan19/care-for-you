@@ -56,8 +56,8 @@
     const sig = () => U.statusDialog(pid);
     const pc = v => `<span class="pc mute">${Math.round(v * 100)}%</span>`;
     /* 指标先不对玩家显示，只在开发者模式里看。基础需求按正面的水平显示，最低的排前面；疾病类的暂按原样 */
-    const dev = G.DEVTOOLS, val = (k) => (G.isLevel(k) ? G.level(p, k) : p.state.needs[k]);
-    const bars = !dev ? '' : Object.keys(defs).sort((a, b) => (G.isLevel(a) ? G.level(p, a) : 1 - p.state.needs[a]) - (G.isLevel(b) ? G.level(p, b) : 1 - p.state.needs[b])).map(k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.levelName(k, defs[k]))}</span><div class="bar${G.isLevel(k) ? '' : ' bad'}"><i style="width:${Math.round(val(k) * 100)}%"></i></div>${pc(val(k))}</div>`).join('');
+    const dev = G.DEVTOOLS, val = k => G.level(p, k);
+    const bars = !dev ? '' : Object.keys(defs).sort((a, b) => G.level(p, a) - G.level(p, b)).map(k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.levelName(k, defs[k]))}</span><div class="bar${G.isLevel(k) ? '' : ' bad'}"><i style="width:${Math.round(val(k) * 100)}%"></i></div>${pc(val(k))}</div>`).join('');
     const selfs = Object.values(G.allActionsOf(p)).filter(a => G.canSelf(p, a)).map(a => `<span class="tag">${esc(a.label)}</span>`).join('');
     const made = (G.journal[p.id] ? Object.values(G.journal[p.id]).flat() : []).filter(e => e.type === 'self').slice(-3).reverse().map(e => `<div class="mute" style="font-size:12px">${esc(G.entryText(e))}</div>`).join('');
     const dlg = U.dialog(`<div class="statgrid"><div class="prev">${CY.avatar(p)}</div><div>

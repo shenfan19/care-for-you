@@ -56,7 +56,7 @@ textarea { width:100%; height:300px; font:12px/1.4 ui-monospace,Menlo,Consolas,m
   for (const p in seed) if (/models\/cond_/.test(p)) docs[p.split('/').pop()] = seed[p];
   const classesText = seed['templates/lm/classes.yaml'];
   const ACTION_NEED = { sugar: 'sugar', selfsugar: 'sugar', bp: 'bp', selfbp: 'bp', heat: 'joint', selfheat: 'joint', massage: 'joint', listen: 'lowmood', walkout: 'lowmood' };
-  const NEEDS = { hunger: 0.2, thirst: 0.2, company: 0.2, medicine: 0.3, sugar: 0.2, bp: 0.2, joint: 0.2, lowmood: 0.2 };
+  const NEEDS = { hunger: 0.8, thirst: 0.8, company: 0.8, medicine: 0.7, sugar: 0.8, bp: 0.8, joint: 0.8, lowmood: 0.8 };   /* 状态是水平，1 满足 */
   let current = null;   /* 当前模型文件名 */
 
   function parseModel(name) { return jsyaml.load(docs[name]); }
@@ -97,10 +97,10 @@ textarea { width:100%; height:300px; font:12px/1.4 ui-monospace,Menlo,Consolas,m
       const dm = t % 1440, hour = dm / 60;
       snap.sleeping = hour < 6.5 || hour >= 22.5; snap.pulses = [];
       for (const k in times) if (times[k].some(x => x >= dm && x < dm + stepMin)) snap.pulses.push(k);
-      for (const a of snap.pulses) if (ACTION_NEED[a]) snap.needs[ACTION_NEED[a]] = Math.max(0, snap.needs[ACTION_NEED[a]] - 1);
+      for (const a of snap.pulses) if (ACTION_NEED[a]) snap.needs[ACTION_NEED[a]] = 1;
       const r = eng.drive({ minutes: stepMin, world: { hour: ((t + stepMin) % 1440) / 60, date: { weekday: Math.floor(t / 1440) % 7 } }, people: [snap] });
       for (const d of r.directives) { if (d.op === 'need') snap.needs[d.need] = Math.min(1, Math.max(0, snap.needs[d.need] + d.delta)); else if (d.op === 'mood') snap.mood = Math.min(1, Math.max(0, snap.mood + d.delta)); else if (d.op === 'frailty') snap.frailty = Math.min(1, Math.max(0, snap.frailty + d.delta)); }
-      const hrs = stepMin / 60, mx = Math.max(...Object.values(snap.needs));
+      const hrs = stepMin / 60, mx = Math.max(...Object.values(snap.needs).map(v => 1 - v));   /* mx 是最急的需求压力 */
       snap.mood = Math.min(1, Math.max(0, snap.mood + (Math.max(0, 1 - 0.7 * mx) - snap.mood) * Math.min(1, hrs * 0.5)));
       if (mx > 0.9) snap.frailty = Math.min(1, snap.frailty + 0.02 * hrs); else if (mx < 0.4) snap.frailty = Math.max(0, snap.frailty - 0.01 * hrs);
       t += stepMin; tAxis.push(t / 60);

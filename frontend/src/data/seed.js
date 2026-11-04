@@ -4,7 +4,7 @@
 (function (CY) {
   const F = {};
 
-  F['templates/species/human.yaml'] = `version: 5
+  F['templates/species/human.yaml'] = `version: 6
 id: human
 label: 人
 food: food
@@ -33,7 +33,7 @@ actions:
   game: { label: 一起打游戏, hold: 7, min: 40, effect: { company: -0.6 }, mood: 0.12, stages: [teen] }
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: -0.6 }, mood: 0.1, stages: [teen, adult, elder] }
   rest: { label: 扶去休息, nap: 40, hold: 6, min: 15, effect: { rest: -0.9 }, stages: [elder] }
-  invite_rest: { label: 请ta睡一会儿, visitor_only: true, nap: 40, hold: 6, min: 15, effect: { rest: -0.9 }, mood: 0.05, stages: [child, teen, adult, elder] }
+  invite_rest: { label: 请ta睡一会儿, nap: 40, hold: 6, min: 15, effect: { rest: -0.9 }, mood: 0.05, stages: [teen, adult] }
   gift: { label: 送礼, visitor_only: true, hold: 3, min: 0, effect: {}, stages: [child, teen, adult, elder] }
   walk: { label: 搀着散步, walks: true, hold: 8, min: 45, effect: { mobility: -1, company: -0.3 }, frailty: -0.05, stages: [elder] }
   park: { label: 带去公园, walks: true, item_for: { infant: stroller }, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, seconds: 40, group: true }, effect: { play: -0.6, company: -0.4, mobility: -0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
@@ -660,12 +660,12 @@ lines:
     sneeze: ["{ta}连着打了几个喷嚏，眼睛红红的。", "{ta}揉着鼻子，说这几天又过敏了。"]
 `;
 
-  F['templates/events/rules.yaml'] = `version: 3
+  F['templates/events/rules.yaml'] = `version: 4
 # 事件规则数据库。游戏本体不写死任何人或事件，谁在什么时候发生什么，都从这里读，改了就生效。
 # trigger：tick 是时间过去，action 是玩家做了一件事，end 是某个带时限的标记到期。
 # when：触发条件，可用 sleeping，any_condition，all_conditions，stage，species，hour_from，hour_to，flag，no_flag，care_total_in，min_frailty。
 # rate_per_hour：每游戏小时发生的概率。chance：这一条触发的概率。stop：触发后不再看后面的规则。
-# do：要做的事，op 可用 flag_set，flag_clear，need，mood，frailty，condition_add，condition_remove，counter，log，say。
+# do：要做的事，op 可用 flag_set，flag_clear，need（delta 按水平算，正数是补上），mood，frailty，condition_add，condition_remove，counter，log，say。
 # then：先 do，再按 chance 乘以 scale 里的各项算概率，从 outcomes 里按 weight 挑一个结果。
 # when 还可以用 dates 日期列表，写 MM-DD 每年重复或 YYYY-MM-DD 某一天，weekday 星期，days_together_in 已陪伴的天数。once_per_day 为真时每人每天只触发一次。
 # 数值是占位，等 Life Matters 的模型接进来，可以换成远程后端，规则格式不用变。
@@ -681,7 +681,7 @@ rules:
     trigger: end
     flag: wc
     do:
-      - { op: need, need: toilet, delta: -0.9 }
+      - { op: need, need: toilet, delta: 0.9 }
     then:
       chance: 0.012
       scale:
@@ -723,7 +723,7 @@ rules:
     when: { stage: [infant, toddler], sleeping: false, with: { stage: [elder], same_room: true } }
     rate_per_hour: 6
     do:
-      - { op: need, need: play, delta: -0.12 }
+      - { op: need, need: play, delta: 0.12 }
       - { op: mood, delta: 0.02 }
       - { op: say, kind: soft, group: life, key: play_together }
   - id: play_together_elder
@@ -731,7 +731,7 @@ rules:
     when: { stage: [elder], sleeping: false, with: { stage: [infant, toddler], same_room: true } }
     rate_per_hour: 6
     do:
-      - { op: need, need: company, delta: -0.12 }
+      - { op: need, need: company, delta: 0.12 }
       - { op: mood, delta: 0.02 }
       - { op: say, kind: soft, group: life, key: play_with_baby }
   - id: clear_hurt
@@ -893,7 +893,7 @@ rules:
     rate_per_hour: 0.015
     do:
       - { op: say, kind: soft, group: life, key: power_cut }
-      - { op: need, need: company, delta: 0.1 }
+      - { op: need, need: company, delta: -0.1 }
   - id: package
     trigger: tick
     when: { sleeping: false, hour_from: 9, hour_to: 19 }

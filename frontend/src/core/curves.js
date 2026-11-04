@@ -17,8 +17,8 @@
   };
 
   G.curvesCsv = pid => {
-    const h = G.hist[pid] || [], cols = [...new Set(h.flatMap(r => Object.keys(r.needs || {})))].sort();
-    return toCsv([['t', 'mood', 'frailty', ...cols], ...h.map(r => [Math.round(r.t), num(r.mood), num(r.frailty), ...cols.map(c => num((r.needs || {})[c]))])]);
+    const h = G.hist[pid] || [], cols = [...new Set(h.flatMap(r => Object.keys(r.needs || {})))].sort();   /* 需求列写成 lv_ 开头的水平，1 满足，0 见底；没有 lv_ 的是旧版的压力 */
+    return toCsv([['t', 'mood', 'frailty', ...cols.map(c => 'lv_' + c)], ...h.map(r => [Math.round(r.t), num(r.mood), num(r.frailty), ...cols.map(c => num((r.needs || {})[c]))])]);
   };
   G.worldCurveCsv = () => toCsv([['t', 'money', 'focus', 'efficiency', 'bonus'], ...G.wcurve.map(r => [Math.round(r.t), num(r.money), num(r.focus), num(r.eff), num(r.bonus)])]);
 
@@ -37,7 +37,7 @@
       const rows = parse(await store.read(`people/${p.id}/curves.csv`)), head = rows.shift();
       if (!head || head[0] !== 't') continue;
       G.hist[p.id] = rows.map(r => {
-        const needs = {}; head.slice(3).forEach((c, i) => { if (r[3 + i] !== undefined && r[3 + i] !== '') needs[c] = +r[3 + i]; });
+        const needs = {}; head.slice(3).forEach((c, i) => { if (r[3 + i] === undefined || r[3 + i] === '') return; const lv = c.startsWith('lv_'); needs[lv ? c.slice(3) : c] = lv ? +r[3 + i] : 1 - +r[3 + i]; });
         return { t: +r[0], mood: +r[1], frailty: +r[2], needs };
       }).filter(x => isFinite(x.t)).slice(-G.HIST.keep);
     }

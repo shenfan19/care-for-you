@@ -134,8 +134,8 @@ Each directive in the directives of a drive response has an op and a person. op 
 
 | op | Fields | Effect | Range |
 | --- | --- | --- | --- |
-| need | need, delta | Add an increment to a need | delta between -1 and 1, the result is clamped to 0 to 1 |
-| need_set | need, value | Set a need to a value | 0 to 1 |
+| need | need, delta | Add an increment to a need level; positive refills it | delta between -1 and 1, the result is clamped to 0 to 1 |
+| need_set | need, value | Set a need level to a value | 0 to 1, 1 is fully satisfied |
 | mood | delta | Add an increment to mood | same as above |
 | mood_set | value | Set mood | 0 to 1 |
 | frailty | delta | Add an increment to frailty | same as above |
@@ -188,7 +188,7 @@ Each directive in the directives of a drive response has an op and a person. op 
 | age_band | A finer age band, null for non-humans |
 | mood | Mood, 0 to 1, 1 is best, four decimals |
 | frailty | Frailty, 0 to 1, 1 is most frail, four decimals |
-| needs | Needs: keys are need names, values 0 to 1, 1 is most urgent, four decimals. Different species have different needs, and conditions add needs |
+| needs | Need levels: keys are need names, values 0 to 1, 1 is fully satisfied (full stomach, fully hydrated, fully rested) and 0 is empty, four decimals. This is the same direction as the state variables of an LM model. Different species have different needs, and conditions add needs |
 | conditions | Array of condition ids |
 | cond_set | Per-condition settings the player chose, for example { "diabetes": { "severity": "advanced" } }. Empty object when none |
 | pulses | Tick snapshots only: the ids of the actions and story choices done since the last tick, for example ["sugar", "carb_heavy"]. Taken once, the next tick starts empty. A model may turn them into inputs |
@@ -247,7 +247,7 @@ Two sections are the game's own:
 
 | Section | Meaning |
 | --- | --- |
-| drives | need name to { state, lo, hi, kinds }: the state variable is the need, scaled from lo..hi to 0..1. A declared need is no longer grown by the game. A need that two conditions both have, such as medicine, is best left to the game; models read it as n_medicine |
+| drives | need name to { state, lo, hi, kinds }: the state variable is mapped from lo..hi onto the need level 0..1, where 1 is fully satisfied. A variable that is a pressure (water deficit, sleep pressure) uses lo 1 and hi 0; a variable that is already a level (satiety) uses lo 0 and hi 1. Inside model equations the name n_thirst is still the pressure, 1 minus the level. A declared need is no longer grown by the game. A need that two conditions both have, such as medicine, is best left to the game; models read it as n_medicine |
 | care.fixed_step_minutes | The model runs on its own clock with this step, as in LM. Inputs are spread over the steps of a window, and equations that add an input without multiplying by step are exact. Without it the model runs on substeps of at most care.max_step_minutes (default 15) |
 | care.step_scale | Equation name to factor: this equation takes factor times longer steps, so a process that takes weeks can happen in a game day |
 | care.schedule | Daily inputs: { var, hour, minutes, value, delivery?: total or level, days? }. total is spread over the window, level holds the value during the window and replaces the default. days uses 0 for Sunday |

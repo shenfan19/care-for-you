@@ -23,7 +23,7 @@
       if (a.selfonly || NO_AUTO.has(a.id) || a.away || a.outing) continue;
       const e = a.effect && a.effect[need];
       if (!(e < 0)) continue;
-      let g = 0; for (const k in a.effect) if (a.effect[k] < 0) g += (p.state.needs[k] || 0) * -a.effect[k];
+      let g = 0; for (const k in a.effect) if (a.effect[k] < 0) g += G.need(p, k) * -a.effect[k];
       g += Math.random() * 0.05;
       if (g > gain) { gain = g; best = a; }
     }
@@ -94,7 +94,7 @@
   /* ---------- 动手 ---------- */
   const doCare = e => {
     const from = G.get(e.from), to = G.get(e.to);
-    if ((from.state.needs[e.need] || 0) < 0.35) return true;
+    if (G.need(from, e.need) < 0.35) return true;
     const a = careAction(from, e.need); if (!a) return true;
     applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5));
     from.state.mood = clamp(from.state.mood + 0.03);
@@ -104,7 +104,7 @@
   };
   const doSelf = e => {
     const p = G.get(e.from), a = G.selfActFor(p, e.need);
-    if (a && (p.state.needs[e.need] || 0) > 0.4) G.selfAct(p, a, e.need, false);
+    if (a && G.need(p, e.need) > 0.4) G.selfAct(p, a, e.need, false);
     return true;
   };
   const doGo = e => {

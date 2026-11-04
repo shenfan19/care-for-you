@@ -265,7 +265,7 @@
         if (c._popN === undefined) c._popN = 0;
         for (const e of G.pops) if (e.pid === p.id && e.n > c._popN) { c._popN = e.n; if (e.kind === 'done' && Date.now() - e.t < 3000) c._doneUntil = Date.now() + 1300; }
       }
-      const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => p.state.needs[k] > U.NEED_LIT).sort((a, b) => p.state.needs[b] - p.state.needs[a]);
+      const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => G.need(p, k) > U.NEED_LIT).sort((a, b) => G.need(p, b) - G.need(p, a));
       const req = G.req[p.id], toast = G.toast[p.id], hid = !!req && (req.folded || U.cardPid !== p.id);
       const done = c._doneUntil > Date.now();
       let lane = '';
@@ -276,7 +276,7 @@
         else if (G.crying[p.id]) lane = one('😭', lit.map(k => G.needLabel(k, defs[k])).join(' '), true);
         else if (G.flag(p, 'hospital')) lane = one('🏥', t('loc.hospital'));
         else if (CY.world.errandOf(p) === 'help') lane = one('🤝', t('badge.help'));
-        else if (lit.length) lane = one(defs[lit[0]].icon || '•', lit.map(k => G.needLabel(k, defs[k])).join(' '), p.state.needs[lit[0]] > 0.85, lit.length - 1);
+        else if (lit.length) lane = one(defs[lit[0]].icon || '•', lit.map(k => G.needLabel(k, defs[k])).join(' '), G.need(p, lit[0]) > 0.85, lit.length - 1);
         else if (G.isSleeping(p)) lane = one('💤', t('act.sleeping'));
       }
       if (c.dataset.bd !== lane) { c.querySelector('.badges').innerHTML = lane; c.dataset.bd = lane; }
@@ -426,11 +426,11 @@
     if (box.dataset.sig === sig) return;
     box.dataset.sig = sig;
     box.innerHTML = people.map(p => {
-      const defs = G.needsOf(p), tn = G.topNeed(p), urgent = p.state.needs[tn] > U.NEED_LIT;
+      const defs = G.needsOf(p), tn = G.topNeed(p), urgent = G.need(p, tn) > U.NEED_LIT;
       const pg = U.pageOf(p), away = pg !== U.viewPlace;
       return `<div class="rcard ${G.req[p.id] || G.needy(p) ? 'calling' : ''} ${away ? 'away' : ''} ${U.sel === p.id ? 'sel' : ''}" data-id="${p.id}" title="${esc(p.person.name + (away ? ' → ' + U.pageName(pg) : ''))}"><div class="av">${CY.avatar(p)}</div>
         <div class="rn">${esc(p.person.name)}${G.isSleeping(p) ? ' 💤' : ''}${G.flag(p, 'hospital') ? ' 🏥' : ''}${G.flag(p, 'hurt') ? ' ❗' : ''}</div>
-        <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${p.state.needs[tn] > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}${away ? `<span class="rl">→ ${esc(U.pageName(pg))}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
+        <div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${urgent ? `<span class="rb ${G.need(p, tn) > 0.85 ? 'urgent' : ''}" title="${esc(G.needLabel(tn, defs[tn]))}">${(defs[tn] || {}).icon || '•'}</span>` : ''}${away ? `<span class="rl">→ ${esc(U.pageName(pg))}</span>` : ''}<span class="ri" data-i="${p.id}">ⓘ</span></div>`;
     }).join('');
     box.querySelectorAll('.rcard').forEach(el => el.onclick = e => {
       e.stopPropagation();
@@ -461,8 +461,8 @@
   };
   /* 这个动作能不能解决角色现在的某个需求 */
   /* 头顶的需求图标和环里亮起的行动用同一个门槛，也是宝宝和宠物开始催人的线 */
-  U.NEED_LIT = 0.5;
-  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && (p.state.needs[k] || 0) > U.NEED_LIT);
+  U.NEED_LIT = 0.5;   /* 需求压力超过这个值，也就是水平低于 1 减它，就亮起来 */
+  U.actUrgent = (p, a) => Object.keys(a.effect || {}).some(k => a.effect[k] < 0 && G.need(p, k) > U.NEED_LIT);
   const ringOff = () => { if (U.room) { U.room.classList.remove('ring-open'); U.room.querySelectorAll('.cx.ring-on').forEach(c => c.classList.remove('ring-on')); } };
   /* 操作结束，选中的状态跟着清掉：画面上的名字和左下的卡片都回到默认，选中只存在于操作面板开着的时候 */
   U.closeRing = function () { if (!U.room) return; const r = $r('#ringLayer'); if (r) r.remove(); U.ringByHover = false; U.sel = null; ringOff(); U.room.querySelectorAll('.sel').forEach(c => c.classList.remove('sel')); };
@@ -479,7 +479,7 @@
     const layer = doc().createElement('div');
     layer.id = 'ringLayer'; layer.className = 'opanel' + (narrow ? ' sheet' : '');
     layer.style.width = W + 'px';
-    const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => p.state.needs[k] > U.NEED_LIT).sort((a, b) => p.state.needs[b] - p.state.needs[a]);
+    const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => G.need(p, k) > U.NEED_LIT).sort((a, b) => G.need(p, b) - G.need(p, a));
     const conds = (p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ');
     const head = doc().createElement('div'); head.className = 'ophead';
     head.innerHTML = `<b>${p === G.protagonist() ? '★ ' : ''}${esc(p.person.name)}</b>${G.isSleeping(p) ? '<span title="' + esc(t('act.sleeping')) + '">💤</span>' : ''}${conds ? '<span title="' + esc(conds) + '">🩺</span>' : ''}<button class="hb" data-a="info">${esc(t('btn.status'))}</button>${p.person.visitor ? '' : `<button class="hb" data-a="edit">${esc(t('btn.edit'))}</button>`}<button class="x" aria-label="×">×</button>`;
@@ -489,7 +489,7 @@
     layer.appendChild(head);
     if (lit.length) {
       const nd = doc().createElement('div'); nd.className = 'opneeds';
-      nd.innerHTML = lit.map(k => `<span class="${p.state.needs[k] > 0.85 ? 'urgent' : ''}">${defs[k].icon || '•'} ${esc(G.needLabel(k, defs[k]))}</span>`).join('');
+      nd.innerHTML = lit.map(k => `<span class="${G.need(p, k) > 0.85 ? 'urgent' : ''}">${defs[k].icon || '•'} ${esc(G.needLabel(k, defs[k]))}</span>`).join('');
       layer.appendChild(nd);
     }
     const label = doc().createElement('div'); label.className = 'oplabel'; label.innerHTML = '&nbsp;';

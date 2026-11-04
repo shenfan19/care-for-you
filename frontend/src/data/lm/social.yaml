@@ -1,6 +1,6 @@
 metadata:
   name: social
-  version: "1.0"
+  version: "1.1"
   lm_format_version: "1.0"
   source: LM human_body/nervous_sleep_stress_2026 的压力与情绪部分
   description:
@@ -82,7 +82,8 @@ equations:
     dynamics:
       mood: "mood + (max(0.0, min(1.0, mood_target)) - mood) * (1.0 - exp(-step / tau_mood_h))"
 
+# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
 drives:
-  company: { state: loneliness, lo: 0.0, hi: 1.0, kinds: [human, animal] }
-  play: { state: boredom, lo: 0.0, hi: 1.0, kinds: [human, animal] }
+  company: { state: loneliness, lo: 1.0, hi: 0.0, kinds: [human, animal] }
+  play: { state: boredom, lo: 1.0, hi: 0.0, kinds: [human, animal] }
   mood: { state: mood, lo: 0.0, hi: 1.0 }

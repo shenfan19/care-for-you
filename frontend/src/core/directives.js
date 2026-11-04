@@ -13,7 +13,7 @@
     p.state.flags[n] = f;
   };
   G.clearFlag = (p, n) => { if (p.state.flags) delete p.state.flags[n]; };
-  const initNeeds = p => { for (const k of Object.keys(G.needsOf(p))) if (typeof p.state.needs[k] !== 'number') p.state.needs[k] = 0.1 + Math.random() * 0.2; };
+  const initNeeds = p => { for (const k of Object.keys(G.needsOf(p))) if (typeof p.state.needs[k] !== 'number') p.state.needs[k] = 1 - (0.1 + Math.random() * 0.2); };
   /* 台词：向后端要一句。late 是远程后端晚回来时换上去的回调 */
   G.sayLine = (p, group, key, situation, late) => {
     if (!CY.backend) return null;

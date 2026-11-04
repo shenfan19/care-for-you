@@ -63,7 +63,7 @@
     if (!p) return null;
     if (c.controllable === false) p.person.controllable = false;
     p.person.visitor = { id, since: day(), stay: rint(G.DOOR.stay_min, G.DOOR.stay_max), day_in: 0, ok: false, fav: 0, wrong: [], talk: 0 };
-    if (c.tired) p.state.needs.rest = c.tired;
+    if (c.tired) G.setNeed(p, 'rest', c.tired);   /* 卡里写的 tired 是疲倦的程度，存成精力水平 */
     p.state.mood = 0.55;
     await saveVisitor(p);
     if (CY.world && CY.world.agents) CY.world.agents[pid] = { room: G.DOOR.door_room, next: Date.now() + 15000 };

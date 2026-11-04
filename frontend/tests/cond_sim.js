@@ -18,7 +18,7 @@ function loadLm(dir) {
 
 /* 一个模拟的角色，需求按固定速率涨，动作把需求清零，同时记一个脉冲 */
 function person(conds, extra) {
-  return Object.assign({ id: 'p1', species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: { hunger: 0.2, thirst: 0.2, company: 0.2, medicine: 0.3, sugar: 0.2, bp: 0.2, joint: 0.2, lowmood: 0.2 },
+  return Object.assign({ id: 'p1', species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: { hunger: 0.8, thirst: 0.8, company: 0.8, medicine: 0.7, sugar: 0.8, bp: 0.8, joint: 0.8, lowmood: 0.8 },
     conditions: conds, cond_set: {}, flags: {}, sleeping: false, rate_mult: {}, pulses: [] }, extra || {});
 }
 
@@ -30,7 +30,7 @@ function run(lm, snap, days, policy, stepMin = 2) {
     const dayMin = t % 1440, hour = dayMin / 60;
     snap.sleeping = hour < 6.5 || hour >= 22.5;
     snap.pulses = policy ? policy(dayMin, Math.floor(t / 1440), snap) : [];
-    for (const a of snap.pulses) for (const n of ACTION_NEED[a] || []) snap.needs[n] = Math.max(0, snap.needs[n] - 1);
+    for (const a of snap.pulses) for (const n of ACTION_NEED[a] || []) snap.needs[n] = 1;
     const req = { minutes: stepMin, world: { hour: (t + stepMin) % 1440 / 60, date: { weekday: Math.floor(t / 1440) % 7 } }, people: [snap] };
     const r = eng.drive(req);
     for (const d of r.directives) {
@@ -39,7 +39,7 @@ function run(lm, snap, days, policy, stepMin = 2) {
       else if (d.op === 'frailty') snap.frailty = Math.min(1, Math.max(0, snap.frailty + d.delta));
     }
     /* 内置后端对心情和虚弱度的规则：心情向 1 减 0.7 倍最高需求松弛，虚弱度在需求很满时涨，很低时降 */
-    const hrs = stepMin / 60, mx = Math.max(...Object.keys(snap.needs).map(k => snap.needs[k]));
+    const hrs = stepMin / 60, mx = Math.max(...Object.keys(snap.needs).map(k => 1 - snap.needs[k]));
     snap.mood = Math.min(1, Math.max(0, snap.mood + (Math.min(1, Math.max(0, 1 - 0.7 * mx)) - snap.mood) * Math.min(1, hrs * 0.5)));
     if (mx > 0.9) snap.frailty = Math.min(1, snap.frailty + 0.02 * hrs); else if (mx < 0.4) snap.frailty = Math.max(0, snap.frailty - 0.01 * hrs);
     t += stepMin;
@@ -54,8 +54,8 @@ const carePolicy = (dm, day, snap) => {
   const acts = [], at = h => Math.abs(dm - h * 60) < 1;
   if (at(8)) acts.push('medicine');
   if (at(10)) { acts.push('sugar', 'bp'); }
-  if (snap.needs.joint > 0.6 && dm > 7 * 60 && dm < 21 * 60) acts.push('heat');
-  if (snap.needs.lowmood > 0.6 && dm > 9 * 60 && dm < 20 * 60) acts.push('listen');
+  if (snap.needs.joint < 0.4 && dm > 7 * 60 && dm < 21 * 60) acts.push('heat');
+  if (snap.needs.lowmood < 0.4 && dm > 9 * 60 && dm < 20 * 60) acts.push('listen');
   return acts;
 };
 

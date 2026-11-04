@@ -14,7 +14,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 RATE_PER_HOUR = 0.05
 NAME = "care-basic-backend"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
 def hello():
@@ -25,10 +25,10 @@ def step(person, minutes):
     """返回这个人的指令列表和它驱动的变量名。person 是协议里的角色快照。"""
     out = []
     for need, v in person["needs"].items():
-        delta = min(1.0, v + RATE_PER_HOUR * minutes / 60) - v
+        delta = max(0.0, v - RATE_PER_HOUR * minutes / 60) - v   # 状态是水平，1 满足，0 见底；每小时降一点
         out.append({"op": "need", "person": person["id"], "need": need, "delta": round(delta, 5)})
-    # 例子：饿得厉害的人，请游戏让他走去厨房待两分钟
-    if person["needs"].get("hunger", 0) > 0.8 and not person.get("sleeping"):
+    # 例子：饿得厉害的人（饱食度低于 0.2），请游戏让他走去厨房待两分钟
+    if person["needs"].get("hunger", 1) < 0.2 and not person.get("sleeping"):
         out.append({"op": "move", "person": person["id"], "room": "kitchen", "minutes": 2})
     return out, list(person["needs"])
 

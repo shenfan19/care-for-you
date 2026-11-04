@@ -105,7 +105,7 @@
   /* ---------- 人和人之间：在同一个房间的两个人，偶尔自己聊几句、玩一会儿、逗逗宠物，需求会降一点，发生的事里留一句 ---------- */
   const socialCd = {}, SMALL = ['infant', 'toddler', 'child'];
   let socialT = 20;
-  const lower = (p, k, v) => { if (k in p.state.needs) p.state.needs[k] = clamp(p.state.needs[k] - v); };
+  const lower = (p, k, v) => { if (k in p.state.needs) G.setNeed(p, k, G.need(p, k) - v); };
   G.socialTick = dt => {
     socialT -= dt; if (socialT > 0) return;
     socialT = 20 + Math.random() * 20;
@@ -128,7 +128,7 @@
       if (!ha && !hb && (a.person.species === b.person.species)) continue;
       const key = [a.id, b.id].sort().join();
       if ((socialCd[key] || 0) > now) continue;
-      const want = Math.max(a.state.needs.company || 0, b.state.needs.company || 0, a.state.needs.play || 0, b.state.needs.play || 0);
+      const want = Math.max(G.need(a, 'company'), G.need(b, 'company'), G.need(a, 'play'), G.need(b, 'play'));
       if (Math.random() > (0.05 + 0.45 * want) * (!ha && !hb ? 0.5 : 1)) continue;
       let kind, who, tgt;
       if (ha && hb) {

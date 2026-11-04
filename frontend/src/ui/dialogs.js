@@ -197,7 +197,7 @@
       else if (a === 'visit') { await G.arrive(dlg.querySelector('#dvc').value, true); await G.load(); U.afterPeopleChange(); }
       else if (a === 'visit-next') { G.world.next_visit = 0; G.world.guest_full = false; G.maybeArrive(); }
       else if (a === 'visit-clear') { for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id); U.afterPeopleChange(); }
-      else if (a === 'needs-low' || a === 'needs-high') { for (const p of G.activePeople()) for (const k in p.state.needs) p.state.needs[k] = a === 'needs-low' ? 0.1 : 0.8; }
+      else if (a === 'needs-low' || a === 'needs-high') { for (const p of G.activePeople()) for (const k in p.state.needs) G.setNeed(p, k, a === 'needs-low' ? 0.1 : 0.8); }
       else if (a === 'flags-clear') { for (const p of G.activePeople()) { G.clearFlag(p, 'outing'); G.clearFlag(p, 'hospital'); } }
       else if (a === 'afford') G.world.money = Math.max(G.world.money || 0, 5000);
       redraw();

@@ -1,6 +1,6 @@
 metadata:
   name: upkeep
-  version: "1.0"
+  version: "1.1"
   lm_format_version: "1.0"
   source: 自建的杂务累积，没有对应的 LM 组件
   description:
@@ -54,11 +54,12 @@ equations:
       nutrient_deficit: "nutrient_deficit + step * k_fert * speed_fertilize"
       overgrowth: "overgrowth + step * k_prune * speed_prune"
 
+# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
 drives:
-  hygiene: { state: grime, kinds: [human] }
-  diaper: { state: diaper_load, kinds: [human] }
-  homework: { state: homework_left, kinds: [human] }
-  clean: { state: litter, kinds: [animal] }
-  sun: { state: light_deficit, kinds: [plant] }
-  fertilize: { state: nutrient_deficit, kinds: [plant] }
-  prune: { state: overgrowth, kinds: [plant] }
+  hygiene: { state: grime, lo: 1.0, hi: 0.0, kinds: [human] }
+  diaper: { state: diaper_load, lo: 1.0, hi: 0.0, kinds: [human] }
+  homework: { state: homework_left, lo: 1.0, hi: 0.0, kinds: [human] }
+  clean: { state: litter, lo: 1.0, hi: 0.0, kinds: [animal] }
+  sun: { state: light_deficit, lo: 1.0, hi: 0.0, kinds: [plant] }
+  fertilize: { state: nutrient_deficit, lo: 1.0, hi: 0.0, kinds: [plant] }
+  prune: { state: overgrowth, lo: 1.0, hi: 0.0, kinds: [plant] }

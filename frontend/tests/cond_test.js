@@ -137,7 +137,7 @@ check('不带病的人完全不被疾病引擎碰', (() => { const s = person([]
   lm.engineCond.people = {};
   const heat = run(lm, person(['arthritis']), 2, (dm) => (dm === 600 || dm === 660 ? ['heat'] : []), 4);
   const painAfter = r => r[Math.round(11 * 15)].snap.needs.joint;
-  check('关节炎：热敷之后疼痛的需求涨得更慢', painAfter(heat) < painAfter(noHeat) - 0.05, `热敷 ${painAfter(heat).toFixed(2)} 不理 ${painAfter(noHeat).toFixed(2)}`);
+  check('关节炎：热敷之后疼痛的需求水平掉得更慢', painAfter(heat) > painAfter(noHeat) + 0.05, `热敷 ${painAfter(heat).toFixed(2)} 不理 ${painAfter(noHeat).toFixed(2)}（水平）`);
   check('关节炎：发作程度每天有固定节奏，周期内会变', new Set(noHeat.map(r => Math.round(r.ro[0].live * 10))).size > 3);
 }
 {
@@ -178,7 +178,7 @@ check('不带病的人完全不被疾病引擎碰', (() => { const s = person([]
   check('转换来的新疾病可以载入', CY.lm.lib.modelsOfCondition('htn_gout').length === 1);
   for (const cid of Object.keys(exp)) {
     const e = exp[cid], m = CY.lm.lib.modelsOfCondition(cid)[0];
-    const snap = { id: 'q-' + cid, species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: { hunger: 0.2, medicine: 0.3, sugar: 0.2, bp: 0.2, lab: 0.2 }, conditions: [cid], cond_set: {}, flags: {}, sleeping: false, rate_mult: {}, pulses: [] };
+    const snap = { id: 'q-' + cid, species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: { hunger: 0.8, medicine: 0.7, sugar: 0.8, bp: 0.8, lab: 0.8 }, conditions: [cid], cond_set: {}, flags: {}, sleeping: false, rate_mult: {}, pulses: [] };
     const eng = CY.lm.engineCond, rows = [];
     for (let h = 0; h < e.hours; h++) {
       snap.pulses = e.pulses.some(p => Math.floor(p[0]) === h) ? e.pulses.filter(p => Math.floor(p[0]) === h).map(p => p[1]) : [];
@@ -189,7 +189,7 @@ check('不带病的人完全不被疾病引擎碰', (() => { const s = person([]
     rows.forEach((st, i) => { for (const k in e.series) { if (k.includes('_need_')) continue; const a = st[k], b = e.series[k][i]; const rel = Math.abs(a - b) / (Math.abs(b) + 1e-6); if (rel > worst) { worst = rel; where = `${k}@${(i + 1) * 12}h ${a} vs ${b}`; } } });
     check(`${cid}：Care 引擎和转换插件的评估器在 ${e.hours} 小时内逐点一致`, rows.length === e.t.length && worst < 1e-6, `最大相对差 ${worst.toExponential(2)} ${where}`);
   }
-  const eng2 = CY.lm.engineCond, snapH = { id: 'h1', species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: { hunger: 0.2, medicine: 0.3, bp: 0.2, lab: 0.2 }, conditions: ['htn_gout'], cond_set: { htn_gout: { severity: 'advanced' } }, flags: {}, sleeping: false, rate_mult: {}, pulses: ['bp', 'labtest'] };
+  const eng2 = CY.lm.engineCond, snapH = { id: 'h1', species: 'human', stage: 'elder', age: 70, mood: 0.7, frailty: 0.2, needs: { hunger: 0.8, medicine: 0.7, bp: 0.8, lab: 0.8 }, conditions: ['htn_gout'], cond_set: { htn_gout: { severity: 'advanced' } }, flags: {}, sleeping: false, rate_mult: {}, pulses: ['bp', 'labtest'] };
   eng2.drive({ minutes: 60, world: { hour: 9 }, people: [snapH] });
   const ro = CY.lm.readouts('h1');
   check('转换来的模型有读数，测过之后才显示', ro.length === 2 && ro.every(r => r.value === null || r.reveal_by.length), JSON.stringify(ro.map(r => [r.id, r.value])));

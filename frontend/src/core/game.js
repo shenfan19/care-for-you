@@ -103,7 +103,8 @@
       state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || 0.5, resp: 0, n_resp: 0, kinds: {} }, state.learn);
       const story = Object.assign({ version: 1, arcs: {}, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
       const p = { id, person, species, state, story, voice: {} };
-      for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 0.1 + Math.random() * 0.2;
+      if (state.needs_v !== 2) { for (const k in state.needs) if (typeof state.needs[k] === 'number') state.needs[k] = 1 - state.needs[k]; state.needs_v = 2; }   /* 旧存档存的是压力，换成水平 */
+      for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 1 - (0.1 + Math.random() * 0.2);
       G.people.push(p);
       const sy = await store.readYaml(`people/${id}/sayings.yaml`);
       G.sayings[id] = (sy && sy.items) || [];
@@ -214,7 +215,7 @@
     if (Array.isArray(arch.self_actions)) { const def = defaultSelf(species, stg); if (arch.self_actions.slice().sort().join() !== def.slice().sort().join()) person.self_actions = arch.self_actions.slice(); }
     if (human) person.age = age;
     await store.writeYaml(`people/${id}/person.yaml`, person);
-    if (arch.health && typeof arch.health.score === 'number') await store.writeYaml(`people/${id}/state.yaml`, { version: 1, needs: {}, mood: typeof arch.health.mood === 'number' ? arch.health.mood : 0.6, frailty: +(1 - arch.health.score).toFixed(2), last_seen: '', asked: [], heal: {} });
+    if (arch.health && typeof arch.health.score === 'number') await store.writeYaml(`people/${id}/state.yaml`, { version: 1, needs_v: 2, needs: {}, mood: typeof arch.health.mood === 'number' ? arch.health.mood : 0.6, frailty: +(1 - arch.health.score).toFixed(2), last_seen: '', asked: [], heal: {} });
     return id;
   };
   G.setActive = async function (pid, on) {
@@ -311,11 +312,13 @@
   };
   /* 需求和动作的显示名：当前语言包有就用，没有就用模板里的写法 */
   G.needLabel = (k, d) => CY.tOr('need.' + k, d.label);
-  /* 给人看的数字一律是正面的水平：饱食度，不是饥饿度。内部仍存需求压力（规则、存档、后端协议都按压力），展示层统一走这里反过来。
-     疾病和病痛类的需求暂不反过来，后续再说，G.isLevel 为假的仍按原样显示 */
+  /* 状态里存的是水平：1 是满足（饱食度），0 是见底，和 LM 的状态变量同一个方向。规则的语言仍是需求压力，压力等于 1 减水平：
+     速率是压力涨得多快，动作效果的负数是缓解，阈值是压力超过多少。两者的换算只在 G.need 和 G.setNeed 这两处。 */
   G.LEVEL_NAME = { thirst: 'Hydration', hunger: 'Fullness', rest: 'Energy', company: 'Companionship', play: 'Fun', diaper: 'Dryness', hygiene: 'Cleanliness', homework: 'Homework done', mobility: 'Movement', clean: 'Tidiness', warmth: 'Warmth', veg: 'Fresh greens', humid: 'Humidity', water: 'Moisture', sun: 'Sunlight', fertilize: 'Nutrients', prune: 'Shape' };
   G.isLevel = k => k in G.LEVEL_NAME;
-  G.level = (p, k) => Math.min(1, Math.max(0, 1 - (p.state.needs[k] || 0)));
+  G.level = (p, k) => (typeof p.state.needs[k] === 'number' ? Math.min(1, Math.max(0, p.state.needs[k])) : 1);
+  G.need = (p, k) => 1 - G.level(p, k);
+  G.setNeed = (p, k, pressure) => { p.state.needs[k] = 1 - clamp(pressure); };
   G.levelName = (k, d) => G.LEVEL_NAME[k] || G.needLabel(k, d);
   G.vigor = p => Math.min(1, Math.max(0, 1 - p.state.frailty));
   /* 全部动作，含角色只能自己做的。界面上的菜单用 actionsOf，不含自己做的 */
@@ -345,8 +348,8 @@
     for (const k in all) { const a = all[k]; if (a.away || a.outing) continue; if (a.selfonly || Object.keys(a.effect || {}).some(n => !covered.has(n))) out[k] = a; }
     return out;
   };
-  G.maxNeed = p => Math.max(0, ...Object.values(p.state.needs));
-  G.topNeed = p => { const d = G.needsOf(p); return Object.keys(d).sort((a, b) => p.state.needs[b] - p.state.needs[a])[0]; };
+  G.maxNeed = p => Math.max(0, ...Object.keys(p.state.needs).map(k => G.need(p, k)));
+  G.topNeed = p => { const d = G.needsOf(p); return Object.keys(d).sort((a, b) => G.need(p, b) - G.need(p, a))[0]; };
   /* 紧迫程度：最急的需求乘以类别的紧迫系数。不让玩家手动排优先级，由类别和当下的需求自然决定谁最急 */
   G.urgency = p => G.maxNeed(p) * G.classOf(p).urgency;
   /* 长按多久：动作本身的时长，乘以主角的年纪。老人手慢，圈转得慢些 */
@@ -403,7 +406,7 @@
     if (p.species.id !== 'human' && !NOCTURNAL.includes(p.species.id)) return 'awake';
     if (G.flag(p, 'nap')) return 'sleeping';
     const [a, b] = G.sleepWindow(p), dm = G.dayMinutes(), R = G.routineOf(p);
-    if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && (p.state.needs.rest || 0) > 0.3) return 'sleeping';   /* 幼儿和老人的午睡 */
+    if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && G.need(p, 'rest') > 0.3) return 'sleeping';   /* 幼儿和老人的午睡 */
     if (!inWindow(dm, a, b)) return 'awake';
     const st = G.stage(p);
     if (st === 'infant') return G.maxNeed(p) > 0.9 ? 'awake' : (dm % 180) < 120 ? 'sleeping' : 'awake';
@@ -577,7 +580,7 @@
   function applyEffects(p, a, scale) {
     const s = p.state, mods = G.traitMods(p);
     G.pulse(p.id, a.id);
-    for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] < 0 ? (mods.effect[k] || 1) : 1));
+    for (const k in a.effect || {}) if (k in s.needs) G.setNeed(p, k, G.need(p, k) + a.effect[k] * scale * (a.effect[k] < 0 ? (mods.effect[k] || 1) : 1));
     if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
   }
   /* 这个动作这个角色自己做得了吗：卡里写了名单就按名单，没写就按年龄阶段 */
@@ -654,9 +657,9 @@
       const night = G.isNight();
       for (const k in defs) {
         if (driven(p, k)) continue;
-        if (k === 'rest' && sleeping) { s.needs.rest = clamp((s.needs.rest || 0) - 0.12 * hp * shop.rest_sleep); continue; }
+        if (k === 'rest' && sleeping) { G.setNeed(p, 'rest', G.need(p, 'rest') - 0.12 * hp * shop.rest_sleep); continue; }
         const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? 0.4 : 1) * (G.flag(p, 'hospital') ? 0.25 : 1) * (G.awayMult ? G.awayMult(p) : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1) * G.rhythm(p, k);
-        s.needs[k] = clamp((s.needs[k] || 0) + grow, 0, offline ? 0.7 : 1);
+        G.setNeed(p, k, Math.min(offline ? 0.7 : 1, G.need(p, k) + grow));
       }
       if (!driven(p, 'mood')) {
         let target = 1 - 0.7 * G.maxNeed(p) + mods.mood_offset + shop.mood;
@@ -667,7 +670,7 @@
       /* 没人管的时候，有的会自己动手：老人自己倒水做饭，孩子能做的少，婴儿什么也做不了 */
       const sc = G.classOf(p).self_care;
       if (sc > 0 && !sleeping && p !== G.protagonist()) for (const k in defs) {
-        if (s.needs[k] > 0.7 && Math.random() < sc * hp * 1.2 * boost) {
+        if (G.need(p, k) > 0.7 && Math.random() < sc * hp * 1.2 * boost) {
           const a = selfActionFor(p, k);
           if (a && selfAct(p, a, k, offline)) break;
         }
@@ -904,7 +907,7 @@
     let n = 0;
     for (const q of G.activePeople()) {
       if (q === cook || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;
-      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v * scale);
+      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) G.setNeed(q, k, G.need(q, k) + v * scale);
       n++;
     }
     G.logK(cook.id, 'event', 'log.meal_all', {});
@@ -949,7 +952,7 @@
     }
     const req = G.req[pid];
     if (req && req.kind === 'need') {
-      if (s.needs[req.need] < 0.4) { delete G.req[pid]; learn(p, 'need', true, (Date.now() - req.since) / 1000); }
+      if (G.need(p, req.need) < 0.4) { delete G.req[pid]; learn(p, 'need', true, (Date.now() - req.since) / 1000); }
     }
     if (p === G.protagonist() && a.selfonly) {
       /* 自己做自己的事：旁白一句，不是被照顾的人道谢 */
@@ -995,7 +998,7 @@
     if (p.person.visitor && G.visitorFav) G.visitorFav(p, G.FAV.ask);   /* 回答来客的问题，好感加一点 */
     /* 来客自己带着回答：卡片里写的一句，选了劝你歇一歇的那个回答，主角的休息需求就降一点 */
     const rp = req.reply || G.sayLine(p, 'reply', custom !== undefined && custom !== null ? 'custom' : 'a' + idx);
-    if (req.rest !== undefined && req.rest === idx) { const lead = G.protagonist(); if (lead && lead.state.needs.rest !== undefined) lead.state.needs.rest = Math.max(0, lead.state.needs.rest - 0.12); }
+    if (req.rest !== undefined && req.rest === idx) { const lead = G.protagonist(); if (lead && lead.state.needs.rest !== undefined) G.setNeed(lead, 'rest', Math.max(0, G.need(lead, 'rest') - 0.12)); }
     G.toastFor(p, rp || line(p, 'thanks', 'default', t('line.ok')), 'speech');
     learn(p, 'ask', true, (Date.now() - req.since) / 1000);
     G.playFx(pid, 'talk');

@@ -40,7 +40,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('没选完开局故事时不来', (G.world.story_pending = true, await G.maybeArrive()) === false && (G.world.story_pending = false, true));
     check('第一天午后必到，是家里的一个人', (await G.maybeArrive()) === true && G.people.length === before + 1 && G.visitorPeople().length === 1);
     const zhuge = G.visitorPeople()[0];
-    check('访客有名字、外观和疲倦', zhuge.person.name === '弗洛伦斯·南丁格尔' && zhuge.person.appearance.hair_style === 'bun' && zhuge.state.needs.rest >= 0.8 && zhuge.person.visitor.id === 'nightingale');
+    check('访客有名字、外观和疲倦', zhuge.person.name === '弗洛伦斯·南丁格尔' && zhuge.person.appearance.hair_style === 'bun' && G.need(zhuge, 'rest') >= 0.8 && zhuge.person.visitor.id === 'nightingale');
     check('访客出现在门口所在的院子', CY.world.agents[zhuge.id] && CY.world.agents[zhuge.id].room === 'yard');
     check('卡片外观转成人物外观，性别对应形象，同一人每次长得一样', (() => { const V = CY.visitors, c = V.cards.nightingale, A = zhuge.person.appearance, k = CY.charKeyOf(zhuge); return typeof A.skin === 'number' && A.hair_color === c.look.hairColor && A.cloth === c.look.clothes && k.startsWith('female') && G.lookOf(c).model === G.lookOf(c).model && G.lookOf(V.cards.nightingale).model.startsWith('female'); })());
     check('停留一到三天', zhuge.person.visitor.stay >= 1 && zhuge.person.visitor.stay <= 3);
@@ -63,7 +63,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     for (const p of G.visitorPeople().slice()) await G.deletePerson(p.id);
     G.world.next_visit = 0; G.world.vday = null;
     const cp = await G.arrive('curie');
-    check('居里夫人是家里的人，需求里没有特别的疲倦', G.visitorPeople().length === 1 && cp.person.name === '玛丽·居里' && !(cp.state.needs.rest >= 0.8));
+    check('居里夫人是家里的人，需求里没有特别的疲倦', G.visitorPeople().length === 1 && cp.person.name === '玛丽·居里' && !(G.need(cp, 'rest') >= 0.8));
     const V0 = CY.visitors.GIFTS; G.world.money = 2000; G.buyGift('tea'); G.buyGift('lab_suit'); G.buyGift('kite');
     check('买礼物扣钱，背包里有', G.world.money === 2000 - V0.tea.price - V0.lab_suit.price - V0.kite.price && G.giftInv().tea === 1 && G.giftInv().lab_suit === 1);
     check('每样最多三件', (() => { for (let i = 0; i < 5; i++) G.buyGift('seeds'); return G.giftInv().seeds === 3; })());
@@ -163,8 +163,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
         const k1 = G.visitorAsk(ar), r1 = G.req[ar.id];
         check('阿基米德先问自己特化的问题：辩论', k1 === 'archimedes' && r1 && r1.kind === 'ask' && /支点/.test(r1.text) && r1.answers.length === 2 && /杠杆/.test(r1.reply));
         delete G.req[ar.id]; const k2 = G.visitorAsk(ar); check('特化问过以后问行业通用的（科学）', /^sci\.[01]$/.test(k2));
-        lead.state.needs.rest = 0.8; G.visitorAsk(nf); G.answerAsk(nf.id, 0);
-        check('南丁格尔劝你歇一歇，选了歇的回答，主角休息需求下降', lead.state.needs.rest < 0.75);
+        G.setNeed(lead, 'rest', 0.8); G.visitorAsk(nf); G.answerAsk(nf.id, 0);
+        check('南丁格尔劝你歇一歇，选了歇的回答，主角休息需求下降', G.need(lead, 'rest') < 0.75);
         for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
       }
       for (const q of G.visitorPeople().slice()) await G.deletePerson(q.id);
@@ -184,7 +184,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   {
     CY.world.enforce = false; G.setClock(15 * 60);   /* 逛街只在白天，前面的测试可能已经把钟走到夜里 */
     const gp = G.people.find(q => q.person.archetype === 'paternal_grandpa'); G.world.protagonist = null;
-    gp.state.frailty = 0.1; for (const k in gp.state.needs) gp.state.needs[k] = 0.2;   /* 前面的测试走了很久，需求涨满的人走不动 */
+    gp.state.frailty = 0.1; for (const k in gp.state.needs) G.setNeed(gp, k, 0.2);   /* 前面的测试走了很久，需求涨满的人走不动 */
     G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'doctor'); const f = G.flag(gp, 'outing');
     check('带去看医生是出门去医院，待上约五十现实秒', !!f && f.place === 'hospital' && Math.abs((f.until - G.world.game_minutes) - G.realMin(50)) < 1e-6, f && JSON.stringify(f));
     G.clearFlag(gp, 'outing'); G.applyAction(gp.id, 'street'); const f2 = G.flag(gp, 'outing');
@@ -250,12 +250,12 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.setClock(13 * 60);
     const vis = await G.arrive('curie', true); await G.load();
     const d = G.get(dad), v = G.visitorPeople()[0], sleepy = G.get(gma);
-    for (const q of G.activePeople()) { q.state.needs.hunger = 0.8; delete (q.state.flags || {}).outing; }
+    for (const q of G.activePeople()) { G.setNeed(q, 'hunger', 0.8); delete (q.state.flags || {}).outing; }
     G.act[sleepy.id] = 'sleeping'; G.flag = G.flag;
     const a = G.allActionsOf(d).cook;
     G.selfAct(d, a, 'hunger', false);
-    check('家人自己做饭，全家在家醒着的人都吃上，访客也一样', G.get(mom).state.needs.hunger < 0.2 && v.state.needs.hunger < 0.2);
-    check('睡着的人这一顿赶不上，幼儿不算', sleepy.state.needs.hunger === 0.8 && G.get(tod).state.needs.hunger === 0.8);
+    check('家人自己做饭，全家在家醒着的人都吃上，访客也一样', G.need(G.get(mom), 'hunger') < 0.2 && G.need(v, 'hunger') < 0.2);
+    check('睡着的人这一顿赶不上，幼儿不算', Math.abs(G.need(sleepy, 'hunger') - 0.8) < 1e-9 && Math.abs(G.need(G.get(tod), 'hunger') - 0.8) < 1e-9);
     const ent = Object.values(G.journal[d.id] || {}).flat().filter(e => e.k === 'log.meal_all').pop();
     check('记录的时间是游戏里的第几天几点，不是系统时间', !!ent && ent.day === G.gameDate().n && ent.cm === Math.floor(G.dayMinutes()), JSON.stringify(ent));
   }
@@ -314,7 +314,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     by('paternal_grandma').state.frailty = 0.7;
     check('奶奶身体不好时帮宝宝约两成', Math.abs(ch('paternal_grandma', baby2) - 0.2) < 0.02, ch('paternal_grandma', baby2).toFixed(3));
     check('妈妈在家帮宝宝约八成', Math.abs(ch('mom', baby2) - 0.8) < 0.02, ch('mom', baby2).toFixed(3));
-    by('mom').state.needs.hunger = 0.7;
+    G.setNeed(by('mom'), 'hunger', 0.7);
     check('自己有急需时算身体不好', Math.abs(ch('mom', baby2) - 0.4) < 0.02, ch('mom', baby2).toFixed(3));
   }
 

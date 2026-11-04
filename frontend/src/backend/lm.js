@@ -260,7 +260,7 @@
       const env = this.baseEnv(snap); env.step = 0; env.hour = this.hourNow;
       Object.assign(env, this.state);
       for (const m of this.activeModels()) for (const k in m.inputs) env[k] = m.inputs[k].value;
-      for (const n in this.drives) env['n_' + n] = this.drives[n].value(this.state[this.drives[n].state]);
+      for (const n in this.drives) env['n_' + n] = n === 'mood' || n === 'frailty' ? this.drives[n].value(this.state[this.drives[n].state]) : 1 - this.drives[n].value(this.state[this.drives[n].state]);   /* 模型方程里的 n_ 是需求压力，游戏里是水平 */
       env.need_max = Math.max(env._other_max, ...Object.keys(this.drives).filter(n => n !== 'mood' && n !== 'frailty').map(n => env['n_' + n]), 0);
       for (const [mn, k, e] of this.lib.aux) if (this.active.has(mn)) env[k] = e.fn(env);
       this.lastEnv = env; return env;
@@ -296,11 +296,11 @@
       });
       env.mood_offset = (this.params.mood_offset || 0) + Number(snap.mood_offset || 0);
       env.frailty_vuln = (this.params.frailty_vuln !== undefined ? this.params.frailty_vuln : 1) * Number(snap.frailty_mult !== undefined ? snap.frailty_mult : 1);
-      for (const k in needs) { env['n_' + k] = Number(needs[k]); env['speed_' + k] = Number(mult[k] !== undefined ? mult[k] : 1); }
+      for (const k in needs) { env['n_' + k] = 1 - Number(needs[k]); env['speed_' + k] = Number(mult[k] !== undefined ? mult[k] : 1); }
       for (const k in mult) if (!('speed_' + k in env)) env['speed_' + k] = Number(mult[k]);
       for (const c of snap.conditions || []) env['has_' + c] = 1;
       for (const [, k] of this.lib.aux) if (!(k in env)) env[k] = 0;
-      env._other_max = Math.max(0, ...Object.keys(needs).filter(k => !(k in this.drives)).map(k => Number(needs[k])));
+      env._other_max = Math.max(0, ...Object.keys(needs).filter(k => !(k in this.drives)).map(k => 1 - Number(needs[k])));
       return env;
     }
     /* 模型输入量：默认值，加上每天固定时刻的日程和动作带来的窗口，按这一小步和窗口的重叠比例给 */
@@ -325,7 +325,7 @@
       Object.assign(env, this.state);
       env.hour = hour; env.step = h;
       this.inputs(env, h, wd, act, tAbs);
-      for (const n in this.drives) env['n_' + n] = this.drives[n].value(this.state[this.drives[n].state]);
+      for (const n in this.drives) env['n_' + n] = n === 'mood' || n === 'frailty' ? this.drives[n].value(this.state[this.drives[n].state]) : 1 - this.drives[n].value(this.state[this.drives[n].state]);   /* 模型方程里的 n_ 是需求压力，游戏里是水平 */
       env.need_max = Math.max(env._other_max, ...Object.keys(this.drives).filter(n => n !== 'mood' && n !== 'frailty').map(n => env['n_' + n]), 0);
       for (const [mn, k, e] of this.lib.aux) if (act.some(m => m.name === mn)) env[k] = e.fn(env);
       for (const [, m, v, e, cond, scale] of this.lib.eqs) {
