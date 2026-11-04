@@ -311,6 +311,13 @@
   };
   /* 需求和动作的显示名：当前语言包有就用，没有就用模板里的写法 */
   G.needLabel = (k, d) => CY.tOr('need.' + k, d.label);
+  /* 给人看的数字一律是正面的水平：饱食度，不是饥饿度。内部仍存需求压力（规则、存档、后端协议都按压力），展示层统一走这里反过来。
+     疾病和病痛类的需求暂不反过来，后续再说，G.isLevel 为假的仍按原样显示 */
+  G.LEVEL_NAME = { thirst: 'Hydration', hunger: 'Fullness', rest: 'Energy', company: 'Companionship', play: 'Fun', diaper: 'Dryness', hygiene: 'Cleanliness', homework: 'Homework done', mobility: 'Movement', clean: 'Tidiness', warmth: 'Warmth', veg: 'Fresh greens', humid: 'Humidity', water: 'Moisture', sun: 'Sunlight', fertilize: 'Nutrients', prune: 'Shape' };
+  G.isLevel = k => k in G.LEVEL_NAME;
+  G.level = (p, k) => Math.min(1, Math.max(0, 1 - (p.state.needs[k] || 0)));
+  G.levelName = (k, d) => G.LEVEL_NAME[k] || G.needLabel(k, d);
+  G.vigor = p => Math.min(1, Math.max(0, 1 - p.state.frailty));
   /* 全部动作，含角色只能自己做的。界面上的菜单用 actionsOf，不含自己做的 */
   G.allActionsOf = p => {
     const out = {};

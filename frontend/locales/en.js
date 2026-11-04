@@ -2,7 +2,7 @@
 CY.i18n.register('en', {
   'app.title': 'Care for You',
             'hdr.save': 'Save & download',   'hdr.settings': 'Settings', 'hdr.about': 'About',
-      'btn.status': 'Status', 'btn.add': '+ Add', 'btn.cancel': 'Cancel', 'btn.close': 'Close', 'btn.save': 'Save', 'btn.later': 'Later',
+      'btn.status': 'Status', 'status.selfdo_plain': 'Can do alone', 'btn.add': '+ Add', 'btn.cancel': 'Cancel', 'btn.close': 'Close', 'btn.save': 'Save', 'btn.later': 'Later',
   'room.empty': 'Nobody is here yet.', 'room.away': 'Let {name} step away from the desktop', 'room.bar': 'Mood {mood}%  Frailty {frail}%',
   'ask.own': 'Say your own…', 'ask.send': 'Say', 'pick.reroll': 'None of these', 'nudge.yes': 'OK, I will', 'nudge.no': 'Later', 'unit.sec': '{n}s',
 

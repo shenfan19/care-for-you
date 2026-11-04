@@ -43,7 +43,7 @@ Python 3 is only needed if you want to run one of the optional backends below.
 
 ## Data and privacy
 
-Everything is stored on your own device as plain files. No account is needed, and there are no analytics and no cookies. By default the page sends your game data nowhere. An optional account and encrypted cloud save exist only when a server address is set in the advanced settings; see [account_server](account_server/README_account_server.md). Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Saves can be downloaded, imported and deleted from the settings.
+Everything is stored on your own device as plain files. No account is needed, and there are no analytics and no cookies. By default the page sends your game data nowhere. An optional account and encrypted cloud save exist only when a server address is set in the advanced settings; see [account_server](account_server/README_account_server.md). Data leaves the device only if you turn on a remote backend or the AI connection yourself in the advanced settings. Downloading and importing saves is switched off in this version while the save format settles; saves stay on your device and can be deleted from the settings.
 
 ## Status
 

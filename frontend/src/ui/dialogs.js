@@ -36,7 +36,7 @@
       <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
-      <div class="row"><button id="dsave">${esc(t('hdr.save'))}</button><button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button><button id="dknow">${esc(t('set.know'))}</button>${CY.account.configured(G.cfg) ? `<button id="dacct">${esc(t('acct.title'))}</button>` : ''}</div>
+      <div class="row">${G.DEVTOOLS ? `<button id="dsave">${esc(t('hdr.save'))}</button>` : ''}<button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button><button id="dknow">${esc(t('set.know'))}</button>${G.DEVTOOLS && CY.account.configured(G.cfg) ? `<button id="dacct">${esc(t('acct.title'))}</button>` : ''}</div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
       <details class="adv"><summary>${esc(t('set.advanced'))}</summary><div class="sform">${advForm}</div></details>
@@ -52,7 +52,7 @@
       const [sc, k] = el.dataset.k.split('.'); G.cfg[sc] = G.cfg[sc] || {}; G.cfg[sc][k] = el.value.trim();
       await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderRoom(true); U.renderClock();
     });
-    dlg.querySelector('#dsave').onclick = () => U.saveDialog();
+    const dsv = dlg.querySelector('#dsave'); if (dsv) dsv.onclick = () => U.saveDialog();
     const ac = dlg.querySelector('#dacct'); if (ac) ac.onclick = () => U.accountDialog();
     dlg.querySelector('#dfolder').onclick = async () => {
       try { const had = await store.chooseFolder(); await G.load(); U.closeDialog(); U.afterPeopleChange(); alert(t(had ? 'set.folder_had' : 'set.folder_copied')); } catch (e) { alert(e.message); }
@@ -69,10 +69,10 @@
   /* 删除全部本地数据：先建议下载存档，再要求明确确认 */
   U.wipeDialog = function () {
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('wipe.title'))}</h2><p>${esc(t('wipe.body'))}</p>
-      <div class="row"><button id="wsave">${esc(t('wipe.save_first'))}</button></div>
+      ${G.DEVTOOLS ? `<div class="row"><button id="wsave">${esc(t('wipe.save_first'))}</button></div>` : ''}
       <label class="row"><input type="checkbox" id="wsure"> ${esc(t('wipe.sure'))}</label>
       <div class="row" style="justify-content:flex-end"><button id="wno">${esc(t('btn.cancel'))}</button><button id="wgo" class="danger" disabled>${esc(t('wipe.go'))}</button></div>`);
-    dlg.querySelector('#wsave').onclick = async () => { G.save(true); await new Promise(r => setTimeout(r, 200)); const s = await A.exportSave(); A.saveBlob(s.blob, s.name); };
+    const wsv = dlg.querySelector('#wsave'); if (wsv) wsv.onclick = async () => { G.save(true); await new Promise(r => setTimeout(r, 200)); const s = await A.exportSave(); A.saveBlob(s.blob, s.name); };
     dlg.querySelector('#wsure').onchange = e => { dlg.querySelector('#wgo').disabled = !e.target.checked; };
     dlg.querySelector('#wno').onclick = U.closeDialog;
     dlg.querySelector('#wgo').onclick = async () => { G.stop(); await store.wipe(); location.reload(); };

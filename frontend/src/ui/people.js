@@ -55,7 +55,9 @@
     const st = G.statusOf(p), defs = G.needsOf(p), cls = G.classKey(p);
     const sig = () => U.statusDialog(pid);
     const pc = v => `<span class="pc mute">${Math.round(v * 100)}%</span>`;
-    const bars = Object.keys(defs).sort((a, b) => p.state.needs[b] - p.state.needs[a]).map(k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.needLabel(k, defs[k]))}</span><div class="bar"><i style="width:${Math.round(p.state.needs[k] * 100)}%"></i></div>${pc(p.state.needs[k])}</div>`).join('');
+    /* 指标先不对玩家显示，只在开发者模式里看。基础需求按正面的水平显示，最低的排前面；疾病类的暂按原样 */
+    const dev = G.DEVTOOLS, val = (k) => (G.isLevel(k) ? G.level(p, k) : p.state.needs[k]);
+    const bars = !dev ? '' : Object.keys(defs).sort((a, b) => (G.isLevel(a) ? G.level(p, a) : 1 - p.state.needs[a]) - (G.isLevel(b) ? G.level(p, b) : 1 - p.state.needs[b])).map(k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.levelName(k, defs[k]))}</span><div class="bar${G.isLevel(k) ? '' : ' bad'}"><i style="width:${Math.round(val(k) * 100)}%"></i></div>${pc(val(k))}</div>`).join('');
     const selfs = Object.values(G.allActionsOf(p)).filter(a => G.canSelf(p, a)).map(a => `<span class="tag">${esc(a.label)}</span>`).join('');
     const made = (G.journal[p.id] ? Object.values(G.journal[p.id]).flat() : []).filter(e => e.type === 'self').slice(-3).reverse().map(e => `<div class="mute" style="font-size:12px">${esc(G.entryText(e))}</div>`).join('');
     const dlg = U.dialog(`<div class="statgrid"><div class="prev">${CY.avatar(p)}</div><div>
@@ -65,11 +67,11 @@
       <div style="margin:6px 0"><span class="tag">${esc(t('mood.' + st.mood))}</span><span class="tag">${esc(t('act.' + st.activity))}</span>${st.crying ? `<span class="tag">${esc(t('status.crying'))}</span>` : ''}
         ${st.conditions.map(k => `<span class="tag">🩺 ${esc(CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k))}</span>`).join('')}${st.traits.map(k => `<span class="tag">${esc(t('trait.' + k))}</span>`).join('')}</div>
       ${p.person.visitor && U.visitorIntroHtml ? `<div class="intro">${U.visitorIntroHtml(p)}</div>` : ''}
-      <div class="srow2"><span class="l">${esc(t('status.mood'))}</span><div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${pc(p.state.mood)}</div>
-      <div class="srow2"><span class="l">${esc(t('status.frailty'))}</span><div class="bar"><i style="width:${Math.round(p.state.frailty * 100)}%"></i></div>${pc(p.state.frailty)}</div>
+      ${dev ? `<div class="srow2"><span class="l">${esc(t('status.mood'))}</span><div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${pc(p.state.mood)}</div>
+      <div class="srow2"><span class="l">Vigor</span><div class="bar"><i style="width:${Math.round(G.vigor(p) * 100)}%"></i></div>${pc(G.vigor(p))}</div>
       ${U.observeHtml(p)}
-      <h3>${esc(t('status.needs'))}</h3>${bars}
-      <h3>${esc(t('status.selfdo', { n: Math.round(st.self_care * 100) }))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
+      <h3>${esc(t('status.needs'))}</h3>${bars}` : ''}
+      <h3>${esc(dev ? t('status.selfdo', { n: Math.round(st.self_care * 100) }) : t('status.selfdo_plain'))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="stclose" class="primary">${esc(t('btn.close'))}</button></div></div></div>`, true);
     dlg.querySelector('#stclose').onclick = U.closeDialog;
   };
