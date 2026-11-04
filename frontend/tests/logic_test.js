@@ -972,6 +972,16 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const bad = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/Bad Name.csv': 't\n', 'people/x1/nul.csv': 't\u0000\n', '../evil.yaml': 'a: 1\n', 'people/x1/run.js': 'x' } }));
       check('文件名不合规，csv 含空字符，路径越界，不认识的类型都拒收', bad.ok && bad.rejected.length === 4 && !bad.files['people/x1/nul.csv'], JSON.stringify(bad.rejected));
     }
+    {   /* 叙事冲突：老人自己能倒水，宝宝不能；卧床的人没有轮椅出不了门，买了就能 */
+      const gid = await G.createPerson({ arch: 'paternal_grandpa', name: '爷爷叙事' }), bid = await G.createPerson({ arch: 'baby', name: '宝宝叙事' }); await G.load();
+      const gp = G.get(gid), bp = G.get(bid);
+      check('老人口渴自己能解决，宝宝不能', !!G.selfActFor(gp, 'thirst') && !G.selfActFor(bp, 'thirst'), String(!!G.selfActFor(gp, 'thirst')) + String(!!G.selfActFor(bp, 'thirst')));
+      gp.state.bedrest = true; G.world.owned = {};
+      check('卧床的老人没有轮椅不能一起出门', !G.canJoinOuting(gp));
+      G.world.owned = { wheelchair: true };
+      check('买了轮椅就能一起出门', G.canJoinOuting(gp));
+      delete gp.state.bedrest; G.world.owned = {};
+    }
     {   /* 参考文献：每个人类需求都有条目，有出处的写了出处，没有的明说是游戏设定 */
       const R = CY.references, rows = R.rows();
       check('每个人类需求的每个阶段都有一行，不留空', rows.length >= 9 && rows.every(r => r.item), rows.filter(r => !r.item).map(r => r.need).join());
