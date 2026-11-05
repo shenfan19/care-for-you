@@ -116,6 +116,18 @@
       return p;
   };
 
+  /* 世界文件的路径：world/世界编号/文件名 */
+  G.worldId = () => G.E('world').default_id;
+  G.wpath = f => 'world/' + G.worldId() + '/' + f;
+  G.WORLD_FILES = ['world.yaml', 'calendar.yaml', 'curves_world.csv'];
+  G.migrateWorldFiles = async () => {
+    for (const f of G.WORLD_FILES) {
+      const old = await store.read(f);
+      if (old === null) continue;
+      await store.write(G.wpath(f), old);   /* 根目录还有旧文件，说明是旧版本写的，比新位置的新：旧版本写过之后再升级也是这样，所以以旧文件为准 */
+      await store.removeDir(f);
+    }
+  };
   G.load = async function () {
     if (!(await store.list()).includes('settings.ini')) {
       const seed = CY.seed.files();
@@ -132,7 +144,9 @@
       if (!ok) { if (have) await store.write('_backup/engine.yaml', have); await store.write('templates/engine.yaml', sd); }
       G.tpl.engine = (await store.readYaml('templates/engine.yaml')) || {};
     }
-    G.world = Object.assign({ game_minutes: 0, last_seen: '' }, await store.readYaml('world.yaml'));
+    /* 世界相关的文件（world.yaml，calendar.yaml，curves_world.csv）放在 world/世界编号/ 下，给以后别的世界留出位置。旧版本放在根目录，第一次载入时搬过去 */
+    await G.migrateWorldFiles();
+    G.world = Object.assign({ version: 1, game_minutes: 0, last_seen: '' }, await store.readYaml(G.wpath('world.yaml')));
     delete G.world.beds;   /* 旧版本的床位数字段，现在床位是固定的，不再使用 */
     /* 新档开局对齐系统时间，之后游戏时钟自己走 */
     if (typeof G.world.clock_shift !== 'number') G.setClock(G.startMinute());
@@ -500,7 +514,7 @@
       if (G.beforeSave) G.beforeSave();
       G.world.last_seen = new Date().toISOString();
       G.world.schema = CY.meta.schema;
-      store.writeYaml('world.yaml', G.world);
+      store.writeYaml(G.wpath('world.yaml'), G.world);
       for (const p of G.people) {
         p.state.last_seen = G.world.last_seen;
         store.writeYaml(`people/${p.id}/state.yaml`, p.state);

@@ -411,7 +411,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.start(); G.stop();
     check('离开五小时回来，游戏时间照样不动', G.world.game_minutes === gm0);
     G.cfg.time.daynight = 'system';
-    check('新档开局从早上八点开始', await (async () => { const w = G.world.clock_shift; { const wy = Object.assign({}, G.world); delete wy.clock_shift; await CY.store.writeYaml('world.yaml', wy); } await G.load(); const ok = typeof G.world.clock_shift === 'number' && G.dayMinutes() === G.startMinute(); G.world.clock_shift = w; return ok; })());
+    check('新档开局从早上八点开始', await (async () => { const w = G.world.clock_shift; { const wy = Object.assign({}, G.world); delete wy.clock_shift; await CY.store.writeYaml(G.wpath('world.yaml'), wy); } await G.load(); const ok = typeof G.world.clock_shift === 'number' && G.dayMinutes() === G.startMinute(); G.world.clock_shift = w; return ok; })());
   }
   G.cfg.time.daynight = 'game'; delete G.world.clock_shift;
   G.world.game_minutes = 3 * 1440 + 5 * 60 + 7;
@@ -819,11 +819,12 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     const oid = await G.createPerson({ arch: 'mom', name: '旧妈妈', helper: true });
     const py = ctx.jsyaml.load(await CY.store.read(`people/${oid}/person.yaml`)); delete py.card; delete py.prefs; delete py.help; delete py.class_override; delete py.need_rate; delete py.self_actions;
     await CY.store.write(`people/${oid}/person.yaml`, ctx.jsyaml.dump(py));
-    const wy = ctx.jsyaml.load(await CY.store.read('world.yaml')); wy.money = 321; wy.inv = { food: 3 }; wy.nanny = { days_left: 2, owed: 0 }; await CY.store.write('world.yaml', ctx.jsyaml.dump(wy));
+    const wy = ctx.jsyaml.load(await CY.store.read(G.wpath('world.yaml'))); wy.money = 321; wy.inv = { food: 3 }; wy.nanny = { days_left: 2, owed: 0 }; await CY.store.write('world.yaml', ctx.jsyaml.dump(wy));   /* 旧版本把世界文件放在根目录，载入时要搬到 world/编号/ 下 */
     let loadErr = null; try { await G.load(); } catch (e) { loadErr = e; }
     const OM = G.get(oid);
     check('旧数据文件夹能载入', !loadErr && !!OM, loadErr && String(loadErr));
     check('旧数据里的钱保留，物品和旧保姆被丢掉', G.world.money === 321 && !('inv' in G.world) && !('nanny' in G.world));
+    check('旧版本放在根目录的世界文件被搬进 world/编号/，根目录不再留', (await CY.store.read('world.yaml')) === null && (await CY.store.read(G.wpath('world.yaml'))) !== null);
     check('没有卡的旧角色也会走动、也能帮忙', ['living', 'kitchen', 'yard', 'study', 'toilet', 'bedroom'].includes(CY.world.locationOf(OM).room) && G.helpers().some(h => h.id === oid));
     await G.deletePerson(oid);
   }
@@ -1001,12 +1002,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const csv = await CY.store.read('people/' + pid0 + '/curves.csv');
       check('曲线存成 CSV，列是 t，心情，虚弱，再是各项需求', /^t,mood,frailty,lv_hunger,lv_thirst\n/.test(csv), csv.slice(0, 60));
       const ex2 = await A.exportSave(), buf2 = new Uint8Array(await ex2.blob.arrayBuffer()), inf2 = await A.inspect(buf2);
-      check('导出里有曲线和说明，manifest 记着格式和文件清单', inf2.ok && !!inf2.files['people/' + pid0 + '/curves.csv'] && !!inf2.files['curves_world.csv'] && !!inf2.files['README.txt'] && inf2.manifest.format.series === 'csv' && inf2.manifest.files['curves_world.csv'] > 0, JSON.stringify(inf2.manifest && inf2.manifest.format));
+      check('导出里有曲线和说明，manifest 记着格式和文件清单', inf2.ok && !!inf2.files['people/' + pid0 + '/curves.csv'] && !!inf2.files[G.wpath('curves_world.csv')] && !!inf2.files['README.txt'] && inf2.manifest.format.series === 'csv' && inf2.manifest.files[G.wpath('curves_world.csv')] > 0, JSON.stringify(inf2.manifest && inf2.manifest.format));
       await A.apply(inf2, 'replace'); await G.load();
       check('曲线往返后行数按上限只留最近 600 行，最后一行对得上', (G.hist[pid0] || []).length === 600 && G.hist[pid0][599].t === 699 * 15 && Math.abs(G.hist[pid0][599].needs.thirst - 0.9) < 1e-9 && G.wcurve.length === 5 && Math.abs(G.wcurve[4].focus - 0.9) < 1e-9, (G.hist[pid0] || []).length);
       const mk = extra => { const z = [{ name: 'careforyou-data/manifest.json', data: enc.encode(JSON.stringify(extra.manifest)) }, { name: 'careforyou-data/settings.ini', data: enc.encode('[ui]\nlanguage = en\n') }, { name: 'careforyou-data/world.yaml', data: enc.encode('game_minutes: 5\n') }]; for (const k in extra.files || {}) z.push({ name: 'careforyou-data/' + k, data: typeof extra.files[k] === 'string' ? enc.encode(extra.files[k]) : extra.files[k] }); return CY.store.zip(z).arrayBuffer(); };
       const old = await A.inspect(await mk({ manifest: { schema: 5, version: '0.60.0' } }));
       check('旧结构的存档能读，并记下升级了哪几步', old.ok && old.migrated && old.migrated.from === 5 && old.migrated.to === CY.meta.schema && old.migrated.steps.length >= 1, JSON.stringify(old.migrated));
+      check('旧结构的存档导入时，根目录的世界文件被搬进 world/编号/', !!old.files[G.wpath('world.yaml')] && !('world.yaml' in old.files), Object.keys(old.files).join());
       const nw = await A.inspect(await mk({ manifest: { schema: CY.meta.schema + 1 } }));
       check('更新结构的存档拒收，不乱读', !nw.ok && nw.error === 'newer');
       const ext = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/mood_notes.csv': 't,note\n1,a\n', 'people/x1/future_thing.yaml': 'a: 1\n', 'curves_extra.csv': 't,v\n1,2\n' } }));

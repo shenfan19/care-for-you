@@ -98,7 +98,6 @@
       out['templates/ai/persona.yaml'] = '# AI 接入时共用的规则。引擎会用 forbidden_patterns 过滤 AI 的输出。\n' + dump(aiPersona);
       for (const k in aiSkills) out[`templates/ai/skills/${k}.yaml`] = '# AI 只能做这一件事，输入输出都受限。\n' + dump(aiSkills[k]);
       out['settings.ini'] = CY.ini.stringify({});
-      out['world.yaml'] = 'version: 1\ngame_minutes: 0\nlast_seen: ""\n';
       out['README.txt'] = '这是 Care for You 的数据文件夹。里面全是明文文件，可以用记事本打开、修改、复制、备份。\n' +
         'settings.ini 是参数。people 里每个角色一个文件夹。templates 是物种、疾病、类别、性格特征、物品和 AI 技能，templates/content 下按语言放着台词、说话库、问答库和提醒库。\n' +
         'people/角色/sayings.yaml 里每句话同时记着库编号 lib 和原文 text。\n' +

@@ -5,8 +5,8 @@
   const t = (k, v) => CY.t(k, v);
 
   G.cal = { version: 1, days: [] };
-  G.loadCalendar = async () => { G.cal = Object.assign({ version: 1, days: [] }, await store.readYaml('calendar.yaml')); };
-  G.saveCalendar = () => { if (G._calDirty) { G._calDirty = false; store.writeYaml('calendar.yaml', G.cal); } };
+  G.loadCalendar = async () => { G.cal = Object.assign({ version: 1, days: [] }, await store.readYaml(G.wpath('calendar.yaml'))); };
+  G.saveCalendar = () => { if (G._calDirty) { G._calDirty = false; store.writeYaml(G.wpath('calendar.yaml'), G.cal); } };
 
   const blank = n => ({ n, care: {}, fam: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
   const today = () => {

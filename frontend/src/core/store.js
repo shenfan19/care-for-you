@@ -26,7 +26,7 @@
     write(p, t) { return tx(this.db, FILES, 'readwrite', s => s.put(t, p)); }
     list() { return tx(this.db, FILES, 'readonly', s => s.getAllKeys()).then(k => k.filter(x => !x.startsWith('_backup/'))); }
     wipe() { return tx(this.db, FILES, 'readwrite', s => s.clear()); }
-    async removeDir(prefix) { const keys = await tx(this.db, FILES, 'readonly', s => s.getAllKeys()); for (const k of keys) if (k.startsWith(prefix + '/')) await tx(this.db, FILES, 'readwrite', s => s.delete(k)); }
+    async removeDir(prefix) { const keys = await tx(this.db, FILES, 'readonly', s => s.getAllKeys()); for (const k of keys) if (k === prefix || k.startsWith(prefix + '/')) await tx(this.db, FILES, 'readwrite', s => s.delete(k)); }
   }
 
   class FolderBackend {
@@ -47,7 +47,7 @@
       try { const d = await this.dir(parts, false); await d.removeEntry(n, { recursive: true }); } catch (e) {}
     }
     async wipe() {
-      for (const n of ['people', 'templates', '_backup', 'settings.ini', 'world.yaml', 'README.txt']) { try { await this.root.removeEntry(n, { recursive: true }); } catch (e) {} }
+      for (const n of ['people', 'templates', '_backup', 'settings.ini', 'world', 'world.yaml', 'README.txt']) { try { await this.root.removeEntry(n, { recursive: true }); } catch (e) {} }
     }
     async list() {
       const out = [];

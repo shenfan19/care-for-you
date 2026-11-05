@@ -27,7 +27,7 @@
     if (G._curveSaved === G._curveRev) return;
     G._curveSaved = G._curveRev;
     for (const p of G.people) if ((G.hist[p.id] || []).length) store.write(`people/${p.id}/curves.csv`, G.curvesCsv(p.id));
-    if (G.wcurve.length) store.write('curves_world.csv', G.worldCurveCsv());
+    if (G.wcurve.length) store.write(G.wpath('curves_world.csv'), G.worldCurveCsv());
   };
 
   /* 读存档里的曲线，格式对不上的行直接丢掉，不影响游戏 */
@@ -41,7 +41,7 @@
         return { t: +r[0], mood: +r[1], frailty: +r[2], needs };
       }).filter(x => isFinite(x.t)).slice(-G.HIST.keep);
     }
-    const rows = parse(await store.read('curves_world.csv')), head = rows.shift();
+    const rows = parse(await store.read(G.wpath('curves_world.csv'))), head = rows.shift();
     if (head && head[0] === 't') G.wcurve = rows.map(r => ({ t: +r[0], money: +r[1], focus: +r[2], eff: +r[3], bonus: +r[4] })).filter(x => isFinite(x.t)).slice(-G.HIST.keep);
     G._curveSaved = G._curveRev;
   };

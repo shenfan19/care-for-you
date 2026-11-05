@@ -14,10 +14,11 @@
 
   /* 存档里允许的文件：数据是 YAML，序列是 CSV。人物文件夹里除了固定的几份，任何 小写字母数字下划线 命名的 yaml 或 csv 都收，
      以后新增一种记录只需要多放一个文件，导入端不用改；根目录同理。路径里不许有 .. 或奇怪字符 */
-  const DATA_OK = /^(people\/[^/]+\/[a-z0-9_]+\.(yaml|csv)|(people\/[^/]+|me)\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|[a-z0-9_]+\.(yaml|csv)|README\.txt)$/;
+  const DATA_OK = /^(people\/[^/]+\/[a-z0-9_]+\.(yaml|csv)|world\/[a-z0-9_]+\/[a-z0-9_]+\.(yaml|csv)|(people\/[^/]+|me)\/journal\/\d{4}-\d\d\.yaml|templates\/[^/]+(\/[^/]+)*\.yaml|settings\.ini|[a-z0-9_]+\.(yaml|csv)|README\.txt)$/;
   /* 数据结构升级：存档的 schema 比当前低，按顺序跑每一步，把文件改成当前结构。新增字段和新增文件通常不需要写步骤，
      因为读取时缺的字段都有默认值；只有改名，拆分，换单位这类才写。每一步只改 files 这张 路径到文本 的表 */
   A.MIGRATIONS = [
+    { from: 6, to: 7, note: 'World files moved from the root into world/<world id>/ (world.yaml, calendar.yaml, curves_world.csv).', run: files => { const id = CY.game.worldId(); for (const f of CY.game.WORLD_FILES) if (f in files) { if (!(`world/${id}/${f}` in files)) files[`world/${id}/${f}`] = files[f]; delete files[f]; } return files; } },
     { from: 5, to: 6, note: 'curves.csv and curves_world.csv added; world.yaml gains focus. All optional, nothing to rewrite.', run: files => files },
   ];
   A.migrate = (files, from) => {
@@ -42,10 +43,10 @@
   A.README = `Care for You save
 This zip is a plain copy of the game's data folder. Open any file in a text editor.
 - manifest.json: app version, schema (data structure version), file list with sizes.
-- world.yaml, calendar.yaml: the shared world (money, clock, focus, owned things) and the day-by-day calendar.
+- world/<world id>/world.yaml, calendar.yaml: the shared world (money, clock, focus, owned things) and the day-by-day calendar. Each world has its own folder; today there is one, home.
 - people/<id>/person.yaml, state.yaml, story.yaml, sayings.yaml: one folder per character.
 - people/<id>/curves.csv: mood, frailty and every need, one row per 15 game minutes, last 600 rows.
-- curves_world.csv: money, focus, efficiency and family bonus on the same clock.
+- world/<world id>/curves_world.csv: money, focus, efficiency and family bonus on the same clock.
 - people/<id>/journal/YYYY-MM.yaml and me/journal: what happened, by real month.
 - templates/: character cards, species, conditions and system settings (editable).
 - settings.ini: preferences. The AI key is left out unless you chose to include it.
@@ -122,7 +123,7 @@ Any new kind of record is simply a new yaml or csv file in these folders. A save
     /* 存档里的关键数字和存盘时写下的校验对不上，说明被手改过：导入时提醒，分享卡片上会标「已编辑」 */
     let edited = false;
     try {
-      const w = jsyaml.load(files['world.yaml'] || '') || {}, c = jsyaml.load(files['calendar.yaml'] || '') || {};
+      const w = jsyaml.load(files[CY.game.wpath('world.yaml')] || '') || {}, c = jsyaml.load(files[CY.game.wpath('calendar.yaml')] || '') || {};
       if (w.sig && w.sig !== CY.game.sigOf(w.money, Object.keys(w.souv || {}).length, (c.days || []).length)) edited = true;
     } catch (x) {}
     return { ok: true, files, rejected, manifest, people, edited, migrated };

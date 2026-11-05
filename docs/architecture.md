@@ -79,6 +79,7 @@ Everything that decides behaviour is a readable file in the data folder. Saves a
 | File or folder | Who edits | Holds |
 | --- | --- | --- |
 | `settings.ini` | The player | Language, theme, time, privacy; backend and account settings under advanced |
+| `world/<world id>/` | The game | `world.yaml` (clock, money, who you play, visitors met), `calendar.yaml` (one summary per game day), `curves_world.csv`. Each world has its own folder, so another world can be added later. Today there is one, `home`; saves from before schema 7 kept these files in the root and are moved on first load |
 | `templates/system.yaml` | Anyone tuning the game | Request and response probabilities, wishes, weights, polling interval |
 | `templates/species` | Anyone | Need rates per kind and life stage |
 | `templates/events/rules.yaml` | Anyone | Event rules: per-hour probability, outcome weights |

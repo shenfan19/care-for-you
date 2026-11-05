@@ -24,7 +24,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     check('一天三到五句', rec.lines.length >= 3 && rec.lines.length <= 5, txt.join(' | '));
     check('句子里有做饭和哭闹', txt.some(x => /热饭|吃得|厨房/.test(x)) && txt.some(x => /宝宝哭|宝宝闹/.test(x)), txt.join(' | '));
     check('存的是键，换英文重新生成', (CY.i18n.set('en'), G.settleText(rec.lines[0]) !== txt[0]) && (CY.i18n.set('zh-CN'), G.settleText(rec.lines[0]) === txt[0]));
-    check('日历记录能存进文件', (G.save(true), await new Promise(r => setTimeout(r, 50)), CY.store.readYaml('calendar.yaml').then(c => c && c.days.length === 1)) && true);
+    check('日历记录能存进文件', (G.save(true), await new Promise(r => setTimeout(r, 50)), CY.store.readYaml(G.wpath('calendar.yaml')).then(c => c && c.days.length === 1)) && true);
     check('变体由日期决定，重算不变', JSON.stringify(G.composeDay({ n: 5, care: { 宝宝: 2 }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false)) === JSON.stringify(G.composeDay({ n: 5, care: { 宝宝: 2 }, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [] }, false)));
   }
 
@@ -296,8 +296,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   {
     G.world.money = 321; G._calDirty = true; G.save(true); await new Promise(r => setTimeout(r, 80));
     const A = CY.archive, ok = await A.exportSave(), good = await A.inspect(await ok.blob.arrayBuffer());
-    check('导出的存档里每个文件导入时都被接受', good.rejected.length === 0, good.rejected.join()); check('没改过的存档导入时不提示已编辑', good.ok && !good.edited, JSON.stringify([G.world.sig, G.computeSig(), good.files['world.yaml'].match(/sig: .*/), good.files['world.yaml'].match(/money: .*/), (good.files['calendar.yaml'] || '').length, G.cal.days.length]));
-    const files = Object.assign({}, good.files); files['world.yaml'] = files['world.yaml'].replace(/money: .*/, 'money: 999999');
+    check('导出的存档里每个文件导入时都被接受', good.rejected.length === 0, good.rejected.join()); check('没改过的存档导入时不提示已编辑', good.ok && !good.edited, JSON.stringify([G.world.sig, G.computeSig(), good.files[G.wpath('world.yaml')].match(/sig: .*/), good.files[G.wpath('world.yaml')].match(/money: .*/), (good.files['calendar.yaml'] || '').length, G.cal.days.length]));
+    const files = Object.assign({}, good.files); files[G.wpath('world.yaml')] = files[G.wpath('world.yaml')].replace(/money: .*/, 'money: 999999');
     const enc = new TextEncoder(), blob = CY.store.zip(Object.keys(files).map(n => ({ name: 'careforyou-data/' + n, data: enc.encode(files[n]) })));
     const bad = await A.inspect(await blob.arrayBuffer());
     check('手改了钱的存档导入时提示已编辑', bad.ok && bad.edited === true);
@@ -323,7 +323,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     G.world.money = 321; G.save(true); await new Promise(r => setTimeout(r, 80));
     const A = CY.archive, ok = await A.exportSave(), good = await A.inspect(await ok.blob.arrayBuffer());
     check('没改过的存档导入时不提示已编辑', good.ok && !good.edited);
-    const files = Object.assign({}, good.files); files['world.yaml'] = files['world.yaml'].replace(/money: .*/, 'money: 999999');
+    const files = Object.assign({}, good.files); files[G.wpath('world.yaml')] = files[G.wpath('world.yaml')].replace(/money: .*/, 'money: 999999');
     const names = Object.keys(files), enc = new TextEncoder();
     const buf = await CY.store.zip(names.map(n => ({ name: 'careforyou-data/' + n, data: enc.encode(files[n]) }))).arrayBuffer();
     const bad = await A.inspect(buf instanceof ArrayBuffer ? buf : (buf.buffer || buf));
