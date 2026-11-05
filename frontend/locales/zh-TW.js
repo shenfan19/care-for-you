@@ -71,11 +71,6 @@ CY.i18n.register("zh-TW", {
  "theme.auto": "跟隨系統",
  "theme.light": "淺色",
  "theme.dark": "深色",
- "bg.warm": "暖米",
- "bg.mint": "薄荷",
- "bg.sky": "天青",
- "bg.rose": "玫瑰",
- "bg.gray": "中性灰",
  "lang.auto": "跟隨瀏覽器",
 
  "arch.me": "我",
@@ -104,9 +99,8 @@ CY.i18n.register("zh-TW", {
  "sec.account": "賬號",
  "sec.ai": "AI 接入",
  "set.title": "設定",
- "set.look": "外觀與語言",
+ "set.look": "外觀",
  "set.theme": "明暗",
- "set.bg": "背景",
  "set.lang": "語言",
  "set.data": "資料位置",
  "set.data_note": "{where}。所有資料都是明文檔案，選資料夾時請確認它不會被同步到別人能看到的地方。",
@@ -320,15 +314,6 @@ CY.i18n.register("zh-TW", {
  "mode.switched_reality": "已切換到現實模式：時間和現實同步，動作靠長按。加速裡還有 {k} 件沒做完的事，先停著，回到加速模式再接著做。",
  "mode.switched_story": "已切換到加速模式：時間壓縮為 ×{n}，動作點一下開始，花掉遊戲裡的時間。一次只能做一件事，插進來的新事會讓舊的先暫停。",
  "mode.switched_paused": "已暫停，時間不走，也不會有人來打擾。",
-     "scene.auto": "自動",
- "scene.living": "客廳",
- "scene.bedroom": "臥室",
- "scene.kitchen": "廚房",
- "scene.lawn": "草坪",
- "scene.balcony": "陽臺",
- "scene.none": "純色",
- "scene.tip": "房間背景",
- "set.scene": "背景場景",
  "add.traits": "性格特徵",
  "trait.clingy": "黏人",
  "trait.independent": "獨立",
@@ -523,7 +508,7 @@ CY.i18n.register("zh-TW", {"player.title": "爸爸", "player.name": "你"});
 
 CY.i18n.register("zh-TW", {"btn.status": "狀態", "status.selfdo_plain": "自己能做的", "btn.edit": "編輯", "btn.archive": "封存", "btn.delete": "刪除", "btn.restore": "恢復", "del.title": "刪除{name}？", "del.note": "刪除後{name}的紀錄、說過的話和狀態都會從本機移除，無法恢復。只是想讓ta先離開的話，可以選封存，紀錄會留著。"});
 
-CY.i18n.register("zh-TW", {"hdr.share": "分享卡片", "share.title": "分享卡片", "share.note": "只在你的裝置上生成一張圖，你選哪些數字就放哪些，預設不含名字。遊戲不會上傳，也不推薦你分享。", "share.f_time": "陪伴時間", "share.f_care": "照顧次數", "share.f_talk": "聊過天", "share.f_called": "被叫的次數", "share.f_back": "收到的心意", "share.f_names": "顯示名字", "share.save": "儲存圖片", "share.send": "分享", "share.line_time": "陪伴了 {t}", "share.line_care": "照顧了 {n} 次", "share.line_talk": "聊了 {n} 次", "share.line_back": "收到了 {n} 份心意", "share.foot": "Care for You · 沒有分數，只有陪伴", "cond.heart": "心臟病", "cond.parkinson": "帕金森氏症", "cond.depress": "情緒低落", "cond.nocturia": "夜尿多", "cond.eczema": "濕疹", "cond.fracture": "骨折復原", "cond.trauma": "創傷後驚醒", "cond.allergy": "過敏", "need.chest": "胸口發悶", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上廁所", "need.itch": "皮膚發癢", "need.pain": "傷處疼", "need.nightmare": "睡不安穩", "need.sneeze": "打噴嚏流眼淚", "need.veg": "想吃新鮮蔬菜", "need.humid": "要噴水保濕", "act.restsit": "扶著坐下歇歇", "act.steady": "扶穩", "act.listen": "靜靜聽ta說", "act.walkout": "陪著出去走走", "act.lead": "扶去廁所", "act.nightlight": "開小夜燈", "act.selftoilet": "自己去廁所", "selfact.selftoilet": "自己去廁所", "act.ointment": "塗藥膏", "act.trimnails": "剪指甲", "act.support": "扶著走幾步", "act.painkill": "吃止痛藥", "act.rehab": "陪著做復健動作", "act.stayclose": "陪在身邊不說話", "act.warmdrink": "遞一杯熱飲", "act.antihist": "吃抗過敏藥", "act.airclean": "打掃除塵", "act.veggie": "餵新鮮蔬菜", "act.mist": "噴水保濕", "act.train": "教口令", "act.teach": "教說話", "class.guineapig": "天竺鼠", "class.gecko": "守宮", "preset.host.label": "收留一家逃難的人", "preset.host.note": "一位老人，一位媽媽，一個孩子，剛到一個陌生的地方，需要時間慢慢安下心來", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "媽媽", "preset.name.refugee_child": "孩子", "preset.night.label": "夜裡起夜的爺爺", "preset.night.note": "夜尿多，夜裡要起來，白天也有些虛弱，需要有人留意"});
+CY.i18n.register("zh-TW", { "share.title": "分享卡片", "share.save": "儲存圖片", "share.send": "分享", "share.foot": "Care for You · 沒有分數，只有陪伴", "cond.heart": "心臟病", "cond.parkinson": "帕金森氏症", "cond.depress": "情緒低落", "cond.nocturia": "夜尿多", "cond.eczema": "濕疹", "cond.fracture": "骨折復原", "cond.trauma": "創傷後驚醒", "cond.allergy": "過敏", "need.chest": "胸口發悶", "need.tremor": "手在抖", "need.lowmood": "心情很低落", "need.toilet": "想上廁所", "need.itch": "皮膚發癢", "need.pain": "傷處疼", "need.nightmare": "睡不安穩", "need.sneeze": "打噴嚏流眼淚", "need.veg": "想吃新鮮蔬菜", "need.humid": "要噴水保濕", "act.restsit": "扶著坐下歇歇", "act.steady": "扶穩", "act.listen": "靜靜聽ta說", "act.walkout": "陪著出去走走", "act.lead": "扶去廁所", "act.nightlight": "開小夜燈", "act.selftoilet": "自己去廁所", "selfact.selftoilet": "自己去廁所", "act.ointment": "塗藥膏", "act.trimnails": "剪指甲", "act.support": "扶著走幾步", "act.painkill": "吃止痛藥", "act.rehab": "陪著做復健動作", "act.stayclose": "陪在身邊不說話", "act.warmdrink": "遞一杯熱飲", "act.antihist": "吃抗過敏藥", "act.airclean": "打掃除塵", "act.veggie": "餵新鮮蔬菜", "act.mist": "噴水保濕", "act.train": "教口令", "act.teach": "教說話", "class.guineapig": "天竺鼠", "class.gecko": "守宮", "preset.host.label": "收留一家逃難的人", "preset.host.note": "一位老人，一位媽媽，一個孩子，剛到一個陌生的地方，需要時間慢慢安下心來", "preset.name.refugee_elder": "老人", "preset.name.refugee_mother": "媽媽", "preset.name.refugee_child": "孩子", "preset.night.label": "夜裡起夜的爺爺", "preset.night.note": "夜尿多，夜裡要起來，白天也有些虛弱，需要有人留意"});
 
 CY.i18n.register("zh-TW", {"loc.home": "家", "loc.office": "辦公室", "loc.hospital": "醫院", "loc.bedroom": "臥室", "loc.market": "超市", "loc.aisle": "超市裡", "act.groceries": "去買菜", "log.groceries": "買菜回來了，帶回 {n} 份食材", "loc.guest": "客房", "loc.elder": "老人房", "loc.toilet": "衛生間", "loc.study": "書房", "loc.living": "客廳", "loc.kitchen": "廚房", "loc.yard": "院子", "loc.ward": "病房", "loc.desk": "工位", "nav.here": "你在{place}", "nav.travel_hold": "前往{place}，長按 {n} 秒", "toast.offsite": "{name}在{place}，先過去吧", "toast.walking": "正在走過去，到了就做", "log.fall_minor": "{name}夜裡起夜時摔了一下，沒有大礙。", "log.fall_serious": "{name}夜裡起夜摔倒了，被送到了醫院。", "log.discharge": "{name}出院回家了。", "log.night_wc": "{name}夜裡起來上了廁所。", "room.edit": "編輯{name}", });
 
@@ -563,7 +548,7 @@ CY.i18n.register("zh-TW", {"card.title": "角色卡", "card.note": "這一類角
 CY.i18n.register("zh-TW", {"badge.help": "去幫忙"});
 
 CY.i18n.register("zh-TW", {"social.pets": "{a}和{b}追著玩了一陣。"});
-CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "share.note": "只在你的裝置上產生一張圖，放什麼內容由你勾選，名字也由你決定。遊戲不會上傳，也不推薦你分享。", "brand.name": "照顧你", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
+CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "brand.name": "照顧你", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
 CY.i18n.register("zh-TW", {"corner.day": "第 {m} 個月 第 {d} 天"});
 CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到 100，0 是關掉。現場合成的安靜音樂，夜裡更低更慢。瀏覽器要求先點一下頁面才會出聲", "ini.audio.mute": "為 true 時音樂和音效全部靜音，不改兩個音量的值", "lbl.audio.mute": "全部靜音", "ini.audio.sfx_volume": "音效音量，0 到 100，0 是關掉。點按、有人開口、完成打勾、發生了事情時的輕響"});
 CY.i18n.register("zh-TW", {"lbl.interrupt.countdown_seconds": "提醒倒數，秒", "lbl.economy.work_hours": "工作時段", "lbl.audio.music_volume": "背景音樂", "lbl.audio.sfx_volume": "音效", });
@@ -576,7 +561,7 @@ CY.i18n.register("zh-TW", {"cred.p3": "家具圖：Kenney 的 Furniture Kit（CC
 CY.i18n.register("zh-TW", {"add.model": "形象", "add.model_auto": "自動"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit 和 Mini Characters（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色在遊戲裡按玩家的選擇重新著色。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動物、花草、動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"corner.eff_tip": "現在的工作效率是 {n}%，你的心情好，收入就多；工作和家裡有人沒人管會讓心情下降，照顧、被關心會讓它回升。"});
-CY.i18n.register("zh-TW", {"shop.title": "商店", "shop.note": "買了就一直有，沒有限時，沒有折扣，不買也能完整地玩。", "shop.owned": "已有", "shop.locked": "先買上一檔", "shop.toy": "玩具", "shop.toy_fx": "嬰兒和幼兒玩耍的需求漲得慢四分之一，客廳裡多一隻小熊。", "shop.bed": "好一點的床", "shop.bed_fx": "睡覺時休息恢復得快三成，臥室多一個床頭櫃和燈。", "shop.stroller": "嬰兒車", "shop.stroller_fx": "帶嬰兒和幼兒出門時，他們更開心。", "shop.wheelchair": "輪椅", "shop.wheelchair_fx": "老人行動的需求漲得慢三成，老人房裡多一把輪椅。", "shop.decor1": "裝飾一檔", "shop.decor1_fx": "客廳裡多一盆植物，大家的心情目標加 0.02。", "shop.decor2": "裝飾二檔", "shop.decor2_fx": "再加地毯和落地燈，心情目標再加 0.02。", "shop.decor3": "裝飾三檔", "shop.decor3_fx": "再加收音機和綠植，心情目標再加 0.02。", "shop.house2": "中等屋子", "shop.house2_fx": "搬進更大的房子：多一間客房，三張床位，家裡更寬敞，心情目標加 0.03。", "shop.bed2": "床品升級", "shop.bed2_fx": "再換上好床品，睡覺時休息恢復再快一些，老人房多一盞夜燈。", "shop.books": "書架", "shop.books_fx": "客廳裡多一個書架，玩耍的需求漲得慢一些，心情目標加 0.01。", "shop.fruit": "果盤", "shop.fruit_fx": "餐桌上常備水果和麵包，飢餓漲得慢一成。", "arc.diabetes.first": "{name}說這幾天血糖的數字比平時高一點，想讓你以後多留意。", "arc.diabetes.habit": "{name}把藥盒自己擺到了桌上顯眼的地方，說這樣不會忘。", "arc.diabetes.checkup": "{name}去複查回來了，醫生說控制得不錯，{name}心情很好。", "log.bought": "買了{item}。"});
+CY.i18n.register("zh-TW", {"shop.title": "商店", "shop.note": "買了就一直有，沒有限時，沒有折扣，不買也能完整地玩。", "shop.owned": "已有", "hint.need_stroller": "沒有嬰兒車時只有爸爸媽媽這一輩能抱著嬰兒出門，換成別人要先買嬰兒車。", "hint.need_wheelchair": "腿腳不便或臥床的老人要有輪椅才能出門。", "refuse.not_tired": "{name}現在不睏，不想睡。", "pedia.title": "百科：知識與參考文獻", "pedia.search": "搜尋", "pedia.back": "返回列表", "pedia.g_needs": "需求", "pedia.g_actions": "動作", "pedia.g_items": "用品", "pedia.g_conds": "疾病", "pedia.g_stages": "人生階段", "pedia.g_sys": "家裡的規則", "pedia.g_refs": "參考文獻", "pedia.f_game": "遊戲裡", "pedia.f_real": "現實裡", "pedia.f_by": "能緩解它的動作", "pedia.f_stages": "適用", "pedia.f_hold": "長按", "pedia.f_min": "耗時", "pedia.f_effect": "緩解", "pedia.f_item": "需要用品", "pedia.f_gate": "做的條件", "pedia.f_flags": "特點", "pedia.f_price": "價格", "pedia.f_requires": "先要買", "pedia.f_acts": "相關動作", "pedia.f_needs": "帶來的需求", "pedia.f_heal": "痊癒", "pedia.f_urgency": "緊迫度", "pedia.f_selfcare": "自理能力", "pedia.f_routine": "作息", "pedia.t_household": "全家一起受益", "pedia.t_selfonly": "只能自己做", "pedia.t_nap": "做完會去睡", "pedia.t_outing": "帶出門", "pedia.t_carry": "沒有用品時，成年人可以抱著去", "pedia.t_cries": "需求嚴重會哭鬧", "pedia.t_caregiver": "需要有人看護", "pedia.n_gate": "對方{need}壓力低於 {min}% 就不做", "pedia.n_heal": "{need}被照顧 {n} 次後痊癒", "pedia.n_wake": "起床", "pedia.n_bed": "睡覺", "pedia.n_meals": "吃飯", "set.d_where": "目前存放位置", "set.d_save_note": "把目前的家庭匯出成一個檔案，可以備份，也可以換電腦使用。", "set.d_folder_note": "預設資料存在這個瀏覽器裡，清除網站資料就會遺失。選一個本機資料夾，資料就變成裡面的明文檔案，自己備份更放心。", "set.d_restore_note": "手動刪了或改壞了預設設定檔時，把缺的補回來，不會覆蓋你改過的。", "set.d_know_note": "遊戲裡每條規則，動作，用品的說明和出處，像百科一樣查。", "set.unf_title": "存檔匯入匯出與資料資料夾（未完成）", "set.unf_note": "檔案結構尚未確定，暫時不提供上傳和下載存檔。下面的功能還沒做完，不保證可用，請不要依賴它。", "gift.hint_names": "適合送給：{names}", "gift.hint_many": "有 {n} 位來客想要它，多是{fields}一類的人。", "gift.hint_none": "目前沒有來客想要它。", "shop.back": "返回商店", "shop.info_tip": "點一下看說明", "hint.cant_leave": "家裡還有不能單獨留下、又帶不出門的人，現在出不了門。", "shop.locked": "先買上一檔", "shop.toy": "玩具", "shop.toy_fx": "嬰兒和幼兒每次玩耍更開心：玩耍的滿足多四成，當次心情再多一點。需求漲的速度不變。", "shop.bed": "好一點的床", "shop.bed_fx": "睡覺時休息恢復得快三成，臥室多一個床頭櫃和燈。", "shop.stroller": "嬰兒車", "shop.stroller_fx": "有了它，爺爺奶奶、少年也能推著嬰兒出門；沒有它，只有爸爸媽媽這一輩能抱著嬰兒出去。嬰兒和幼兒出門時也更開心。", "shop.wheelchair": "輪椅", "shop.wheelchair_fx": "解鎖：腿腳不便的老人，也就是體弱或有關節炎的，有了輪椅才能出門，也才能自己去想去的地方；坐輪椅出門的好處多兩成半。臥床的老人也要用它出門（臥床老人更完整的行動設計還沒做）。", "shop.decor1": "裝飾一檔", "shop.decor1_fx": "客廳裡多一盆植物，大家的心情目標加 0.02。", "shop.decor2": "裝飾二檔", "shop.decor2_fx": "再加地毯和落地燈，心情目標再加 0.02。", "shop.decor3": "裝飾三檔", "shop.decor3_fx": "再加收音機和綠植，心情目標再加 0.02。", "shop.house2": "中等屋子", "shop.house2_fx": "搬進更大的房子：多一間客房，三張床位，家裡更寬敞，心情目標加 0.03。", "shop.bed2": "床品升級", "shop.bed2_fx": "再換上好床品，睡覺時休息恢復再快一些，老人房多一盞夜燈。", "shop.books": "書架", "shop.books_fx": "大家每次做休閒的事，心情多一點點，一次一次的。需求漲的速度不變。", "shop.fruit": "果盤", "shop.fruit_fx": "每次吃東西更飽一些：飽足感多四成。餓的速度不變。", "arc.diabetes.first": "{name}說這幾天血糖的數字比平時高一點，想讓你以後多留意。", "arc.diabetes.habit": "{name}把藥盒自己擺到了桌上顯眼的地方，說這樣不會忘。", "arc.diabetes.checkup": "{name}去複查回來了，醫生說控制得不錯，{name}心情很好。", "log.bought": "買了{item}。"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters 和 Cube Pets（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"figure.sprite": "方塊小人"});

@@ -72,7 +72,9 @@
   const dependent = q => G.isHuman(q) && !!G.classOf(q).needs_caregiver;
   const homeAndFree = q => !G.flag(q, 'hospital') && !G.flag(q, 'outing') && (!CY.world || CY.world.locationOf(q).place === 'home');
   G.caregiversAt = except => G.activePeople().filter(q => G.isHuman(q) && !dependent(q) && ['adult', 'elder'].includes(G.stage(q)) && q !== G.protagonist() && !except.includes(q) && !G.bedridden(q) && homeAndFree(q));
-  G.canJoinOuting = q => !G.isSleeping(q) && !(G.stage(q) === 'infant' && !G.owned('stroller')) && !(G.bedridden(q) && !G.owned('wheelchair'));
+  /* 婴儿出门：有婴儿车，谁都能推；没有婴儿车只能抱着，抱得动的是成年人（爸爸妈妈这一辈），老人和少年抱不稳。带出门的是主角，没有主角时玩家是一位看不见的成年人 */
+  G.canCarry = stage => { if (stage !== 'infant') return true; const lead = G.protagonist(); return !lead || G.stage(lead) === 'adult'; };
+  G.canJoinOuting = q => !G.isSleeping(q) && !(G.stage(q) === 'infant' && !G.owned('stroller') && !G.canCarry('infant')) && !(G.needsChair(q) && !G.owned('wheelchair'));
   /* 出门后被留在家里无人看护的人：没人看护了，又带不走的（睡着，没有婴儿车），出门就被拦下 */
   G.outingBlocked = p => {
     if (G.caregiversAt([p]).length) return false;

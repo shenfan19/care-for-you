@@ -7,28 +7,64 @@
   const $ = id => document.getElementById(id);
   U.renderLife = function () {};
 
-  /* 商店：点钱的格子直接打开。所有东西一个样子：图标，名字，价格，鼠标停上去显示说明。分四块：床位，日用品，装饰，送客人的礼物。
+  /* 商店：点钱的格子直接打开。所有东西一个样子：图标，名字，价格，点一下格子在弹窗里看说明。分四块：床位，日用品，装饰，送客人的礼物。
      床位决定家里最多住几个人，家人和穿越者都占，很贵，一张一张买；装饰纯粹是观感，没有数值；礼物买了进背包，每样最多备三件。没有限时，没有折扣 */
   U.shopDialog = function () {
     const V = CY.visitors, inv = G.giftInv(), money = G.world.money || 0, old = document.querySelector('#modal .box'), keep = old ? old.scrollTop : 0;
-    const tile = (icon, name, desc, label, attrs, extra) => `<div class="gift shoptile" title="${esc(desc)}"><div>${icon}</div><div>${esc(name)}</div><div class="mute">${extra || '&nbsp;'}</div>${label}</div>`;
+    /* 格子里只有图标，名字，价格：说明太占地方，点一下格子，在弹窗里看。info 是弹窗的编号：item:商品，gift:礼物，bed */
+    const tile = (icon, name, label, extra, info) => `<div class="gift shoptile" data-info="${esc(info)}" title="${esc(t('shop.info_tip'))}" tabindex="0"><span class="tinfo" aria-hidden="true">ⓘ</span><div>${icon}</div><div>${esc(name)}</div><div class="mute">${extra || '&nbsp;'}</div>${label}</div>`;
     const item = it => {
-      const own = G.owned(it.id), can = G.canBuy(it.id), locked = it.needs && !G.owned(it.needs);
-      return tile(it.icon, t('shop.' + it.id), t('shop.' + it.id + '_fx') + (locked ? ' ' + t('shop.locked') : ''), own ? `<button disabled>${esc(t('shop.owned'))}</button>` : `<button data-b="${it.id}" ${can ? '' : 'disabled'}>💰 ${it.price}</button>`);
+      const own = G.owned(it.id), can = G.canBuy(it.id);
+      return tile(it.icon, t('shop.' + it.id), own ? `<button disabled>${esc(t('shop.owned'))}</button>` : `<button data-b="${it.id}" ${can ? '' : 'disabled'}>💰 ${it.price}</button>`, '', 'item:' + it.id);
     };
     const bp = G.bedPrice();
-    const bed = tile('🛏', t('shop.bed_slot'), t('shop.bed_slot_fx') + ' ' + t('shop.beds_now', { n: G.guestBedsOwned(), m: G.GUEST_BED_MAX, u: G.guestBedsOwned() - G.guestRoom() }), bp === null ? `<button disabled>${esc(t('shop.full'))}</button>` : `<button data-bed="1" ${G.canBuyBed() ? '' : 'disabled'}>💰 ${bp}</button>`, '', t('shop.beds_now', { n: G.guestBedsOwned(), m: G.GUEST_BED_MAX, u: G.guestBedsOwned() - G.guestRoom() }));
-    const giftTile = g => tile(g.icon, t('gift.' + g.id), t('gift.' + g.id), `<button data-g="${g.id}" ${money < g.price || (inv[g.id] || 0) >= G.DOOR.gift_max ? 'disabled' : ''}>💰 ${g.price}</button>`, '', inv[g.id] ? esc(t('gift.have', { n: inv[g.id] })) : '');
+    const bed = tile('🛏', t('shop.bed_slot'), bp === null ? `<button disabled>${esc(t('shop.full'))}</button>` : `<button data-bed="1" ${G.canBuyBed() ? '' : 'disabled'}>💰 ${bp}</button>`, esc(t('shop.beds_now', { n: G.guestBedsOwned(), m: G.GUEST_BED_MAX, u: G.guestBedsOwned() - G.guestRoom() })), 'bed');
+    const giftTile = g => tile(g.icon, t('gift.' + g.id), `<button data-g="${g.id}" ${money < g.price || (inv[g.id] || 0) >= G.DOOR.gift_max ? 'disabled' : ''}>💰 ${g.price}</button>`, inv[g.id] ? esc(t('gift.have', { n: inv[g.id] })) : '', 'gift:' + g.id);
     const gifts = V ? Object.values(V.GIFTS).sort((a, b) => a.price - b.price).map(giftTile).join('') : '';
-    const sec = (key, note, body) => `<h3>${esc(t(key))}</h3>${note ? `<div class="mute" style="margin-bottom:6px">${esc(t(note))}</div>` : ''}<div class="giftgrid">${body}</div>`;
+    const sec = (key, note, body, wide) => `<h3>${esc(t(key))}</h3>${note ? `<div class="mute" style="margin-bottom:6px">${esc(t(note))}</div>` : ''}<div class="giftgrid${wide ? ' wide' : ''}">${body}</div>`;
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('shop.title'))}</h2><div class="money big">💰 ${Math.floor(money)}</div><div class="mute" style="margin:6px 0">${esc(t('shop.note'))}</div>
-      ${sec('shop.sec_bed', 'shop.bed_note', bed)}${sec('shop.sec_daily', '', G.SHOP.filter(i => i.cat === 'daily').map(item).join(''))}${sec('shop.sec_decor', 'shop.decor_note', G.SHOP.filter(i => i.cat === 'decor').map(item).join(''))}${sec('shop.sec_gifts', 'shop.gift_note', gifts)}
+      ${sec('shop.sec_bed', '', bed)}${sec('shop.sec_daily', '', G.SHOP.filter(i => i.cat === 'daily').map(item).join(''))}${sec('shop.sec_decor', 'shop.decor_note', G.SHOP.filter(i => i.cat === 'decor').map(item).join(''))}${sec('shop.sec_gifts', 'shop.gift_note', gifts)}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="shclose" class="primary">${esc(t('btn.close'))}</button></div>`, true);
     dlg.scrollTop = keep;
     dlg.querySelectorAll('[data-b]').forEach(b => b.onclick = () => { if (G.buy(b.dataset.b)) { U.renderRoom(true); U.renderClock(); U.shopDialog(); } });
     dlg.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { if (G.buyGift(b.dataset.g)) { U.renderClock(); U.shopDialog(); } });
     dlg.querySelectorAll('[data-bed]').forEach(b => b.onclick = () => { if (G.buyBed()) { U.renderRoom(true); U.renderClock(); U.shopDialog(); } });
     dlg.querySelector('#shclose').onclick = U.closeDialog;
+    dlg.querySelectorAll('[data-info]').forEach(el => {
+      const open = e => { if (e.target.closest && e.target.closest('button')) return; U.shopInfo(el.dataset.info); };
+      el.onclick = open; el.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(e); } };
+    });
+  };
+
+  /* 礼物适合送给谁：看来客卡里想要的东西。没有人想要就直说；一到三位直接写名字，说得明确；更多就找共性，多是哪个领域的人 */
+  U.giftHint = id => {
+    const V = CY.visitors, who = Object.values(V.cards).filter(c => (c.wants || []).includes(id));
+    if (!who.length) return t('gift.hint_none');
+    if (who.length <= 3) return t('gift.hint_names', { names: who.map(c => t('visitor.' + c.id + '.name')).join(t('sep.list')) });
+    const by = {}; for (const c of who) by[c.field] = (by[c.field] || 0) + 1;
+    const top = Object.entries(by).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).slice(0, 2).map(x => t('field.' + x[0]));
+    return t('gift.hint_many', { n: who.length, fields: top.join(t('sep.list')) });
+  };
+
+  /* 说明弹窗：名字，图标，说明，价格；关掉回到商店 */
+  U.shopInfo = function (info) {
+    const [kind, id] = info.split(':');
+    let icon = '', name = '', body = '', price = '';
+    if (kind === 'item') {
+      const it = G.SHOP.find(x => x.id === id); if (!it) return;
+      icon = it.icon; name = t('shop.' + id); price = it.price;
+      body = `<p>${esc(t('shop.' + id + '_fx'))}</p>${it.needs && !G.owned(it.needs) ? `<p class="mute">${esc(t('shop.locked'))}</p>` : ''}`;
+    } else if (kind === 'gift') {
+      const g = CY.visitors.GIFTS[id]; if (!g) return;
+      icon = g.icon; name = t('gift.' + id); price = g.price;
+      body = `<p>${esc(U.giftHint(id))}</p><p class="mute">${esc(t('shop.gift_note'))}</p>`;
+    } else {
+      icon = '🛏'; name = t('shop.bed_slot'); price = G.bedPrice() === null ? '' : G.bedPrice();
+      body = `<p>${esc(t('shop.bed_slot_fx'))}</p><p>${esc(t('shop.bed_note'))}</p><p class="mute">${esc(t('shop.beds_now', { n: G.guestBedsOwned(), m: G.GUEST_BED_MAX, u: G.guestBedsOwned() - G.guestRoom() }))}</p>`;
+    }
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(icon)} ${esc(name)}</h2>${body}${price !== '' ? `<div class="money">💰 ${esc(price)}</div>` : ''}
+      <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="shback" class="primary">${esc(t('shop.back'))}</button></div>`);
+    dlg.querySelector('#shback').onclick = () => U.shopDialog();
   };
 
   /* 第一次有了角色之后，走开局的后两步 */

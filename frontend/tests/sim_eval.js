@@ -5,6 +5,7 @@
      CARE_BACKEND_URL  设了就把后端换成这个地址的远程后端（设置 backend_provider=http），并统计每次请求的耗时和字节数
      CARE_PROVIDER     设为 lm 就用浏览器里的数值积分后端
      CARE_COND         设为 0 时关掉疾病模型积分，对比用
+     CARE_DISPATCH     设为 0 时关掉看护调度，对比用
      CARE_SEED         随机种子，同一个种子下不同后端的对比才公平
      CARE_SPEED        时间倍速，1、6、24、60，默认 1（1 时昼夜用虚拟的系统时钟，保持以前的对比基线）
      CARE_SIM_JSON     设为 1 时最后多输出一行 JSON 汇总，给 backend_compare.py 读 */
@@ -48,6 +49,7 @@ const FAMILIES = {
   if (leadName) { const L = G.people.find(p => p.person.name === leadName); if (L) G.setProtagonist(L.id); }
   if (!G.protagonist()) { const L = G.people.find(p => G.canLead(p)); if (L) G.setProtagonist(L.id); }
   CY.world.enforce = false;
+  if (process.env.CARE_DISPATCH === '0') G.tpl.system.dispatch = { enabled: false };   /* 关掉看护调度，对比用 */
 
   /* 虚拟时钟：Date 被换成可控的，从早上八点开始 */
   let fake = Date.UTC(2026, 9, 28, 0, 0, 0) + 8 * 3600e3;
@@ -57,7 +59,7 @@ const FAMILIES = {
   G.cfg.time.speed = process.env.CARE_SPEED || '1';
   G.cfg.time.daynight = G.speed() === 1 ? 'system' : 'game';
   if (process.env.CARE_DAY) { G.cfg.time.day_minutes = process.env.CARE_DAY; delete G.cfg.time.speed; G.cfg.time.daynight = 'game'; G.setClock(G.DAY.start); G._dayN = undefined; G.DAY.enabled = true; }
-  else { G.DAY.enabled = false; if (G.speed() > 1) G.alignClock(); }
+  else if (G.speed() > 1) { G.setClock(G.DAY.start); G._dayN = undefined; G.DAY.enabled = true; } else G.DAY.enabled = false;
   G.lastTick = fake; G.nextAt = fake + 4000;
 
   const stat = { crowdSum: 0, crowdN: 0, ticks: 0, urgentTicks: 0, sleepSkip: 0, cryTicks: 0, awakePersonTicks: 0, reqs: 0, asks: 0, acts: 0, roomMoves: 0, hospital: 0, assists: 0, falls: 0 };
@@ -91,7 +93,7 @@ const FAMILIES = {
       (needSum[p.person.name] = needSum[p.person.name] || 0); needSum[p.person.name] += mx; needN[p.person.name] = (needN[p.person.name] || 0) + 1;
       if (mx > 0.8) stat.urgentTicks++;
       if (G.needy(p)) stat.needyTicks = (stat.needyTicks || 0) + 1;
-      stat.moodSum = (stat.moodSum || 0) + p.state.mood; stat.frailSum = (stat.frailSum || 0) + p.state.frailty; stat.needMeanSum = (stat.needMeanSum || 0) + (Object.values(p.state.needs).reduce((a, b) => a + b, 0) / Math.max(1, Object.keys(p.state.needs).length));
+      stat.moodSum = (stat.moodSum || 0) + p.state.mood; stat.frailSum = (stat.frailSum || 0) + p.state.frailty; stat.needMeanSum = (stat.needMeanSum || 0) + (Object.keys(p.state.needs).reduce((a, k) => a + G.need(p, k), 0) / Math.max(1, Object.keys(p.state.needs).length));
       if (G.crying[p.id]) stat.cryTicks++;
       const r = CY.world.locationOf(p);
       const key = r.place + '/' + r.room;

@@ -405,6 +405,7 @@
     if (p === G.protagonist()) return CY.world && CY.world.leadSleeping() ? 'sleeping' : 'awake';   /* 主角睡不睡看他在不在床上：小睡，或者夜里在卧室里闲着 */
     if (p.species.id !== 'human' && !NOCTURNAL.includes(p.species.id)) return 'awake';
     if (G.flag(p, 'nap')) return 'sleeping';
+    if (G.flag(p, 'awake')) return 'awake';   /* 被叫醒去看护，一会儿再睡 */
     const [a, b] = G.sleepWindow(p), dm = G.dayMinutes(), R = G.routineOf(p);
     if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && G.need(p, 'rest') > 0.3) return 'sleeping';   /* 幼儿和老人的午睡 */
     if (!inWindow(dm, a, b)) return 'awake';
@@ -580,7 +581,9 @@
   function applyEffects(p, a, scale) {
     const s = p.state, mods = G.traitMods(p);
     G.pulse(p.id, a.id);
-    for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] > 0 ? (mods.effect[k] || 1) : 1));   /* 效果是水平的增量，正数是补上 */
+    const bo = G.shopBoost(p, a);   /* 买的东西让这一次动作的效果更多，只管当次，不改需求涨落的速度 */
+    for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] > 0 ? (mods.effect[k] || 1) * (bo.scale[k] || 1) * bo.all : 1));   /* 效果是水平的增量，正数是补上 */
+    if (bo.mood) s.mood = clamp(s.mood + bo.mood);
     if (a.frailty) s.frailty = clamp(s.frailty + a.frailty * (a.frailty > 0 ? mods.frailty : 1));
   }
   /* 这个动作这个角色自己做得了吗：卡里写了名单就按名单，没写就按年龄阶段 */
@@ -609,11 +612,26 @@
     if (d.outing && d.outing.group && G.outingBlocked && G.outingBlocked(p)) return false;   /* 家里不能单独留下需要看护的人 */
     if (d.trip && (G.world.trip || (G.world.money || 0) < d.trip.cost)) return false;   /* 已经在路上，或钱不够 */
     if (d.walks && G.bedridden(p)) return false;
-    if (d.only_bedridden && !G.bedridden(p)) return false;
+    if (d.needs_chair && !G.needsChair(p)) return false;   /* 推轮椅出去，只给需要轮椅的人 */
+    if (d.outing && !d.needs_chair && G.legsBad(p) && !G.owned('wheelchair')) return false;   /* 腿脚不便的老人没有轮椅出不了门 */
     if (d.visitor_only && !(p.person && p.person.visitor)) return false;
     if (d.item && !G.owned(d.item)) return false;
     const need = d.item_for && d.item_for[G.stage(p)];
-    return !need || G.owned(need);
+    return !need || G.owned(need) || !!(d.carry && d.carry.includes(G.stage(p)) && G.canCarry(G.stage(p)));
+  };
+  /* 外出的按钮没出现时，告诉玩家为什么：婴儿要婴儿车或成年人抱着，卧床的老人要轮椅，家里有不能单独留下又带不走的人。没有被拦下就返回空 */
+  G.outingHint = p => {
+    if (!p || p === G.protagonist() || !G.isHuman(p)) return '';
+    const st = G.stage(p);
+    const outs = Object.entries(p.species.actions || {}).filter(([k, d]) => (d.outing || d.walks) && k !== 'doctor' && (!d.stages || d.stages.includes(st)));
+    if (G.needsChair(p) && !G.owned('wheelchair') && outs.some(([k, d]) => d.outing && !d.needs_chair)) return 'hint.need_wheelchair';   /* 还能搀着散步，但出不了门，也要说原因 */
+    if (!outs.length || outs.some(([k, d]) => G.usable(p, d))) return '';
+    for (const [k, d] of outs) {
+      if (G.needsChair(p) && !G.owned('wheelchair')) return 'hint.need_wheelchair';
+      if (d.item_for && d.item_for[st] && !G.owned(d.item_for[st]) && !(d.carry && d.carry.includes(st) && G.canCarry(st))) return 'hint.need_stroller';
+      if (d.outing && d.outing.group && G.outingBlocked && G.outingBlocked(p)) return 'hint.cant_leave';
+    }
+    return '';
   };
   G.bedCheck = p => {
     const s = p.state;
@@ -907,7 +925,9 @@
     let n = 0;
     for (const q of G.activePeople()) {
       if (q === cook || !G.isHuman(q) || ['infant', 'toddler'].includes(G.stage(q)) || G.isSleeping(q) || G.flag(q, 'hospital') || G.flag(q, 'outing') || (W0 && W0.locationOf(q).place !== 'home')) continue;
-      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v * scale);
+      const bo = G.shopBoost(q, a);
+      for (const [k, v] of Object.entries(a.effect || {})) if (k in q.state.needs) q.state.needs[k] = clamp(q.state.needs[k] + v * scale * (v > 0 ? (bo.scale[k] || 1) : 1));
+      if (bo.mood) q.state.mood = clamp(q.state.mood + bo.mood);
       n++;
     }
     G.logK(cook.id, 'event', 'log.meal_all', {});
@@ -917,6 +937,12 @@
     const p = G.get(pid), a = p && G.actionsOf(p)[actionId];
     if (!a) return false;
     const s = p.state;
+    /* 对方这件事上还不需要：不做，说明原因。gate 写在动作数据里，需求是压力，低于 min 算还不需要 */
+    if (a.gate && G.need(p, a.gate.need) < a.gate.min) {
+      const why = t('refuse.not_tired', { name: p.person.name });
+      G.toastFor(p, why, 'soft');
+      return false;
+    }
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
     applyEffects(p, a, 1);
     if (G.arcCare) G.arcCare(p, a);
@@ -961,7 +987,7 @@
       G.playFx(pid, actionId); G.save(); emit();
       return true;
     }
-    let tx = line(p, 'thanks', actionId, line(p, 'thanks', 'default', t('line.ok')));
+    let tx = line(p, 'thanks', actionId, line(p, 'thanks', a.thanks_as || 'default', line(p, 'thanks', 'default', t('line.ok'))));
     /* 要不要说不一样的话，由后端决定：受了伤，在医院，到了某个次数 */
     const dres = G.drive('action', { person: p, action: { id: actionId, label: a.label }, collect: true });
     if (dres && dres.said) tx = dres.said;
@@ -1080,6 +1106,7 @@
     if (G.worldTick) G.worldTick(now);
     G.nagTick(now);
     if (G.agentTick) G.agentTick(dt);
+    if (G.dispatchTick) G.dispatchTick(dt);
     if (G.socialTick) G.socialTick(dt);
     if (now >= (G.nextAmbient || 0)) { G.nextAmbient = now + 30000 + Math.random() * 40000; if (!G.isPaused() && G.activePeople().length) ambientChat(); }
     emit();

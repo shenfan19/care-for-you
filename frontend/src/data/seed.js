@@ -4,7 +4,7 @@
 (function (CY) {
   const F = {};
 
-  F['templates/species/human.yaml'] = `version: 7
+  F['templates/species/human.yaml'] = `version: 10
 id: human
 label: 人
 food: food
@@ -33,12 +33,12 @@ actions:
   game: { label: 一起打游戏, hold: 7, min: 40, effect: { company: 0.6 }, mood: 0.12, stages: [teen] }
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: 0.6 }, mood: 0.1, stages: [teen, adult, elder] }
   rest: { label: 扶去休息, nap: 40, hold: 6, min: 15, effect: { rest: 0.9 }, stages: [elder] }
-  invite_rest: { label: 请ta睡一会儿, nap: 40, hold: 6, min: 15, effect: { rest: 0.9 }, mood: 0.05, stages: [teen, adult] }
+  invite_rest: { label: 请ta睡一会儿, nap: 40, hold: 6, min: 15, effect: { rest: 0.9 }, mood: 0.05, gate: { need: rest, min: 0.3 }, thanks_as: rest, stages: [teen, adult] }
   gift: { label: 送礼, visitor_only: true, hold: 3, min: 0, effect: {}, stages: [child, teen, adult, elder] }
   walk: { label: 搀着散步, walks: true, hold: 8, min: 45, effect: { mobility: 1, company: 0.3 }, frailty: -0.05, stages: [elder] }
-  park: { label: 带去公园, walks: true, item_for: { infant: stroller }, hold: 8, min: 40, away: true, outing: { place: park, room: lawn, seconds: 40, group: true }, effect: { play: 0.6, company: 0.4, mobility: 0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
-  street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, hold: 6, min: 30, away: true, outing: { place: street, room: road, seconds: 30, group: true }, effect: { company: 0.3, play: 0.3 }, mood: 0.1, stages: [toddler, child, elder] }
-  wheel: { label: 推轮椅出去走走, only_bedridden: true, item: wheelchair, hold: 8, min: 45, away: true, outing: { place: park, room: lawn, seconds: 40, group: false }, effect: { mobility: 0.6, company: 0.5 }, mood: 0.15, stages: [elder] }
+  park: { label: 带去公园, walks: true, item_for: { infant: stroller }, carry: [infant], hold: 8, min: 40, away: true, outing: { place: park, room: lawn, seconds: 40, group: true }, effect: { play: 0.6, company: 0.4, mobility: 0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
+  street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, carry: [infant], hold: 6, min: 30, away: true, outing: { place: street, room: road, seconds: 30, group: true }, effect: { company: 0.3, play: 0.3 }, mood: 0.1, stages: [infant, toddler, child, elder] }
+  wheel: { label: 推轮椅出去走走, needs_chair: true, item: wheelchair, hold: 8, min: 45, away: true, outing: { place: park, room: lawn, seconds: 40, group: false }, effect: { mobility: 0.6, company: 0.5 }, mood: 0.15, stages: [elder] }
   hand: { label: 握着手, hold: 6, min: 10, effect: { company: 0.5 }, frailty: -0.15, mood: 0.1, stages: [elder] }
   doctor: { label: 带去看医生, hold: 8, min: 120, away: true, manual: true, outing: { place: hospital, room: ward, seconds: 50, group: false }, effect: {}, frailty: -0.25, mood: 0.05, heals: [cold] }
   drink: { label: 倒水喝, selfonly: true, at: kitchen, self: [child, teen, adult, elder], hold: 1, min: 3, effect: { thirst: 0.8 }, stages: [child, teen, adult, elder] }
@@ -306,7 +306,7 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
-  F['templates/system.yaml'] = `version: 8
+  F['templates/system.yaml'] = `version: 9
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
@@ -367,6 +367,23 @@ agents:
       - { id: elder_street, stage: [elder], action: street, chance_per_hour: 0.3, hour_from: 9, hour_to: 17 }
       - { id: elder_park, stage: [elder], action: park, chance_per_hour: 0.2, hour_from: 9, hour_to: 17 }
       - { id: kid_park, stage: [toddler, child], action: park, chance_per_hour: 0.3, hour_from: 9, hour_to: 17, max_level: { play: 0.7 } }
+  dispatch:                   # 看护调度：全家统一决定谁看护谁、谁做哪件事、谁换班去睡，疲劳都是压力，0 是精神，1 是累垮
+    enabled: true
+    step_minutes: 5           # 每隔多少游戏分钟决策一次，低于一小时
+    watch_stages: [infant, toddler]   # 醒着时必须有人盯着的阶段
+    act_at: 0.45              # 被照看的人某项需求压力超过它，才派人动手
+    sleep_at: 0.72            # 看护人疲劳到这里，有人接手就去睡
+    floor: 0.95               # 疲劳到这里不再派他，除非没有别人
+    nap_minutes: 120          # 换班去睡的时长
+    watch_extra: 0.03         # 盯着一个人，每游戏小时额外加的疲劳，和手上的活是两条独立的通道
+    hands_extra: 0.04         # 手上的活，每游戏小时额外加的疲劳
+    efficiency: 0.7           # 家人出手的效果，玩家自己动手是 1
+    depl_loss: 0.5            # 疲劳从 sleep_at 涨到 1，出手效果最多再打掉这么多
+    elder_mult: 1.3           # 老人看护同样的时间更累
+    meal_at: 0.6              # 醒着的人饿到这里，家里需要有人做一顿饭
+    meal_gap: 180             # 两顿饭之间至少隔这么多游戏分钟
+    cook_minutes: 45          # 做一顿饭占手上的活这么久
+    lactating: [mom, wife, young_woman]   # 母乳喂养时，只有这些人能喂婴儿
 `;
 
   /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */

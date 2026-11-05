@@ -36,6 +36,7 @@
     if (!from || !to || from === G.protagonist() || to === G.protagonist()) return false;
     if (e.kind === 'care') return to !== from && G.canHelp(to) && !!careAction(from, e.need);
     if (e.kind === 'self') return to === from && !!G.selfActFor(from, e.need);
+    if (e.kind === 'go' && G.legsBad(from) && !G.owned('wheelchair')) return false;
     if (e.kind === 'go') return !!goAction(from, e.action) && (to === from ? G.isHuman(from) && GO_ALONE.includes(G.stage(from)) : G.canHelp(to));
     return false;
   };

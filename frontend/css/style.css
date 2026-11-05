@@ -1,13 +1,5 @@
 :root { --bg:#f6f1e8; --card:#fffdf8; --ink:#33302b; --mute:#8a8378; --accent:#c8794a; --line:#e4dccd; --soft:#efe7d8; --ok:#6b9a6b; }
 :root[data-theme=dark] { --bg:#201e1b; --card:#2b2825; --ink:#ece6da; --mute:#9a9286; --accent:#e09468; --line:#3c3833; --soft:#35312c; --ok:#86b486; }
-:root[data-bg=mint] { --bg:#eef5f1; --card:#fbfffd; --ink:#2b3531; --mute:#7a8a82; --accent:#3f9b7a; --line:#d3e3da; --soft:#e0eee7; --ok:#5b9a6b; }
-:root[data-theme=dark][data-bg=mint] { --bg:#17201d; --card:#1f2a26; --ink:#e3efe9; --mute:#8fa39a; --accent:#5cc0a0; --line:#2e3d37; --soft:#28352f; --ok:#7fc08f; }
-:root[data-bg=sky] { --bg:#eef3f8; --card:#fcfdff; --ink:#2a3340; --mute:#7a8798; --accent:#4a7fc1; --line:#d5e0ec; --soft:#e2ebf5; --ok:#5b9a8a; }
-:root[data-theme=dark][data-bg=sky] { --bg:#171c24; --card:#1f2631; --ink:#e4eaf3; --mute:#8d99ab; --accent:#6ea0e0; --line:#2d3745; --soft:#27303d; --ok:#7fbfae; }
-:root[data-bg=rose] { --bg:#f8eff0; --card:#fffdfd; --ink:#382f31; --mute:#948083; --accent:#c0607a; --line:#ecd9dc; --soft:#f3e4e6; --ok:#6b9a7a; }
-:root[data-theme=dark][data-bg=rose] { --bg:#231a1c; --card:#2e2224; --ink:#f0e4e6; --mute:#a38f92; --accent:#e08aa0; --line:#44323a; --soft:#392a2d; --ok:#86b496; }
-:root[data-bg=gray] { --bg:#f1f1f2; --card:#ffffff; --ink:#2c2c2e; --mute:#858589; --accent:#5c6bc0; --line:#dcdcde; --soft:#e7e7e9; --ok:#5b9a6b; }
-:root[data-theme=dark][data-bg=gray] { --bg:#1a1a1c; --card:#242427; --ink:#e8e8ea; --mute:#98989d; --accent:#8c9bf0; --line:#38383b; --soft:#2f2f32; --ok:#86b486; }
 html { background:var(--bg); }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.6 system-ui,"PingFang SC","Microsoft YaHei",sans-serif; }
@@ -394,6 +386,7 @@ button.corner.unread { position:relative; }
 .opanel .ophead b { flex:1; font-size:15px; }
 .opanel .ophead .hb { font-size:12px; padding:1px 8px; }
 .opanel .ophead .x { padding:0 8px; font-size:16px; line-height:1.3; border:none; background:none; color:var(--mute); }
+.opanel .ophint { font-size:12px; line-height:1.4; margin-top:6px; }
 .opanel .opneeds { display:flex; flex-wrap:wrap; gap:4px 8px; font-size:12px; color:var(--mute); margin-bottom:4px; }
 .opanel .opneeds .urgent { color:var(--accent); font-weight:600; }
 .opanel .oplabel { min-height:20px; font-size:13px; line-height:1.5; } .opanel .oplabel small { color:var(--mute); margin-left:6px; }
@@ -455,3 +448,36 @@ button.corner.unread { position:relative; }
 
 .srow2 .pc { min-width:34px; text-align:right; font-size:12px; }
 .statgrid .intro { margin:8px 0; padding:6px 8px; border-left:3px solid var(--line); }
+
+/* 百科：左边条目，右边当前的设计；窄屏先列表后正文 */
+a.pl { text-decoration: underline; text-underline-offset: 2px; cursor: pointer; color: inherit; }
+a.pl:hover { color: var(--accent); }
+.pedia { display: grid; grid-template-columns: 210px 1fr; gap: 12px; height: min(68vh, 560px); }
+.pedia .pnav { overflow-y: auto; border-right: 1px solid var(--line); padding-right: 8px; }
+.pedia .psearch { width: 100%; box-sizing: border-box; margin-bottom: 6px; }
+.pedia .pgh { font-size: 12px; color: var(--mute); margin: 8px 0 2px; letter-spacing: .04em; }
+.pedia .pi { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 4px 8px; border-radius: 6px; cursor: pointer; color: inherit; font: inherit; }
+.pedia .pi:hover { background: var(--soft); }
+.pedia .pi.on { background: var(--soft); color: var(--accent); font-weight: 600; }
+.pedia .pbody { overflow-y: auto; padding-right: 4px; }
+.pedia .pbody h3 { margin-top: 0; font-size: 18px; color: var(--ink); }
+.pedia .pbody h4 { margin: 14px 0 4px; }
+.pedia .pf { display: flex; gap: 10px; margin: 4px 0; align-items: baseline; }
+.pedia .pk { flex: 0 0 6.5em; color: var(--mute); font-size: 13px; }
+.pedia .pback { display: none; margin-bottom: 8px; }
+@media (max-width: 640px) {
+  .pedia { grid-template-columns: 1fr; height: 62vh; }
+  .pedia .pbody { display: none; }
+  .pedia.show-body .pnav { display: none; }
+  .pedia.show-body .pbody { display: block; }
+  .pedia .pback { display: inline-block; }
+}
+/* 设置里数据位置：按钮加一句说明 */
+.drows { display: grid; gap: 8px; }
+.drow { display: grid; grid-template-columns: minmax(9em, 12em) 1fr; gap: 10px; align-items: center; }
+@media (max-width: 520px) { .drow { grid-template-columns: 1fr; } }
+
+/* 商店格子：说明放进弹窗，格子只留图标名字价格，点一下看说明 */
+.shoptile { position: relative; cursor: pointer; }
+.shoptile .tinfo { position: absolute; top: 4px; right: 6px; font-size: 12px; color: var(--mute); }
+.shoptile:hover { border-color: var(--accent); }

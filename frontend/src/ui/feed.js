@@ -72,7 +72,7 @@
       return;
     }
     root.innerHTML = (curvesOn() ? tabs : `<h2>${esc(t('feed.title'))}</h2>`) + `<div class="chips">${chips}<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button></div>${stat}` +
-      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${esc(G.entryText(x.e))}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
+      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
       (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div>';
     root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });

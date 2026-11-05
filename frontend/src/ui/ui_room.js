@@ -148,9 +148,8 @@
     else U.room.style.aspectRatio = '';
     let sig, html;
     if (fam) {
-      const id = CY.scenes.resolve(ini.get(G.cfg, 'ui', 'scene'), h);
-      sig = 'f|' + (id || 'none') + '|' + CY.scenes.phase(h); html = () => (id ? CY.scenes.svg(id, h) : '');
-      U.room.classList.toggle('hasscene', !!id);
+      sig = 'f|none'; html = () => '';
+      U.room.classList.remove('hasscene');
     } else { sig = U.viewPlace + '|' + Math.floor(h * 2) + '|' + CY.i18n.lang + '|' + CY.world.bedKey() + '|' + (CY.game.tableFood() ? 'f' : '') + (CY.game.itemAway('stroller') ? 's' : '') + (CY.game.itemAway('wheelchair') ? 'w' : '') + '|' + (CY.game.world.owned ? Object.keys(CY.game.world.owned).join() : ''); html = () => CY.iso.svg(U.basePlace(), h, U.viewZone() ? U.zoneDef(U.viewZone()).rooms : null); U.room.classList.add('hasscene'); }
     if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html(); }
   };
@@ -450,8 +449,8 @@
     park: '🌳', street: '🏪', pet: '🤚', hug: '🤗', water: '💧', feed: '🍼', meal: '🍲', diaper: '🚼', bath: '🛁', play: '🧸', read: '📖', soothe: '🌙', homework: '📚', game: '🎮', chat: '💬', rest: '🛋', walk: '🚶', hand: '🤝', doctor: '🩺',
     groom: '✨', vet: '🏥', clean: '🧹', train: '🎓', teach: '🗣', warm: '🔥', veggie: '🥬', mist: '💦', sun: '☀', fertilize: '🌱', prune: '✂', repot: '🪴',
     medicine: '💊', sugar: '🩸', bp: '🫀', heat: '♨', massage: '💆', fever: '🌡', cool: '🧊', inhaler: '💨', air: '🌬', remind: '☝', album: '📷',
-    restsit: '💺', steady: '✋', listen: '👂', walkout: '🌳', lead: '🚽', nightlight: '💡', ointment: '🧴', trimnails: '💅', painkill: '🩹', support: '🤲', rehab: '🏃',
-    gift: '🎁', invite_rest: '😴', stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
+    restsit: '💺', steady: '✋', listen: '👂', walkout: '🚪', lead: '🚽', nightlight: '💡', ointment: '🧴', trimnails: '💅', painkill: '🩹', support: '🤲', rehab: '🏃',
+    groceries: '🛒', sleep: '🛏', gift: '🎁', invite_rest: '😴', stayclose: '🤍', warmdrink: '☕', antihist: '🤧', airclean: '🫧',
   };
   U.actIcon = (p, a) => {
     if (ACT_ICON[a.id]) return ACT_ICON[a.id];
@@ -489,11 +488,11 @@
     layer.appendChild(head);
     if (lit.length) {
       const nd = doc().createElement('div'); nd.className = 'opneeds';
-      nd.innerHTML = lit.map(k => `<span class="${G.need(p, k) > 0.85 ? 'urgent' : ''}">${defs[k].icon || '•'} ${esc(G.needLabel(k, defs[k]))}</span>`).join('');
+      nd.innerHTML = lit.map(k => `<span class="${G.need(p, k) > 0.85 ? 'urgent' : ''}">${defs[k].icon || '•'} ${U.pediaLink('need:' + k, G.needLabel(k, defs[k]))}</span>`).join('');
       layer.appendChild(nd);
     }
     const label = doc().createElement('div'); label.className = 'oplabel'; label.innerHTML = '&nbsp;';
-    const home = () => { label.innerHTML = '&nbsp;'; };
+    const home = () => {};   /* 标签留着不收，才点得到里面的下划线链接 */
     layer.appendChild(label);
     const grid = doc().createElement('div'); grid.className = 'opgrid';
     acts.map(a => ({ a, urgent: U.actUrgent(p, a) })).sort((x, y) => (y.urgent ? 1 : 0) - (x.urgent ? 1 : 0)).forEach(({ a, urgent }) => {
@@ -503,13 +502,14 @@
       b.className = 'ico ' + (urgent ? 'urgent' : 'calm');
       b.title = text; b.setAttribute('aria-label', text);
       b.innerHTML = `<span class="e">${U.actIcon(p, a)}</span>`;
-      const show = () => { label.innerHTML = `<b>${esc(a.label)}</b><small>${esc(cost)}</small>`; };
+      const show = () => { label.innerHTML = `<b>${U.pediaLink('act:' + a.id, a.label)}</b><small>${esc(cost)}</small>`; };
       b.onpointerenter = show; b.onfocus = show; b.onpointerleave = home; b.onblur = home;
       b.onpointerdown = e => { e.preventDefault(); show(); b.setPointerCapture(e.pointerId); const r = b.getBoundingClientRect(); U.startHold(pid, a, r.left + r.width / 2, r.top + r.height / 2); };
       b.onpointerup = b.onpointercancel = () => U.endHold(false);
       grid.appendChild(b);
     });
     layer.appendChild(grid);
+    const hk = G.outingHint(p); if (hk) { const hn = doc().createElement('div'); hn.className = 'ophint mute'; hn.textContent = t(hk); layer.appendChild(hn); }
     layer.style.left = '0px'; layer.style.top = '0px';
     U.room.appendChild(layer);
     /* 先量一下容器的原点和面板的高度，再摆：右边放得下放右边，否则放左边；窄屏贴底 */

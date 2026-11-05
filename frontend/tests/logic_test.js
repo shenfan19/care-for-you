@@ -53,7 +53,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   used.add('kind.note.plant'); used.add('kind.note.animal'); used.add('add.group_plant');
   Object.keys(ctx.CY.seed.files()).filter(f => /templates\/species/.test(f)).map(f => f.split('/').pop().replace('.yaml', '')).filter(k => k !== 'human').forEach(k => used.add('class.' + k));
   ['interrupt', 'time', 'player', 'interaction', 'ui', 'privacy', 'account', 'ai', 'play', 'economy'].forEach(k => used.add('sec.' + k));
-  ['warm', 'mint', 'sky', 'rose', 'gray'].forEach(k => used.add('bg.' + k));
   ['none', 'round', 'square'].forEach(k => used.add('glasses.' + k));
   ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'].forEach(k => used.add('hair.' + k));
   ['zip', 'empty', 'newer'].forEach(k => used.add('import.err_' + k));
@@ -61,7 +60,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   for (const i of [1, 2, 3, 6, 7, 8, 9, 10]) used.add('priv.p' + i);
   used.add('player.title'); used.add('player.name');
   ['reality', 'story', 'paused'].forEach(m => { used.add('mode.' + m); used.add('mode.' + m + '_tip'); used.add('mode.hint_' + m); used.add('mode.switched_' + m); });
-  ['auto', 'living', 'bedroom', 'kitchen', 'lawn', 'balcony', 'none'].forEach(k => used.add('scene.' + k));
   CY.content.TRAITS.forEach(k => { used.add('trait.' + k); used.add('trait.' + k + '_tip'); });
   ['great', 'ok', 'low', 'bad'].forEach(k => used.add('mood.' + k)); ['sleeping', 'awake'].forEach(k => used.add('act.' + k)); ['m', 'f', 'n'].forEach(k => used.add('pron.sub.' + k));
   for (const f of Object.keys(CY.seed.files()).filter(f => /^templates\/(species|conditions)\//.test(f))) { const o = ctx.jsyaml.load(CY.seed.files()[f]); for (const k in o.actions || {}) if (o.actions[k].selfonly) used.add('selfact.' + k); }
@@ -84,7 +82,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   const needKeys = new Set(), actKeys = new Set();
   for (const f of Object.keys(CY.seed.files()).filter(f => /^templates\/(species|conditions)\//.test(f))) { const o = ctx.jsyaml.load(CY.seed.files()[f]); Object.keys(o.needs || {}).forEach(k => needKeys.add(k)); Object.keys(o.actions || {}).forEach(k => actKeys.add(k)); }
   check('英文包覆盖所有需求和动作标签', [...needKeys].every(k => 'need.' + k in en) && [...actKeys].every(k => 'act.' + k in en), [...needKeys].filter(k => !('need.' + k in en)).concat([...actKeys].filter(k => !('act.' + k in en))).join());
-  const iniMiss = CY.ini.SCHEMA.filter(([s, k]) => !['ui.theme', 'ui.background', 'ui.language', 'ui.figure'].includes(s + '.' + k) && !(`ini.${s}.${k}` in en)).map(x => x[0] + '.' + x[1]);
+  const iniMiss = CY.ini.SCHEMA.filter(([s, k]) => !['ui.theme', 'ui.language', 'ui.figure'].includes(s + '.' + k) && !(`ini.${s}.${k}` in en)).map(x => x[0] + '.' + x[1]);
   check('英文包覆盖所有设置说明', iniMiss.length === 0, iniMiss.join());
 
   /* 运行包清单和页面一致 */
@@ -482,7 +480,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('头上弹出的事件：完成打勾和有人开口', (() => { const GG = CY.game, p = GG.people[0]; if (!p) return false; const n0 = GG.popSeq; GG.playFx(p.id, 'talk'); const e = GG.pops[GG.pops.length - 1]; return GG.popSeq === n0 + 1 && e.kind === 'done' && e.icon === '✓' && e.pid === p.id; })());
   check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 
-  /* 没人管：婴儿哭闹，老人自己解决 */
+  /* 没人管：婴儿哭闹，老人自己解决。这一段测的是没人照顾时的哭闹记录，所以关掉看护调度 */
+  const dispatchWas = G.tpl.system.dispatch; G.tpl.system.dispatch = { enabled: false };
   G.cfg.time.mode = 'fast'; G.cfg.interrupt.frequency = 'normal'; 
   for (const p of G.people) { for (const k in p.state.needs) G.setNeed(p, k, 0.1); p.person.active = false; }
   bb.person.active = true; eld.person.active = true; sis2.person.active = true;
@@ -493,6 +492,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   for (let i = 0; i < 4000; i++) { G.lastTick -= 5000; for (const p of [eld, bb]) G.setNeed(p, 'hunger', Math.max(G.need(p, 'hunger'), 0.9)); const h = G.need(eld, 'hunger'); G.tick(); }
   check('老人没人管会自己解决', G.journal[eld.id] && Object.values(G.journal[eld.id]).flat().some(e => e.type === 'self'));
   check('哭闹只记一次', Object.values(G.journal[bb.id]).flat().filter(e => e.type === 'cry').length === 1);
+  if (dispatchWas === undefined) delete G.tpl.system.dispatch; else G.tpl.system.dispatch = dispatchWas;
   for (const k in bb.state.needs) G.setNeed(bb, k, 0.1); G.lastTick = Date.now() - 1000; G.tick();
   check('需求解决后不再哭', !G.crying[bb.id]);
   for (const p of [bb, eld, sis2]) { p.person.active = true; }
@@ -555,7 +555,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
-  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 7 && Object.keys(G.tpl.species.human.needs).length > 5);
+  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 10 && Object.keys(G.tpl.species.human.needs).length > 5);
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */
@@ -644,8 +644,6 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   for (const lang of ['en', 'ja', 'ko', 'fr']) for (const q of CY.content.packs[lang].asks) { const b = zhC.asks.find(x => x.id === q.id); if (phFmt(q.say) !== phFmt(b.say)) badPh.push(lang + ':' + q.id); }
   check('各语言问题里的 {title} 占位符和中文一致', badPh.length === 0, badPh.slice(0, 5).join());
   /* 场景 */
-  check('五种场景都能画，昼夜不同', CY.scenes.ids.every(id => [3, 9, 19, 23].every(h => /<svg/.test(CY.scenes.svg(id, h))) && CY.scenes.svg(id, 3) !== CY.scenes.svg(id, 12)));
-  check('自动场景白天客厅夜里卧室，纯色没有场景', CY.scenes.resolve('auto', 12) === 'living' && CY.scenes.resolve('auto', 23) === 'bedroom' && CY.scenes.resolve('lawn', 23) === 'lawn' && CY.scenes.resolve('none', 12) === null);
 
   /* AI 接入 */
   const ai = CY.ai;
@@ -1176,11 +1174,18 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = { wheelchair: true };
     check('有轮椅，卧床的人能被推出去', !!G.actionsOf(gp).wheel && !G.actionsOf(gp).walk);
     gp.state.frailty = 0.5; G.bedCheck(gp);
-    check('降到 0.55 以下起床，恢复散步', !G.bedridden(gp) && !!G.actionsOf(gp).walk && !G.actionsOf(gp).wheel);
+    check('降到 0.55 以下起床，恢复散步；仍体弱，算腿脚不便，有轮椅时还能被推出去', !G.bedridden(gp) && !!G.actionsOf(gp).walk && G.legsBad(gp) && !!G.actionsOf(gp).wheel);
+    gp.state.frailty = 0.3; G.bedCheck(gp);
+    check('恢复到硬朗，不再需要轮椅，推轮椅的动作消失', !G.bedridden(gp) && !G.legsBad(gp) && !!G.actionsOf(gp).walk && !G.actionsOf(gp).wheel);
+    gp.state.frailty = 0.5; G.bedCheck(gp);
     G.world.owned = {};
-    check('没有婴儿车，对婴儿不出现带去公园', !G.actionsOf(bb).park);
+    G.setProtagonist(gpId);
+    check('没有婴儿车，爷爷当主角抱不动婴儿，不出现带去公园和逛街', !G.actionsOf(bb).park && !G.actionsOf(bb).street);
     G.world.owned = { stroller: true };
-    check('有婴儿车，婴儿能被带去公园', !!G.actionsOf(bb).park);
+    check('有婴儿车，爷爷也能推着婴儿去公园和逛街', !!G.actionsOf(bb).park && !!G.actionsOf(bb).street);
+    G.world.owned = {}; G.world.protagonist = null;
+    check('没有婴儿车，没有主角时玩家是看不见的成年人，抱得动婴儿', !!G.actionsOf(bb).park);
+    G.world.owned = { stroller: true };
     G.world.owned = { stroller: true, wheelchair: true }; G.clearFlag(bb, 'outing');
     check('用品没出门时都在家里', !G.itemAway('stroller') && !G.itemAway('wheelchair'));
     G.setFlag(bb, 'outing', { minutes: 10, place: 'park', room: 'lawn', mode: 'stand' }); G.setFlag(gp, 'outing', { minutes: 10, place: 'park', room: 'lawn', mode: 'stand' }); gp.state.frailty = 0.9; G.bedCheck(gp);
@@ -1232,19 +1237,26 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const pet = G.activePeople().find(p => !G.isHuman(p));
       if (pet) check('宠物不走朝向规则', W.facing(pet, lay) === '');
     }
-    /* 舒适度修正：商品的 fx 由 G.shopFx 按人汇总，后台计算只读这一处 */
+    /* 商品分解锁型和加成型：买了东西，需求涨落的速度一点不变；加成只管做某个动作的当次效果，一次性的 */
     const kid = G.activePeople().find(p => G.stage(p) === 'infant' || G.stage(p) === 'toddler'), ad = G.activePeople().find(p => G.stage(p) === 'adult');
     G.world.owned = {};
     if (ad) {
       const base = G.shopFx(ad);
       check('什么都没买，修正是单位值', base.rest_sleep === 1 && base.mood === 0 && Object.keys(base.rate).length === 0);
-      G.world.owned = { books: true, fruit: true, decor1: true };
+      G.world.owned = { books: true, fruit: true, toy: true, wheelchair: true, stroller: true, decor1: true };
       const f = G.shopFx(ad);
-      check('床和装饰不再改睡觉恢复', f.rest_sleep === 1);
-      check('书架只对玩耍起作用，果盘只对饥饿起作用', f.rate.play === 0.85 && f.rate.hunger === 0.9 && f.rate.mobility === undefined);
-      check('心情目标加成只来自书架 0.01，装饰没有', Math.abs(f.mood - 0.01) < 1e-9);
+      check('玩具，果盘，书架，轮椅，婴儿车都不改需求涨落的速度', Object.keys(f.rate).length === 0 && f.rest_sleep === 1 && f.mood === 0);
+      const play = { effect: { play: 0.5 } }, eat = { effect: { hunger: 0.3 } };
+      check('书架：大人做休闲的事，心情当次多 0.04，玩耍效果不变', G.shopBoost(ad, play).mood === 0.04 && G.shopBoost(ad, play).scale.play === 1);
+      check('果盘：吃东西的饱足多四成，不是休闲的事没有心情加成', G.shopBoost(ad, eat).scale.hunger === 1.4 && G.shopBoost(ad, eat).mood === 0);
+      ad.state.needs.hunger = 0.2; const h0 = G.need(ad, 'hunger'); G._h.applyEffects(ad, eat, 1);
+      check('果盘：一次吃东西饱足 0.42，没买是 0.3', Math.abs((h0 - G.need(ad, 'hunger')) - 0.42) < 1e-6, (h0 - G.need(ad, 'hunger')).toFixed(3));
     }
-    if (kid) { G.world.owned = { toy: true, books: true }; const k = G.shopFx(kid); check('玩具只对婴幼儿，书架不对婴幼儿', k.rate.play === 0.75 && k.mood === 0); }
+    if (kid) {
+      G.world.owned = { toy: true, books: true };
+      const play = { effect: { play: 0.5 } };
+      check('玩具：婴幼儿玩耍多四成，心情当次多 0.02；书架不对婴幼儿', G.shopBoost(kid, play).scale.play === 1.4 && Math.abs(G.shopBoost(kid, play).mood - 0.02) < 1e-9);
+    }
     G.world.owned = {}; G.world.money = 200;
   }
   {

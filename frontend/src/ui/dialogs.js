@@ -9,8 +9,7 @@
   /* ---------- 设置（齿轮） ---------- */
   const OPT = { 'play.backend_provider': ['builtin', 'lm', 'http'], 'play.needs_source': ['builtin', 'backend'], 'time.daynight': ['auto', 'system', 'game'], 'ai.provider': ['none', 'openai_compat', 'mock'], 'ai.autonomy': ['text_only', 'suggest', 'bounded'] };
   /* 声音，时间倍率，时间模式，工作时段，时间制式都在角落按钮和日历菜单里，设置里不再重复 */
-  const SKIP = new Set(['audio.music_volume', 'audio.sfx_volume', 'audio.mute', 'economy.work_hours', 'ui.clock_12h', 'time.speed', 'time.mode', 'time.fast_speed', 'time.daynight', 'ui.theme', 'ui.background', 'ui.language', 'ui.scene', 'ui.figure', 'ui.house_view', 'play.last_mode']);
-  const BGS = ['warm', 'mint', 'sky', 'rose', 'gray'], BG_HEX = { warm: '#e9d9c0', mint: '#cfe7da', sky: '#cfe0f2', rose: '#f0d3d9', gray: '#d9d9dc' };
+  const SKIP = new Set(['audio.music_volume', 'audio.sfx_volume', 'audio.mute', 'economy.work_hours', 'ui.clock_12h', 'time.speed', 'time.mode', 'time.fast_speed', 'time.daynight', 'ui.theme', 'ui.language', 'ui.figure', 'ui.house_view', 'play.last_mode']);
   U.settingsDialog = function () {
     /* AI、账号、后端、对外接口都在底部的高级设置里，默认折叠 */
     const ADV = k => /^(ai|account|interaction)\./.test(k) || /^play\.(backend_|needs_source|api_bridge|condition_models)/.test(k);
@@ -24,22 +23,30 @@
     const shown = ini.SCHEMA.filter(([s, k]) => !SKIP.has(s + '.' + k));
     const form = rows(shown.filter(([s, k]) => !ADV(s + '.' + k)), true);
     const advForm = rows(shown.filter(([s, k]) => ADV(s + '.' + k)));
-    const th = ini.get(G.cfg, 'ui', 'theme'), bg = ini.get(G.cfg, 'ui', 'background'), lg = ini.get(G.cfg, 'ui', 'language');
+    const th = ini.get(G.cfg, 'ui', 'theme'), lg = ini.get(G.cfg, 'ui', 'language');
     const sel = (name, vals, labels, cur) => `<select data-ap="${name}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('set.title'))}</h2>
+      <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <h3>${esc(t('set.look'))}</h3>
       <div class="row">${esc(t('set.theme'))} ${sel('theme', ['auto', 'light', 'dark'], [t('theme.auto'), t('theme.light'), t('theme.dark')], th)}</div>
-      <div class="row">${esc(t('set.bg'))} <span class="sws">${BGS.map(b => `<span class="sw ${b === bg ? 'on' : ''}" data-ap="background" data-v="${b}" title="${esc(t('bg.' + b))}" style="background:${BG_HEX[b]}"></span>`).join('')}</span></div>
-      <div class="row">${esc(t('set.scene'))} ${sel('scene', ['auto', ...CY.scenes.ids, 'none'], ['auto', ...CY.scenes.ids, 'none'].map(k => t('scene.' + k)), ini.get(G.cfg, 'ui', 'scene'))}</div>
       <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.FIGURES, CY.FIGURES.map(k => t('figure.' + k)), CY.figureOf(ini.get(G.cfg, 'ui', 'figure')))}</div>
       <div class="row">${esc(t('set.house_view'))} ${sel('house_view', ['rooms', 'house'], [t('house_view.rooms'), t('house_view.house')], ini.get(G.cfg, 'ui', 'house_view') === 'house' ? 'house' : 'rooms')}</div>
-      <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <div class="sform">${form}</div>
-      <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.data_note', { where: store.backend.label }))}</div>
-      <div class="row">${G.DEVTOOLS ? `<button id="dsave">${esc(t('hdr.save'))}</button>` : ''}<button id="dfolder">${esc(t('set.folder'))}</button><button id="drestore">${esc(t('set.restore'))}</button><button id="dknow">${esc(t('set.know'))}</button>${G.DEVTOOLS && CY.account.configured(G.cfg) ? `<button id="dacct">${esc(t('acct.title'))}</button>` : ''}</div>
+      <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px"><b>${esc(t('set.d_where'))}</b> ${esc(t('set.data_note', { where: store.backend.label }))}</div>
+      <div class="drows">
+        <div class="drow"><button id="drestore">${esc(t('set.restore'))}</button><span class="mute">${esc(t('set.d_restore_note'))}</span></div>
+        <div class="drow"><button id="dknow">${esc(t('set.know'))}</button><span class="mute">${esc(t('set.d_know_note'))}</span></div>
+        ${G.DEVTOOLS && CY.account.configured(G.cfg) ? `<div class="drow"><button id="dacct">${esc(t('acct.title'))}</button></div>` : ''}
+      </div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
-      <details class="adv"><summary>${esc(t('set.advanced'))}</summary><div class="sform">${advForm}</div></details>
+      <details class="adv"><summary>${esc(t('set.advanced'))}</summary>
+        <h3>${esc(t('set.unf_title'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.unf_note'))}</div>
+        <div class="drows">
+          ${G.DEVTOOLS ? `<div class="drow"><button id="dsave">${esc(t('hdr.save'))}</button><span class="mute">${esc(t('set.d_save_note'))}</span></div>` : ''}
+          <div class="drow"><button id="dfolder">${esc(t('set.folder'))}</button><span class="mute">${esc(t('set.d_folder_note'))}</span></div>
+        </div>
+        <div class="sform">${advForm}</div></details>
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="scancel" class="primary">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelectorAll('[data-ap]').forEach(el => el[el.tagName === 'SELECT' ? 'onchange' : 'onclick'] = async () => {
       const k = el.dataset.ap; G.cfg.ui = G.cfg.ui || {}; G.cfg.ui[k] = el.tagName === 'SELECT' ? el.value : el.dataset.v;

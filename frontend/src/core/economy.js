@@ -91,11 +91,11 @@
      cat 是分类：daily 日用品有一点数值效果；decor 装饰纯粹是观感，没有任何数值效果。decor 一档一档买。
      床位另算，不在这张表里，见 G.bedsOwned：床位决定家里最多住几个人，家人和穿越者都占床位。 */
   G.SHOP = [
-    { id: 'toy', cat: 'daily', price: 80, icon: '🧸', fx: { rate: { play: 0.75 }, stages: ['infant', 'toddler'] } },
-    { id: 'fruit', cat: 'daily', price: 200, icon: '🍎', fx: { rate: { hunger: 0.9 } } },
-    { id: 'books', cat: 'daily', price: 400, icon: '📚', fx: { rate: { play: 0.85 }, mood: 0.01, stages: ['child', 'teen', 'adult', 'elder'] } },
+    { id: 'toy', cat: 'daily', price: 80, icon: '🧸', boost: { need: 'play', scale: 1.4, mood: 0.02, stages: ['infant', 'toddler'] } },
+    { id: 'fruit', cat: 'daily', price: 200, icon: '🍎', boost: { need: 'hunger', scale: 1.4 } },
+    { id: 'books', cat: 'daily', price: 400, icon: '📚', boost: { need: 'play', scale: 1, mood: 0.04, stages: ['child', 'teen', 'adult', 'elder'] } },
     { id: 'stroller', cat: 'daily', price: 400, icon: '👶' },
-    { id: 'wheelchair', cat: 'daily', price: 600, icon: '♿', fx: { rate: { mobility: 0.7 }, stages: ['elder'] } },
+    { id: 'wheelchair', cat: 'daily', price: 600, icon: '♿' },
     { id: 'cabinet', cat: 'decor', price: 300, icon: '🏺' },
     { id: 'decor1', cat: 'decor', price: 160, icon: '🪴' }, { id: 'decor2', cat: 'decor', price: 350, icon: '🛋', needs: 'decor1' }, { id: 'decor3', cat: 'decor', price: 550, icon: '📻', needs: 'decor2' },
   ];
@@ -126,6 +126,23 @@
     }
     return o;
   };
+  /* 商品分两种。解锁型：婴儿车，轮椅，有了才做得了某些事，不改变需求涨落的速度。加成型：玩具，果盘，书架，做某个动作的当次效果更多，一次性的，
+     需求该涨还是涨，不因为买了东西变慢。boost 写在商品上：need 是动作要缓解的需求，scale 是这一项效果的倍数，mood 是当次额外的心情，stages 限定受益的阶段 */
+  G.shopBoost = (p, a) => {
+    const o = { scale: {}, all: 1, mood: 0 }, st = G.stage(p);
+    for (const it of G.SHOP) {
+      const b = it.boost;
+      if (!b || !G.owned(it.id) || (b.stages && !b.stages.includes(st)) || !(a.effect && a.effect[b.need] > 0)) continue;
+      o.scale[b.need] = (o.scale[b.need] || 1) * (b.scale || 1); o.mood += b.mood || 0;
+    }
+    if (a.outing && G.owned('wheelchair') && G.needsChair(p)) o.all = G.WHEELCHAIR.outing_scale;   /* 轮椅出门的好处多一些 */
+    return o;
+  };
+  /* 轮椅：腿脚不便的老人，也就是体弱到一定程度或有关节炎，没有轮椅就出不了门，也没法自己去想去的地方；有了就能出去，出门的好处多两成半。
+     卧床的老人也要用轮椅出门，卧床老人更完整的行动设计还没做 */
+  G.WHEELCHAIR = { legs_frailty: 0.5, conditions: ['arthritis'], outing_scale: 1.25 };
+  G.legsBad = p => !!p && G.isHuman(p) && G.stage(p) === 'elder' && !G.bedridden(p) && !p.person.visitor && (p.state.frailty >= G.WHEELCHAIR.legs_frailty || (p.person.conditions || []).some(c => G.WHEELCHAIR.conditions.includes(c)));
+  G.needsChair = p => G.bedridden(p) || G.legsBad(p);
   G.owned = id => !!(G.world.owned && G.world.owned[id]);
   G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };
   G.buy = id => {
@@ -167,7 +184,7 @@
   G.tableFood = () => (G.world.fed_until || 0) > G.world.game_minutes;
   /* 用品出门：婴儿出门时用着婴儿车，卧床的人出门时坐着轮椅；用着的时候家里那件就不在了，画面上人物带着它 */
   G.usingStroller = p => G.owned('stroller') && G.stage(p) === 'infant' && !!G.flag(p, 'outing');
-  G.usingWheelchair = p => G.owned('wheelchair') && G.bedridden(p) && !!G.flag(p, 'outing');
+  G.usingWheelchair = p => G.owned('wheelchair') && G.needsChair(p) && !!G.flag(p, 'outing');
   G.itemAway = id => G.activePeople().some(p => id === 'stroller' ? G.usingStroller(p) : id === 'wheelchair' ? G.usingWheelchair(p) : false);
   G.decorLevel = () => (G.owned('decor1') ? 1 : 0) + (G.owned('decor2') ? 1 : 0) + (G.owned('decor3') ? 1 : 0);
 })(globalThis.CY = globalThis.CY || {});

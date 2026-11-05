@@ -1,17 +1,16 @@
-/* 顶栏：明暗，背景色调，语言，时钟，快进，通用弹窗。 */
+/* 顶栏：明暗，语言，时钟，快进，通用弹窗。 */
 (function (CY) {
   const G = CY.game, ini = CY.ini, store = CY.store, C = CY.content, A = CY.archive, I = CY.i18n;
   const t = (k, v) => CY.t(k, v);
   const U = CY.ui = CY.ui || {};
   const esc = U.esc;
   const $ = id => document.getElementById(id);
-  /* ---------- 外观：明暗、背景色调、语言 ---------- */
+  /* ---------- 外观：明暗、语言 ---------- */
   U.applyTheme = function () {
     let th = ini.get(G.cfg, 'ui', 'theme');
     if (th !== 'light' && th !== 'dark') th = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const bg = ini.get(G.cfg, 'ui', 'background');
     CY.figure = CY.figureOf(ini.get(G.cfg, 'ui', 'figure'));
-    for (const d of [document, U.pipDoc]) if (d) { d.documentElement.dataset.theme = th; d.documentElement.dataset.bg = bg; }
+    for (const d of [document, U.pipDoc]) if (d) { d.documentElement.dataset.theme = th; }
   };
   /* 顶栏已经没有语言和明暗的快捷控件，都在设置里 */
   U.renderControls = function () {};
@@ -28,7 +27,7 @@
     I.applyDom(document);
     document.title = t('app.title');
     U.renderBrand();
-    for (const [id, k] of [['shareBtn', 'hdr.share'], ['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
+    for (const [id, k] of [['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
     for (const k of ['feed', 'roomBar']) delete $(k).dataset.sig;
     if (U.room) { U.renderRoom(true); }
     U.renderClock(); U.renderBar(); U.renderFeed(true);
