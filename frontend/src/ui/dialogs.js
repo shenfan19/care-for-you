@@ -29,7 +29,7 @@
       <div class="row">${esc(t('set.lang'))} ${sel('language', ['auto', ...Object.keys(I.packs)], [t('lang.auto'), ...Object.keys(I.packs).map(l => I.names[l] || l)], lg)}</div>
       <h3>${esc(t('set.look'))}</h3>
       <div class="row">${esc(t('set.theme'))} ${sel('theme', ['auto', 'light', 'dark'], [t('theme.auto'), t('theme.light'), t('theme.dark')], th)}</div>
-      <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.FIGURES, CY.FIGURES.map(k => t('figure.' + k)), CY.figureOf(ini.get(G.cfg, 'ui', 'figure')))}</div>
+      <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.figuresAvailable(), CY.figuresAvailable().map(k => t('figure.' + k)), CY.figureOf(ini.get(G.cfg, 'ui', 'figure')))}</div>
       <div class="row">${esc(t('set.house_view'))} ${sel('house_view', ['rooms', 'house'], [t('house_view.rooms'), t('house_view.house')], ini.get(G.cfg, 'ui', 'house_view') === 'house' ? 'house' : 'rooms')}</div>
       <div class="sform">${form}</div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>

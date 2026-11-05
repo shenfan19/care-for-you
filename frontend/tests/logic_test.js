@@ -471,7 +471,14 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   [bb, sis2, eld, tdl] = [bb, sis2, eld, tdl].map(p => G.get(p.id));
   check('每种原型都能画出形象', CY.content.archetypes.every(a => /<svg/.test(CY.avatarPreview(a, a.look))));
   check('两种人物造型都能画，豆子带可动的手脚', (() => { const old = CY.figure; const ok = []; for (const fg of CY.FIGURES) { CY.figure = fg; for (const age of [0.5, 2, 8, 15, 35, 70]) { const svg = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look, age); ok.push(svg.startsWith('<svg')); if (fg === 'dressed') ok.push(svg.includes('class="foot l"') && svg.includes('class="hand r"')); } } CY.figure = old; return ok.every(Boolean); })());
-  check('造型只有两种：穿衣小豆（默认），迷你小人精灵；不认识的名字回到默认', CY.FIGURES.join() === 'dressed,sprite' && CY.figureOf('plain') === 'dressed' && CY.figureOf('dumpling') === 'dressed' && CY.figureOf('') === 'dressed' && CY.figureOf('sprite') === 'sprite' && CY.figure === 'dressed');
+  check('造型只有两种：穿衣小豆（默认），迷你小人精灵；不认识的名字回到默认；运行包不带精灵图时只提供穿衣小豆', (() => {
+    const had = CY.isoSprites; CY.isoSprites = Object.assign({}, had, { char: {} });
+    const withArt = CY.figuresAvailable().join() === 'dressed,sprite' && CY.figureOf('sprite') === 'sprite';
+    CY.isoSprites = Object.assign({}, had); delete CY.isoSprites.char;
+    const noArt = CY.figuresAvailable().join() === 'dressed' && CY.figureOf('sprite') === 'dressed';
+    CY.isoSprites = had;
+    return CY.FIGURES.join() === 'dressed,sprite' && CY.figureOf('plain') === 'dressed' && CY.figureOf('dumpling') === 'dressed' && CY.figureOf('') === 'dressed' && CY.figure === 'dressed' && withArt && noArt;
+  })());
   check('四个方向都能画：朝上看不到脸，朝下脸转向一侧，左右是镜像', (() => { const mom = CY.content.archOf('mom'), at = d => CY.avatarPreview(mom, mom.look, 35).length && CY.avatar({ species: { id: 'human' }, state: { mood: 0.7 }, person: { age: 35, appearance: mom.look } }, d); const f = at(''), se = at('se'), sw = at('sw'), ne = at('ne'), nw = at('nw'); return CY.DIRS.length === 4 && f.includes('class="eyes"') && se.includes('class="eyes"') && sw.includes('scale(-1 1)') && !se.includes('scale(-1 1)') && !ne.includes('class="eyes"') && !nw.includes('class="eyes"') && nw.includes('scale(-1 1)') && ne.includes('data-dir="ne"') && ne.includes('class="foot l"'); })());
   check('书桌前的椅子在书房和办公室都有', (() => { const W = CY.world; const a = W.slotPoint('home', 'study', 'seat', 0), c = W.slotPoint('office', 'desk', 'player', 0); const old = Object.assign({}, W.player()); W.moveTo('home', 'study'); const s1 = W.atWork(); W.moveTo('office', 'desk'); const s2 = W.atWork(); W.moveTo('home', 'living'); const s3 = W.atWork(); Object.assign(W.player(), old); return s1 && s2 && !s3 && a.gy < 2 && c.gx < 3; })());
   check('只有夫妻办公；家里没有夫妻时才轮到主角自己', (() => { const W = CY.world, G2 = CY.game, ar = p => p.person.archetype || p.person.card, act = G2.activePeople(), couple = act.filter(p => G2.isHuman(p) && G2.stage(p) === 'adult' && ['dad', 'mom', 'husband', 'wife'].includes(ar(p))); return act.every(p => W.worker(p) === (couple.includes(p) || (!couple.length && p === G2.protagonist() && G2.isHuman(p) && G2.stage(p) === 'adult'))); })());

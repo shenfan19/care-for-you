@@ -349,7 +349,9 @@ function beanDraw(o) {
   /* CY.figure：人的造型，设置里选。dressed 穿衣小豆，默认，上半肤色下半衣服，精灵图没加载完时也退回它；sprite 迷你小人精灵，Kenney 素材渲染，动物和花草也跟着用精灵。
      只换人，动物和花草不变 */
   CY.FIGURES = ['dressed', 'sprite'];
-  CY.figureOf = v => (CY.FIGURES.includes(v) ? v : 'dressed');
+  /* 迷你小人要有精灵图才能用；有的运行包为了文件数限制不带精灵图（itch.io 一个压缩包最多 1000 个文件），那时只提供穿衣小豆，旧设置里选了迷你小人也退回穿衣小豆 */
+  CY.figuresAvailable = () => CY.FIGURES.filter(k => k !== 'sprite' || !!((CY.isoSprites || {}).char));
+  CY.figureOf = v => (CY.figuresAvailable().includes(v) ? v : 'dressed');
   CY.figure = 'dressed';
   CY.DIRS = ['se', 'sw', 'ne', 'nw'];
   /* ---------- 人物精灵：Kenney 的 CC0 小人渲染成四个朝向，站，走，坐，睡四种姿势。肤色在浏览器里按玩家的选择重着色 ----------
