@@ -159,7 +159,7 @@
 
   /* 买礼物，进背包 */
   G.buyGift = id => {
-    const g = V.GIFTS[id]; if (!g) return false;
+    const g = V.GIFTS[id]; if (!g || !G.module('shop')) return false;
     const inv = G.giftInv();
     if ((G.world.money || 0) < g.price || (inv[id] || 0) >= G.DOOR.gift_max) return false;
     G.world.money -= g.price; inv[id] = (inv[id] || 0) + 1; G.save(true);

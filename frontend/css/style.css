@@ -481,3 +481,7 @@ a.pl:hover { color: var(--accent); }
 .shoptile { position: relative; cursor: pointer; }
 .shoptile .tinfo { position: absolute; top: 4px; right: 6px; font-size: 12px; color: var(--mute); }
 .shoptile:hover { border-color: var(--accent); }
+/* 贡献统计表，开发者面板里的内部界面 */
+.ltab { border-collapse: collapse; font-size: 13px; margin: 4px 0; }
+.ltab th, .ltab td { border: 1px solid var(--line); padding: 3px 8px; text-align: center; }
+.ltab th { font-weight: 600; background: var(--soft); }

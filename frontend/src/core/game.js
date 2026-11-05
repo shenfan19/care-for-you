@@ -8,6 +8,8 @@
     tpl: { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, items: { items: {}, start: {}, for_need: {} } },
     listeners: [], timer: null, nextAt: 0, lastTick: Date.now(), dirty: new Set(),
   };
+  /* 事件总线：各个系统把发生的事发出来，可选的模块自己来听，发的人不用知道谁在听。听的人出错不影响游戏 */
+  G.bus = (() => { const m = {}; return { on: (n, f) => { (m[n] = m[n] || []).push(f); }, emit: (n, d) => { for (const f of m[n] || []) { try { f(d); } catch (e) { /* 统计出错不能影响游戏 */ } } } }; })();
   /* 打扰间隔，单位是游戏分钟，所以真实时间下是真实分钟，压缩时间下会按比例变短。test 档单位是现实秒。 */
   const GAP = { often: [20, 60], normal: [60, 180], rare: [240, 600] };
   const GAP_TEST = [15, 40];
@@ -595,6 +597,7 @@
   /* 角色自己动手：效果打折，行动记进日志 */
   function selfAct(p, a, need, offline) {
     applyEffects(p, a, 0.7);
+    G.bus.emit('care', { kind: 'self', actor: p.id, target: p.id, action: a.id, need });
     if (a.household && !offline) G.shareMeal(p, a, 1);   /* 家人自己做饭，也是全家一起吃 */
     p.state.mood = clamp(p.state.mood + 0.02);
     p.story.self_total = (p.story.self_total || 0) + 1;
@@ -613,22 +616,23 @@
     if (d.trip && (G.world.trip || (G.world.money || 0) < d.trip.cost)) return false;   /* 已经在路上，或钱不够 */
     if (d.walks && G.bedridden(p)) return false;
     if (d.needs_chair && !G.needsChair(p)) return false;   /* 推轮椅出去，只给需要轮椅的人 */
-    if (d.outing && !d.needs_chair && G.legsBad(p) && !G.owned('wheelchair')) return false;   /* 腿脚不便的老人没有轮椅出不了门 */
+    if (d.outing && !d.needs_chair && G.legsBad(p) && !G.unlocked('wheelchair')) return false;   /* 腿脚不便的老人没有轮椅出不了门 */
     if (d.visitor_only && !(p.person && p.person.visitor)) return false;
-    if (d.item && !G.owned(d.item)) return false;
+    if (d.module && !G.module(d.module)) return false;   /* 属于某个可选模块的动作，模块关了就没有 */
+    if (d.item && !G.unlocked(d.item)) return false;
     const need = d.item_for && d.item_for[G.stage(p)];
-    return !need || G.owned(need) || !!(d.carry && d.carry.includes(G.stage(p)) && G.canCarry(G.stage(p)));
+    return !need || G.unlocked(need) || !!(d.carry && d.carry.includes(G.stage(p)) && G.canCarry(G.stage(p)));
   };
   /* 外出的按钮没出现时，告诉玩家为什么：婴儿要婴儿车或成年人抱着，卧床的老人要轮椅，家里有不能单独留下又带不走的人。没有被拦下就返回空 */
   G.outingHint = p => {
     if (!p || p === G.protagonist() || !G.isHuman(p)) return '';
     const st = G.stage(p);
     const outs = Object.entries(p.species.actions || {}).filter(([k, d]) => (d.outing || d.walks) && k !== 'doctor' && (!d.stages || d.stages.includes(st)));
-    if (G.needsChair(p) && !G.owned('wheelchair') && outs.some(([k, d]) => d.outing && !d.needs_chair)) return 'hint.need_wheelchair';   /* 还能搀着散步，但出不了门，也要说原因 */
+    if (G.needsChair(p) && !G.unlocked('wheelchair') && outs.some(([k, d]) => d.outing && !d.needs_chair)) return 'hint.need_wheelchair';   /* 还能搀着散步，但出不了门，也要说原因 */
     if (!outs.length || outs.some(([k, d]) => G.usable(p, d))) return '';
     for (const [k, d] of outs) {
-      if (G.needsChair(p) && !G.owned('wheelchair')) return 'hint.need_wheelchair';
-      if (d.item_for && d.item_for[st] && !G.owned(d.item_for[st]) && !(d.carry && d.carry.includes(st) && G.canCarry(st))) return 'hint.need_stroller';
+      if (G.needsChair(p) && !G.unlocked('wheelchair')) return 'hint.need_wheelchair';
+      if (d.item_for && d.item_for[st] && !G.unlocked(d.item_for[st]) && !(d.carry && d.carry.includes(st) && G.canCarry(st))) return 'hint.need_stroller';
       if (d.outing && d.outing.group && G.outingBlocked && G.outingBlocked(p)) return 'hint.cant_leave';
     }
     return '';
@@ -700,6 +704,7 @@
         G.frailCross(p, was);
       }
     }
+    G.bus.emit('advance', { gmin, offline: !!offline });
     if (!offline) sampleHist();
     if (G.economyTick) G.economyTick(gmin, offline);
     if (!offline && G.arcTick) G.arcTick();
@@ -960,6 +965,7 @@
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
     s.mood = clamp(s.mood + (a.mood === undefined ? 0.08 : a.mood));
     p.story.care_total++;
+    { const lead = G.protagonist(); G.bus.emit('care', a.selfonly && p === lead ? { kind: 'self', actor: pid, target: pid, action: actionId } : { kind: 'player', actor: lead ? lead.id : null, target: pid, action: actionId }); }
     /* 带去看医生一类的动作直接治好某些病 */
     for (const c of a.heals || []) {
       if ((p.person.conditions || []).includes(c)) { p.person.conditions = p.person.conditions.filter(x => x !== c); store.writeYaml(`people/${p.id}/person.yaml`, p.person); G.logK(p.id, 'recovered', 'log.healed', { name: p.person.name, cond: G.ref('cond.' + c, (G.tpl.conditions[c] || {}).label || c) }); }

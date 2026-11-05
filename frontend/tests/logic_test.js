@@ -481,7 +481,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('默认肤色都偏浅', CY.content.archetypes.filter(a => a.species === 'human').every(a => a.look.skin <= 4) && CY.avatarOptions.skin.length >= 8 && CY.avatarOptions.skin[0] === '#fffaf6');
 
   /* 没人管：婴儿哭闹，老人自己解决。这一段测的是没人照顾时的哭闹记录，所以关掉看护调度 */
-  const dispatchWas = G.tpl.system.dispatch; G.tpl.system.dispatch = { enabled: false };
+  G.setModule('dispatch', false);
   G.cfg.time.mode = 'fast'; G.cfg.interrupt.frequency = 'normal'; 
   for (const p of G.people) { for (const k in p.state.needs) G.setNeed(p, k, 0.1); p.person.active = false; }
   bb.person.active = true; eld.person.active = true; sis2.person.active = true;
@@ -492,7 +492,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   for (let i = 0; i < 4000; i++) { G.lastTick -= 5000; for (const p of [eld, bb]) G.setNeed(p, 'hunger', Math.max(G.need(p, 'hunger'), 0.9)); const h = G.need(eld, 'hunger'); G.tick(); }
   check('老人没人管会自己解决', G.journal[eld.id] && Object.values(G.journal[eld.id]).flat().some(e => e.type === 'self'));
   check('哭闹只记一次', Object.values(G.journal[bb.id]).flat().filter(e => e.type === 'cry').length === 1);
-  if (dispatchWas === undefined) delete G.tpl.system.dispatch; else G.tpl.system.dispatch = dispatchWas;
+  G.setModule('dispatch', true);
   for (const k in bb.state.needs) G.setNeed(bb, k, 0.1); G.lastTick = Date.now() - 1000; G.tick();
   check('需求解决后不再哭', !G.crying[bb.id]);
   for (const p of [bb, eld, sis2]) { p.person.active = true; }
@@ -555,7 +555,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
-  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 10 && Object.keys(G.tpl.species.human.needs).length > 5);
+  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 11 && Object.keys(G.tpl.species.human.needs).length > 5);
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */

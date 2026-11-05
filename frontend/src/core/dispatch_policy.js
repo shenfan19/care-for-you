@@ -26,7 +26,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   /* 参数。游戏里由 templates/system.yaml 的 dispatch 覆盖；没有数据来源的参数都是假设，用到时要做敏感性分析 */
   const DEFAULTS = {
-    enabled: true, step_minutes: 5,
+    step_minutes: 5,
     watch_stages: ['infant', 'toddler'],   /* 醒着时必须有人盯着的阶段 */
     act_at: 0.45,        /* 被照看的人某项需求压力超过它，才派人动手 */
     sleep_at: 0.72,      /* 看护人疲劳压力到这里，有人接手就去睡 */

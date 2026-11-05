@@ -49,7 +49,7 @@ const FAMILIES = {
   if (leadName) { const L = G.people.find(p => p.person.name === leadName); if (L) G.setProtagonist(L.id); }
   if (!G.protagonist()) { const L = G.people.find(p => G.canLead(p)); if (L) G.setProtagonist(L.id); }
   CY.world.enforce = false;
-  if (process.env.CARE_DISPATCH === '0') G.tpl.system.dispatch = { enabled: false };   /* 关掉看护调度，对比用 */
+  if (process.env.CARE_DISPATCH === '0') G.setModule('dispatch', false);   /* 关掉看护调度，对比用 */
 
   /* 虚拟时钟：Date 被换成可控的，从早上八点开始 */
   let fake = Date.UTC(2026, 9, 28, 0, 0, 0) + 8 * 3600e3;

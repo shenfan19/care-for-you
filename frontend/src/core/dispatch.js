@@ -11,8 +11,10 @@
    引擎里和本模块有关的触点，一共三处，拆掉本模块时一并去掉：
      game.js 的 tick 里调用 G.dispatchTick；game.js 的 activityOf 认 'awake' 标记；seed.js 里 system.yaml 的 dispatch 参数块。
    运行时状态 D.state（现任看护人，手上的活到几点，上一顿饭）和统计 D.stat 都只在内存里，不存档。
+   总开关是 modules.dispatch，在 templates/system.yaml 里。
+   事件：每次出手，盯人，叫醒，做饭都往 G.bus 发一条，统计模块自己听，本模块不知道谁在听。
    可换实现：D.policy 设成函数（快照，参数）返回分配，就替换本地规则，D.validate 会先核硬约束。
-   步长按游戏分钟，不依赖真实时间。开关是 dispatch.enabled。 */
+   步长按游戏分钟，不依赖真实时间。 */
 (function (CY) {
   const G = CY.game, P = CY.dispatchPolicy;
   const { clamp, applyEffects } = G._h;
@@ -64,6 +66,7 @@
       const q = get(id); if (!ok(q) || q === G.protagonist()) continue;
       G.clearFlag(q, 'nap'); G.setFlag(q, 'awake', { minutes: step * 3 }); G.act[q.id] = G.activityOf(q);
       S.wakes = (S.wakes || 0) + 1; S.wakeBy = S.wakeBy || {}; S.wakeBy[id] = (S.wakeBy[id] || 0) + 1;
+      G.bus.emit('wake', { actor: id, night: !!G.isNight() });
     }
     for (const id in plan.watch) {
       const dep = get(id), who = plan.watch[id] && get(plan.watch[id]);
@@ -76,6 +79,7 @@
       if (W && lw.room !== ld.room && lw.place === ld.place) W.goTo(who, ld.room, 0.7, 'help');
       tire(who, P.model.watchFatigue(C, step));
       S.watchMin = (S.watchMin || 0) + step;
+      G.bus.emit('watch', { actor: who.id, target: dep.id, minutes: step });
     }
     for (const id in st.duty) { const dep = get(id); if (!dep || G.isSleeping(dep) || !(id in plan.watch)) delete st.duty[id]; }
     for (const id of plan.sleep) {
@@ -91,7 +95,8 @@
       G.act[dep.id] = G.activityOf(dep);
       const mins = Math.max(step, a.min || step); st.hands[who.id] = now + mins;
       tire(who, P.model.handsFatigue(C, mins));
-      G.logK(dep.id, 'care', 'log.assist', { who: dep.person.name, name: who.person.name, label: G.refAct(a, dep) });
+      G.logK(dep.id, 'care', 'log.assist', { who: who.person.name, name: dep.person.name, label: G.refAct(a, dep) });   /* who 是出手的人，name 是被照顾的人，和 agents.js 一致 */
+      G.bus.emit('care', { kind: 'family', actor: who.id, target: dep.id, action: a.id });
       S.tasks = (S.tasks || 0) + 1; S.byAct = S.byAct || {}; S.byAct[a.id] = (S.byAct[a.id] || 0) + 1;
     }
     if (plan.cook) {
@@ -100,13 +105,14 @@
         G.shareMeal(who, meal, C.efficiency); st.mealT = now; st.hands[who.id] = now + C.cook_minutes;
         tire(who, P.model.handsFatigue(C, C.cook_minutes));
         S.meals = (S.meals || 0) + 1;
+        G.bus.emit('cook', { actor: who.id, minutes: C.cook_minutes });
       }
     }
     S.depletedSteps = (S.depletedSteps || 0) + plan.depleted.length;
   };
 
   D.tick = function () {
-    const C = cfg(); if (!C.enabled || !G.activePeople().length) return;
+    const C = cfg(); if (!G.module('dispatch') || !G.activePeople().length) return;
     const now = G.world.game_minutes;
     if (D.state.last === null) { D.state.last = now; return; }
     if (now - D.state.last < C.step_minutes - 1e-6) return;

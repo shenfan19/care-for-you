@@ -266,7 +266,7 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     await G.load();
     check('旧存档里的保姆载入时被拿掉', !G.people.some(q => q.id === id) && !G.world.nanny_on && !G.nanny && !G.hireNanny);
     const fs = require('fs'), path = require('path'), life = fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'life.js'), 'utf8'), head = fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'header.js'), 'utf8');
-    check('商店有家里的东西和礼物两块，点钱的格子直接打开商店，没有保姆入口', /shop\.sec_gifts/.test(life) && /shop\.sec_bed/.test(life) && /shop\.sec_decor/.test(life) && /mn\.onclick = \(\) => U\.shopDialog\(\)/.test(head) && !/helpDialog|nnhire/.test(life + head));
+    check('商店有家里的东西和礼物两块，点钱的格子直接打开商店，没有保姆入口', /shop\.sec_gifts/.test(life) && /shop\.sec_bed/.test(life) && /shop\.sec_decor/.test(life) && /mn\.onclick = \(\) => \{ if \(G\.module\('shop'\)\) U\.shopDialog\(\); \}/.test(head) && !/helpDialog|nnhire/.test(life + head));
     check('界面里被调用的开局和商店函数都有定义', ['maybeIntro', 'introDialog', 'shopDialog'].every(f => new RegExp('U\.' + f + ' = ').test(life)) && /U\.giftDialog = /.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'visitor.js'), 'utf8')) && /U\.onboard = /.test(fs.readFileSync(path.join(__dirname, '..', 'src', 'ui', 'people_add.js'), 'utf8')));
     check('钱的格子写成 钱 加 每小时收入', /' \+' \+ rate \+ '\/h'/.test(head));
   }

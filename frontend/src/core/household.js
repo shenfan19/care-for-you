@@ -74,7 +74,7 @@
   G.caregiversAt = except => G.activePeople().filter(q => G.isHuman(q) && !dependent(q) && ['adult', 'elder'].includes(G.stage(q)) && q !== G.protagonist() && !except.includes(q) && !G.bedridden(q) && homeAndFree(q));
   /* 婴儿出门：有婴儿车，谁都能推；没有婴儿车只能抱着，抱得动的是成年人（爸爸妈妈这一辈），老人和少年抱不稳。带出门的是主角，没有主角时玩家是一位看不见的成年人 */
   G.canCarry = stage => { if (stage !== 'infant') return true; const lead = G.protagonist(); return !lead || G.stage(lead) === 'adult'; };
-  G.canJoinOuting = q => !G.isSleeping(q) && !(G.stage(q) === 'infant' && !G.owned('stroller') && !G.canCarry('infant')) && !(G.needsChair(q) && !G.owned('wheelchair'));
+  G.canJoinOuting = q => !G.isSleeping(q) && !(G.stage(q) === 'infant' && !G.unlocked('stroller') && !G.canCarry('infant')) && !(G.needsChair(q) && !G.unlocked('wheelchair'));
   /* 出门后被留在家里无人看护的人：没人看护了，又带不走的（睡着，没有婴儿车），出门就被拦下 */
   G.outingBlocked = p => {
     if (G.caregiversAt([p]).length) return false;
@@ -96,7 +96,7 @@
       else if (group.length === 1) G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place });
       else if (m === p) G.logK(m.id, 'event', 'log.outing_lead', { name: m.person.name, others: names, place });
       else G.logK(m.id, 'event', 'log.outing_follow', { name: m.person.name, lead: p.person.name, place });
-      if (m !== p) m.state.mood = clamp(m.state.mood + 0.05 + (G.owned('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? 0.04 : 0));
+      if (m !== p) m.state.mood = clamp(m.state.mood + 0.05 + (G.hasItem('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? 0.04 : 0));
     }
   };
 
@@ -144,6 +144,7 @@
       else { lower(tgt, 'company', 0.2); lower(tgt, 'play', 0.15); }
       for (const q of [a, b]) q.state.mood = clamp(q.state.mood + 0.02);
       socialCd[key] = now + 90 * 60 * 1000;
+      G.bus.emit('care', { kind: 'social', actor: who.id, target: tgt.id, action: kind });
       G.logK(tgt.id, 'event', 'social.' + kind, { a: who.person.name, b: tgt.person.name });
     }
   };

@@ -184,6 +184,8 @@
       <div class="row">流速每现实分钟 <input id="dsp" type="number" min="1" step="10" style="width:80px"> 游戏分钟 <button data-d="speed">应用</button><button data-d="speed-reset">恢复默认</button></div>
       <h3>穿越者</h3>
       <div class="row"><select id="dvc">${cards}</select><button data-d="visit">让他现在来</button><button data-d="visit-next">客房空位立刻可来新客人</button><button data-d="visit-clear">送走所有来客</button></div>
+      <h3>统计</h3>
+      <div class="row"><button data-d="ledger">贡献统计</button><span class="mute">谁照顾了谁；默认关，见 templates/system.yaml 的 modules</span></div>
       <h3>角色</h3>
       <div class="row"><button data-d="needs-low">全部需求设为 0.1</button><button data-d="needs-high">全部需求设为 0.8</button><button data-d="flags-clear">清除外出和住院标记</button><button data-d="afford">所有商品和床位可买</button></div>
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="dclose" class="primary">关闭</button></div>`, true);
@@ -207,6 +209,7 @@
       else if (a === 'needs-low' || a === 'needs-high') { for (const p of G.activePeople()) for (const k in p.state.needs) G.setNeed(p, k, a === 'needs-low' ? 0.1 : 0.8); }
       else if (a === 'flags-clear') { for (const p of G.activePeople()) { G.clearFlag(p, 'outing'); G.clearFlag(p, 'hospital'); } }
       else if (a === 'afford') G.world.money = Math.max(G.world.money || 0, 5000);
+      else if (a === 'ledger') { U.ledgerDialog(); return; }
       redraw();
     });
     dlg.querySelector('#dclose').onclick = U.closeDialog;

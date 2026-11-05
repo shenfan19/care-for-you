@@ -4,7 +4,7 @@
 (function (CY) {
   const F = {};
 
-  F['templates/species/human.yaml'] = `version: 10
+  F['templates/species/human.yaml'] = `version: 11
 id: human
 label: 人
 food: food
@@ -34,7 +34,7 @@ actions:
   chat: { label: 聊聊天, hold: 6, min: 20, effect: { company: 0.6 }, mood: 0.1, stages: [teen, adult, elder] }
   rest: { label: 扶去休息, nap: 40, hold: 6, min: 15, effect: { rest: 0.9 }, stages: [elder] }
   invite_rest: { label: 请ta睡一会儿, nap: 40, hold: 6, min: 15, effect: { rest: 0.9 }, mood: 0.05, gate: { need: rest, min: 0.3 }, thanks_as: rest, stages: [teen, adult] }
-  gift: { label: 送礼, visitor_only: true, hold: 3, min: 0, effect: {}, stages: [child, teen, adult, elder] }
+  gift: { label: 送礼, module: shop, visitor_only: true, hold: 3, min: 0, effect: {}, stages: [child, teen, adult, elder] }
   walk: { label: 搀着散步, walks: true, hold: 8, min: 45, effect: { mobility: 1, company: 0.3 }, frailty: -0.05, stages: [elder] }
   park: { label: 带去公园, walks: true, item_for: { infant: stroller }, carry: [infant], hold: 8, min: 40, away: true, outing: { place: park, room: lawn, seconds: 40, group: true }, effect: { play: 0.6, company: 0.4, mobility: 0.5 }, mood: 0.15, stages: [infant, toddler, child, elder] }
   street: { label: 去街上逛逛, walks: true, item_for: { infant: stroller }, carry: [infant], hold: 6, min: 30, away: true, outing: { place: street, room: road, seconds: 30, group: true }, effect: { company: 0.3, play: 0.3 }, mood: 0.1, stages: [infant, toddler, child, elder] }
@@ -306,7 +306,7 @@ actions:
   F['templates/species/bamboo.yaml'] = plant('bamboo', '竹子', 0.025, 0.012, 0.005, 0.006);
 
   /* 内部总体设置：玩法的整体节奏和概率，不是玩家的 settings.ini。请求发得多不多、响应的几率、愿望的概率表都在这里，调低可以让玩家有更多自己操作的空间 */
-  F['templates/system.yaml'] = `version: 9
+  F['templates/system.yaml'] = `version: 10
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
@@ -367,8 +367,11 @@ agents:
       - { id: elder_street, stage: [elder], action: street, chance_per_hour: 0.3, hour_from: 9, hour_to: 17 }
       - { id: elder_park, stage: [elder], action: park, chance_per_hour: 0.2, hour_from: 9, hour_to: 17 }
       - { id: kid_park, stage: [toddler, child], action: park, chance_per_hour: 0.3, hour_from: 9, hour_to: 17, max_level: { play: 0.7 } }
+  modules:                    # 可选功能的总开关，关掉就等于没有这个功能，原有机制照旧；模块之间不互相依赖
+    dispatch: true            # 看护调度：全家统一决定谁看护谁，谁做哪件事，谁换班去睡
+    shop: true                # 商店：用品，礼物；关掉后婴儿车和轮椅这类解锁要求不再卡人，用品加成，装饰，礼物都不生效
+    ledger: false             # 贡献统计：谁照顾了谁，谁没被顾上；默认关，只在开发者模式里看
   dispatch:                   # 看护调度：全家统一决定谁看护谁、谁做哪件事、谁换班去睡，疲劳都是压力，0 是精神，1 是累垮
-    enabled: true
     step_minutes: 5           # 每隔多少游戏分钟决策一次，低于一小时
     watch_stages: [infant, toddler]   # 醒着时必须有人盯着的阶段
     act_at: 0.45              # 被照看的人某项需求压力超过它，才派人动手

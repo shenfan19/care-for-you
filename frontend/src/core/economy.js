@@ -108,7 +108,7 @@
   G.bedsFree = () => G.FAMILY_BEDS - G.bedUsers().length;
   G.guestRoom = () => G.guestBedsOwned() - G.sleepers().filter(p => p.person.visitor).length;   /* 客房还能接待几位客人 */
   G.bedPrice = () => (G.guestBedsOwned() >= G.GUEST_BED_MAX ? null : G.BED_PRICE[G.guestBedsOwned()] || 600);
-  G.canBuyBed = () => { const pr = G.bedPrice(); return pr !== null && G.world.money >= pr; };
+  G.canBuyBed = () => { const pr = G.bedPrice(); return G.module('shop') && pr !== null && G.world.money >= pr; };
   G.buyBed = () => {
     if (!G.canBuyBed()) return false;
     G.guestWatch && G.guestWatch();
@@ -120,7 +120,7 @@
   G.shopFx = p => {
     const o = { rate: {}, rest_sleep: 1, mood: 0 }, st = G.stage(p);
     for (const it of G.SHOP) {
-      if (!it.fx || !G.owned(it.id) || (it.fx.stages && !it.fx.stages.includes(st))) continue;
+      if (!it.fx || !G.hasItem(it.id) || (it.fx.stages && !it.fx.stages.includes(st))) continue;
       for (const k in it.fx.rate || {}) o.rate[k] = (o.rate[k] || 1) * it.fx.rate[k];
       o.rest_sleep *= it.fx.rest_sleep || 1; o.mood += it.fx.mood || 0;
     }
@@ -132,10 +132,10 @@
     const o = { scale: {}, all: 1, mood: 0 }, st = G.stage(p);
     for (const it of G.SHOP) {
       const b = it.boost;
-      if (!b || !G.owned(it.id) || (b.stages && !b.stages.includes(st)) || !(a.effect && a.effect[b.need] > 0)) continue;
+      if (!b || !G.hasItem(it.id) || (b.stages && !b.stages.includes(st)) || !(a.effect && a.effect[b.need] > 0)) continue;
       o.scale[b.need] = (o.scale[b.need] || 1) * (b.scale || 1); o.mood += b.mood || 0;
     }
-    if (a.outing && G.owned('wheelchair') && G.needsChair(p)) o.all = G.WHEELCHAIR.outing_scale;   /* 轮椅出门的好处多一些 */
+    if (a.outing && G.hasItem('wheelchair') && G.needsChair(p)) o.all = G.WHEELCHAIR.outing_scale;   /* 轮椅出门的好处多一些 */
     return o;
   };
   /* 轮椅：腿脚不便的老人，也就是体弱到一定程度或有关节炎，没有轮椅就出不了门，也没法自己去想去的地方；有了就能出去，出门的好处多两成半。
@@ -144,7 +144,7 @@
   G.legsBad = p => !!p && G.isHuman(p) && G.stage(p) === 'elder' && !G.bedridden(p) && !p.person.visitor && (p.state.frailty >= G.WHEELCHAIR.legs_frailty || (p.person.conditions || []).some(c => G.WHEELCHAIR.conditions.includes(c)));
   G.needsChair = p => G.bedridden(p) || G.legsBad(p);
   G.owned = id => !!(G.world.owned && G.world.owned[id]);
-  G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };
+  G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return G.module('shop') && !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };
   G.buy = id => {
     if (!G.canBuy(id)) return false;
     const it = G.SHOP.find(x => x.id === id);
@@ -183,8 +183,8 @@
   };
   G.tableFood = () => (G.world.fed_until || 0) > G.world.game_minutes;
   /* 用品出门：婴儿出门时用着婴儿车，卧床的人出门时坐着轮椅；用着的时候家里那件就不在了，画面上人物带着它 */
-  G.usingStroller = p => G.owned('stroller') && G.stage(p) === 'infant' && !!G.flag(p, 'outing');
-  G.usingWheelchair = p => G.owned('wheelchair') && G.needsChair(p) && !!G.flag(p, 'outing');
+  G.usingStroller = p => G.hasItem('stroller') && G.stage(p) === 'infant' && !!G.flag(p, 'outing');
+  G.usingWheelchair = p => G.hasItem('wheelchair') && G.needsChair(p) && !!G.flag(p, 'outing');
   G.itemAway = id => G.activePeople().some(p => id === 'stroller' ? G.usingStroller(p) : id === 'wheelchair' ? G.usingWheelchair(p) : false);
-  G.decorLevel = () => (G.owned('decor1') ? 1 : 0) + (G.owned('decor2') ? 1 : 0) + (G.owned('decor3') ? 1 : 0);
+  G.decorLevel = () => (G.hasItem('decor1') ? 1 : 0) + (G.hasItem('decor2') ? 1 : 0) + (G.hasItem('decor3') ? 1 : 0);
 })(globalThis.CY = globalThis.CY || {});

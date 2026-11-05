@@ -36,7 +36,7 @@
     if (!from || !to || from === G.protagonist() || to === G.protagonist()) return false;
     if (e.kind === 'care') return to !== from && G.canHelp(to) && !!careAction(from, e.need);
     if (e.kind === 'self') return to === from && !!G.selfActFor(from, e.need);
-    if (e.kind === 'go' && G.legsBad(from) && !G.owned('wheelchair')) return false;
+    if (e.kind === 'go' && G.legsBad(from) && !G.unlocked('wheelchair')) return false;
     if (e.kind === 'go') return !!goAction(from, e.action) && (to === from ? G.isHuman(from) && GO_ALONE.includes(G.stage(from)) : G.canHelp(to));
     return false;
   };
@@ -98,6 +98,7 @@
     if (G.need(from, e.need) < 0.35) return true;
     const a = careAction(from, e.need); if (!a) return true;
     applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5));
+    G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
     from.state.mood = clamp(from.state.mood + 0.03);
     const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label });
     G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); G.playFx(from.id, a.id);
@@ -117,6 +118,7 @@
       G.setFlag(to, 'outing', { minutes: G.outingMinutes(a.outing), place: a.outing.place, room: a.outing.room, mode: 'stand' });
     }
     applyEffects(from, a, 1);
+    if (to !== from) G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
     from.state.mood = clamp(from.state.mood + (a.mood === undefined ? 0.08 : a.mood));
     G.startOuting(from, a); G.pop(from.id, 'done', '✓');
     if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }
