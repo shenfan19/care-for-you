@@ -25,6 +25,7 @@
     const embed = q.get('embed') === '1' || (q.get('embed') !== '0' && window.self !== window.top);
     document.body.classList.toggle('embed', embed);
     { const tools = document.querySelector('header .tools'), box = $('room').querySelector('.cornerbox'); if (tools && box) box.appendChild(tools); }
+    U.layoutNarrow();
     G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); });
     U.renderBar(); U.renderFeed(true); U.renderClock(); U.renderControls(); U.renderLife();
     let lastFeed = 0;

@@ -1,4 +1,6 @@
 """Builds the zip for itch.io from frontend/: python tools/build_itch.py [output.zip]
+With --site it builds the full version for the website instead (Cloudflare Pages takes up to 20000 files): the mini-figure and
+pet sprites stay in, there is no file limit, and the output is care-for-you-<version>-site.zip.
 
 itch.io accepts an HTML5 zip with at most 1000 files after extraction, and the game has more than that. The zip leaves out
 what the page never loads (tests, tools, the source YAML that is already packed into scripts, the 3D demo, the lab page)
@@ -11,12 +13,14 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 SRC = os.path.join(ROOT, 'frontend')
 META = open(os.path.join(SRC, 'src', 'core', 'meta.js'), encoding='utf-8').read()
 VERSION = META.split("version: '")[1].split("'")[0]
-OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'care-for-you-%s-itch.zip' % VERSION)
-LIMIT = 1000
+SITE = '--site' in sys.argv
+ARGS = [a for a in sys.argv[1:] if a != '--site']
+OUT = ARGS[0] if ARGS else os.path.join(ROOT, 'care-for-you-%s-%s.zip' % (VERSION, 'site' if SITE else 'itch'))
+LIMIT = None if SITE else 1000
 
 SKIP_TOP = {'tests', 'temp_bean', 'demo3d', 'config'}
-SKIP_PREFIX = ('src/data/cards/', 'src/data/visitors/', 'src/data/lm/', 'assets/iso/char/', 'assets/iso/pet/')
-SKIP_FILES = {'lab.html', 'assets/iso/manifest.json', 'assets/iso/LICENSE_Kenney_Mini_Characters_CC0.txt', 'assets/iso/LICENSE_Kenney_Cube_Pets_CC0.txt'}
+SKIP_PREFIX = ('src/data/cards/', 'src/data/visitors/', 'src/data/lm/') + (() if SITE else ('assets/iso/char/', 'assets/iso/pet/'))
+SKIP_FILES = {'lab.html', 'assets/iso/manifest.json'} | (set() if SITE else {'assets/iso/LICENSE_Kenney_Mini_Characters_CC0.txt', 'assets/iso/LICENSE_Kenney_Cube_Pets_CC0.txt'})
 
 
 def wanted(rel):
@@ -45,7 +49,7 @@ with zipfile.ZipFile(OUT, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
             rel = os.path.relpath(full, SRC).replace('\\', '/')
             if not wanted(rel):
                 continue
-            if rel == 'assets/iso/manifest.js':
+            if rel == 'assets/iso/manifest.js' and not SITE:
                 z.writestr(rel, sprite_manifest())
             else:
                 z.write(full, rel)
@@ -55,5 +59,5 @@ size = os.path.getsize(OUT)
 print('%d files, %.1f MB -> %s' % (len(names), size / 1048576, os.path.normpath(OUT)))
 if 'index.html' not in names:
     sys.exit('index.html is not at the root of the zip')
-if len(names) > LIMIT:
+if LIMIT and len(names) > LIMIT:
     sys.exit('too many files for itch.io: %d, the limit is %d' % (len(names), LIMIT))

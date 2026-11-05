@@ -25,17 +25,19 @@
   /* 动作，需求，病名的引用换成条目编号 */
   const refId = keys => { for (const k of keys || []) { let m; if ((m = /^act\.([^.]+)/.exec(k))) return 'act:' + m[1]; if ((m = /^need\.(.+)$/.exec(k))) return 'need:' + m[1]; if ((m = /^cond\.(.+)$/.exec(k))) return 'cond:' + m[1]; } return null; };
   /* 发生的事的文字，动作名，需求名，病名变成下划线链接，其余和 G.entryText 一样 */
-  U.entryHtml = e => {
-    if (!(e.k && CY.i18n.hasOwn(e.k))) return linkNames(esc(e.text));
+  /* plain 为真时不出链接：收起的记录条整条是展开的按钮，条里的名字不能再是链接，不然手机上点一下就打开了别的窗口 */
+  U.entryHtml = (e, plain) => {
+    const L = h => (plain ? h : linkNames(h));
+    if (!(e.k && CY.i18n.hasOwn(e.k))) return L(esc(e.text));
     const links = [], args = {};
     for (const [k, v] of Object.entries(e.a || {})) {
       if (v && typeof v === 'object' && v.t) {
         const txt = v.t.reduceRight((fb, key) => CY.tOr(key, fb), v.d), id = refId(v.t), vm = /^visitor\.([^.]+)\.name$/.exec(v.t[0] || '');
-        if (vm) { args[k] = '\u0001' + links.length + '\u0002'; links.push(`<a class="pl" href="#" data-visitor="${esc(vm[1])}">${esc(txt)}</a>`); }
-        else if (id && U.pediaHas(id)) { args[k] = '\u0001' + links.length + '\u0002'; links.push(U.pediaLink(id, txt)); } else args[k] = txt;
+        if (vm) { args[k] = '\u0001' + links.length + '\u0002'; links.push(plain ? esc(txt) : `<a class="pl" href="#" data-visitor="${esc(vm[1])}">${esc(txt)}</a>`); }
+        else if (id && !plain && U.pediaHas(id)) { args[k] = '\u0001' + links.length + '\u0002'; links.push(U.pediaLink(id, txt)); } else args[k] = txt;
       } else args[k] = v;
     }
-    return linkNames(esc(t(e.k, args)).replace(/\u0001(\d+)\u0002/g, (m, i) => links[i]));
+    return L(esc(t(e.k, args)).replace(/\u0001(\d+)\u0002/g, (m, i) => links[i]));
   };
   /* 文字里出现的家人名字变成下划线链接，点开看状态；只改标签之外的文字，已经是链接的不再套 */
   const linkNames = html => {

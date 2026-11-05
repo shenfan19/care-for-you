@@ -42,6 +42,13 @@
   U.fmtMinutes = m => (m >= 60 ? t('unit.hour', { n: +(m / 60).toFixed(1) }) : t('unit.min', { n: Math.round(m) }));
 
   /* ---------- 构建 ---------- */
+  /* 手机宽度（640 以内）：顶部按钮排在场景上方，要给它留出位置；记录搬到页面最外层做贴底抽屉。宽屏时都放回窗体里 */
+  U.layoutNarrow = function () {
+    const room = U.room; if (!room) return;
+    const box = room.querySelector('.cornerbox'), log = doc().getElementById('logwin'), narrow = win().innerWidth <= 640;
+    if (log) { const host = narrow ? doc().body : room; if (log.parentNode !== host) host.appendChild(log); }
+    if (box) { const mt = narrow ? Math.ceil(box.offsetHeight) + 8 + 'px' : ''; if (room.style.marginTop !== mt) room.style.marginTop = mt; }
+  };
   U.buildRoom = function (root) {
     U.room = root;
     root.innerHTML = '<div class="scenewrap"><div class="scene" id="scene"></div></div><div class="stagewrap"><div class="stage" id="stage"></div></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><div class="logwin" id="logwin"><div class="logbar" id="logBar" role="button" tabindex="0" aria-expanded="false"></div><div class="logbody" id="logBody"><section id="feed"></section></div></div><div class="toast" id="modeToast"></div><div class="dlgcard" id="dlgCard"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
@@ -53,7 +60,9 @@
     root.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 70) U.cyclePlace(dx < 0 ? 1 : -1); });
     /* 鼠标悬停：移到谁身上，谁的菜单就弹出，不用点 */
     root.addEventListener('pointermove', onHover);
+    win().addEventListener('resize', () => U.layoutNarrow());
     U.renderRoom(true);
+    U.layoutNarrow();
   };
 
   /* ---------- 悬停弹出，重叠的人怎么选 ----------
@@ -475,9 +484,9 @@
     if (fig) fig.classList.add('ring-on');
     U.room.classList.add('ring-open');
     const cx = (anchor || fig || U.room).getBoundingClientRect();
-    const vw = win().innerWidth, vh = win().innerHeight, narrow = vw < 640, W = narrow ? vw - 16 : 244;
+    const vw = win().innerWidth, vh = win().innerHeight, narrow = vw < 640, W = narrow ? Math.min(vw - 16, 320) : 244;
     const layer = doc().createElement('div');
-    layer.id = 'ringLayer'; layer.className = 'opanel' + (narrow ? ' sheet' : '');
+    layer.id = 'ringLayer'; layer.className = 'opanel';
     layer.style.width = W + 'px';
     const defs = G.needsOf(p), lit = Object.keys(defs).filter(k => G.need(p, k) > U.NEED_LIT).sort((a, b) => G.need(p, b) - G.need(p, a));
     const conds = (p.person.conditions || []).map(k => CY.tOr('cond.' + k, (G.tpl.conditions[k] || {}).label || k)).join(' ');
@@ -519,7 +528,8 @@
     if (x + W > vw - 8) x = cx.left - 10 - W;
     x = Math.min(vw - W - 8, Math.max(8, x));
     y = Math.min(vh - H - 8, Math.max(8, y));
-    if (narrow) { x = 8; y = vh - H - 8; }
+    /* 手机：面板跟着角色，放在他下面，下面放不下放上面，不贴底；底部留出记录抽屉的一条 */
+    if (narrow) { x = Math.min(vw - W - 8, Math.max(8, cx.left + cx.width / 2 - W / 2)); y = cx.bottom + 8; if (y + H > vh - 56) y = cx.top - H - 8; y = Math.max(8, Math.min(vh - H - 56, y)); }
     layer.style.left = (x - o.left) + 'px'; layer.style.top = (y - o.top) + 'px';
     U.ringGeom = { l: x, t: y, r: x + W, b: y + H };
   };

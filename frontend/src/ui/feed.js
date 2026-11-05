@@ -66,7 +66,7 @@
     /* 收起时窗体底部的一行：最新的一件事 */
     if (bar) {
       const last = all.find(x => !QUIET_HIDES.includes(x.e.type)) || all[0];
-      bar.innerHTML = `<span class="lgi">📜</span>` + (last ? `<span class="t">${last.e.cm !== undefined ? fmtC(last.e.cm) : fmtT(last.e.t)}</span><span class="who">${U.nameLink(last.pid)}</span><span class="x">${U.entryHtml(last.e)}</span>` : `<span class="mute">${esc(t('feed.empty'))}</span>`) + `<span class="chev">${U.logOpen ? '▾' : '▴'}</span>`;
+      bar.innerHTML = `<span class="lgi">📜</span>` + (last ? `<span class="t">${last.e.cm !== undefined ? fmtC(last.e.cm) : fmtT(last.e.t)}</span><span class="who">${esc(nameOf(last.pid))}</span><span class="x">${U.entryHtml(last.e, true)}</span>` : `<span class="mute">${esc(t('feed.empty'))}</span>`) + `<span class="chev">${U.logOpen ? '▾' : '▴'}</span>`;
       if (!bar.dataset.bound) { bar.dataset.bound = '1'; const tog = e => { if (e.target.closest && e.target.closest('a.pl')) return; U.setLogOpen(!U.logOpen); U.renderFeed(true); }; bar.onclick = tog; bar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(e); } }; applyOpen(); }
     }
     if (!force && root.dataset.sig === sig) return;

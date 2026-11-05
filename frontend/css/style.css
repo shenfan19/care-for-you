@@ -286,9 +286,8 @@ header { align-items:center; }
 @media (max-width:480px) { .tiles { grid-template-columns:1fr; } }
 .corner { position:absolute; top:8px; z-index:9; padding:3px 10px; border-radius:12px; font-size:13px; background:color-mix(in srgb, var(--card) 82%, transparent); border:1px solid var(--line); font-variant-numeric:tabular-nums; line-height:1.4; }
 #cornerTime { cursor:pointer; user-select:none; } .cornerbox { position:absolute; top:8px; right:10px; z-index:9; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
-@media (max-width:640px) { .cornerbox { top:auto; bottom:10px; } }
 header .tagline { flex:1; margin:0 0 0 18px; color:var(--mute); font-size:14px; font-style:italic; align-self:center; min-width:0; }
-@media (max-width:760px) { header .tagline { display:none; } }
+@media (max-width:760px) { header .tagline { flex-basis:100%; margin:2px 0 0 4px; font-size:13px; } }   /* 窄屏一句话排在标题下面，不隐藏 */
 .cpop { position:absolute; z-index:40; width:max-content; min-width:340px; max-width:calc(100vw - 24px); padding:10px 12px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 6px 18px #0003; font-size:13px; display:grid; gap:8px; }
 .cpop .prow2 { white-space:nowrap; display:flex; align-items:center; justify-content:space-between; gap:10px; } .cpop input[type=range] { flex:1; min-width:120px; margin:0; } .cpop .tsel select { font:inherit; padding:1px 2px; } .cpop .tsel { white-space:nowrap; } .cpop input[type=time] { font:inherit; width:104px; } .cpop .prow2 > span:last-child { white-space:nowrap; } .cpop .seg button { white-space:nowrap; }
 .cpop .seg { display:flex; gap:4px; } .cpop .seg button { padding:1px 7px; } .cpop .seg button.on { background:var(--accent); color:#fff; }
@@ -500,7 +499,6 @@ a.pl:hover { color: var(--accent); }
 .lgtab h3 { font-size: 14px; margin: 12px 0 4px; }
 
 /* 窄屏：窗体底部右侧的角落按钮让到记录条上面；记录展开时按钮回到上面，不盖住记录 */
-@media (max-width:640px) { .room .cornerbox { bottom: 46px; } .room.logopen .cornerbox { top: 8px; bottom: auto; } }
 /* 宽屏：窗体左下角的角色头像让到记录条上面；记录展开时先收起，不盖住记录 */
 @media (min-width:641px) { .room .roster { bottom: 46px; } .room.logopen .roster { display: none; } }
 .logwin { z-index: 25; } .logwin.open { background: var(--card); } .room .cornerbox { z-index: 30; }
@@ -537,3 +535,14 @@ body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none
 .spair { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
 .spie.v { flex-direction: column; align-items: flex-start; gap: 6px; }
 .spie.v .sleg { grid-template-columns: 12px 1fr auto auto; }
+
+/* 手机（640 以内）：时间，钱，按钮排在场景上面，不盖场景；记录是贴底的抽屉，展开最多占六成屏幕，点它的标题条收起；记录由 U.layoutNarrow 搬到页面最外层，因为场景容器里的 fixed 不相对窗口 */
+@media (max-width: 640px) {
+  .room .cornerbox { top: auto; bottom: 100%; left: 0; right: 0; margin-bottom: 8px; max-width: none; justify-content: flex-start; gap: 5px; }
+  .cornerbox .corner { padding: 2px 8px; font-size: 12px; }
+  .cornerbox .tools .icon { width: 28px; height: 28px; }
+  .logwin { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; border-radius: 14px 14px 0 0; border: 1px solid var(--line); border-bottom: none; box-shadow: 0 -4px 16px #0002; background: var(--card); padding-bottom: env(safe-area-inset-bottom); }
+  .logwin .logbody { max-height: 55vh; }
+  .logbar { padding: 10px 12px; }
+  main { padding-bottom: 84px; }
+}

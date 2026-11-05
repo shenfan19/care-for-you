@@ -75,6 +75,7 @@
       ms.title = t('corner.music_tip');
       ms.onclick = e => { e.stopPropagation(); U.soundPopover(ms); };
     }
+    if (U.layoutNarrow) U.layoutNarrow();
   };
 
   /* ---------- 角落按钮的小下拉：点一下弹出，点别处收起。不是点击就切换，免得不小心改了看不到 ---------- */
