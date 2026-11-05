@@ -91,7 +91,7 @@ CY.i18n.register("es", {
 "req.pick_human": "Piensa: ¿qué suele decirte {name}?", "req.pick_animal": "Piensa: ¿cómo suele demostrarlo {name}?",
 "req.nudge_human": "{name} te mira: {text}", "req.nudge_animal": "{name} te mira fijamente y de pronto recuerdas: {text}",
 "log.called_gone": "{name} te llamó, y luego ya estaba bien", "toast.nevermind": "Ya está bien.", "log.missed_need": "No llegaste. {name} lo resolvió solo: {text}", "toast.self": "Lo haré yo mismo.",
-"log.missed_generic": "No respondiste: {text}", "toast.nevermind2": "…olvídalo.", "log.care": "{label}. {line}", "log.talk": "{q} Dijiste: {a}",
+"log.missed_generic": "No respondiste: {text}", "toast.nevermind2": "…olvídalo.", "log.care": "{who} cuidó de {name}: {label}. {line}", "log.talk": "{q} Dijiste: {a}",
 "log.dinner_auto": "No elegiste a tiempo. {name} decidió: {reply}", "log.dinner": "Elección de cena: {label}. {reply}", "log.picked": "Recordaste que {name} diría: {text}",
 "log.nudge": "{name} te recordó: {text} Dijiste que sí y fuiste.", "toast.go": "Ve, yo estaré aquí.", "toast.later": "Vale, luego también está bien.", "log.put_down": "Lo dejaste a un lado: {text}",
 "ans.generic1": "Mm, te escucho.", "ans.generic2": "Te lo cuento cuando termine.", "ans.generic3": "Yo también me lo pregunto.",

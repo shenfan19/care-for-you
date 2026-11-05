@@ -91,7 +91,7 @@ CY.i18n.register("de", {
 "req.pick_human": "Überlege: Was sagt {name} normalerweise zu dir?", "req.pick_animal": "Überlege: Wie zeigt {name} es normalerweise?",
 "req.nudge_human": "{name} sieht dich an: {text}", "req.nudge_animal": "{name} starrt dich an, und plötzlich fällt dir ein: {text}",
 "log.called_gone": "{name} hat dich gerufen, dann war es wieder gut", "toast.nevermind": "Ist schon gut.", "log.missed_need": "Du hast es verpasst. {name} hat es allein erledigt: {text}", "toast.self": "Ich mache das selbst.",
-"log.missed_generic": "Du hast nicht reagiert: {text}", "toast.nevermind2": "…vergiss es.", "log.care": "{label}. {line}", "log.talk": "{q} Du hast gesagt: {a}",
+"log.missed_generic": "Du hast nicht reagiert: {text}", "toast.nevermind2": "…vergiss es.", "log.care": "{who} hat sich um {name} gekümmert: {label}. {line}", "log.talk": "{q} Du hast gesagt: {a}",
 "log.dinner_auto": "Du hast nicht rechtzeitig gewählt. {name} hat entschieden: {reply}", "log.dinner": "Abendessen: {label}. {reply}", "log.picked": "Du hast dich erinnert, dass {name} sagen würde: {text}",
 "log.nudge": "{name} hat dich erinnert: {text} Du hast ja gesagt und bist gegangen.", "toast.go": "Geh nur, ich bin hier.", "toast.later": "Okay, später ist auch gut.", "log.put_down": "Du hast es beiseitegelegt: {text}",
 "ans.generic1": "Mm, ich höre zu.", "ans.generic2": "Ich sage es dir, wenn ich fertig bin.", "ans.generic3": "Das frage ich mich auch.",

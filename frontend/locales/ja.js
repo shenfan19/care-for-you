@@ -91,7 +91,7 @@ CY.i18n.register("ja", {
 "req.pick_human": "思い出してみてください。{name}はいつもあなたに何と言いますか？", "req.pick_animal": "思い出してみてください。{name}はいつもどう伝えますか？",
 "req.nudge_human": "{name}があなたを見て言う：{text}", "req.nudge_animal": "{name}がじっと見ている。ふと思い出す：{text}",
 "log.called_gone": "{name}があなたを呼んだが、そのあと大丈夫だった", "toast.nevermind": "もう大丈夫。", "log.missed_need": "間に合わなかった。{name}は一人で何とかした：{text}", "toast.self": "自分でやるよ。",
-"log.missed_generic": "返事をしなかった：{text}", "toast.nevermind2": "…なんでもない。", "log.care": "{label}。{line}", "log.talk": "{q} あなたは言った：{a}",
+"log.missed_generic": "返事をしなかった：{text}", "toast.nevermind2": "…なんでもない。", "log.care": "{who}が{name}の世話をした：{label}。{line}", "log.talk": "{q} あなたは言った：{a}",
 "log.dinner_auto": "選ぶのが間に合わず、{name}が決めた：{reply}", "log.dinner": "夕食の選択：{label}。{reply}", "log.picked": "{name}ならこう言うと思い出した：{text}",
 "log.nudge": "{name}が思い出させた：{text} あなたは「うん」と言って行った。", "toast.go": "行っておいで。ここにいるから。", "toast.later": "うん、あとでもいいよ。", "log.put_down": "あとにした：{text}",
 "ans.generic1": "うん、聞いてるよ。", "ans.generic2": "終わったら話すね。", "ans.generic3": "私も知りたい。",

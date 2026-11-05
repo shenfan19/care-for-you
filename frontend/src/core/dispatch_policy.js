@@ -28,7 +28,7 @@
   if (root) { root.CY = root.CY || {}; root.CY.dispatchPolicy = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   /* 参数：全部来自 templates/system.yaml 的 dispatch，这里不放默认值，缺一个就报错。没有数据来源的参数都是假设，用到时要做敏感性分析 */
-  const REQUIRED = ['step_minutes', 'watch_stages', 'act_at', 'sleep_at', 'floor', 'nap_minutes', 'watch_extra', 'hands_extra', 'efficiency', 'depl_loss', 'elder_mult', 'meal_at', 'meal_gap', 'cook_minutes', 'lactating', 'hear', 'hear_quiet', 'hear_help', 'hear_suppress', 'primary_bonus', 'wake_cost', 'busy_cost', 'load_cost', 'stick', 'room_bonus', 'awake_steps', 'walk_minutes', 'care_mood', 'skip_actions'];
+  const REQUIRED = ['step_minutes', 'watch_stages', 'act_at', 'sleep_at', 'floor', 'nap_minutes', 'watch_extra', 'hands_extra', 'efficiency', 'depl_loss', 'elder_mult', 'meal_at', 'meal_gap', 'cook_minutes', 'lactating', 'hear', 'hear_quiet', 'hear_help', 'hear_suppress', 'deaf_at', 'primary_bonus', 'wake_cost', 'busy_cost', 'load_cost', 'stick', 'room_bonus', 'awake_steps', 'walk_minutes', 'care_mood', 'skip_actions'];
   const config = over => { const C = Object.assign({}, over || {}); for (const k of REQUIRED) if (C[k] === undefined) throw new Error('缺少配置 dispatch.' + k); if (C.hear.default === undefined) throw new Error('缺少配置 dispatch.hear.default'); return C; };
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 
@@ -44,7 +44,7 @@
   const efficiency = (C, fatigue) => C.efficiency * (1 - C.depl_loss * clamp((fatigue - C.sleep_at) / (1 - C.sleep_at)));
   /* ---------- 夜里的响应：睡着的人听不听得见 ----------
      一个需求发出的信号强度：会哭的人需求压力到 cry_at 是 1；夜里要人帮的人的那项需求是 hear_help；其余需求到了 act_at 是 hear_quiet；没到是 0。
-     睡着的人这一步听见的几率 = 角色的 hear × 信号强度 × (1 − hear_suppress × clamp((F − sleep_at) / (floor − sleep_at)))，F 到了 floor 是 0。
+     睡着的人这一步听见的几率 = 角色的 hear × 信号强度 × (1 − hear_suppress × clamp((F − sleep_at) / (deaf_at − sleep_at)))，F 到了 deaf_at 是 0。
      听见与否用适配层给的 roll 判断：roll 小于几率就听见。醒着的人一定听得见。 */
   const topNeed = d => Math.max(0, ...Object.values(d.needs));
   const signalOf = (C, d) => {
@@ -55,8 +55,8 @@
   };
   const hearLevel = (C, q) => (q.role in C.hear ? C.hear[q.role] : C.hear.default);
   const hearProb = (C, q, sig) => {
-    const f = effFatigue(C, q); if (f >= C.floor) return 0;
-    return hearLevel(C, q) * sig * (1 - C.hear_suppress * clamp((f - C.sleep_at) / (C.floor - C.sleep_at)));
+    const f = effFatigue(C, q); if (f >= C.deaf_at) return 0;
+    return hearLevel(C, q) * sig * (1 - C.hear_suppress * clamp((f - C.sleep_at) / (C.deaf_at - C.sleep_at)));
   };
   const hears = (C, q, sig) => !q.asleep || (sig > 0 && q.roll !== undefined && q.roll < hearProb(C, q, sig));
   const model = { effFatigue, tier, watchFatigue, handsFatigue, efficiency, signalOf, hearProb, hears };

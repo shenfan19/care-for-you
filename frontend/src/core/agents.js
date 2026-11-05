@@ -121,8 +121,8 @@
     applyEffects(from, a, 1);
     if (to !== from) G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
     from.state.mood = clamp(from.state.mood + (a.mood === undefined ? cfg().go_mood_default : a.mood));
+    if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }   /* 先记谁带谁出门，再记出门这件事 */
     G.startOuting(from, a); G.pop(from.id, 'done', '✓');
-    if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }
     return true;
   };
 

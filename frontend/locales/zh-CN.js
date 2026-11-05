@@ -113,7 +113,7 @@ CY.i18n.register('zh-CN', {
   'req.pick_human': '你想想，{name}平时会对你说哪句话？', 'req.pick_animal': '你想想，{name}平时是怎么表示的？',
   'req.nudge_human': '{name}看着你：{text}', 'req.nudge_animal': '{name}盯着你，你忽然想起：{text}',
   'log.called_gone': '{name}叫了你一声，后来没事了', 'toast.nevermind': '没事了。', 'log.missed_need': '你没赶上，{name}自己处理了：{text}', 'toast.self': '我自己来吧。',
-  'log.missed_generic': '你没回应：{text}', 'toast.nevermind2': '……没事。', 'log.care': '{label}。{line}', 'log.talk': '{q} 你说：{a}',
+  'log.missed_generic': '你没回应：{text}', 'toast.nevermind2': '……没事。', 'log.care': "{who}照顾了{name}：{label}。{line}", 'log.talk': '{q} 你说：{a}',
   'log.dinner_auto': '你没来得及选，{name}自己定了：{reply}', 'log.dinner': '晚饭选了{label}：{reply}', 'log.picked': '你记起{name}会说：{text}',
   'log.nudge': '{name}提醒你：{text} 你说好，去了。', 'toast.go': '去吧，我在这儿。', 'toast.later': '好，晚点也行。', 'log.put_down': '你先放下了：{text}',
   'ans.generic1': '嗯，我听着呢。', 'ans.generic2': '等我忙完告诉你。', 'ans.generic3': '我也想知道。',

@@ -910,7 +910,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.perform(jp.id, act.id);
     const ent = Object.values(G.journal[jp.id]).flat().filter(e => e.type === 'care').pop();
     const zhText = G.entryText(ent); CY.i18n.set('en'); const enText = G.entryText(ent); CY.i18n.set('zh-CN');
-    check('发生的事存了键和参数，换成英文后框架和动作名都变了', !!ent.k && enText !== zhText && !/[\u4e00-\u9fff]/.test(enText.replace(ent.a.line, '')), zhText + ' | ' + enText);
+    check('发生的事存了键和参数，换成英文后框架和动作名都变了', !!ent.k && enText !== zhText && !/[\u4e00-\u9fff]/.test(enText.replace(ent.a.line, '').replace(ent.a.name, '')), zhText + ' | ' + enText);
     for (const x of G.people) x.person.active = true;
   }
 

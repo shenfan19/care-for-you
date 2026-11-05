@@ -113,7 +113,7 @@ CY.i18n.register('en', {
   'req.pick_human': 'Think about it: what does {name} usually say to you?', 'req.pick_animal': 'Think about it: how does {name} usually show it?',
   'req.nudge_human': '{name} looks at you: {text}', 'req.nudge_animal': '{name} stares at you, and you suddenly remember: {text}',
   'log.called_gone': '{name} called you, then it was fine', 'toast.nevermind': 'It is fine now.', 'log.missed_need': 'You missed it. {name} handled it alone: {text}', 'toast.self': 'I will do it myself.',
-  'log.missed_generic': 'You did not respond: {text}', 'toast.nevermind2': '…never mind.', 'log.care': '{label}. {line}', 'log.talk': '{q} You said: {a}',
+  'log.missed_generic': 'You did not respond: {text}', 'toast.nevermind2': '…never mind.', 'log.care': "{who} looked after {name}: {label}. {line}", 'log.talk': '{q} You said: {a}',
   'log.dinner_auto': 'You did not choose in time. {name} decided: {reply}', 'log.dinner': 'Dinner choice: {label}. {reply}', 'log.picked': 'You remembered {name} would say: {text}',
   'log.nudge': '{name} reminded you: {text} You said yes and went.', 'toast.go': 'Go on, I will be here.', 'toast.later': 'OK, later is fine.', 'log.put_down': 'You set it aside: {text}',
   'ans.generic1': 'Mm, I am listening.', 'ans.generic2': 'I will tell you when I am done.', 'ans.generic3': 'I wonder too.',

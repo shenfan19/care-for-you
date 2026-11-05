@@ -91,7 +91,7 @@ CY.i18n.register("ko", {
 "req.pick_human": "떠올려 보세요. {name}은(는) 평소 당신에게 뭐라고 말하나요?", "req.pick_animal": "떠올려 보세요. {name}은(는) 평소 어떻게 표현하나요?",
 "req.nudge_human": "{name}이(가) 당신을 보며: {text}", "req.nudge_animal": "{name}이(가) 가만히 쳐다보고, 문득 생각난다: {text}",
 "log.called_gone": "{name}이(가) 불렀지만 곧 괜찮아졌다", "toast.nevermind": "이제 괜찮아.", "log.missed_need": "놓쳤다. {name}이(가) 혼자 처리했다: {text}", "toast.self": "내가 할게.",
-"log.missed_generic": "대답하지 않았다: {text}", "toast.nevermind2": "…아니야.", "log.care": "{label}. {line}", "log.talk": "{q} 당신이 말했다: {a}",
+"log.missed_generic": "대답하지 않았다: {text}", "toast.nevermind2": "…아니야.", "log.care": "{who}이(가) {name}을(를) 돌봤어요: {label}. {line}", "log.talk": "{q} 당신이 말했다: {a}",
 "log.dinner_auto": "제때 고르지 못해 {name}이(가) 정했다: {reply}", "log.dinner": "저녁 선택: {label}. {reply}", "log.picked": "{name}이(가) 이렇게 말하곤 했다고 떠올렸다: {text}",
 "log.nudge": "{name}이(가) 일깨웠다: {text} 당신은 알겠다고 하고 갔다.", "toast.go": "다녀와. 여기 있을게.", "toast.later": "응, 나중에 해도 돼.", "log.put_down": "미뤄 두었다: {text}",
 "ans.generic1": "응, 듣고 있어.", "ans.generic2": "끝나면 말해 줄게.", "ans.generic3": "나도 궁금해.",

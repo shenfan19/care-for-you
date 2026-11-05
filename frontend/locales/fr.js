@@ -92,7 +92,7 @@ CY.i18n.register("fr", {
 "req.pick_human": "Réfléchissez : que vous dit habituellement {name} ?", "req.pick_animal": "Réfléchissez : comment {name} le montre-t-il d'habitude ?",
 "req.nudge_human": "{name} vous regarde : {text}", "req.nudge_animal": "{name} vous fixe, et soudain vous vous souvenez : {text}",
 "log.called_gone": "{name} vous a appelé, puis tout allait bien", "toast.nevermind": "C'est bon maintenant.", "log.missed_need": "Vous avez manqué. {name} s'en est occupé seul : {text}", "toast.self": "Je vais me débrouiller.",
-"log.missed_generic": "Vous n'avez pas répondu : {text}", "toast.nevermind2": "…laissez tomber.", "log.care": "{label}. {line}", "log.talk": "{q} Vous avez dit : {a}",
+"log.missed_generic": "Vous n'avez pas répondu : {text}", "toast.nevermind2": "…laissez tomber.", "log.care": "{who} s’est occupé(e) de {name} : {label}. {line}", "log.talk": "{q} Vous avez dit : {a}",
 "log.dinner_auto": "Vous n'avez pas choisi à temps. {name} a décidé : {reply}", "log.dinner": "Choix du dîner : {label}. {reply}", "log.picked": "Vous vous êtes souvenu que {name} dirait : {text}",
 "log.nudge": "{name} vous a rappelé : {text} Vous avez dit oui et y êtes allé.", "toast.go": "Allez-y, je serai là.", "toast.later": "D'accord, plus tard c'est bien.", "log.put_down": "Vous l'avez mis de côté : {text}",
 "ans.generic1": "Mm, je vous écoute.", "ans.generic2": "Je vous le dirai quand j'aurai fini.", "ans.generic3": "Je me le demande aussi.",

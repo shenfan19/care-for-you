@@ -417,7 +417,8 @@
     if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && G.need(p, 'rest') > G.E('game').nap_min_level) return 'sleeping';   /* 幼儿和老人的午睡 */
     if (!inWindow(dm, a, b)) return 'awake';
     const cl = G.classOf(p);
-    if (G.maxNeed(p) > cl.wake_at) return 'awake';
+    /* 夜里睡不着：除了 wake_except 里列的需求（成人和老人是疲倦，累到极点照样睡得着），别的需求压力到 wake_at 就睡不着；婴儿的疲倦不在其中，累过头会哭闹睡不着 */
+    if (Math.max(0, ...Object.keys(p.state.needs).filter(k => !cl.wake_except.includes(k)).map(k => G.need(p, k))) > cl.wake_at) return 'awake';
     return cl.sleep_cycle ? ((dm % cl.sleep_cycle[0]) < cl.sleep_cycle[1] ? 'sleeping' : 'awake') : 'sleeping';
   };
   G.isSleeping = p => G.act[p.id] === 'sleeping';
@@ -635,7 +636,8 @@
     const st = G.stage(p);
     const outs = Object.entries(p.species.actions || {}).filter(([k, d]) => (d.outing || d.walks) && k !== 'doctor' && (!d.stages || d.stages.includes(st)));
     if (G.needsChair(p) && !G.unlocked('wheelchair') && outs.some(([k, d]) => d.outing && !d.needs_chair)) return 'hint.need_wheelchair';   /* 还能搀着散步，但出不了门，也要说原因 */
-    if (!outs.length || outs.some(([k, d]) => G.usable(p, d))) return '';
+    const oo = outs.filter(([k, d]) => d.outing && !d.needs_chair);   /* 有出门的动作就只看它们：搀着散步还能做，不该把出不了门的原因吞掉 */
+    if (!outs.length || (oo.length ? oo : outs).some(([k, d]) => G.usable(p, d))) return '';
     for (const [k, d] of outs) {
       if (G.needsChair(p) && !G.unlocked('wheelchair')) return 'hint.need_wheelchair';
       if (d.item_for && d.item_for[st] && !G.unlocked(d.item_for[st]) && !(d.carry && d.carry.includes(st) && G.canCarry(st))) return 'hint.need_stroller';
@@ -964,12 +966,14 @@
     const meal = () => { if (a.household) { G.shareMeal(p, a, 1); if (G.useGroceries) G.useGroceries(p, a); } };   /* 做饭的结果在这次动作的记录之后写 */
     if (a.trip && G.startTrip) G.startTrip(a);
     if (a.at && p === G.protagonist() && CY.world && CY.world.doAt) CY.world.doAt(a);   /* 自己做的动作：去那个房间做，摆那个姿势 */
-    if (a.outing && G.startOuting) {
+    const goOut = () => {   /* 出门放在这次动作的记录之后做，先记做了什么，再记出门 */
+      if (a.outing && G.startOuting) {
       G.startOuting(p, a);
       /* 带人出门，主角自己也一起去：去的是同一个地点，人回来了主角也回家 */
       const lead = G.protagonist(), W = CY.world;
       if (lead && lead !== p && W && W.moveTo && W.PLACES[a.outing.place]) { W.moveTo(a.outing.place, a.outing.room); W.escort = true; G.logK(G.youId(), 'event', 'me.go', { place: G.ref('loc.' + a.outing.place, a.outing.place) }); }
     }
+    };
     /* 送人睡觉：睡着的人走到自己的床上躺下，睡这么多现实秒，不是效果一下子加上就算了 */
     if (a.nap && G.isHuman(p) && p !== G.protagonist()) { G.setFlag(p, 'nap', { minutes: G.realMin(a.nap) }); G.act[p.id] = G.activityOf(p); }
     if (a.flag && a.flag.name) G.setFlag(p, a.flag.name, { minutes: a.flag.minutes });
@@ -1000,7 +1004,7 @@
       /* 自己做自己的事：旁白一句，不是被照顾的人道谢 */
       const lk = CY.i18n.hasOwn('selfact.' + a.id) ? 'selfact.' + a.id : 'log.self_did', la = { name: p.person.name, label: G.refAct(a, p) };
       G.toastFor(p, t(lk, { name: p.person.name, label: a.label }), 'soft'); G.logK(pid, 'self', lk, la);
-      meal(); G.playFx(pid, actionId); G.save(); emit();
+      goOut(); meal(); G.playFx(pid, actionId); G.save(); emit();
       return true;
     }
     let tx = line(p, 'thanks', actionId, line(p, 'thanks', a.thanks_as || 'default', line(p, 'thanks', 'default', t('line.ok'))));
@@ -1008,8 +1012,8 @@
     const dres = G.drive('action', { person: p, action: { id: actionId, label: a.label }, collect: true });
     if (dres && dres.said) tx = dres.said;
     G.toastFor(p, tx, 'speech'); G.say(pid, 'char', tx);
-    G.logK(pid, 'care', 'log.care', { label: G.refAct(a, p), line: tx });
-    meal();
+    G.logK(pid, 'care', 'log.care', { who: G.protagonist() ? G.protagonist().person.name : G.ref('player.name', t('player.name')), name: p.person.name, label: G.refAct(a, p), line: tx });   /* 玩家做的也直说谁照顾了谁，和家人之间一样 */
+    goOut(); meal();
     G.playFx(pid, actionId);
     G.save(); emit();
     return true;

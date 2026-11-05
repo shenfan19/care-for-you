@@ -231,7 +231,7 @@ CY.i18n.register("zh-TW", {
  "toast.self": "我自己來吧。",
  "log.missed_generic": "你沒回應：{text}",
  "toast.nevermind2": "……沒事。",
- "log.care": "{label}。{line}",
+ "log.care": "{who}照顧了{name}：{label}。{line}",
  "log.talk": "{q} 你說：{a}",
  "log.dinner_auto": "你沒來得及選，{name}自己定了：{reply}",
  "log.dinner": "晚飯選了{label}：{reply}",

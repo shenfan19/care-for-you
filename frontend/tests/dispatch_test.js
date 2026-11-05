@@ -75,17 +75,17 @@ const sim = (kind, days, seed) => JSON.parse(execFileSync(process.execPath, [pat
     check('妈妈过度疲劳，叫不醒（几率 0），由奶奶判断响应', q.watch.baby === 'gma' && !q.wake.includes('mom'), JSON.stringify(q.watch));
     q = D.plan(snap([mom({ fatigue: 0.98, roll: 0 }), cry]), C);
     check('只有过度疲劳的妈妈，叫不醒，孩子没人响应', q.watch.baby === null && q.unheard.includes('baby'));
-    q = D.plan(snap([mom({ roll: 0.15 }), quiet]), C);
-    check('没有哭，只是湿了，信号只有 0.3：几率 0.21，roll 0.15 听见了', q.watch.baby === 'mom');
-    q = D.plan(snap([mom({ roll: 0.3 }), quiet]), C);
-    check('没有哭的需求，roll 0.3 听不见：只能看状态，睡着的妈妈不会被叫醒', q.watch.baby === null && q.wake.length === 0);
+    q = D.plan(snap([mom({ roll: 0.02 }), quiet]), C);
+    check('没有哭，只是湿了，信号只有哭的二十分之一：几率 0.035，roll 0.02 才听见', q.watch.baby === 'mom');
+    q = D.plan(snap([mom({ roll: 0.1 }), quiet]), C);
+    check('没有哭的需求，roll 0.1 听不见：只能看状态，睡着的妈妈不会被叫醒', q.watch.baby === null && q.wake.length === 0);
     q = D.plan(snap([mom({ roll: 0 }), calm]), C);
     check('孩子醒着但什么需求也没有，不叫醒任何人', q.watch.baby === null && q.wake.length === 0);
     q = D.plan(snap([person('mom', 'adult', { role: 'mom', fatigue: 0.3 }), person('dad', 'adult', { role: 'dad', asleep: true, roll: 0 }), cry]), C);
     check('有醒着的妈妈，不叫醒睡着的爸爸', q.watch.baby === 'mom' && q.wake.length === 0);
     const M2 = Pol.model, near2 = (a, b) => Math.abs(a - b) < 1e-9;
-    check('公式 听见的几率：妈妈哭声 0.7，没哭 0.21，疲劳过线线性降，到 floor 是 0', near2(M2.hearProb(C, { role: 'mom', fatigue: 0.3, stage: 'adult' }, 1), 0.7) && near2(M2.hearProb(C, { role: 'mom', fatigue: 0.3, stage: 'adult' }, 0.3), 0.21) && near2(M2.hearProb(C, { role: 'mom', fatigue: (C.sleep_at + C.floor) / 2, stage: 'adult' }, 1), 0.7 * (1 - 0.6 * 0.5)) && M2.hearProb(C, { role: 'mom', fatigue: 0.96, stage: 'adult' }, 1) === 0);
-    check('公式 爸爸 0.4，老人默认 0.35，信号强度：哭 1，要人帮 0.5，没哭 0.3，没到线 0', near2(M2.hearProb(C, { role: 'dad', fatigue: 0.2, stage: 'adult' }, 1), 0.4) && near2(M2.hearProb(C, { role: 'paternal_grandpa', fatigue: 0.2, stage: 'adult' }, 1), 0.35) && M2.signalOf(C, { cries: true, cry_at: 0.8, needs: { hunger: 0.9 } }) === 1 && M2.signalOf(C, { needs: { toilet: 0.6 }, night_help: true }) === 0.5 && M2.signalOf(C, { cries: true, cry_at: 0.8, needs: { diaper: 0.6 } }) === 0.3 && M2.signalOf(C, { cries: true, cry_at: 0.8, needs: { diaper: 0.2 } }) === 0);
+    check('公式 听见的几率：妈妈哭声 0.7，没哭 0.035，疲劳过线线性降，到 deaf_at 是 0', near2(M2.hearProb(C, { role: 'mom', fatigue: 0.3, stage: 'adult' }, 1), 0.7) && near2(M2.hearProb(C, { role: 'mom', fatigue: 0.3, stage: 'adult' }, C.hear_quiet), 0.7 * C.hear_quiet) && near2(M2.hearProb(C, { role: 'mom', fatigue: (C.sleep_at + C.deaf_at) / 2, stage: 'adult' }, 1), 0.7 * (1 - 0.6 * 0.5)) && M2.hearProb(C, { role: 'mom', fatigue: 0.9, stage: 'adult' }, 1) === 0);
+    check('公式 爸爸 0.4，老人默认 0.35，信号强度：哭 1，要人帮 0.5，没哭 hear_quiet，没到线 0', near2(M2.hearProb(C, { role: 'dad', fatigue: 0.2, stage: 'adult' }, 1), 0.4) && near2(M2.hearProb(C, { role: 'paternal_grandpa', fatigue: 0.2, stage: 'adult' }, 1), 0.35) && M2.signalOf(C, { cries: true, cry_at: 0.8, needs: { hunger: 0.9 } }) === 1 && M2.signalOf(C, { needs: { toilet: 0.6 }, night_help: true }) === 0.5 && M2.signalOf(C, { cries: true, cry_at: 0.8, needs: { diaper: 0.6 } }) === C.hear_quiet && M2.signalOf(C, { cries: true, cry_at: 0.8, needs: { diaper: 0.2 } }) === 0);
     /* 疾病并进调度：记性变差的老人要人盯着；夜尿多的老人夜里要人帮，叫醒听见的人 */
     const forget = person('gpa', 'elder', { watch: true, dep: true, needs: { reorient: 0.7, rest: 0.2 }, urgency: 0.5 });
     q = D.plan(snap([person('mom', 'adult', { role: 'mom' }), forget]), C);
