@@ -27,6 +27,6 @@ const js = `/* 由 tools/build_config.js 生成，不要手改。源头是 front
 `;
 if (process.argv.includes('--check')) {
   const cur = fs.existsSync(out) ? fs.readFileSync(out, 'utf8') : '';
-  if (cur !== js) { console.error('templates_packed.js 和 YAML 对不上，运行 node tools/build_config.js'); process.exit(1); }
+  if (cur.split(String.fromCharCode(13, 10)).join(String.fromCharCode(10)) !== js) {   /* Windows 上检出可能是 CRLF，比较时不管换行符 */ console.error('templates_packed.js 和 YAML 对不上，运行 node tools/build_config.js'); process.exit(1); }
   console.log('配置打包：一致，共 ' + files.length + ' 个 YAML');
 } else { fs.writeFileSync(out, js, 'utf8'); console.log('已打包 ' + files.length + ' 个 YAML 到 templates_packed.js'); }
