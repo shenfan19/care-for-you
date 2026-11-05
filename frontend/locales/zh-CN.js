@@ -32,9 +32,9 @@ CY.i18n.register('zh-CN', {
   'sec.interrupt': '打扰', 'sec.time': '时间', 'sec.player': '称呼', 'sec.interaction': '互动', 'sec.ui': '界面', 'sec.privacy': '隐私', 'sec.account': '账号', 'sec.ai': 'AI 接入',
   'set.title': '设置', 'set.look': "外观", 'set.theme': '明暗', 'set.lang': '语言',
   'set.data': '数据位置', 'set.data_note': '{where}。所有数据都是明文文件，选文件夹时请确认它不会被同步到别人能看到的地方。',
-  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'corner.money_tip': '钱。点开可以请保姆', 'corner.music_tip': '音乐。点一下开或关', 'set.figure': '人物造型', 'figure.dressed': '穿衣小豆', 'figure.plain': '素色小豆', 'figure.dumpling': '团子', 'sec.audio': '声音', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
+  'set.folder': '选择数据文件夹', 'set.restore': '补回缺失的初始文件', 'ob.random': '随机生成', 'ob.custom': '自己搭配', 'ob.back': '返回', 'preset.selfcare.label': '一个人住，照顾自己', 'preset.selfcare.note': '单身独居，你就是那个人：按时吃药、测血糖、做饭、休息', 'preset.name.self': '我', 'corner.money_tip': '钱。点开可以请保姆', 'corner.music_tip': '音乐。点一下开或关', 'set.figure': '人物造型', 'figure.dressed': '穿衣小豆', 'sec.audio': '声音', 'set.advanced': '高级设置', 'set.danger': '删除', 'set.wipe_note': '删除本机上的全部游戏数据，包括所有角色和记录。',
   'set.wipe': '删除全部本地数据', 'set.folder_had': '已切换到该文件夹里已有的数据', 'set.folder_copied': '已把当前数据复制到该文件夹', 'set.restored': '补回了 {n} 个文件',
-  'wipe.title': '删除全部本地数据', 'wipe.body': '这会清除这台设备上的所有角色、记录和设置，无法恢复。建议先下载一份存档。',
+  'wipe.title': '删除全部本地数据', 'wipe.body': '这会清除这台设备上的所有角色、记录和设置，无法恢复。',
   'wipe.save_first': '先下载存档', 'wipe.sure': '我知道删除后无法恢复', 'wipe.go': '删除',
 
   'save.title': '存档与下载',
@@ -93,11 +93,11 @@ CY.i18n.register('zh-CN', {
   'about.p3': '游戏里的角色都是虚构的。游戏不提供也不鼓励复制已故的人。你记起的话，只是你自己对一类人的印象。',
   'about.p4': '目前是早期版本，会有不完善的地方。欢迎提意见：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。',
   'priv.h1': '数据放在哪里',
-  'priv.p1': '所有游戏数据只保存在你自己的设备上，是明文文件，你可以随时打开、修改、复制和删除。',
+  'priv.p1': '所有游戏数据只保存在你自己的设备上，是可读的纯文本（YAML 和 CSV）。游戏源代码以 MIT 许可证公开，你可以自己核对它做了什么。',
   'priv.p2': '目前没有账号，没有服务器，没有统计，没有广告，也不使用 cookie 或第三方追踪。',
   'priv.p3': '网页本身是静态的，运行时不会把你的游戏数据发到任何地方。',
         'priv.h3': '你的权利',
-  'priv.p6': '你可以随时下载全部数据，设置里有删除全部本地数据的按钮，删除后无法恢复。',
+  'priv.p6': '设置里有删除全部本地数据的按钮，删除后无法恢复。这一版没有开放存档的下载和导入。',
   'priv.p7': '如果将来增加账号或云端功能，会先写明收集哪些数据、用来做什么、保存多久，并且只在你明确同意后才上传。同意可以撤回，撤回后可以要求删除。',
   'priv.p8': '游戏面向成年人。如果将来在欧盟等地区提供服务，会按当地的数据保护法规，例如 GDPR，完善说明和流程。',
   'priv.h4': '免责声明',
@@ -317,8 +317,8 @@ CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit�
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit，Mini Characters，Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。"});
 CY.i18n.register("zh-CN", {"figure.sprite": "方块小人"});
 CY.i18n.register("zh-CN", {"act.meal": "做饭给ta吃", "act.cook": "做饭自己吃"});
-CY.i18n.register("zh-CN", {"figure.sprite": "迷你小人", "figure.blocky": "方块角色"});
-CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit，Mini Characters，Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。 可选的方块角色来自 Kenney 的 Blocky Characters，街道背景的楼来自 City Kit Commercial，同为 CC0 1.0。"});
+CY.i18n.register("zh-CN", {"figure.sprite": "迷你小人"});
+CY.i18n.register("zh-CN", {"cred.p3": "画面素材：Kenney 的 Furniture Kit，Mini Characters，Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我们仍写明来源。三维模型由本项目渲染成斜视图，人物的肤色，发色，衣服颜色在游戏里按玩家的选择重着色；花草用 Furniture Kit 里的植物模型放大，没有一一对应的动物用了外形最接近的。渲染工具用到 three.js（MIT 许可证），不随游戏发布。动画和文字为原创。代码以 MIT 许可证开源，见仓库里的 LICENSE。 街道背景的楼来自 Kenney 的 City Kit Commercial，CC0 1.0。"});
 CY.i18n.register("zh-CN", {"corner.eff_tip": "全家的平均状态是 {n}%，这也是上班的人现在的工作效率。每个人都照顾到，包括你自己，收入才高，最低按四成算。", "log.meal_all": "一顿饭做好了，在家的人都吃上了。"});
 CY.i18n.register("zh-CN", {"act.sleep": "去睡觉"});
 CY.i18n.register("zh-CN", {"selfact.sleep": "{name}去睡觉了"});

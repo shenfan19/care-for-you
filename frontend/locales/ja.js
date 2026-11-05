@@ -23,9 +23,9 @@ CY.i18n.register("ja", {
 "sec.interrupt": "割り込み", "sec.time": "時間", "sec.player": "呼び名", "sec.interaction": "操作", "sec.ui": "画面", "sec.privacy": "プライバシー", "sec.account": "アカウント", "sec.ai": "AI", "sec.play": "遊び方", "sec.economy": "仕事とお金",
 "set.title": "設定", "set.look": "見た目", "set.theme": "テーマ", "set.lang": "言語", "set.data": "データの場所",
 "set.data_note": "{where}。データはすべてテキストファイルです。フォルダを選ぶときは、他の人に見える場所へ同期されないか確認してください。",
-"set.folder": "データフォルダを選ぶ", "set.restore": "足りない初期ファイルを復元", "ob.random": "おまかせ", "ob.custom": "自分で組み立てる", "ob.back": "戻る", "preset.selfcare.label": "ひとり暮らしで、自分をいたわる", "preset.selfcare.note": "ひとり暮らし。薬、血糖測定、食事、休息を自分で管理する", "preset.name.self": "わたし", "corner.money_tip": "お金。開くとお手伝いさんを頼めます", "corner.music_tip": "音楽。タップでオンとオフ", "set.figure": "キャラの見た目", "figure.dressed": "服を着たまめ", "figure.plain": "無地のまめ", "figure.dumpling": "だんご", "sec.audio": "音", "set.advanced": "詳細設定", "set.danger": "削除", "set.wipe_note": "この端末のゲームデータをすべて削除します。キャラクターも記録もすべて含みます。",
+"set.folder": "データフォルダを選ぶ", "set.restore": "足りない初期ファイルを復元", "ob.random": "おまかせ", "ob.custom": "自分で組み立てる", "ob.back": "戻る", "preset.selfcare.label": "ひとり暮らしで、自分をいたわる", "preset.selfcare.note": "ひとり暮らし。薬、血糖測定、食事、休息を自分で管理する", "preset.name.self": "わたし", "corner.money_tip": "お金。開くとお手伝いさんを頼めます", "corner.music_tip": "音楽。タップでオンとオフ", "set.figure": "キャラの見た目", "figure.dressed": "服を着たまめ", "sec.audio": "音", "set.advanced": "詳細設定", "set.danger": "削除", "set.wipe_note": "この端末のゲームデータをすべて削除します。キャラクターも記録もすべて含みます。",
 "set.wipe": "ローカルデータをすべて削除", "set.folder_had": "そのフォルダにあるデータに切り替えました", "set.folder_copied": "現在のデータをそのフォルダにコピーしました", "set.restored": "{n}個のファイルを復元しました",
-"wipe.title": "ローカルデータをすべて削除", "wipe.body": "この端末のキャラクター、記録、設定がすべて消え、元に戻せません。先にセーブをダウンロードすることをおすすめします。",
+"wipe.title": "ローカルデータをすべて削除", "wipe.body": "この端末のキャラクター、記録、設定がすべて消え、元に戻せません。",
 "wipe.save_first": "先にセーブをダウンロード", "wipe.sure": "元に戻せないことを理解しました", "wipe.go": "削除",
 "save.title": "保存とダウンロード", "save.s1": "ゲームを保存", "save.s1_note": "すべてのデータファイル、表計算ファイル2つ、マニフェストを含む zip をダウンロードします。あとで読み込み直したり、バックアップや端末の引っ越しに使えます。",
 "save.s1_btn": "セーブをダウンロード", "save.s1_key": "AIキーを含める（初期状態ではオフ）", "save.s2": "ローカル版をダウンロード", "save.s2_note": "ゲーム全体をダウンロードします。解凍して index.html をダブルクリックすれば、インターネットもサーバーも要らず自分のパソコンで遊べます。",
@@ -77,9 +77,9 @@ CY.i18n.register("ja", {
 "visitor.wiki": "ウィキペディアで詳しく見る",
 "about.p3": "キャラクターはすべて架空の存在です。亡くなった人を再現することを、このゲームは提供も推奨もしません。思い出した言葉は、あくまで「こういう人」という自分なりの印象です。",
 "about.p4": "初期バージョンのため、粗いところがあります。ご意見はこちらへ：contact@careforyou.dev、または github.com/shenfan19/care-for-you の issue。",
-"priv.h1": "データの保存場所", "priv.p1": "ゲームのデータはすべてあなた自身の端末にだけ保存されます。いつでも開いて、編集、コピー、削除できるテキストファイルです。",
+"priv.h1": "データの保存場所", "priv.p1": "すべてのゲームデータはあなた自身の端末にだけ、読めるテキスト（YAML と CSV）で保存されます。ソースコードは MIT ライセンスで公開されており、ゲームが何をしているか自分で確かめられます。",
 "priv.p2": "現在、アカウント、サーバー、アクセス解析、広告、Cookie、第三者による追跡はありません。", "priv.p3": "ページ自体は静的で、動作中にゲームデータをどこにも送信しません。",
-"priv.h3": "あなたの権利", "priv.p6": "いつでもすべてのデータをダウンロードできます。設定にはローカルデータをすべて削除するボタンがあり、削除すると元に戻せません。",
+"priv.h3": "あなたの権利", "priv.p6": "設定にはローカルデータをすべて削除するボタンがあり、削除すると元に戻せません。このバージョンではセーブのダウンロードと読み込みは利用できません。",
 "priv.p7": "将来アカウントやクラウド機能を追加する場合は、先に何を、何のために、どれだけの期間集めるかを明記し、明確な同意があるときだけ送信します。同意は撤回でき、そのあと削除を求められます。",
 "priv.p8": "このゲームは成人向けです。将来EUなどで提供する場合は、GDPR など現地のデータ保護法に沿って、案内と手続きを整えます。",
 "priv.h4": "免責", "priv.p9": "これはゲームであり、医療・心理・介護の製品ではありません。診断、治療、服薬の助言はしません。ゲーム内の病気は基本的な場面設定で、実際の医学的判断ではありません。実際のケアは専門家に相談してください。",
@@ -190,8 +190,8 @@ CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit�
 CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit、Mini Characters、Cube Pets、Car Kit（すべて CC0 1.0、kenney.nl）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが斜めから描画し、キャラクターの肌、髪、服の色はゲーム内で選んだ色に塗り替えます。植物は Furniture Kit の植物モデルを拡大したもので、ぴったり対応する動物がいないものは最も近い姿を使っています。描画には three.js（MIT ライセンス、ゲームには同梱しません）を使いました。アニメーションと文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。"});
 CY.i18n.register("ja", {"figure.sprite": "ブロックの人"});
 CY.i18n.register("ja", {"act.meal": "ご飯を作ってあげる", "act.cook": "作って食べる"});
-CY.i18n.register("ja", {"figure.sprite": "ミニキャラ", "figure.blocky": "ブロックキャラ"});
-CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit、Mini Characters、Cube Pets、Car Kit（すべて CC0 1.0、kenney.nl）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが斜めから描画し、キャラクターの肌、髪、服の色はゲーム内で選んだ色に塗り替えます。植物は Furniture Kit の植物モデルを拡大したもので、ぴったり対応する動物がいないものは最も近い姿を使っています。描画には three.js（MIT ライセンス、ゲームには同梱しません）を使いました。アニメーションと文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。 選択できるブロックキャラは Kenney の Blocky Characters、通りの背景の建物は City Kit Commercial からで、どちらも CC0 1.0 です。"});
+CY.i18n.register("ja", {"figure.sprite": "ミニキャラ"});
+CY.i18n.register("ja", {"cred.p3": "画面の素材：Kenney の Furniture Kit、Mini Characters、Cube Pets、Car Kit（すべて CC0 1.0、kenney.nl）。CC0 は表記を求めませんが、出典を明記します。3D モデルは本プロジェクトが斜めから描画し、キャラクターの肌、髪、服の色はゲーム内で選んだ色に塗り替えます。植物は Furniture Kit の植物モデルを拡大したもので、ぴったり対応する動物がいないものは最も近い姿を使っています。描画には three.js（MIT ライセンス、ゲームには同梱しません）を使いました。アニメーションと文章はオリジナルです。コードは MIT ライセンスで公開されています。リポジトリの LICENSE を見てください。 通りの背景の建物は Kenney の City Kit Commercial からで、CC0 1.0 です。"});
 CY.i18n.register("ja", {"corner.eff_tip": "家の平均の状態は {n}% で、働いている人の仕事の効率でもあります。自分も含めて全員を気にかけると収入が高くなります。最低は 40% です。", "log.meal_all": "食事ができて、家にいる人はみんな食べた。"});
 CY.i18n.register("ja", {"act.sleep": "寝る"});
 CY.i18n.register("ja", {"selfact.sleep": "{name}は寝に行った"});

@@ -106,14 +106,14 @@ CY.i18n.register("zh-TW", {
  "set.data_note": "{where}。所有資料都是明文檔案，選資料夾時請確認它不會被同步到別人能看到的地方。",
  "set.folder": "選擇資料資料夾",
  "set.restore": "補回缺失的初始檔案",
- "ob.random": "隨機生成", "ob.custom": "自己搭配", "ob.back": "返回", "preset.selfcare.label": "一個人住，照顧自己", "preset.selfcare.note": "單身獨居，你就是那個人：按時吃藥、測血糖、做飯、休息", "preset.name.self": "我", "corner.money_tip": "錢。點開可以請保姆", "corner.music_tip": "音樂。點一下開或關", "set.figure": "人物造型", "figure.dressed": "穿衣小豆", "figure.plain": "素色小豆", "figure.dumpling": "團子", "sec.audio": "聲音", "set.advanced": "進階設定", "set.danger": "刪除",
+ "ob.random": "隨機生成", "ob.custom": "自己搭配", "ob.back": "返回", "preset.selfcare.label": "一個人住，照顧自己", "preset.selfcare.note": "單身獨居，你就是那個人：按時吃藥、測血糖、做飯、休息", "preset.name.self": "我", "corner.money_tip": "錢。點開可以請保姆", "corner.music_tip": "音樂。點一下開或關", "set.figure": "人物造型", "figure.dressed": "穿衣小豆", "sec.audio": "聲音", "set.advanced": "進階設定", "set.danger": "刪除",
  "set.wipe_note": "刪除本機上的全部遊戲資料，包括所有角色和記錄。",
  "set.wipe": "刪除全部本地資料",
  "set.folder_had": "已切換到該資料夾裡已有的資料",
  "set.folder_copied": "已把當前資料複製到該資料夾",
  "set.restored": "補回了 {n} 個檔案",
  "wipe.title": "刪除全部本地資料",
- "wipe.body": "這會清除這臺裝置上的所有角色、記錄和設定，無法恢復。建議先下載一份存檔。",
+ "wipe.body": "這會清除這臺裝置上的所有角色、記錄和設定，無法恢復。",
  "wipe.save_first": "先下載存檔",
  "wipe.sure": "我知道刪除後無法恢復",
  "wipe.go": "刪除",
@@ -200,11 +200,11 @@ CY.i18n.register("zh-TW", {
  "about.p3": "遊戲裡的角色都是虛構的。遊戲不提供也不鼓勵複製已故的人。你記起的話，只是你自己對一類人的印象。",
  "about.p4": "目前是早期版本，會有不完善的地方。歡迎提意見：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。",
  "priv.h1": "資料放在哪裡",
- "priv.p1": "所有遊戲資料只儲存在你自己的裝置上，是明文檔案，你可以隨時開啟、修改、複製和刪除。",
+ "priv.p1": "所有遊戲資料只儲存在你自己的裝置上，是可讀的純文字（YAML 和 CSV）。遊戲原始碼以 MIT 授權公開，你可以自己核對它做了什麼。",
  "priv.p2": "目前沒有賬號，沒有伺服器，沒有統計，沒有廣告，也不使用 cookie 或第三方追蹤。",
  "priv.p3": "網頁本身是靜態的，執行時不會把你的遊戲資料發到任何地方。",
     "priv.h3": "你的權利",
- "priv.p6": "你可以隨時下載全部資料，設定裡有刪除全部本地資料的按鈕，刪除後無法恢復。",
+ "priv.p6": "設定裡有刪除全部本地資料的按鈕，刪除後無法恢復。這一版沒有開放存檔的下載和匯入。",
  "priv.p7": "如果將來增加賬號或雲端功能，會先寫明收集哪些資料、用來做什麼、儲存多久，並且只在你明確同意後才上傳。同意可以撤回，撤回後可以要求刪除。",
  "priv.p8": "遊戲面向成年人。如果將來在歐盟等地區提供服務，會按當地的資料保護法規，例如 GDPR，完善說明和流程。",
  "priv.h4": "免責宣告",
@@ -566,8 +566,8 @@ CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit�
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。"});
 CY.i18n.register("zh-TW", {"figure.sprite": "方塊小人"});
 CY.i18n.register("zh-TW", {"act.meal": "做飯給ta吃", "act.cook": "做飯自己吃"});
-CY.i18n.register("zh-TW", {"figure.sprite": "迷你小人", "figure.blocky": "方塊角色"});
-CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。 可選的方塊角色來自 Kenney 的 Blocky Characters，街道背景的樓來自 City Kit Commercial，同為 CC0 1.0。"});
+CY.i18n.register("zh-TW", {"figure.sprite": "迷你小人"});
+CY.i18n.register("zh-TW", {"cred.p3": "畫面素材：Kenney 的 Furniture Kit、Mini Characters、Cube Pets 和 Car Kit（都是 CC0 1.0，kenney.nl）。CC0 不要求署名，我們仍寫明來源。三維模型由本專案渲染成斜視圖，人物的膚色、髮色、衣服顏色在遊戲裡按玩家的選擇重新著色；花草用 Furniture Kit 裡的植物模型放大，沒有一一對應的動物用了外形最接近的。渲染工具用到 three.js（MIT 授權），不隨遊戲發布。動畫和文字為原創。程式碼以 MIT 授權開源，見倉庫裡的 LICENSE。 街道背景的樓來自 Kenney 的 City Kit Commercial，CC0 1.0。"});
 CY.i18n.register("zh-TW", {"corner.eff_tip": "全家的平均狀態是 {n}%，這也是上班的人現在的工作效率。每個人都照顧到，包括你自己，收入才高，最低按四成算。", "log.meal_all": "一頓飯做好了，在家的人都吃上了。"});
 CY.i18n.register("zh-TW", {"act.sleep": "去睡覺"});
 CY.i18n.register("zh-TW", {"selfact.sleep": "{name}去睡覺了"});

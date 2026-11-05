@@ -23,9 +23,9 @@ CY.i18n.register("ko", {
 "sec.interrupt": "방해", "sec.time": "시간", "sec.player": "호칭", "sec.interaction": "상호작용", "sec.ui": "화면", "sec.privacy": "개인정보", "sec.account": "계정", "sec.ai": "AI", "sec.play": "플레이 방식", "sec.economy": "일과 돈",
 "set.title": "설정", "set.look": "화면", "set.theme": "테마", "set.lang": "언어", "set.data": "데이터 위치",
 "set.data_note": "{where}. 모든 데이터는 일반 텍스트 파일입니다. 폴더를 고를 때는 다른 사람이 볼 수 있는 곳으로 동기화되지 않는지 확인하세요.",
-"set.folder": "데이터 폴더 선택", "set.restore": "빠진 기본 파일 복원", "ob.random": "무작위로 만들기", "ob.custom": "직접 구성하기", "ob.back": "뒤로", "preset.selfcare.label": "혼자 살며 나를 돌보기", "preset.selfcare.note": "혼자 사는 당신이 직접 관리해요: 약, 혈당 측정, 식사, 휴식", "preset.name.self": "나", "corner.money_tip": "돈. 열어서 도우미를 부르세요", "corner.music_tip": "음악. 눌러서 켜고 끄기", "set.figure": "캐릭터 모양", "figure.dressed": "옷 입은 콩", "figure.plain": "단색 콩", "figure.dumpling": "경단", "sec.audio": "소리", "set.advanced": "고급 설정", "set.danger": "삭제", "set.wipe_note": "이 기기의 게임 데이터를 모든 캐릭터와 기록까지 전부 삭제합니다.",
+"set.folder": "데이터 폴더 선택", "set.restore": "빠진 기본 파일 복원", "ob.random": "무작위로 만들기", "ob.custom": "직접 구성하기", "ob.back": "뒤로", "preset.selfcare.label": "혼자 살며 나를 돌보기", "preset.selfcare.note": "혼자 사는 당신이 직접 관리해요: 약, 혈당 측정, 식사, 휴식", "preset.name.self": "나", "corner.money_tip": "돈. 열어서 도우미를 부르세요", "corner.music_tip": "음악. 눌러서 켜고 끄기", "set.figure": "캐릭터 모양", "figure.dressed": "옷 입은 콩", "sec.audio": "소리", "set.advanced": "고급 설정", "set.danger": "삭제", "set.wipe_note": "이 기기의 게임 데이터를 모든 캐릭터와 기록까지 전부 삭제합니다.",
 "set.wipe": "로컬 데이터 모두 삭제", "set.folder_had": "그 폴더에 이미 있는 데이터로 전환했습니다", "set.folder_copied": "현재 데이터를 그 폴더로 복사했습니다", "set.restored": "파일 {n}개를 복원했습니다",
-"wipe.title": "로컬 데이터 모두 삭제", "wipe.body": "이 기기의 모든 캐릭터, 기록, 설정이 지워지며 되돌릴 수 없습니다. 먼저 저장 파일을 내려받기를 권합니다.",
+"wipe.title": "로컬 데이터 모두 삭제", "wipe.body": "이 기기의 모든 캐릭터, 기록, 설정이 지워지며 되돌릴 수 없습니다.",
 "wipe.save_first": "먼저 저장 파일 다운로드", "wipe.sure": "되돌릴 수 없음을 이해했습니다", "wipe.go": "삭제",
 "save.title": "저장과 다운로드", "save.s1": "게임 저장", "save.s1_note": "모든 데이터 파일, 표 두 개, 매니페스트가 든 zip을 내려받습니다. 나중에 다시 불러오거나 백업, 기기 이전에 쓸 수 있습니다.",
 "save.s1_btn": "저장 파일 다운로드", "save.s1_key": "AI 키 포함 (기본은 끔)", "save.s2": "로컬 앱 다운로드", "save.s2_note": "게임 전체를 내려받습니다. 압축을 풀고 index.html을 더블클릭하면 인터넷도 서버도 없이 내 컴퓨터에서 즐길 수 있습니다.",
@@ -77,9 +77,9 @@ CY.i18n.register("ko", {
 "visitor.wiki": "위키백과에서 더 보기",
 "about.p3": "모든 캐릭터는 가상입니다. 세상을 떠난 사람을 재현하는 것을 게임은 제공하지도 권하지도 않습니다. 떠올린 말은 어떤 유형의 사람에 대한 나만의 인상일 뿐입니다.",
 "about.p4": "초기 버전이라 거친 부분이 있습니다. 의견은 contact@careforyou.dev 또는 github.com/shenfan19/care-for-you 의 issue로 보내 주세요.",
-"priv.h1": "데이터가 있는 곳", "priv.p1": "게임 데이터는 모두 내 기기에만 저장되며, 언제든 열고, 고치고, 복사하고, 삭제할 수 있는 일반 파일입니다.",
+"priv.h1": "데이터가 있는 곳", "priv.p1": "모든 게임 데이터는 사용자의 기기에만 읽을 수 있는 텍스트(YAML과 CSV)로 저장됩니다. 소스 코드는 MIT 라이선스로 공개되어 있어 게임이 무엇을 하는지 직접 확인할 수 있습니다.",
 "priv.p2": "현재 계정, 서버, 분석, 광고, 쿠키, 제3자 추적이 없습니다.", "priv.p3": "페이지 자체는 정적이며, 실행 중에 게임 데이터를 어디로도 보내지 않습니다.",
-"priv.h3": "내 권리", "priv.p6": "언제든 모든 데이터를 내려받을 수 있습니다. 설정에 로컬 데이터를 모두 삭제하는 버튼이 있으며, 삭제하면 되돌릴 수 없습니다.",
+"priv.h3": "내 권리", "priv.p6": "설정에 로컬 데이터를 모두 삭제하는 버튼이 있으며, 삭제하면 되돌릴 수 없습니다. 이 버전에서는 저장 파일 내려받기와 불러오기를 제공하지 않습니다.",
 "priv.p7": "나중에 계정이나 클라우드 기능을 추가하면, 무엇을 왜 얼마나 오래 수집하는지 먼저 밝히고 명시적 동의가 있을 때만 전송합니다. 동의는 철회할 수 있고, 그 뒤 삭제를 요청할 수 있습니다.",
 "priv.p8": "이 게임은 성인을 위한 것입니다. 나중에 EU 등에서 제공하게 되면 GDPR 같은 현지 개인정보 보호법에 맞춰 안내와 절차를 갖추겠습니다.",
 "priv.h4": "면책", "priv.p9": "이것은 게임이며 의료, 심리, 간호 제품이 아닙니다. 진단, 치료, 복약 조언을 하지 않습니다. 게임 속 질환은 기본적인 상황일 뿐 실제 의학적 판단이 아닙니다. 실제 돌봄은 전문가와 상의하세요.",
@@ -190,8 +190,8 @@ CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit, Mini
 CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit, Mini Characters, Cube Pets, Car Kit(모두 CC0 1.0, kenney.nl). CC0는 표기를 요구하지 않지만 출처를 밝힙니다. 3D 모델은 이 프로젝트가 비스듬한 시점으로 렌더링했고, 캐릭터의 피부, 머리카락, 옷 색은 게임 안에서 플레이어의 선택에 따라 다시 칠합니다. 식물은 Furniture Kit의 식물 모델을 키운 것이고, 딱 맞는 동물이 없는 경우 가장 비슷한 모습을 썼습니다. 렌더링에는 three.js(MIT 라이선스, 게임에는 포함되지 않음)를 썼습니다. 애니메이션과 글은 직접 만든 것입니다. 코드는 MIT 라이선스로 공개되어 있으며 저장소의 LICENSE를 보세요."});
 CY.i18n.register("ko", {"figure.sprite": "블록 인물"});
 CY.i18n.register("ko", {"act.meal": "밥을 해 주기", "act.cook": "해서 먹기"});
-CY.i18n.register("ko", {"figure.sprite": "미니 캐릭터", "figure.blocky": "블록 캐릭터"});
-CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit, Mini Characters, Cube Pets, Car Kit(모두 CC0 1.0, kenney.nl). CC0는 표기를 요구하지 않지만 출처를 밝힙니다. 3D 모델은 이 프로젝트가 비스듬한 시점으로 렌더링했고, 캐릭터의 피부, 머리카락, 옷 색은 게임 안에서 플레이어의 선택에 따라 다시 칠합니다. 식물은 Furniture Kit의 식물 모델을 키운 것이고, 딱 맞는 동물이 없는 경우 가장 비슷한 모습을 썼습니다. 렌더링에는 three.js(MIT 라이선스, 게임에는 포함되지 않음)를 썼습니다. 애니메이션과 글은 직접 만든 것입니다. 코드는 MIT 라이선스로 공개되어 있으며 저장소의 LICENSE를 보세요. 선택할 수 있는 블록 캐릭터는 Kenney의 Blocky Characters, 거리 배경 건물은 City Kit Commercial에서 왔으며 둘 다 CC0 1.0입니다."});
+CY.i18n.register("ko", {"figure.sprite": "미니 캐릭터"});
+CY.i18n.register("ko", {"cred.p3": "그림 소재: Kenney의 Furniture Kit, Mini Characters, Cube Pets, Car Kit(모두 CC0 1.0, kenney.nl). CC0는 표기를 요구하지 않지만 출처를 밝힙니다. 3D 모델은 이 프로젝트가 비스듬한 시점으로 렌더링했고, 캐릭터의 피부, 머리카락, 옷 색은 게임 안에서 플레이어의 선택에 따라 다시 칠합니다. 식물은 Furniture Kit의 식물 모델을 키운 것이고, 딱 맞는 동물이 없는 경우 가장 비슷한 모습을 썼습니다. 렌더링에는 three.js(MIT 라이선스, 게임에는 포함되지 않음)를 썼습니다. 애니메이션과 글은 직접 만든 것입니다. 코드는 MIT 라이선스로 공개되어 있으며 저장소의 LICENSE를 보세요. 거리 배경 건물은 Kenney의 City Kit Commercial에서 왔으며 CC0 1.0입니다."});
 CY.i18n.register("ko", {"corner.eff_tip": "집 전체의 평균 상태는 {n}%이며, 일하는 사람의 업무 효율이기도 합니다. 자신을 포함해 모두를 돌보면 수입이 높게 유지됩니다. 최저는 40%입니다.", "log.meal_all": "식사가 준비되어 집에 있는 모두가 먹었다."});
 CY.i18n.register("ko", {"act.sleep": "자러 가기"});
 CY.i18n.register("ko", {"selfact.sleep": "{name}이(가) 자러 갔다"});
