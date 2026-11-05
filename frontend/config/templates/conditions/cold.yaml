@@ -1,0 +1,12 @@
+version: 4
+id: cold
+label: 感冒发烧
+heal_after: { need: fever, count: 3 }
+needs:
+  fever: { label: 体温高, icon: "🌡", rate: 0.1 }
+actions:
+  fever: { label: 量体温退热, hold: 4, min: 10, effect: { fever: 0.8 } }
+  cool: { label: 物理降温, hold: 5, min: 15, effect: { fever: 0.5, company: 0.2 }, mood: 0.05 }
+lines:
+  request:
+    fever: ["{ta}脸有点烫，没精神。", "{ta}蔫蔫地靠着，额头摸着有点热。"]

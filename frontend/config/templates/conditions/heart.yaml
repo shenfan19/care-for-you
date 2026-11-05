@@ -1,0 +1,14 @@
+version: 4
+id: heart
+label: 心脏病
+needs:
+  medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
+  chest: { label: 胸口发闷, icon: "🫀", rate: 0.04 }
+actions:
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: 1 } }
+  restsit: { label: 扶着坐下歇歇, hold: 4, min: 10, effect: { chest: 0.8, company: 0.2 }, mood: 0.03 }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: 0.8 } }
+lines:
+  request:
+    medicine: ["药，是不是该吃了？", "{ta}看了看药盒。"]
+    chest: ["{ta}按着胸口，慢慢坐了下来。", "{ta}说有点闷，歇一会儿就好。"]

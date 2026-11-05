@@ -1,0 +1,11 @@
+version: 4
+id: allergy
+label: 过敏
+needs:
+  sneeze: { label: 打喷嚏流眼泪, icon: "🤧", rate: 0.05 }
+actions:
+  antihist: { label: 吃抗过敏药, hold: 2, min: 3, effect: { sneeze: 0.9 } }
+  airclean: { label: 打扫除尘, hold: 6, min: 25, effect: { sneeze: 0.5 } }
+lines:
+  request:
+    sneeze: ["{ta}连着打了几个喷嚏，眼睛红红的。", "{ta}揉着鼻子，说这几天又过敏了。"]

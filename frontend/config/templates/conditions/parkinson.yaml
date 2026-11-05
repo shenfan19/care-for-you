@@ -1,0 +1,15 @@
+version: 5
+id: parkinson
+label: 帕金森
+needs_escort: true      # 不会自己一个人出门，要有人陪
+needs:
+  medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
+  tremor: { label: 手在抖, icon: "🤲", rate: 0.05 }
+actions:
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: 1 } }
+  steady: { label: 扶稳, hold: 3, min: 8, effect: { tremor: 0.8 }, mood: 0.04 }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: 0.8 } }
+lines:
+  request:
+    medicine: ["药，是不是该吃了？", "{ta}看了看药盒，又看了看自己的手。"]
+    tremor: ["{ta}端着杯子，手一直在轻轻抖。", "{ta}说今天手不太听使唤。"]

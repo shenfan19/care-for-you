@@ -6,30 +6,28 @@
   const { emit } = G._h;
   G.workWindow = () => {
     const m = ini.get(G.cfg, 'economy', 'work_hours').match(/^(\d\d):(\d\d)-(\d\d):(\d\d)$/);
-    return m ? [+m[1] * 60 + +m[2], +m[3] * 60 + +m[4]] : [540, 1080];
+    return m ? [+m[1] * 60 + +m[2], +m[3] * 60 + +m[4]] : G.E('economy').work_hours_default;
   };
   G.isWorkTime = () => { const [a, b] = G.workWindow(), d = G.dayMinutes(); return d >= a && d < b; };
 
-  G.WAGE = 52;              /* 工作时段在书桌前，每标准游戏小时。标准模式现实 24 分钟一天，其中工作 9 分钟；挂机约一小时买第一张床，三小时多买第二张，挂机十分钟够买一件礼物 */
-  G.PENSION = 5;            /* 老人主角的退休金，每标准游戏小时，固定，不用到书桌前 */
-  G.START_MONEY = 200;
+  /* 工资，退休金，起始的钱，效率下限，负荷，专注，商品，床位，买菜加成：都在 templates/engine.yaml 的 economy 和 shop 里 */
+  G.constGet('WAGE', () => G.E('economy').wage);
+  G.constGet('PENSION', () => G.E('economy').pension);
+  G.constGet('START_MONEY', () => G.E('economy').start_money);
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
   /* 收益效率由负荷决定，不看心情平均：负荷是每个人没被照顾到的程度（1 减心情）乘依赖度，加总后除以主角能顾及的容量。
      依赖度按年龄阶段，卧床加倍，动物低，花草几乎为零，所以堆花草堆不出效率；每多一个依赖者负荷就多一份，人多自然更累。
      成年家人是助力，抬高容量，所以一个人带孩子最累，有人分担就轻松，不是人越少越好。效率不低于四成，不会越穷越没法挣。
      家人的满意度另算：每个心情不低的家人给收入加一点，线性叠加，有封顶，花草和动物不算 */
-  G.MOOD = { eff_min: 0.4 };
-  G.LOAD = {
-    weight: { infant: 1, toddler: 0.8, child: 0.4, teen: 0.15, adult: 0.1, elder: 0.4 }, bedridden: 2, animal: 0.15, plant: 0.03, self: 0.3,
-    capacity: 1, helper: 0.3, helper_mood: 0.5, bonus_each: 0.08, bonus_cap: 0.6, bonus_mood: 0.6,
-  };
+  G.constGet('MOOD', () => ({ eff_min: G.E('economy').mood_eff_min }));
+  G.constGet('LOAD', () => G.E('economy').load);
   const loadWeight = (p, lead) => {
     const L = G.LOAD;
     if (p === lead) return L.self;
     if (p.person.kind === 'plant') return L.plant;
     if (p.person.kind !== 'human') return L.animal;
-    return (L.weight[G.stage(p)] || 0.1) * (G.bedridden(p) ? L.bedridden : 1);
+    return (G.opt(L.weight, G.stage(p)) || L.weight_default) * (G.bedridden(p) ? L.bedridden : 1);
   };
   G.burden = () => { const lead = G.protagonist(); return G.activePeople().reduce((a, p) => a + loadWeight(p, lead) * (1 - p.state.mood), 0); };
   G.capacity = () => {
@@ -55,7 +53,7 @@
   /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
   /* 工作专注：进入工作不是立刻满额，坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟；离开工作（离开书桌，外出办事，被叫去照顾人）立刻掉回 floor，而且离开期间仍按 floor 计收入，不是零。收入速率 = 工资 乘 专注 乘 家庭效率 乘 家人加成。
      配偶不在家（出差，去公司）是别处没人打断的工作，专注按满额，家庭效率和加成照乘。参数出处见 CY.references 里的 focus。 */
-  G.FOCUS = { floor: 0.2, minutes: 20 };
+  G.constGet('FOCUS', () => G.E('economy').focus);
   G.focus = () => (typeof G.world.focus === 'number' ? G.world.focus : G.FOCUS.floor);
   /* 走过 gmin 分钟，working 为真就爬升，否则掉回 floor；返回这段时间的平均专注，离线大步长也按线性积分，不会少算也不会多算 */
   G.focusStep = (gmin, working) => {
@@ -90,24 +88,16 @@
   /* 商店：买了就一直有，没有损耗，没有订阅。价格按前台一天五分钟，一个游戏日收入约 100 到 150 重标。
      cat 是分类：daily 日用品有一点数值效果；decor 装饰纯粹是观感，没有任何数值效果。decor 一档一档买。
      床位另算，不在这张表里，见 G.bedsOwned：床位决定家里最多住几个人，家人和穿越者都占床位。 */
-  G.SHOP = [
-    { id: 'toy', cat: 'daily', price: 80, icon: '🧸', boost: { need: 'play', scale: 1.4, mood: 0.02, stages: ['infant', 'toddler'] } },
-    { id: 'fruit', cat: 'daily', price: 200, icon: '🍎', boost: { need: 'hunger', scale: 1.4 } },
-    { id: 'books', cat: 'daily', price: 400, icon: '📚', boost: { need: 'play', scale: 1, mood: 0.04, stages: ['child', 'teen', 'adult', 'elder'] } },
-    { id: 'stroller', cat: 'daily', price: 400, icon: '👶' },
-    { id: 'wheelchair', cat: 'daily', price: 600, icon: '♿', outing_scale: 1.25 },
-    { id: 'cabinet', cat: 'decor', price: 300, icon: '🏺' },
-    { id: 'decor1', cat: 'decor', price: 160, icon: '🪴' }, { id: 'decor2', cat: 'decor', price: 350, icon: '🛋', needs: 'decor1' }, { id: 'decor3', cat: 'decor', price: 550, icon: '📻', needs: 'decor2' },
-  ];
+  G.constGet('SHOP', () => G.E('shop').items);
   /* 床位：家里三间卧室，夫妻、孩子、老人各两张，一共六张，是家人的床，不用买，家人最多六位，婴儿睡婴儿床不占床位。
      客房一开始就有一张床，只给穿越者睡，最多三张，另外两张在商店买。家人和客人的床分开，家人住满了也有床留给第一位客人，不然就永远没有客人来 */
-  G.FAMILY_BEDS = 6; G.GUEST_BED_MAX = 3; G.BED_PRICE = { 1: 600, 2: 400 };
+  G.constGet('FAMILY_BEDS', () => G.E('economy').beds.family); G.constGet('GUEST_BED_MAX', () => G.E('economy').beds.guest_max); G.constGet('BED_PRICE', () => G.E('economy').beds.price);
   G.sleepers = () => G.activePeople().filter(p => G.isHuman(p) && G.stage(p) !== 'infant');
   G.bedUsers = () => G.sleepers().filter(p => !p.person.visitor);
   G.guestBedsOwned = () => Math.min(G.GUEST_BED_MAX, Math.max(1, G.world.gbeds || 1));
   G.bedsFree = () => G.FAMILY_BEDS - G.bedUsers().length;
   G.guestRoom = () => G.guestBedsOwned() - G.sleepers().filter(p => p.person.visitor).length;   /* 客房还能接待几位客人 */
-  G.bedPrice = () => (G.guestBedsOwned() >= G.GUEST_BED_MAX ? null : G.BED_PRICE[G.guestBedsOwned()] || 600);
+  G.bedPrice = () => (G.guestBedsOwned() >= G.GUEST_BED_MAX ? null : G.opt(G.BED_PRICE, G.guestBedsOwned()) || G.E('economy').beds.price_default);
   G.canBuyBed = () => { const pr = G.bedPrice(); return G.module('shop') && pr !== null && G.world.money >= pr; };
   G.buyBed = () => {
     if (!G.canBuyBed()) return false;
@@ -168,7 +158,7 @@
     if (W && W.moveTo) W.moveTo(W.WORK.place, W.workRoom());
     G.logK(G.youId(), 'event', 'log.groceries', { n: tr.meals });
   };
-  G.GROCERY_BONUS = { hunger: 0.15, mood: 0.02, table_minutes: 90 };
+  G.constGet('GROCERY_BONUS', () => G.E('economy').grocery_bonus);
   G.useGroceries = (p, a) => {
     if (!G.groceries()) return false;
     G.world.groceries--; G.world.fed_until = G.world.game_minutes + G.GROCERY_BONUS.table_minutes;

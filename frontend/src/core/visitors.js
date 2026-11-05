@@ -5,9 +5,9 @@
   const G = CY.game, V = CY.visitors, store = CY.store;
   const t = (k, v) => CY.t(k, v);
 
-  G.DOOR = { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, gap_hours: [5, 18], arrive_from: 8, arrive_to: 21, hint_gap: [40, 70], door_room: 'yard', meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] };
+  G.constGet('DOOR', () => G.E('visitors').door);   /* 来客的节奏，选人的倾向，好感的分数，都在 templates/engine.yaml 的 visitors 里 */
   /* 选人的倾向：每个地区总权重相等，卡多的地区不会多来；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减，免得连着来 */
-  G.PICK = { field: { med: 1.3, pol: 0.5 }, home: 1.5, repeat: 0.5, home_of: { 'zh-CN': ['ea'], 'zh-TW': ['ea'], ja: ['ea'], ko: ['ea'], de: ['eu'], fr: ['eu'], es: ['eu', 'am'] } };
+  G.constGet('PICK', () => G.E('visitors').pick);
   G.visitorPeople = () => G.activePeople().filter(p => p.person.visitor);
   G.souvenirs = () => (G.world.souv = G.world.souv || {});
   G.giftInv = () => (G.world.gifts = G.world.gifts || {});
@@ -29,13 +29,13 @@
     const here = new Set(G.visitorPeople().map(p => p.person.visitor.id)), souv = G.souvenirs(), met = G.world.met || {};
     const nf = {}; for (const id of V.order) { const f = V.cards[id].field; nf[f] = (nf[f] || 0) + 1; }
     /* 行业也向均匀靠拢：卡多的行业每张权重降一点，卡少的升一点，开方并限在 0.6 到 1.5，不完全拉平 */
-    const soft = f => Math.min(1.5, Math.max(0.6, Math.sqrt(V.order.length / V.FIELDS.length / (nf[f] || 1))));
+    const soft = f => Math.min(G.E('visitors').soft_clamp[1], Math.max(G.E('visitors').soft_clamp[0], Math.sqrt(V.order.length / V.FIELDS.length / (nf[f] || 1))));
     /* 行业因子算完，再让每个地区的因子总和相等：地区之间始终均分，行业只在地区内部分配 */
-    const fw = id => { const f = V.cards[id].field; return soft(f) * (G.PICK.field[f] || 1); }, asum = {};
+    const fw = id => { const f = V.cards[id].field; return soft(f) * (G.opt(G.PICK.field, f) || 1); }, asum = {};
     for (const id of V.order) { const a = V.cards[id].area; asum[a] = (asum[a] || 0) + fw(id); }
-    const home = G.PICK.home_of[CY.i18n.lang] || [], last = G.world.last_area;
+    const home = G.opt(G.PICK.home_of, CY.i18n.lang) || [], last = G.world.last_area;
     const pool = V.order.filter(id => !here.has(id)).map(id => {
-      const c = V.cards[id], base = souv[id] ? 0.15 : met[id] ? 2 : 3;
+      const c = V.cards[id], base = souv[id] ? G.E('visitors').pick_base.souvenir : met[id] ? G.E('visitors').pick_base.met : G.E('visitors').pick_base.fresh;
       return { id, w: base * fw(id) / asum[c.area] * (home.includes(c.area) ? G.PICK.home : 1) * (c.area === last ? G.PICK.repeat : 1) };
     });
     const sum = pool.reduce((a, b) => a + b.w, 0);
@@ -47,7 +47,7 @@
   G.firstVisitorId = () => V.FIRST[CY.i18n.lang] || V.FIRST.default;
 
   /* 卡片外观转成人物外观：肤色按色表取编号，发色发型衣服换成人物用的字段名；形象从同性别的六个里按卡片编号固定挑一个，同一个人每次来都长一样。卡片里写了 model 就用它 */
-  const hashId = x => { let h = 0; for (const ch of String(x)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+  const hashId = x => { let h = 0; for (const ch of String(x)) h = (h * G.E('hash').id_mult + ch.charCodeAt(0)) >>> 0; return h; };
   G.lookOf = c => {
     const O = CY.avatarOptions || {}, l = c.look || {}, sk = (O.skin || []).indexOf(l.skin), keys = CY.charKeys || [];
     const pool = keys.filter(k => k.startsWith(CY.content.pron(c.pronoun) === 'she' ? 'female' : 'male'));
@@ -64,9 +64,9 @@
     if (c.controllable === false) p.person.controllable = false;
     p.person.visitor = { id, since: day(), stay: rint(G.DOOR.stay_min, G.DOOR.stay_max), day_in: 0, ok: false, fav: 0, wrong: [], talk: 0 };
     if (c.energy !== undefined) p.state.needs.rest = c.energy;   /* 卡里写的是精力水平 */
-    p.state.mood = 0.55;
+    p.state.mood = G.E('visitors').arrival_mood;
     await saveVisitor(p);
-    if (CY.world && CY.world.agents) CY.world.agents[pid] = { room: G.DOOR.door_room, next: Date.now() + 15000 };
+    if (CY.world && CY.world.agents) CY.world.agents[pid] = { room: G.DOOR.door_room, next: Date.now() + G.E('visitors').door_walk_ms };
     G.world.met = Object.assign({}, G.world.met, { [id]: ((G.world.met || {})[id] || 0) + 1 });
     G.world.last_area = c.area;
     G.settleNote('settle.visit_arrive', { name: nameRef(id) });
@@ -95,7 +95,7 @@
   G.pickGroup = () => {
     const seen = G.world.meets || {}, pool = V.MEETS.filter(m => !seen[m.key] && G.guestRoom() >= m.ids.length);
     if (!pool.length) return null;
-    const w = m => (m.ids.length === 3 ? 0.5 : 1);
+    const w = m => (m.ids.length === G.E('visitors').trio_size ? G.E('visitors').trio_weight : 1);
     let r = Math.random() * pool.reduce((a, m) => a + w(m), 0);
     for (const m of pool) { r -= w(m); if (r <= 0) return m; }
     return pool[pool.length - 1];
@@ -127,7 +127,7 @@
 
   /* 好感度：满分五十，到三十就算满足，留下回礼，也就是纪念品。送到心仪的礼物，或者做了对方真正需要的事，一下子加很多；
      送一般的礼物加得不多，要送好几件才够；回答他向你提的问题也加一点。这样不是只有猜中才行，而是更有弹性 */
-  G.FAV = { ok: 30, max: 50, like: 30, other: 4, care: 30, ask: 6 };   /* 内部五十分，界面五颗星，十分一颗；三颗星满足 */
+  G.constGet('FAV', () => G.E('visitors').fav);   /* 内部五十分，界面五颗星，十分一颗；三颗星满足 */
   const satisfy = p => {
     const st = p.person.visitor;
     if (st.ok) return;
@@ -212,7 +212,7 @@
       /* 没满足时轮流说需求暗示和自己的话，满足以后只剩自己的话 */
       const from = st.ok ? V.NEED_HINTS : 0, pool = n > from ? n - from : 0;
       if (!pool || G.isSleeping(p) || G.toast[p.id]) continue;
-      if (nextHint[p.id] === undefined) nextHint[p.id] = now + 8000;
+      if (nextHint[p.id] === undefined) nextHint[p.id] = now + G.E('visitors').first_hint_ms;
       if (now < nextHint[p.id]) continue;
       nextHint[p.id] = now + 1000 * rint(G.DOOR.hint_gap[0], G.DOOR.hint_gap[1]);
       const text = t(`visitor.${st.id}.hint.${from + (st.talk % pool)}`); st.talk++;

@@ -1,0 +1,21 @@
+version: 4
+id: cat
+label: 猫
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.09 }
+  hunger: { label: 饥饿, icon: "🍚", rate: 0.09 }
+  company: { label: 想蹭人, icon: "🤝", rate: 0.07 }
+  play: { label: 想玩, icon: "🧶", rate: 0.10 }
+  clean: { label: 猫砂该清了, icon: "🧹", rate: 0.04 }
+actions:
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: 0.7 } }
+  pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: 0.7 } }
+  groom: { label: 梳毛, hold: 5, min: 15, effect: { company: 0.3 }, mood: 0.1 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 摸一摸, hold: 1, min: 2, effect: { company: 0.3 }, mood: 0.06 }
+  water: { label: 换水, hold: 3, min: 3, effect: { thirst: 0.9 } }
+  feed: { label: 喂猫粮, hold: 4, min: 5, effect: { hunger: 0.9 } }
+  play: { label: 逗猫, hold: 8, min: 20, effect: { play: 0.9, company: 0.3 } }
+  clean: { label: 铲猫砂, hold: 4, min: 10, effect: { clean: 1 } }
+  hand: { label: 抱一会儿, hold: 6, min: 10, effect: { company: 0.5 }, frailty: -0.15, mood: 0.1 }

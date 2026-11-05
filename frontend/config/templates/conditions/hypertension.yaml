@@ -1,0 +1,22 @@
+version: 5
+id: hypertension
+label: 高血压
+needs:
+  medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
+  bp: { label: 该量血压了, icon: "🩺", rate: 0.04 }
+actions:
+  medicine: { label: 陪吃药, hold: 5, min: 5, effect: { medicine: 1 } }
+  bp: { label: 量血压, hold: 3, min: 5, effect: { bp: 1 } }
+  selfmed: { label: 自己吃药, selfonly: true, self: [adult, elder], hold: 1, min: 3, effect: { medicine: 0.8 } }
+  selfbp: { label: 自己量血压, selfonly: true, self: [adult, elder], hold: 1, min: 5, effect: { bp: 0.7 } }
+lines:
+  request:
+    medicine: ["药，是不是该吃了？", "{ta}看了看药盒。"]
+    bp: ["今天还没量血压。", "{ta}揉了揉太阳穴。"]
+events:
+  salty:
+    say: 今天菜里放盐吗？
+    choices:
+      - { label: 多放点盐, liked: true, pulse: salt_high, mood: 0.12, frailty: 0.05, reply: "{ta}说这样才有味道。你没说话。" }
+      - { label: 少盐，加点醋, mood: 0.02, frailty: -0.02, reply: "{ta}尝了一口，说也能吃。" }
+      - { label: 不放盐，多放姜, pulse: salt_low, mood: -0.02, frailty: -0.04, reply: "{ta}皱了皱眉，还是吃光了。" }

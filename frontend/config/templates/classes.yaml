@@ -1,0 +1,31 @@
+version: 10
+# routine 是真实生活的作息：起床 wake，睡觉 bed，午睡 nap，三餐 meals，洗澡 bath，单位小时，spread 是每个人偏离这张表的小时数上限。婴儿不在此列，按自己的节奏。
+# 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
+classes:
+  infant: { urgency: 3.0, self_care: 0, cries: true, cry_at: 0.8, wake_at: 0.9, sleep_cycle: [180, 120], nag: 15, needs_caregiver: true }
+  toddler: { urgency: 2.4, self_care: 0.05, cries: true, cry_at: 0.8, nag: 20, needs_caregiver: true, routine: { wake: 7.0, bed: 20.5, nap: [12.5, 14.5], meals: [7.5, 12.0, 18.0], bath: 19.5, spread: 0.4 } }
+  child: { urgency: 1.5, self_care: 0.35, needs_caregiver: true, routine: { wake: 6.8, bed: 21.0, meals: [7.2, 12.0, 18.0], bath: 20.0, spread: 0.5 } }
+  teen: { urgency: 1.0, self_care: 0.7, routine: { wake: 7.0, bed: 23.0, meals: [7.3, 12.3, 18.3], bath: 21.5, spread: 0.7 } }
+  adult: { urgency: 0.8, self_care: 0.9, routine: { wake: 6.5, bed: 22.5, meals: [7.3, 12.3, 18.5], bath: 21.0, spread: 0.6 } }
+  elder: { urgency: 1.6, self_care: 0.6, bedrest: [0.8, 0.55], legs_frailty: 0.5, routine: { wake: 5.8, bed: 21.5, nap: [13.0, 14.5], meals: [7.0, 12.0, 17.5], bath: 20.0, spread: 0.4 } }
+  cat: { urgency: 1.0, self_care: 0.3, nag: 40 }
+  dog: { urgency: 1.1, self_care: 0.1, nag: 35 }
+  rabbit: { urgency: 1.0, self_care: 0.1 }
+  hamster: { urgency: 0.8, self_care: 0.15 }
+  bird: { urgency: 1.0, self_care: 0.1 }
+  fish: { urgency: 0.6, self_care: 0.02 }
+  turtle: { urgency: 0.6, self_care: 0.05 }
+  snake: { urgency: 0.6, self_care: 0.05 }
+  guineapig: { urgency: 0.9, self_care: 0.15 }
+  gecko: { urgency: 0.6, self_care: 0.05 }
+  hedgehog: { urgency: 0.8, self_care: 0.15 }
+  duck: { urgency: 1.0, self_care: 0.15 }
+  ferret: { urgency: 1.1, self_care: 0.1 }
+  axolotl: { urgency: 0.6, self_care: 0.03 }
+  chicken: { urgency: 0.9, self_care: 0.2 }
+  orchid: { urgency: 0.35, self_care: 0 }
+  bamboo: { urgency: 0.3, self_care: 0 }
+  succulent: { urgency: 0.3, self_care: 0 }
+  cactus: { urgency: 0.25, self_care: 0 }
+  flower: { urgency: 0.4, self_care: 0 }
+  tree: { urgency: 0.3, self_care: 0 }

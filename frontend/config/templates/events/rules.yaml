@@ -1,0 +1,264 @@
+version: 4
+# 事件规则数据库。游戏本体不写死任何人或事件，谁在什么时候发生什么，都从这里读，改了就生效。
+# trigger：tick 是时间过去，action 是玩家做了一件事，end 是某个带时限的标记到期。
+# when：触发条件，可用 sleeping，any_condition，all_conditions，stage，species，hour_from，hour_to，flag，no_flag，care_total_in，min_frailty。
+# rate_per_hour：每游戏小时发生的概率。chance：这一条触发的概率。stop：触发后不再看后面的规则。
+# do：要做的事，op 可用 flag_set，flag_clear，need（delta 按水平算，正数是补上），mood，frailty，condition_add，condition_remove，counter，log，say。
+# then：先 do，再按 chance 乘以 scale 里的各项算概率，从 outcomes 里按 weight 挑一个结果。
+# when 还可以用 dates 日期列表，写 MM-DD 每年重复或 YYYY-MM-DD 某一天，weekday 星期，days_together_in 已陪伴的天数。once_per_day 为真时每人每天只触发一次。
+# 数值是占位，等 Life Matters 的模型接进来，可以换成远程后端，规则格式不用变。
+rules:
+  - id: night_toilet
+    trigger: tick
+    when: { sleeping: true, any_condition: [nocturia], no_flag: [wc, hospital] }
+    rate_per_hour: 0.31
+    do:
+      - { op: flag_set, name: wc, minutes: 6, place: home, room: toilet }
+      - { op: log, type: self, key: log.night_wc }
+  - id: night_toilet_end
+    trigger: end
+    flag: wc
+    do:
+      - { op: need, need: toilet, delta: 0.9 }
+    then:
+      chance: 0.012
+      scale:
+        - { frailty: 2 }
+        - { age_over: 80, mult: 1.3 }
+        - { flag: nightlight, mult: 0.5 }
+      outcomes:
+        - weight: 0.65
+          do:
+            - { op: mood, delta: -0.15 }
+            - { op: frailty, delta: 0.15 }
+            - { op: flag_set, name: hurt, minutes: 0, value: minor }
+            - { op: log, type: event, key: log.fall_minor }
+            - { op: say, kind: soft, tkey: log.fall_minor }
+        - weight: 0.35
+          do:
+            - { op: flag_set, name: hospital, minutes: 4320, place: hospital, room: ward, mode: sleep }
+            - { op: condition_add, id: fracture }
+            - { op: flag_set, name: hurt, minutes: 0, value: serious }
+            - { op: log, type: event, key: log.fall_serious }
+            - { op: say, kind: cry, tkey: log.fall_serious }
+  - id: hospital_end
+    trigger: end
+    flag: hospital
+    do:
+      - { op: flag_clear, name: hurt }
+      - { op: counter, name: hospital_n, delta: 1 }
+      - { op: log, type: recovered, key: log.discharge }
+      - { op: say, kind: soft, group: events, key: discharge }
+  - id: outing_end
+    trigger: end
+    flag: outing
+    do:
+      - { op: mood, delta: 0.05 }
+      - { op: log, type: event, key: log.outing_back }
+      - { op: say, kind: soft, group: life, key: outing_back }
+  - id: play_together_baby
+    trigger: tick
+    when: { stage: [infant, toddler], sleeping: false, with: { stage: [elder], same_room: true } }
+    rate_per_hour: 6
+    do:
+      - { op: need, need: play, delta: 0.12 }
+      - { op: mood, delta: 0.02 }
+      - { op: say, kind: soft, group: life, key: play_together }
+  - id: play_together_elder
+    trigger: tick
+    when: { stage: [elder], sleeping: false, with: { stage: [infant, toddler], same_room: true } }
+    rate_per_hour: 6
+    do:
+      - { op: need, need: company, delta: 0.12 }
+      - { op: mood, delta: 0.02 }
+      - { op: say, kind: soft, group: life, key: play_with_baby }
+  - id: clear_hurt
+    trigger: action
+    when: { flag: [hurt] }
+    do:
+      - { op: flag_clear, name: hurt }
+  - id: milestone
+    trigger: action
+    when: { care_total_in: [10, 50, 100, 300] }
+    stop: true
+    do:
+      - { op: say, kind: speech, group: events, key: 'milestone_{care_total}' }
+  - id: after_fall
+    trigger: action
+    when: { flag: [hurt] }
+    chance: 0.8
+    stop: true
+    do:
+      - { op: say, kind: speech, group: events, key: after_fall }
+  - id: visit_hospital
+    trigger: action
+    when: { flag: [hospital] }
+    chance: 0.6
+    stop: true
+    do:
+      - { op: say, kind: speech, group: events, key: visit_hospital }
+  - id: festival_newyear
+    trigger: tick
+    when: { dates: ['01-01'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_newyear }
+  - id: festival_valentine
+    trigger: tick
+    when: { dates: ['02-14'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_valentine }
+  - id: festival_children
+    trigger: tick
+    when: { dates: ['06-01'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_children }
+  - id: festival_national
+    trigger: tick
+    when: { dates: ['10-01'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_national }
+  - id: festival_halloween
+    trigger: tick
+    when: { dates: ['10-31'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_halloween }
+  - id: festival_christmas
+    trigger: tick
+    when: { dates: ['12-24', '12-25'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_christmas }
+  - id: festival_spring
+    trigger: tick
+    when: { dates: ['2026-02-17', '2027-02-06', '2028-01-26', '2029-02-13', '2030-02-03'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_spring }
+  - id: festival_midautumn
+    trigger: tick
+    when: { dates: ['2026-09-25', '2027-09-15', '2028-10-03', '2029-09-22', '2030-09-12'], sleeping: false, hour_from: 8, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: festival_midautumn }
+  - id: anniv_7
+    trigger: tick
+    when: { days_together_in: [7], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_7 }
+  - id: anniv_30
+    trigger: tick
+    when: { days_together_in: [30], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_30 }
+  - id: anniv_100
+    trigger: tick
+    when: { days_together_in: [100], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_100 }
+  - id: anniv_365
+    trigger: tick
+    when: { days_together_in: [365], sleeping: false, hour_from: 9, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 3
+    do:
+      - { op: say, kind: soft, group: life, key: anniv_365 }
+  - id: weekend
+    trigger: tick
+    when: { weekday: [0, 6], sleeping: false, hour_from: 9, hour_to: 20 }
+    once_per_day: true
+    rate_per_hour: 0.6
+    do:
+      - { op: say, kind: soft, group: life, key: weekend }
+  - id: greet_morning
+    trigger: tick
+    when: { sleeping: false, hour_from: 6, hour_to: 9 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: greet_morning }
+  - id: goodnight
+    trigger: tick
+    when: { sleeping: false, hour_from: 21, hour_to: 23 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: goodnight }
+  - id: lunch
+    trigger: tick
+    when: { sleeping: false, hour_from: 11.5, hour_to: 13 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: lunch }
+  - id: feeling_low
+    trigger: tick
+    when: { sleeping: false, min_frailty: 0.6 }
+    once_per_day: true
+    rate_per_hour: 1.5
+    do:
+      - { op: say, kind: soft, group: life, key: feeling_low }
+      - { op: mood, delta: -0.02 }
+  - id: rain
+    trigger: tick
+    when: { sleeping: false, hour_from: 7, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 0.03
+    do:
+      - { op: say, kind: soft, group: life, key: rain }
+  - id: power_cut
+    trigger: tick
+    when: { sleeping: false, hour_from: 18, hour_to: 23 }
+    once_per_day: true
+    rate_per_hour: 0.015
+    do:
+      - { op: say, kind: soft, group: life, key: power_cut }
+      - { op: need, need: company, delta: -0.1 }
+  - id: package
+    trigger: tick
+    when: { sleeping: false, hour_from: 9, hour_to: 19 }
+    once_per_day: true
+    rate_per_hour: 0.04
+    do:
+      - { op: say, kind: soft, group: life, key: package }
+  - id: neighbor
+    trigger: tick
+    when: { sleeping: false, hour_from: 9, hour_to: 20 }
+    once_per_day: true
+    rate_per_hour: 0.03
+    do:
+      - { op: say, kind: soft, group: life, key: neighbor }
+      - { op: mood, delta: 0.03 }
+  - id: old_song
+    trigger: tick
+    when: { sleeping: false, hour_from: 17, hour_to: 22 }
+    once_per_day: true
+    rate_per_hour: 0.03
+    do:
+      - { op: say, kind: soft, group: life, key: old_song }
+      - { op: mood, delta: 0.03 }
+  - id: old_photo
+    trigger: tick
+    when: { sleeping: false, hour_from: 10, hour_to: 21 }
+    once_per_day: true
+    rate_per_hour: 0.02
+    do:
+      - { op: say, kind: soft, group: life, key: old_photo }

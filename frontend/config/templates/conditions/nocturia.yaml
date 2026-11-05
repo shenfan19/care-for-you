@@ -1,0 +1,22 @@
+version: 5
+id: nocturia
+label: 夜尿多
+night_help: true        # 夜里想上厕所要人帮，声音不大
+dispatch_care: true     # 由看护调度派人照顾
+needs:
+  toilet: { label: 想上厕所, icon: "🚽", rate: 0.05 }
+actions:
+  lead: { label: 扶去厕所, hold: 4, min: 8, effect: { toilet: 1 } }
+  nightlight: { label: 开小夜灯, hold: 2, min: 2, effect: { toilet: 0.3 }, flag: { name: nightlight, minutes: 480 } }
+  selftoilet: { label: 自己去厕所, selfonly: true, self: [adult, elder], hold: 1, min: 5, effect: { toilet: 0.8 } }
+lines:
+  request:
+    toilet: ["{ta}又起来了，摸索着往厕所走。", "{ta}说夜里要起好几次。"]
+events:
+  pre_sleep:
+    evening: true
+    say: 睡前想喝点水吗？
+    choices:
+      - { label: 喝一小口, mood: 0.03, frailty: 0.0, reply: "{ta}抿了一小口，说够了。" }
+      - { label: 喝一大杯, liked: true, mood: 0.08, frailty: 0.03, reply: "{ta}喝得很痛快。你知道夜里怕是要起来了。" }
+      - { label: 不喝了，漱漱口, mood: -0.02, frailty: -0.02, reply: "{ta}点点头，说也行。" }

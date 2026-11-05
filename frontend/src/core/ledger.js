@@ -1,4 +1,4 @@
-/* 贡献统计：谁照顾了谁，谁盯着孩子多久，谁夜里被叫醒，谁做了饭，谁的需求没有被顾上。按游戏日记，每天一份，留最近九十天。
+/* 贡献统计：谁照顾了谁，谁盯着孩子多久，谁夜里被叫醒，谁做了饭，谁的需求没有被顾上。按游戏日记，每天一份，留最近多少天和多重算没被顾上，在 templates/engine.yaml 的 ledger 里。
    这是一个可选模块，总开关是 templates/system.yaml 的 modules.ledger，默认关，只在开发者模式里看。关着的时候，听到事件什么也不记，也不占存档。
    本模块只听 G.bus，不被任何别的系统调用，别的系统也不知道它在不在；拆掉它，删掉这个文件和清单里的一行即可。
 
@@ -14,7 +14,6 @@
    访客不算家里人，不进统计。 */
 (function (CY) {
   const G = CY.game;
-  const KEEP = 90, URGENT = 0.8;
   const L = G.ledger = {};
   const on = () => G.module('ledger');
   const store = () => (G.world.ledger = G.world.ledger || { days: {} });
@@ -24,7 +23,7 @@
   };
   const fam = id => { const p = G.get(id); return !!p && !p.person.visitor; };
   const remember = (d, id) => { const p = G.get(id); if (p) d.names[id] = p.person.name; };
-  const trim = () => { const s = store(), ks = Object.keys(s.days).map(Number).sort((a, b) => a - b); while (ks.length > KEEP) delete s.days[ks.shift()]; };
+  const trim = () => { const s = store(), ks = Object.keys(s.days).map(Number).sort((a, b) => a - b); while (ks.length > G.E('ledger').keep_days) delete s.days[ks.shift()]; };
 
   G.bus.on('care', e => {
     if (!on() || !e.target || !fam(e.target) || (e.actor && !fam(e.actor))) return;
@@ -47,7 +46,7 @@
     const d = today();
     for (const p of G.activePeople()) {
       if (p.person.visitor || !G.isHuman(p)) continue;
-      for (const k in p.state.needs) if (G.need(p, k) >= URGENT) { const o = d.neglect[p.id] = d.neglect[p.id] || {}; o[k] = (o[k] || 0) + e.gmin; remember(d, p.id); }
+      for (const k in p.state.needs) if (G.need(p, k) >= G.E('ledger').urgent_level) { const o = d.neglect[p.id] = d.neglect[p.id] || {}; o[k] = (o[k] || 0) + e.gmin; remember(d, p.id); }
     }
   });
 

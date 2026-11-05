@@ -63,8 +63,16 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   for (const p of G.people) for (const mk of Object.values(G.journal[p.id] || {})) for (const e of mk) if (e.k === 'log.assist') { seen++; if (e.a.name !== p.person.name || e.a.who === p.person.name) wrong++; }
   check('log.assist 里 who 是出手的人，name 是被照顾的人，没有写反（宝宝替我照顾了爷爷这类）', seen > 0 && wrong === 0, seen + ' 条，错 ' + wrong);
   const ex = journal.find(e => e.k === 'log.assist');
-  check('记录的文字：出手的人替你照顾了被照顾的人', ex && /^.+替你照顾了.+：/.test(G.entryText(ex)) && G.entryText(ex).startsWith(ex.a.who + '替你照顾了' + ex.a.name), ex && G.entryText(ex));
+  check('记录的文字：直说谁照顾了谁，不说替你', ex && G.entryText(ex).startsWith(ex.a.who + '照顾了' + ex.a.name + '：'), ex && G.entryText(ex));
 
+  /* 做饭：先记谁做了饭，再记全家吃上了；同一时刻按写入先后，新的在上 */
+  {
+    const cook = P('奶奶'), act = Object.values(G.allActionsOf(cook)).find(a => a.id === 'cook');
+    const before = Object.values(G.journal[cook.id] || {}).flat().length;
+    G.selfAct(cook, act, 'hunger', false);
+    const added = Object.values(G.journal[cook.id]).flat().slice(before);
+    check('自己做饭：先记"自己做了顿饭"，再记"一顿饭做好了"', added.length >= 2 && added[0].type === 'self' && added[1].k === 'log.meal_all' && added[1].seq > added[0].seq, JSON.stringify(added.map(e => e.k)));
+  }
   /* 访客不进统计 */
   G.bus.emit('care', { kind: 'family', actor: P('妈妈').id, target: 'no-such-id', action: 'meal' });
   check('不存在的人不进统计', !Object.keys(G.ledger.sum().acts).some(k => k.endsWith('>no-such-id')));

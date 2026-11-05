@@ -1,0 +1,164 @@
+version: 4
+# 规则代码里的数都写在这里，改数不改代码。源头是这个 YAML，部署前 tools/build_config.js 把它打包成 templates_packed.js；
+# 读不到的键直接报错，代码里不给默认值，所以缺了哪一项一运行就知道。改了内容把 version 加一，旧存档才会更新。
+economy:
+  work_hours_default: [540, 1080]   # 设置里的工作时段写得不对时用，单位是一天里的分钟，九点到十八点
+  wage: 52                  # 工作时段在书桌前，每标准游戏小时。标准模式现实 24 分钟一天，其中工作 9 分钟；挂机约一小时买第一张床，三小时多买第二张，挂机十分钟够买一件礼物
+  pension: 5                # 老人主角的退休金，每标准游戏小时，固定，不用到书桌前
+  start_money: 200
+  mood_eff_min: 0.4         # 效率不低于四成，不会越穷越没法挣
+  load:                     # 收益效率由负荷决定：每个人没被照顾到的程度乘依赖度，加总后除以主角能顾及的容量
+    weight: { infant: 1, toddler: 0.8, child: 0.4, teen: 0.15, adult: 0.1, elder: 0.4 }
+    weight_default: 0.1
+    bedridden: 2
+    animal: 0.15
+    plant: 0.03
+    self: 0.3
+    capacity: 1
+    helper: 0.3
+    helper_mood: 0.5
+    bonus_each: 0.08
+    bonus_cap: 0.6
+    bonus_mood: 0.6
+  focus: { floor: 0.2, minutes: 20 }   # 工作专注：坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟
+  beds:
+    family: 6               # 家里三间卧室，夫妻，孩子，老人各两张，婴儿睡婴儿床不占床位
+    guest_max: 3            # 客房一开始一张，最多三张
+    price: { 1: 600, 2: 400 }   # 客房床第二张，第三张的价格，键是已有的张数
+    price_default: 600
+  grocery_bonus: { hunger: 0.15, mood: 0.02, table_minutes: 90 }
+shop:
+  items:                    # 价格按前台一天五分钟重标；daily 日用品，decor 装饰；boost 是做某个动作的当次加成，outing_scale 是轮椅出门的好处倍数
+    - { id: toy, cat: daily, price: 80, icon: "🧸", boost: { need: play, scale: 1.4, mood: 0.02, stages: [infant, toddler] } }
+    - { id: fruit, cat: daily, price: 200, icon: "🍎", boost: { need: hunger, scale: 1.4 } }
+    - { id: books, cat: daily, price: 400, icon: "📚", boost: { need: play, scale: 1, mood: 0.04, stages: [child, teen, adult, elder] } }
+    - { id: stroller, cat: daily, price: 400, icon: "👶" }
+    - { id: wheelchair, cat: daily, price: 600, icon: "♿", outing_scale: 1.25 }
+    - { id: cabinet, cat: decor, price: 300, icon: "🏺" }
+    - { id: decor1, cat: decor, price: 160, icon: "🪴" }
+    - { id: decor2, cat: decor, price: 350, icon: "🛋", needs: decor1 }
+    - { id: decor3, cat: decor, price: 550, icon: "📻", needs: decor2 }
+visitors:
+  door: { gifts_per_day: 2, gift_max: 3, stay_min: 1, stay_max: 3, gap_hours: [5, 18], arrive_from: 8, arrive_to: 21, hint_gap: [40, 70], door_room: yard, meet_chance: 0.06, fam_gap: [90, 150], ask_gap: [70, 130] }
+  pick:                     # 选人的倾向：每个地区总权重相等；医疗略加，政治军事减；界面语言所在的地区略加；上一位同地区的略减
+    field: { med: 1.3, pol: 0.5 }
+    home: 1.5
+    repeat: 0.5
+    home_of: { zh-CN: [ea], zh-TW: [ea], ja: [ea], ko: [ea], de: [eu], fr: [eu], es: [eu, am] }
+  fav: { ok: 30, max: 50, like: 30, other: 4, care: 30, ask: 6 }
+  soft_clamp: [0.6, 1.5]             # 各领域来客权重的平滑范围
+  pick_base: { souvenir: 0.15, met: 2, fresh: 3 }   # 选人的基础权重：已经有纪念品的，见过的，没见过的
+  arrival_mood: 0.55
+  door_walk_ms: 15000
+  trio_weight: 0.5                   # 三人同遇时的权重
+  trio_size: 3
+  first_hint_ms: 8000   # 内部五十分，界面五颗星，十分一颗；三颗星满足
+time:
+  legacy_speeds: [1, 6, 24, 60]      # 旧的四档，界面已不用，只留给测试
+  fast_speeds: [2, 4, 6]             # 加速模式是标准的几倍
+  day: { start: 840, end: 1440, minutes: 5 }   # 第一天的时段：14:00 到 24:00，现实 minutes 分钟走完
+  pace_base: 120                     # 配速：流速不超过它时需求跟着钟面走
+  start_minute: 480                  # 新档从早上八点开始
+  speed_max: 360
+  hold: { max: 6, min: 1, base: 0.6, slope: 0.65 }   # 长按秒数 = clamp(base + slope × 开方（动作花的游戏分钟）)
+clock:
+  default_shift: 480                 # 游戏钟面和游戏分钟的默认差，分钟
+  night_from: 22
+  night_to: 6
+ledger:
+  keep_days: 90                      # 贡献统计留最近多少个游戏日
+  urgent_level: 0.8                  # 需求压力到这里算"没被顾上"
+household:
+  helper_max_need: 0.8               # 家人需求压力低于这个值才算有空帮忙
+  outing_follow_mood: 0.05           # 被带出门的人心情加这么多
+  stroller_mood: 0.04                # 婴幼儿用着婴儿车出门，心情另加这么多
+needs:
+  init_floor: 0.1                    # 新角色起始的需求：水平从 1 减 (floor + 随机 × spread)
+  init_spread: 0.2
+social:                              # 同一个房间的两个人偶尔自己聊几句，玩一会儿
+  interval_seconds: [20, 40]         # 隔多少秒看一次，第一个数也是开局的等待
+  meal: { min_eaters: 3, gap_hours: 3, hunger: 0.35, thirst: 0.2, mood: 0.03 }   # 饭点厨房里三个以上的人一起吃一顿
+  chance: { base: 0.05, want: 0.45, pets_factor: 0.5 }   # 互动几率 = (base + want × 两人最高的陪伴或玩耍需求) × (只有宠物时乘 pets_factor)
+  chat: { company: 0.2 }
+  play: { target_play: 0.25, target_company: 0.2, helper_company: 0.1 }
+  pets: { play: 0.2 }
+  pet: { company: 0.2, play: 0.15 }
+  mood: 0.02
+  pair_gap_minutes: 90               # 同一对人隔多久才再互动
+hash:                                # 稳定的小哈希，同一个输入永远同一个结果，用来错开人的作息，挑每日小结的说法，来客的先后
+  fnv_offset: 2166136261
+  fnv_prime: 16777619
+  modulus: 4294967296
+  settle_seed: 7
+  settle_mult: 31
+  sig_seed: 5381
+  sig_mult: 33
+  id_mult: 31
+settle:
+  variants: 6                        # 每句小结最多几种说法
+  offline_notes: 3                   # 离线时最多写几件事
+  max_notes: 6                       # 来客的事最多留几件
+  end_line_below: 6                  # 句数少于这个数，才加一句收尾
+  max_lines: 7                       # 一天的小结最多几句
+  mood_default: 0.6                  # 没有人时的平均心情
+  mood_good: 0.7
+  mood_low: 0.45
+directives:
+  drive_min_gap_ms: 5000             # 远程后端的指令，至少隔这么久才再要一次
+game:
+  interrupt_gap_minutes: { often: [20, 60], normal: [60, 180], rare: [240, 600] }   # 两次打扰之间隔多少游戏分钟，在范围里随机
+  test_gap_seconds: [15, 40]         # 测试档，现实秒
+  min_gap_seconds: 20                # 不管流速多快，两次打扰至少隔这么多现实秒
+  retry_ms: 5000                     # 间隔算不出来时，隔多久再试
+  person:
+    legacy_skin_map: [1, 2, 4, 5, 6, 7]   # 旧存档里肤色序号换成现在的肤色编号
+    default_age: 35
+    start_mood: 0.6
+    start_frailty: 0.1
+    talkative_default: 0.5
+    id_mod: 1296                     # 角色编号里序号和随机数各取两位三十六进制
+  class_defaults: { urgency: 1, self_care: 0.3, cry_at: 0.8, wake_at: 0.95, self_care_cap: 0.98 }   # 类别里没写的字段用这些
+  need_rate_default: 0.05            # 需求没写速率时用
+  action_min: { floor: 3, hold_default: 3, hold_factor: 3 }   # 动作没写 min 时：max(floor, (hold 或 hold_default) × hold_factor) 游戏分钟
+  actor_slow: { elder: 1.6 }         # 老人当主角，同一个动作要长按更久
+  routine: { meal_jitter: 0.5, morning_bath_offset: 0.6, morning_bath_spread: 0.5 }
+  rhythm_lead_hours: 0.3             # 饭点前多久开始饿
+  sleep_window: { nocturnal: [10, 18], default_bed: 22, default_wake: 6.5 }   # 夜行动物睡觉的钟点；没有作息的人的睡觉与起床钟点
+  nap_min_level: 0.3                 # 午睡时间里，疲倦压力要到这个值才睡
+  mood_bands: { great: 0.75, ok: 0.5, low: 0.3 }
+  age_buckets: { infant_months: [4, 7], toddler_years: [2, 3], child_years: 7, kid_age: 13 }   # 台词按月龄和年龄分档，小孩的年龄线
+  recent_window_ms: 600000           # 同一个人同一句话，这么久内不重复
+  save_debounce_ms: 400
+  pops_max: 40
+  learn: { resp_keep: 0.8, needy_fast: 0.03, needy_slow: 0.01, fast_latency: 10, needy_min: 0.1, needy_max: 0.95, needy_drop: 0.03, k_slope: 0.15, k_min: 0.3, k_max: 2.5, needy_weight_base: 0.4 }
+  self_act: { efficiency: 0.7, mood: 0.02 }   # 角色自己动手：效果打折，心情加一点
+  frailty_cross: { weak: 0.7, recover: 0.5 }  # 虚弱度跨过这两条线记一笔
+  hist: { step: 15, keep: 600 }               # 状态曲线：每隔多少游戏分钟记一点，最多留多少点
+  test_boost: 30                     # 测试档需求涨得快多少倍
+  need_dynamics:
+    rest_sleep_recovery: 0.12        # 睡着时疲倦每游戏小时恢复多少
+    sleeping_growth: 0.4             # 睡着时其他需求涨的速度乘这个
+    hospital_growth: 0.25            # 住院时需求涨的速度乘这个
+    offline_cap: 0.7                 # 离线推进时需求最多涨到这里
+    mood_target_slope: 0.7           # 心情目标 = 1 − slope × 最高需求压力 + 修正
+    mood_relax: 0.5                  # 心情每游戏小时向目标松弛的比例
+    self_act_level: 0.7              # 没人管时，需求压力超过这个才会自己动手
+    self_act_rate: 1.2
+    frailty_up_level: 0.9            # 最高需求压力超过这个，虚弱度上升
+    frailty_up: 0.02
+    frailty_down_level: 0.4          # 最高需求压力低于这个，虚弱度下降
+    frailty_down: 0.01
+  toasts: { reveal_ms: 16000, cry_ms: 6500, self_ms: 7000, default_ms: 9000, narrow_width: 560 }
+  pick_options_default: 3
+  evening: { from_hour: 16, to_hour: 21 }     # 晚上才出现的打扰
+  fire: { needy_level: 0.55, needy_level_plant: 0.7, needy_chance: 0.65, weight_floor: 0.01 }
+  care_back: { min_care: 3, cap: 0.3, base: 0.05, per_care: 0.01, reveal_back: 3, reveal_care: 12 }   # 被照顾多了，角色会回报的几率，和揭开心事的条件
+  event_weights: { choice: 0.15, ask: 0.3, pick: 0.2, nudge: 0.07, glance: 0.2, speech: 0.15 }
+  asked_keep: 8
+  need_call_level: 0.5               # 会催的角色，需求压力超过这个才会叫人
+  fold_ms: 120000                    # 请求折叠后，多久作废
+  go_mood_default: 0.08
+  answer_level: 0.4                  # 照顾后需求压力降到这个以下，这次请求算解决
+  time_bands: { morning_to: 11, noon_to: 17 }  # 早，中，晚的分界，夜的分界用 clock
+  answer_reward: { care_mood: 0.1, rest_relief: 0.12 }
+  tick: { dt_max_seconds: 5, ambient_ms: [30000, 40000], first_fire_ms: 4000, autosave_ms: 15000 }

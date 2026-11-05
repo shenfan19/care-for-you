@@ -1,0 +1,11 @@
+version: 4
+id: fish
+label: 金鱼
+food: pet_food
+needs:
+  hunger: { label: 饥饿, icon: "🍚", rate: 0.05 }
+  clean: { label: 水该换了, icon: "🫧", rate: 0.04 }
+actions:
+  pet: { label: 看一看, hold: 1, min: 2, effect: {}, mood: 0.03 }
+  feed: { label: 撒鱼食, hold: 2, min: 2, effect: { hunger: 0.9 } }
+  clean: { label: 换水, hold: 6, min: 20, effect: { clean: 1 } }

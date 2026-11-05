@@ -1,0 +1,110 @@
+version: 11
+# 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
+plan:
+  interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
+bubbles:                      # 画面上同时出现的闲聊气泡不超过 total，窄屏不超过 narrow，超出的排队，前一个说完隔几秒再冒出来；请求在底部的对话卡里，头顶的小标和完成的小图标不算。哭闹不弹气泡，只有头顶图标和身体的动作
+  total: 1
+  narrow: 1
+  gap_seconds: [1.5, 3.5]     # 一个气泡消失或出现后，下一个至少隔多久
+  queue_seconds: 25           # 排队太久的话就不说了
+routine:                      # 作息的节奏：每个角色按自己的类别作息，再加上自己的一点偏差，所以一家人不会同时起床、同时吃饭
+  morning_bath_langs: [en, de, fr, es]   # 这些语言的使用地区习惯早上洗澡，其余晚上洗
+  rhythm:                     # 需求的涨速随一天的时间起伏，饭点前后饿得快，洗澡点前后觉得脏得快，平均下来和原来一样
+    hunger: { lo: 0.6, hi: 3.0, width: 1.2 }
+    thirst: { lo: 0.85, hi: 1.6, width: 1.2 }
+    hygiene: { lo: 0.8, hi: 4.0, width: 1.5 }
+away:                         # 白天离家：卡里写了上班或上学的人按这个时间表出门，到点回来，期间在办公室或学校，不会向家里发请求，也不能当主角
+  work: { from: 8.5, to: 18.0, place: office, room: desk }
+  school: { from: 7.8, to: 16.5, place: school, room: class }
+  spread: 0.4                 # 每个人出门和回家的时间再各加一点自己的偏差，单位小时
+  need_mult: 0.5              # 在外面的时候需求涨得慢一些，单位和学校里有饭吃有水喝有厕所
+  wage: 0.6                   # 上班的人每游戏小时给家里带来的收入，是在家办公时薪的这个倍数
+agents:
+  first_plan_seconds: 8       # 打开后多久向后台要第一次状态
+  pick_noise: 0.05            # 挑照顾动作时的随机扰动，免得每次都选同一个
+  care_min_level: 0.35        # 对方这项需求压力低于这个值，家人就不出手了
+  self_min_level: 0.4         # 自己这项需求压力低于这个值，就不自己动手了
+  care_mood: 0.03             # 家人出手一次，被照顾的人心情加这么多
+  go_mood_default: 0.08       # 带出门的动作没写心情时，加这么多
+  walk_minutes: 0.7           # 走过去帮忙用的游戏分钟
+  request:
+    below: 0.45               # 水平低于这个值的角色才会向别人发请求
+    rate_per_hour: 1          # 超过门槛的角色每游戏小时发请求的次数，成年人一两个小时才有一个需求，很多还能自己完成，所以不是一直在问
+    go_rate_per_hour: 6       # 有位置愿望的角色每游戏小时发邀请的次数
+    scale: 1.0                # 发请求的整体倍率，调低让玩家有更多自己操作的余地，0 为不发
+    max_open: 6               # 同时在路上的请求最多几个
+    wait_seconds: [3, 12]     # 请求发出后，对方多久才反应，在这个范围里随机，单位秒
+  role_weight:                # 挑接收者时的权重，help.proactive 的家人优先
+    helper: 1.5
+    self: 0.7                 # 发给自己，要自己的卡里有这个需求能自己做的动作
+    other: 0                  # 其他人不接请求
+  same_room_bonus: 1.5        # 接收者与发请求的人在同一个房间时权重乘这个数
+  respond:
+    base: 0.7                 # 接收者响应的基础几率
+    mood_weight: 0.6          # 心情的影响，几率乘 (1 - 0.3 + 0.6 × 心情)，心情好更愿意
+    own_level_block: 0.2      # 自己最低的水平低于这个值就不响应别人
+    mood_weight_table: 0.3    # 用帮忙概率表时，心情只做小幅修正
+    well_frailty: 0.5         # 虚弱度低于这个值，并且自己没有急需，算身体好
+    well_level: 0.4           # 自己最低的水平不低于这个值才算没有急需
+    table:                    # 帮忙概率表：帮手的身份，被帮的对象，身体好和不好时愿意帮的几率，从上到下第一行匹配的生效，没有匹配的用 base
+      - { helper: { arch: [paternal_grandma] }, target: baby, well: 0.6, poor: 0.2 }
+      - { helper: { arch: [paternal_grandpa] }, target: baby, well: 0.5, poor: 0.15 }
+      - { helper: { arch: [dad, mom, husband, wife, young_man, young_woman] }, target: baby, well: 0.8, poor: 0.4 }
+      - { helper: { stage: [teen] }, target: baby, well: 0.3, poor: 0.15 }
+      - { helper: { stage: [elder] }, target: pet, well: 0.4, poor: 0.15 }
+      - { helper: { stage: [teen, adult] }, target: pet, well: 0.5, poor: 0.25 }
+    self: 0.5                 # 发给自己时的响应几率
+    ttl_seconds: 120          # 请求多久没响应就作废
+    decline_cooldown_seconds: 90   # 被拒绝后，同一对人多久内不再发同一个请求
+    walk_seconds: 12          # 不在同一个房间时，走过去用的秒数
+    near_seconds: 3           # 在同一个房间时，反应用的秒数
+    efficiency: 0.5           # 卡里没写效率时，别人帮忙的效果比例
+  want:                       # 愿望概率表：状态里的位置愿望，比如狗想去公园，爷爷想上街
+    ttl_seconds: 600
+    respond_alone: 0.6        # 愿望的主人自己能去时，自己去的几率
+    rows:
+      - { id: dog_park, species: [dog], action: walk, chance_per_hour: 0.6, hour_from: 8, hour_to: 19, max_level: { play: 0.7 } }
+      - { id: elder_street, stage: [elder], action: street, chance_per_hour: 0.3, hour_from: 9, hour_to: 17 }
+      - { id: elder_park, stage: [elder], action: park, chance_per_hour: 0.2, hour_from: 9, hour_to: 17 }
+      - { id: kid_park, stage: [toddler, child], action: park, chance_per_hour: 0.3, hour_from: 9, hour_to: 17, max_level: { play: 0.7 } }
+modules:                    # 可选功能的总开关，关掉就等于没有这个功能，原有机制照旧；模块之间不互相依赖
+  dispatch: true            # 看护调度：全家统一决定谁看护谁，谁做哪件事，谁换班去睡
+  shop: true                # 商店：用品，礼物；关掉后婴儿车和轮椅这类解锁要求不再卡人，用品加成，装饰，礼物都不生效
+  ledger: false             # 贡献统计：谁照顾了谁，谁没被顾上；默认关，只在开发者模式里看
+dispatch:                   # 看护调度：全家统一决定谁看护谁、谁做哪件事、谁换班去睡，疲劳都是压力，0 是精神，1 是累垮
+  step_minutes: 5           # 每隔多少游戏分钟决策一次，低于一小时
+  watch_stages: [infant, toddler]   # 醒着时必须有人盯着的阶段
+  act_at: 0.45              # 被照看的人某项需求压力超过它，才派人动手
+  sleep_at: 0.72            # 看护人疲劳到这里，有人接手就去睡
+  floor: 0.95               # 疲劳到这里不再派他，除非没有别人
+  nap_minutes: 120          # 换班去睡的时长
+  watch_extra: 0.03         # 盯着一个人，每游戏小时额外加的疲劳，和手上的活是两条独立的通道
+  hands_extra: 0.04         # 手上的活，每游戏小时额外加的疲劳
+  efficiency: 0.7           # 家人出手的效果，玩家自己动手是 1
+  depl_loss: 0.5            # 疲劳从 sleep_at 涨到 1，出手效果最多再打掉这么多
+  elder_mult: 1.3           # 老人看护同样的时间更累
+  hear:                     # 夜里睡着的人听见哭声后，这一步醒来的几率，按角色卡身份；妈妈最高，爸爸次之，老人再次；全是假设
+    mom: 0.7
+    wife: 0.7
+    young_woman: 0.7
+    dad: 0.4
+    husband: 0.4
+    young_man: 0.4
+    default: 0.35
+  hear_quiet: 0.3           # 没哭只是需求高了，听不见，只能看状态，信号只有哭的这么多
+  hear_help: 0.5            # 夜里要人帮的人叫人的信号强度，比如夜尿多
+  primary_bonus: 0.2        # 几个人都听见了，听得越灵的越优先，妈妈先起来，除非明显更累
+  hear_suppress: 0.6        # 疲劳从 sleep_at 涨到 floor，听见的几率最多再打掉这么多；到了 floor 听不见，由别人判断
+  wake_cost: 0.3          # 派人的代价：睡着的人被叫醒要多付这么多
+  busy_cost: 0.3          # 手上的活没做完要多付这么多
+  load_cost: 0.5          # 已经盯着一个人，再盯一个要多付这么多
+  stick: 0.15             # 现任看护人的粘性，代价减去这么多，不为小差别来回倒手
+  room_bonus: 0.1         # 和被盯的人在同一个房间，代价减去这么多
+  awake_steps: 3          # 被叫醒或被派去盯人的人，保持醒着这么多个决策步
+  walk_minutes: 0.7       # 走到孩子所在的房间用的游戏分钟
+  care_mood: 0.03         # 被家人照顾一次，被照顾的人心情加这么多
+  skip_actions: [doctor, vet, listen, stayclose, album, hand, chat, walkout, game]   # 调度不自己派的动作，要人在场或要玩家决定
+  meal_at: 0.6              # 醒着的人饿到这里，家里需要有人做一顿饭
+  meal_gap: 180             # 两顿饭之间至少隔这么多游戏分钟
+  cook_minutes: 45          # 做一顿饭占手上的活这么久
+  lactating: [mom, wife, young_woman]   # 母乳喂养时，只有这些人能喂婴儿

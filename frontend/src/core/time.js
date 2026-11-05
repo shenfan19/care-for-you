@@ -6,11 +6,11 @@
 (function (CY) {
   const G = CY.game;
   G.timeMode = () => 'real';
-  G.SPEEDS = [1, 6, 24, 60];   /* 旧的四档，界面已不用，只留给测试 */
+  G.constGet('SPEEDS', () => G.E('time').legacy_speeds);   /* 旧的四档，界面已不用，只留给测试 */
   /* 第一天的时段：14:00 到 24:00，现实 minutes 分钟走完，流速由它定下 */
-  G.DAY = { enabled: true, start: 840, end: 1440, minutes: 5 };
+  G.constOnce('DAY', () => Object.assign({ enabled: true }, G.E('time').day));   /* enabled 是运行状态，其余在 engine.yaml */
   G.STD_SPEED = 60;   /* 标准模式：现实 1 秒是游戏 1 分钟，现实 24 分钟是游戏一天 */
-  G.FAST_SPEEDS = [2, 4, 6];   /* 加速模式是标准的几倍 */
+  G.constGet('FAST_SPEEDS', () => G.E('time').fast_speeds);   /* 加速模式是标准的几倍 */
   G.timeModeSetting = () => ((G.cfg.time || {}).mode === 'fast' ? 'fast' : 'standard');   /* 新档默认标准；加速在日历菜单里选，切换时明确告知赚钱不加快 */
   G.fastSpeed = () => { const v = parseFloat((G.cfg.time || {}).fast_speed); return G.FAST_SPEEDS.includes(v) ? v : 2; };
   G.dayRealMinutes = () => { const v = parseFloat((G.cfg.time || {}).day_minutes); return isFinite(v) && v > 0 ? v : G.DAY.minutes; };
@@ -18,22 +18,22 @@
   G.DEV = (() => { try { const m = /[?&]dev=(\d+)/.exec(globalThis.location && location.search || ''); return m ? Math.max(1, +m[1]) : 0; } catch (e) { return 0; } })();
   /* 开发者模式：网址带 ?devtools，或者带 ?dev= 的内部测试入口，界面上多出开发面板和状态曲线，普通玩家看不到 */
   Object.defineProperty(G, 'DEVTOOLS', { get: () => { try { return G.DEV > 0 || /[?&]devtools/.test(globalThis.location && location.search || ''); } catch (e) { return false; } } });
-  G.speed = () => { if (G.DEV) return G.DEV; const raw = (G.cfg.time || {}).speed; if (raw !== undefined && raw !== '') { const v = parseFloat(raw); return isFinite(v) ? Math.min(360, Math.max(1, v)) : 1; } return G.STD_SPEED * (G.timeModeSetting() === 'fast' ? G.fastSpeed() : 1); };
+  G.speed = () => { if (G.DEV) return G.DEV; const raw = (G.cfg.time || {}).speed; if (raw !== undefined && raw !== '') { const v = parseFloat(raw); return isFinite(v) ? Math.min(G.E('time').speed_max, Math.max(1, v)) : 1; } return G.STD_SPEED * (G.timeModeSetting() === 'fast' ? G.fastSpeed() : 1); };
   G.isFast = () => G.speed() > G.STD_SPEED;
   /* 钱按标准模式算：标准下一个游戏小时就是一个计价小时；加速 N 倍就除以 N，每现实秒赚的和标准一样 */
   G.econHours = gmin => gmin / 60 / Math.max(1, G.speed() / G.STD_SPEED);
   /* 新档从早上八点开始，不再跟系统时钟 */
-  G.startMinute = () => (G.DEV ? G.DAY.start : 480);
+  G.startMinute = () => (G.DEV ? G.DAY.start : G.E('time').start_minute);
   /* 游戏日历：新存档从现实当天开始，每过一个游戏日加一天；第几天，星期，节日都按它算 */
   G.gameDate = () => {
     if (!G.world.start_date) { const d = new Date(); G.world.start_date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
     const [y, m, dd] = G.world.start_date.split('-').map(Number);
-    const n = Math.floor((Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) / 1440);
+    const n = Math.floor((Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : G.E('clock').default_shift)) / 1440);
     const d = new Date(y, m - 1, dd + n), pad = x => String(x).padStart(2, '0');
     return { n: n + 1, month: d.getMonth() + 1, day: d.getDate(), weekday: d.getDay(), iso: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), day_index: Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000) };
   };
   /* 配速：默认流速下是 1，需求跟着钟面走，每个人什么时候饿、渴、困贴近真实的间隔；只有测试把流速调得更快时才按比例压低。1 表示不折算 */
-  G.PACE_BASE = 120;
+  G.constGet('PACE_BASE', () => G.E('time').pace_base);
   /* 现实几秒折成几个游戏分钟。外出，小睡这类要让玩家看得见的事，时长按现实秒写，不然一天压成五分钟以后，出去一趟几秒钟就回来了 */
   G.realMin = sec => sec * G.speed() / 60;
   G.outingMinutes = o => (o.seconds ? G.realMin(o.seconds) : o.minutes);
@@ -72,5 +72,5 @@
   G.isPaused = () => false;
   G.inputMode = () => 'hold';
   /* 长按要多少秒：由动作花掉的游戏分钟算出来，不是线性的，开方后压缩。一分钟的小事一秒多，一个小时的大事五秒多，封顶六秒。 */
-  G.holdFor = min => Math.round(Math.min(6, Math.max(1, 0.6 + 0.65 * Math.sqrt(min))) * 2) / 2;
+  G.holdFor = min => { const H = G.E('time').hold; return Math.round(Math.min(H.max, Math.max(H.min, H.base + H.slope * Math.sqrt(min))) * 2) / 2; };
 })(globalThis.CY = globalThis.CY || {});

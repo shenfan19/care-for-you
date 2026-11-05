@@ -1,0 +1,13 @@
+version: 5
+id: arthritis
+label: 关节炎
+legs_bad: true          # 算腿脚不便，没有轮椅出不了门
+needs:
+  joint: { label: 关节疼, icon: "🔥", rate: 0.05 }
+actions:
+  heat: { label: 热敷, hold: 4, min: 15, effect: { joint: 0.9 } }
+  massage: { label: 按摩, hold: 6, min: 20, effect: { joint: 0.6, company: 0.3 }, mood: 0.08 }
+  selfheat: { label: 自己热敷, selfonly: true, self: [adult, elder], hold: 1, min: 15, effect: { joint: 0.6 } }
+lines:
+  request:
+    joint: ["{ta}揉着膝盖，轻轻吸了口气。", "天要变了，腿又疼了。"]

@@ -1,0 +1,11 @@
+version: 4
+id: eczema
+label: 湿疹
+needs:
+  itch: { label: 皮肤发痒, icon: "🩹", rate: 0.06 }
+actions:
+  ointment: { label: 涂药膏, hold: 4, min: 8, effect: { itch: 0.9 } }
+  trimnails: { label: 剪指甲, hold: 5, min: 10, effect: { itch: 0.2 }, mood: 0.04 }
+lines:
+  request:
+    itch: ["{ta}不停地抓着胳膊，皱着眉。", "{ta}哭闹着，小手往身上挠。"]

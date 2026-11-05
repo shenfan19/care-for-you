@@ -1,0 +1,11 @@
+version: 4
+id: depress
+label: 情绪低落
+needs:
+  lowmood: { label: 心情很低落, icon: "🌧", rate: 0.04 }
+actions:
+  listen: { label: 静静听ta说, hold: 7, min: 30, effect: { lowmood: 0.7, company: 0.4 }, mood: 0.1 }
+  walkout: { label: 陪着出去走走, hold: 9, min: 40, effect: { lowmood: 0.5, company: 0.3 }, mood: 0.12 }
+lines:
+  request:
+    lowmood: ["{ta}坐在窗边，很久没有说话。", "{ta}说：没什么，就是提不起劲。"]

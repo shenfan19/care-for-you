@@ -1,0 +1,15 @@
+version: 4
+id: cactus
+label: 仙人掌
+needs:
+  water: { label: 土干了, icon: "💧", rate: 0.004 }
+  sun: { label: 想晒太阳, icon: "☀", rate: 0.012 }
+  fertilize: { label: 该施肥了, icon: "🌱", rate: 0.002 }
+  prune: { label: 该修剪了, icon: "✂", rate: 0.002 }
+actions:
+  pet: { label: 碰碰叶子, hold: 1, min: 1, effect: {}, mood: 0.02 }
+  water: { label: 浇水, hold: 3, min: 5, effect: { water: 1 } }
+  sun: { label: 挪到阳光下, hold: 3, min: 3, effect: { sun: 1 } }
+  fertilize: { label: 施肥, hold: 4, min: 8, effect: { fertilize: 1 } }
+  prune: { label: 修剪, hold: 5, min: 10, effect: { prune: 1 } }
+  repot: { label: 换盆, hold: 6, min: 20, effect: { fertilize: 0.5, prune: 0.4 }, mood: 0.1 }

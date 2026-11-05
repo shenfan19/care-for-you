@@ -14,7 +14,7 @@
      人物卡上写了 away（work 上班，school 上学）的人，到点出门，去办公室或学校，到点回来。出门走的是和外出一样的标记 outing，
      所以在外面的时候不能叫他做事，他也不向家里发请求。家里有需要看护的人（婴儿、幼儿、孩子）而没有一位留在家里的青少年、大人或老人时，谁也不出门 */
   const awayCfg = () => (G.tpl && G.tpl.system && G.tpl.system.away) || {};
-  const hash = (id, salt) => { let h = 2166136261; for (const ch of String(id) + salt) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0; return h / 4294967296; };
+  const hash = (id, salt) => { const H = G.E('hash'); let h = H.fnv_offset; for (const ch of String(id) + salt) h = Math.imul(h ^ ch.charCodeAt(0), H.fnv_prime) >>> 0; return h / H.modulus; };
   G.homeCaregiver = () => G.activePeople().some(q => G.isHuman(q) && ['teen', 'adult', 'elder'].includes(G.stage(q)) && !q.person.away);
   G.needsCaregiver = () => G.activePeople().some(q => G.isHuman(q) && !q.person.away && G.classOf(q).needs_caregiver);
   G.awayWindow = p => { const c = awayCfg(), w = c[p.person.away]; if (!w) return null; const sp = c.spread || 0; return { from: w.from + (hash(p.id, 'af') * 2 - 1) * sp, to: w.to + (hash(p.id, 'at') * 2 - 1) * sp, w }; };
@@ -96,7 +96,7 @@
       else if (group.length === 1) G.logK(m.id, 'event', 'log.outing_start', { name: m.person.name, place });
       else if (m === p) G.logK(m.id, 'event', 'log.outing_lead', { name: m.person.name, others: names, place });
       else G.logK(m.id, 'event', 'log.outing_follow', { name: m.person.name, lead: p.person.name, place });
-      if (m !== p) m.state.mood = clamp(m.state.mood + 0.05 + (G.hasItem('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? 0.04 : 0));
+      if (m !== p) m.state.mood = clamp(m.state.mood + G.E('household').outing_follow_mood + (G.hasItem('stroller') && ['infant', 'toddler'].includes(G.stage(m)) ? G.E('household').stroller_mood : 0));
     }
   };
 
@@ -104,15 +104,17 @@
   /* 疾病数据里标了 needs_escort 的人，比如帕金森，不会自己一个人出门，要有人陪 */
   G.needsEscort = p => !!p && (p.person.conditions || []).some(c => (G.tpl.conditions[c] || {}).needs_escort);
   G.canHelp = p => !!p.person.helper && G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)) && p !== G.protagonist();
-  G.helpers = () => G.activePeople().filter(p => G.canHelp(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty') && G.maxNeed(p) < 0.8);
+  G.helpers = () => G.activePeople().filter(p => G.canHelp(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty') && G.maxNeed(p) < G.E('household').helper_max_need);
 
   /* ---------- 人和人之间：在同一个房间的两个人，偶尔自己聊几句、玩一会儿、逗逗宠物，需求会降一点，发生的事里留一句 ---------- */
   const socialCd = {}, SMALL = ['infant', 'toddler', 'child'];
-  let socialT = 20;
+  let socialT = null;   /* 开局的等待从配置里取 */
   const lower = (p, k, v) => { if (k in p.state.needs) p.state.needs[k] = clamp(p.state.needs[k] + v); };   /* 名字沿用，意思是这一项需求缓解了 v，也就是水平升 v */
   G.socialTick = dt => {
+    const SC = G.E('social'), [lo, hi] = SC.interval_seconds;
+    if (socialT === null) socialT = lo;
     socialT -= dt; if (socialT > 0) return;
-    socialT = 20 + Math.random() * 20;
+    socialT = lo + Math.random() * (hi - lo);
     const W = CY.world, lead = G.protagonist(), now = Date.now(), byRoom = {};
     for (const p of G.activePeople()) {
       if (p === lead || p.person.kind === 'plant' || G.isSleeping(p) || G.flag(p, 'hospital') || G.flag(p, 'outing')) continue;
@@ -120,9 +122,9 @@
     }
     /* 饭点厨房里有三个以上的人，就一起吃一顿：不是婴幼儿的人饿和渴降下去，每个饭点一次 */
     const kit = byRoom['home/kitchen'] || [], eaters = kit.filter(p => G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)));
-    if (W.isMealTime() && eaters.length >= 3 && (socialCd.meal || 0) < now) {
-      socialCd.meal = now + 3 * 3600 * 1000;
-      for (const q of eaters) { lower(q, 'hunger', 0.35); lower(q, 'thirst', 0.2); q.state.mood = clamp(q.state.mood + 0.03); }
+    if (W.isMealTime() && eaters.length >= SC.meal.min_eaters && (socialCd.meal || 0) < now) {
+      socialCd.meal = now + SC.meal.gap_hours * 3600 * 1000;
+      for (const q of eaters) { lower(q, 'hunger', SC.meal.hunger); lower(q, 'thirst', SC.meal.thirst); q.state.mood = clamp(q.state.mood + SC.meal.mood); }
       G.logK(eaters[0].id, 'event', 'social.meal', { n: eaters.length });
     }
     for (const room in byRoom) {
@@ -133,19 +135,19 @@
       const key = [a.id, b.id].sort().join();
       if ((socialCd[key] || 0) > now) continue;
       const want = Math.max(G.need(a, 'company'), G.need(b, 'company'), G.need(a, 'play'), G.need(b, 'play'));
-      if (Math.random() > (0.05 + 0.45 * want) * (!ha && !hb ? 0.5 : 1)) continue;
+      if (Math.random() > (SC.chance.base + SC.chance.want * want) * (!ha && !hb ? SC.chance.pets_factor : 1)) continue;
       let kind, who, tgt;
       if (ha && hb) {
         const sa = SMALL.includes(G.stage(a)), sb = SMALL.includes(G.stage(b));
         if (sa !== sb) { kind = 'play'; who = sa ? b : a; tgt = sa ? a : b; } else { kind = 'chat'; who = a; tgt = b; }
       } else if (!ha && !hb) { kind = 'pets'; who = a; tgt = b; }
       else { kind = 'pet'; who = ha ? a : b; tgt = ha ? b : a; }
-      if (kind === 'chat') { lower(a, 'company', 0.2); lower(b, 'company', 0.2); }
-      else if (kind === 'play') { lower(tgt, 'play', 0.25); lower(tgt, 'company', 0.2); lower(who, 'company', 0.1); }
-      else if (kind === 'pets') { lower(a, 'play', 0.2); lower(b, 'play', 0.2); }
-      else { lower(tgt, 'company', 0.2); lower(tgt, 'play', 0.15); }
-      for (const q of [a, b]) q.state.mood = clamp(q.state.mood + 0.02);
-      socialCd[key] = now + 90 * 60 * 1000;
+      if (kind === 'chat') { lower(a, 'company', SC.chat.company); lower(b, 'company', SC.chat.company); }
+      else if (kind === 'play') { lower(tgt, 'play', SC.play.target_play); lower(tgt, 'company', SC.play.target_company); lower(who, 'company', SC.play.helper_company); }
+      else if (kind === 'pets') { lower(a, 'play', SC.pets.play); lower(b, 'play', SC.pets.play); }
+      else { lower(tgt, 'company', SC.pet.company); lower(tgt, 'play', SC.pet.play); }
+      for (const q of [a, b]) q.state.mood = clamp(q.state.mood + SC.mood);
+      socialCd[key] = now + SC.pair_gap_minutes * 60 * 1000;
       G.bus.emit('care', { kind: 'social', actor: who.id, target: tgt.id, action: kind });
       G.logK(tgt.id, 'event', 'social.' + kind, { a: who.person.name, b: tgt.person.name });
     }

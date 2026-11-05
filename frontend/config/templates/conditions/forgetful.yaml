@@ -1,0 +1,13 @@
+version: 5
+id: forgetful
+label: 记性变差
+needs_watch: true       # 醒着时要有人盯着，进看护调度的盯人通道
+dispatch_care: true     # 由看护调度派人照顾
+needs:
+  reorient: { label: 又问了一遍, icon: "❓", rate: 0.05 }
+actions:
+  remind: { label: 耐心再说一遍, hold: 4, min: 5, effect: { reorient: 1 }, mood: 0.06 }
+  album: { label: 翻老相册, hold: 7, min: 30, effect: { reorient: 1, company: 0.5 }, mood: 0.12 }
+lines:
+  request:
+    reorient: ["我的钥匙放哪了？", "今天几号了？", "{ta}站在门口，不记得要去哪儿了。"]

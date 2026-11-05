@@ -6,7 +6,8 @@ const path = require('path');
 const Pol = require('../src/core/dispatch_policy.js');
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
-const C = Pol.config();
+const jsyaml = require('../vendor/js-yaml.min.js'), fs = require('fs');
+const C = Pol.config(jsyaml.load(fs.readFileSync(path.join(__dirname, '..', 'config', 'templates', 'system.yaml'), 'utf8')).dispatch);   /* 参数的唯一来源是 YAML，策略模块没有默认值 */
 const D = { plan: Pol.plan, validate: (raw, S, c) => Pol.validate(raw, S, c).plan, snapshot: true, apply: true, policy: null };
 const person = (id, stage, o = {}) => Object.assign({ id, stage, role: '', roll: 0, watch: ['infant', 'toddler'].includes(stage), cries: ['infant', 'toddler', 'child'].includes(stage), cry_at: 0.8, night_help: false, dep: ['infant', 'toddler', 'child'].includes(stage), lead: false, asleep: false, bedridden: false, away: false, room: 'living', fatigue: 0.2, needs: { rest: 0.2 }, urgency: 0.3, hands: false }, o);
 const snap = (people, duty) => ({ t: 0, night: false, duty: duty || {}, people });
@@ -107,7 +108,7 @@ const sim = (kind, days, seed) => JSON.parse(execFileSync(process.execPath, [pat
   check('I9 外部决策结构残缺被丢掉', D.validate({ foo: 1 }, S9, C).watch.baby === 'dad');
   check('I9 合规的外部决策原样通过', D.validate({ watch: { baby: 'dad' }, tasks: [{ cg: 'dad', target: 'baby', need: 'hunger' }], wake: [], sleep: [] }, S9, C).tasks.length === 1);
   check('I9 外部决策让一个人一步做两件事被丢掉', D.validate({ watch: { baby: 'dad' }, tasks: [{ cg: 'dad', target: 'baby', need: 'hunger' }, { cg: 'dad', target: 'baby', need: 'rest' }], wake: [], sleep: [] }, S9, C).tasks.length <= 1);
-  check('I9 策略模块对外只有 config plan validate model', ['config', 'plan', 'validate', 'model', 'DEFAULTS'].every(k => k in Pol));
+  check('I9 策略模块对外只有 config plan validate model REQUIRED，没有默认参数', ['config', 'plan', 'validate', 'model', 'REQUIRED'].every(k => k in Pol));
   const wired = execFileSync(process.execPath, ['-e', "const { CY, G } = require('./tests/harness'); const D = G.dispatch; console.log(['snapshot', 'apply', 'tick', 'plan', 'validate'].every(k => typeof D[k] === 'function') && 'policy' in D && typeof G.dispatchTick === 'function')"], { cwd: path.join(__dirname, '..'), encoding: 'utf8' }).trim().split(String.fromCharCode(10)).pop();
   check('I9 适配层接口齐全：snapshot apply tick plan validate policy', wired === 'true');
   /* 精力模型的公式，单独核对 */

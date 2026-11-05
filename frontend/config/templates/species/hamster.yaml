@@ -1,0 +1,19 @@
+version: 4
+id: hamster
+label: 仓鼠
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.07 }
+  hunger: { label: 饥饿, icon: "🌰", rate: 0.07 }
+  play: { label: 想跑轮, icon: "🎡", rate: 0.05 }
+  clean: { label: 窝该换垫料了, icon: "🧹", rate: 0.03 }
+actions:
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: 0.7 } }
+  pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: 0.7 } }
+  groom: { label: 梳毛, hold: 5, min: 15, effect: { company: 0.3 }, mood: 0.1 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 摸一摸, hold: 1, min: 2, effect: { company: 0.3 }, mood: 0.06 }
+  water: { label: 换水, hold: 3, min: 3, effect: { thirst: 0.9 } }
+  feed: { label: 喂鼠粮, hold: 4, min: 5, effect: { hunger: 0.9 } }
+  play: { label: 放进跑轮, hold: 3, min: 10, effect: { play: 0.9 } }
+  clean: { label: 换垫料, hold: 5, min: 15, effect: { clean: 1 } }

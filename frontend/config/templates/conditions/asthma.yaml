@@ -1,0 +1,11 @@
+version: 4
+id: asthma
+label: 哮喘
+needs:
+  breath: { label: 喘得厉害, icon: "💨", rate: 0.03 }
+actions:
+  inhaler: { label: 用吸入器, hold: 2, min: 3, effect: { breath: 1 } }
+  air: { label: 开窗通风, hold: 2, min: 3, effect: { breath: 0.3 } }
+lines:
+  request:
+    breath: ["{ta}咳了几声，喘得有点急。", "{ta}按着胸口，呼吸有点重。"]

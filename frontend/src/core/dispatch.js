@@ -19,7 +19,7 @@
   const G = CY.game, P = CY.dispatchPolicy;
   const { clamp, applyEffects } = G._h;
   const D = G.dispatch = { policy: null, state: { duty: {}, hands: {}, last: null }, stat: {} };
-  const cfg = () => P.config(G.tpl && G.tpl.system && G.tpl.system.dispatch);
+  const cfg = () => P.config(G.S('dispatch'));
   D.cfg = cfg; D.plan = P.plan;
   D.validate = (raw, S, C) => { const r = P.validate(raw, S, C); if (r.rejected) D.stat.rejected = (D.stat.rejected || 0) + 1; return r.plan; };
 
@@ -68,7 +68,7 @@
     const tire = (q, x) => G.setNeed(q, 'rest', G.need(q, 'rest') + x);
     for (const id of plan.wake) {
       const q = get(id); if (!ok(q) || q === G.protagonist()) continue;
-      G.clearFlag(q, 'nap'); G.setFlag(q, 'awake', { minutes: step * 3 }); G.act[q.id] = G.activityOf(q);
+      G.clearFlag(q, 'nap'); G.setFlag(q, 'awake', { minutes: step * C.awake_steps }); G.act[q.id] = G.activityOf(q);
       S.wakes = (S.wakes || 0) + 1; S.wakeBy = S.wakeBy || {}; S.wakeBy[id] = (S.wakeBy[id] || 0) + 1;
       G.bus.emit('wake', { actor: id, night: !!G.isNight() });
     }
@@ -78,9 +78,9 @@
       if (!ok(who) || who === G.protagonist()) { delete st.duty[id]; S.unmetMin = (S.unmetMin || 0) + step; continue; }
       if (st.duty[id] && st.duty[id] !== who.id) S.handoffs = (S.handoffs || 0) + 1;
       st.duty[id] = who.id;
-      G.setFlag(who, 'awake', { minutes: step * 3 });
+      G.setFlag(who, 'awake', { minutes: step * C.awake_steps });
       const lw = W && W.locationOf(who), ld = W && W.locationOf(dep);
-      if (W && lw.room !== ld.room && lw.place === ld.place) W.goTo(who, ld.room, 0.7, 'help');
+      if (W && lw.room !== ld.room && lw.place === ld.place) W.goTo(who, ld.room, C.walk_minutes, 'help');
       tire(who, P.model.watchFatigue(C, step));
       S.watchMin = (S.watchMin || 0) + step;
       G.bus.emit('watch', { actor: who.id, target: dep.id, minutes: step });
@@ -94,7 +94,7 @@
       const who = get(k.cg), dep = get(k.target); if (!ok(who) || !dep || G.need(dep, k.need) < C.act_at) continue;
       const a = careActionFor(dep, k.need, C); if (!a) continue;
       applyEffects(dep, a, P.model.efficiency(C, G.need(who, 'rest')));
-      dep.state.mood = clamp(dep.state.mood + 0.03);
+      dep.state.mood = clamp(dep.state.mood + C.care_mood);
       if (a.nap && G.isHuman(dep)) G.setFlag(dep, 'nap', { minutes: G.realMin(a.nap) });
       G.act[dep.id] = G.activityOf(dep);
       const mins = Math.max(step, a.min || step); st.hands[who.id] = now + mins;
@@ -106,6 +106,7 @@
     if (plan.cook) {
       const who = get(plan.cook), meal = G.tpl.species.human.actions && G.tpl.species.human.actions.meal;
       if (ok(who) && meal) {
+        G.logK(who.id, 'event', 'log.cooked', { name: who.person.name });   /* 先记谁做了饭，再记全家吃上了 */
         G.shareMeal(who, meal, C.efficiency); st.mealT = now; st.hands[who.id] = now + C.cook_minutes;
         tire(who, P.model.handsFatigue(C, C.cook_minutes));
         S.meals = (S.meals || 0) + 1;

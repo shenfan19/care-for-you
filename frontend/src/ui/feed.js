@@ -27,7 +27,7 @@
   function entries() {
     const out = [];
     for (const pid in G.journal) for (const mk in G.journal[pid]) G.journal[pid][mk].forEach(e => out.push({ pid: pid === 'you' ? G.youId() : pid, e }));   /* 旧存档里记在"你"名下的事，归到操纵对象身上 */
-    return out.sort((a, b) => (a.e.t < b.e.t ? 1 : -1));
+    return out.sort((a, b) => (a.e.t < b.e.t ? 1 : a.e.t > b.e.t ? -1 : (b.e.seq || 0) - (a.e.seq || 0)));   /* 新的在上；同一时刻的，后写的在上 */
   }
   const nameOf = pid => (G.get(pid) ? G.get(pid).person.name : pid === 'you' ? t('player.name') : pid);
   /* ---------- 状态曲线：和发生的事并列的一个标签，现在只在开发者模式里看得到 ----------

@@ -43,21 +43,21 @@
   };
 
   const top = obj => Object.entries(obj).sort((a, b) => b[1] - a[1])[0];
-  const hash = s => { let h = 7; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; };
+  const hash = s => { const H = G.E('hash'); let h = H.settle_seed; for (const c of String(s)) h = (h * H.settle_mult + c.charCodeAt(0)) >>> 0; return h; };
   /* 变体：键 settle.xxx 有 settle.xxx.0 settle.xxx.1 ...，按日期挑一个 */
-  const variant = (key, n) => { const list = []; for (let i = 0; i < 6; i++) if (CY.i18n.has(key + '.' + i)) list.push(key + '.' + i); return list.length ? list[hash(key + n) % list.length] : key; };
+  const variant = (key, n) => { const list = []; for (let i = 0; i < G.E('settle').variants; i++) if (CY.i18n.has(key + '.' + i)) list.push(key + '.' + i); return list.length ? list[hash(key + n) % list.length] : key; };
 
   G.composeDay = (d, offline) => {
     const L = [], line = (k, a) => L.push({ k: variant('settle.' + k, d.n), a: a || {} });
     if (offline) {
       line('away');
-      for (const n of d.notes.slice(0, 3)) L.push(n);
+      for (const n of d.notes.slice(0, G.E('settle').offline_notes)) L.push(n);
       return L;
     }
     /* 访客先说：到来，被照顾，收到礼物，离开，都按发生的顺序 */
     /* 最多六句：先舍家人互动，再舍最早的，遇见的话和别的访客事不丢 */
     const ns = d.notes.slice();
-    while (ns.length > 6) { const i = ns.findIndex(n => /^visit\.fam\./.test(n.k)), j = i >= 0 ? i : ns.findIndex(n => !/^meet\./.test(n.k)); ns.splice(j >= 0 ? j : 0, 1); }
+    while (ns.length > G.E('settle').max_notes) { const i = ns.findIndex(n => /^visit\.fam\./.test(n.k)), j = i >= 0 ? i : ns.findIndex(n => !/^meet\./.test(n.k)); ns.splice(j >= 0 ? j : 0, 1); }
     for (const n of ns) L.push(n);
     /* 家人的日常：照顾得最多的两个人，各挑最常做的一件事 */
     const fam = Object.entries(d.fam || {}).sort((a, b) => (d.care[b[0]] || 0) - (d.care[a[0]] || 0)).slice(0, 2);
@@ -75,10 +75,10 @@
     }
     if (d.bought.length) line('bought', { item: d.bought[0] });
     const people = G.activePeople().filter(p => p.person.kind === 'human');
-    const mood = people.length ? people.reduce((a, p) => a + p.state.mood, 0) / people.length : 0.6;
+    const mood = people.length ? people.reduce((a, p) => a + p.state.mood, 0) / people.length : G.E('settle').mood_default;
     if (!L.length) line('quiet');
-    if (L.length < 6) line(mood >= 0.7 ? 'end_good' : mood < 0.45 ? 'end_low' : 'end_mid');
-    return L.slice(0, 7);
+    if (L.length < G.E('settle').end_line_below) line(mood >= G.E('settle').mood_good ? 'end_good' : mood < G.E('settle').mood_low ? 'end_low' : 'end_mid');
+    return L.slice(0, G.E('settle').max_lines);
   };
 
   G.dateOf = n => {
@@ -102,7 +102,7 @@
   G.settleText = line => (line.k && CY.i18n.has(line.k) ? t(line.k, Object.fromEntries(Object.entries(line.a || {}).map(([k, v]) => [k, v && v.t ? (v.t.reduceRight((fb, kk) => CY.tOr(kk, fb), v.d)) : v]))) : line.text || '');
   /* 存档被手动改过的标记：存盘时写入关键数字的校验，载入时对不上就记一个“已编辑”，分享卡片上会标出来。
      只是诚实的标注，不是防作弊；存档本来就是明文，鼓励自己改着玩 */
-  G.sigOf = (money, souvN, days) => { let h = 5381; for (const c of `${Math.floor(money || 0)}|${souvN}|${days}|care`) h = ((h * 33) ^ c.charCodeAt(0)) >>> 0; return h.toString(16); };
+  G.sigOf = (money, souvN, days) => { const H = G.E('hash'); let h = H.sig_seed; for (const c of `${Math.floor(money || 0)}|${souvN}|${days}|care`) h = ((h * H.sig_mult) ^ c.charCodeAt(0)) >>> 0; return h.toString(16); };
   G.computeSig = () => G.sigOf(G.world.money, Object.keys(G.world.souv || {}).length, G.cal.days.length);
   G.beforeSave = () => { G.world.sig = G.computeSig(); };
   G.afterLoad = () => { if (G.world.sig && G.world.sig !== G.computeSig()) G.world.edited = true; };

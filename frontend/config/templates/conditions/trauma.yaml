@@ -1,0 +1,11 @@
+version: 4
+id: trauma
+label: 创伤后惊醒
+needs:
+  nightmare: { label: 睡不安稳, icon: "🌙", rate: 0.04 }
+actions:
+  stayclose: { label: 陪在身边不说话, hold: 8, min: 30, effect: { nightmare: 0.7, company: 0.4 }, mood: 0.1 }
+  warmdrink: { label: 递一杯热饮, hold: 3, min: 5, effect: { nightmare: 0.4, thirst: 0.3 }, mood: 0.05 }
+lines:
+  request:
+    nightmare: ["{ta}猛地惊醒，抱着自己的胳膊坐了很久。", "{ta}一直看着门口，睡不踏实。"]

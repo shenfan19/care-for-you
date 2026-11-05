@@ -1,0 +1,20 @@
+version: 6
+id: dog
+label: 狗
+food: pet_food
+needs:
+  thirst: { label: 口渴, icon: "💧", rate: 0.09 }
+  hunger: { label: 饥饿, icon: "🍖", rate: 0.09 }
+  company: { label: 想你陪, icon: "🤝", rate: 0.09 }
+  play: { label: 想出去玩, icon: "🎾", rate: 0.12 }
+actions:
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: 0.7 } }
+  pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: 0.7 } }
+  groom: { label: 梳毛, hold: 5, min: 15, effect: { company: 0.3 }, mood: 0.1 }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 摸一摸, hold: 1, min: 2, effect: { company: 0.3 }, mood: 0.06 }
+  water: { label: 换水, hold: 3, min: 3, effect: { thirst: 0.9 } }
+  feed: { label: 喂狗粮, hold: 4, min: 5, effect: { hunger: 0.9 } }
+  play: { label: 扔球, hold: 7, min: 20, effect: { play: 0.9, company: 0.3 } }
+  walk: { label: 遛一圈, hold: 10, min: 40, away: true, outing: { place: park, room: lawn, seconds: 30, group: false }, effect: { play: 1, company: 0.5 }, mood: 0.12 }
+  train: { label: 教口令, hold: 6, min: 20, effect: { play: 0.4, company: 0.3 }, mood: 0.08 }

@@ -1,0 +1,13 @@
+version: 4
+id: fracture
+label: 骨折恢复
+heal_after: { need: pain, count: 8 }
+needs:
+  pain: { label: 伤处疼, icon: "🦴", rate: 0.05 }
+actions:
+  painkill: { label: 吃止痛药, hold: 3, min: 5, effect: { pain: 0.8 } }
+  support: { label: 扶着走几步, hold: 5, min: 15, effect: { pain: 0.1 }, frailty: -0.05, mood: 0.04 }
+  rehab: { label: 陪着做康复动作, hold: 7, min: 30, effect: { pain: 0.3 }, frailty: -0.1, mood: 0.06 }
+lines:
+  request:
+    pain: ["{ta}扶着伤处，倒吸了一口气。", "{ta}说今天伤口又疼了。"]

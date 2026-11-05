@@ -134,3 +134,17 @@ flowchart LR
 | Outings | [outings.md](outings.md) |
 | State bars, work efficiency, money | [state_and_income.md](state_and_income.md) |
 | Fields of the backend interface, writing your own back end | [README_backend_protocol.md](../README_backend_protocol.md) |
+
+## Rules live in YAML, not in code
+
+Every number that tunes a game rule (thresholds, rates, prices, timings, multipliers) is written in a YAML file under `frontend/config/templates`, not in the code. Code reads it through `G.E(section)` for `engine.yaml` and `G.S(section)` for `system.yaml`; a missing key throws an error naming the path, so there are no silent defaults in code.
+
+The page can be opened straight from a local folder, where it cannot fetch other files, so the YAML is packed into a script before deployment. The YAML is the source and the script is its copy; do not edit the script by hand.
+
+```
+node tools/predeploy.js        # pack cards and config, check the copy is current, check no new constants crept into rule code, run the config test
+node tools/build_config.js     # pack only
+node tools/lint_constants.js   # list the numbers still left in rule code (--list), or check none were added (--check)
+```
+
+Unit conversions and indices (0, 1, 2, 10, 12, 16, 24, 36, 60, 100, 1000, 1440, 3600 ...) are not rules and are allowed. Rendering geometry, interface timing, the built-in backend models and a few tables in `seed.js` are outside the checked scope for now.

@@ -1,0 +1,14 @@
+version: 4
+id: axolotl
+label: 六角恐龙
+food: pet_food
+needs:
+  thirst: { label: 水位低了, icon: "💧", rate: 0.03 }
+  hunger: { label: 饥饿, icon: "🪱", rate: 0.04 }
+  clean: { label: 水该换了, icon: "🫧", rate: 0.05 }
+actions:
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
+  water: { label: 补水, hold: 3, min: 3, effect: { thirst: 0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, effect: { hunger: 0.9 } }
+  clean: { label: 换水, hold: 6, min: 20, effect: { clean: 1 } }

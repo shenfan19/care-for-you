@@ -9,9 +9,9 @@
   const NO_AUTO = new Set(['doctor', 'vet', 'listen', 'stayclose', 'album', 'remind', 'hand', 'chat', 'walkout', 'game']);
 
   G.wants = {};                 /* 位置愿望，运行时的，不存档：{ 人: { id, action, until } } */
-  const S = { inbox: [], declined: [], planT: 8, lastMin: null, seq: 0 };
+  const S = { inbox: [], declined: [], planT: null, lastMin: null, seq: 0 };   /* planT 第一次用时从配置里取 */
   G.agentState = S;
-  const cfg = () => (G.tpl && G.tpl.system && G.tpl.system.agents) || {};
+  const cfg = () => G.S('agents');
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   /* ---------- 个人卡的判断，前台再核一遍，不全信后台 ---------- */
@@ -24,7 +24,7 @@
       const e = a.effect && a.effect[need];
       if (!(e > 0)) continue;
       let g = 0; for (const k in a.effect) if (a.effect[k] > 0) g += G.need(p, k) * a.effect[k];
-      g += Math.random() * 0.05;
+      g += Math.random() * cfg().pick_noise;
       if (g > gain) { gain = g; best = a; }
     }
     return best;
@@ -44,22 +44,22 @@
 
   /* ---------- 接收后台的状态表和策略 ---------- */
   function receive(plan) {
-    const W = cfg().want || {}, now = Date.now();
+    const W = cfg().want, now = Date.now();
     for (const r of plan.states) {
       const p = G.get(r.person); if (!p) continue;
       for (const k in r.needs || {}) if (k in p.state.needs) p.state.needs[k] = r.needs[k];
       if (r.mood !== undefined) p.state.mood = r.mood;
       if (r.frailty !== undefined) p.state.frailty = r.frailty;
       if (r.want && !G.wants[p.id] && goAction(p, r.want.action) && eligibleTo(p)) {
-        G.wants[p.id] = { id: r.want.id, action: r.want.action, until: now + (W.ttl_seconds || 600) * 1000 };
+        G.wants[p.id] = { id: r.want.id, action: r.want.action, until: now + W.ttl_seconds * 1000 };
         G.toastFor(p, goAction(p, r.want.action).label + '…', 'soft');
         G.pop(p.id, 'ask', goAction(p, r.want.action).icon || '🚶');
       }
     }
-    const max = (cfg().request || {}).max_open || 6;
+    const max = cfg().request.max_open;
     for (const s of plan.strategies) {
       if (S.inbox.length >= max) break;
-      const e = Object.assign({ id: ++S.seq, born: now, phase: 'sent', wait: rnd(3, 12), tries: 0 }, s);
+      const e = Object.assign({ id: ++S.seq, born: now, phase: 'sent', wait: rnd(...cfg().request.wait_seconds), tries: 0 }, s);
       if (valid(e)) { S.inbox.push(e); if (e.kind !== 'go') G.pop(e.from, 'ask', ((G.needsOf(G.get(e.from)) || {})[e.need] || {}).icon || '💬'); }
     }
   }
@@ -69,45 +69,45 @@
   const targetKind = p => (!G.isHuman(p) ? 'pet' : ['infant', 'toddler'].includes(G.stage(p)) ? 'baby' : 'other');
   G.helpRow = (helper, target) => {
     const tk = targetKind(target), arch = helper.person.archetype || helper.person.card || '', st = G.stage(helper);
-    return (((cfg().respond || {}).table) || []).find(r => r.target === tk && ((r.helper.arch && r.helper.arch.includes(arch)) || (r.helper.stage && r.helper.stage.includes(st)))) || null;
+    return (cfg().respond.table).find(r => r.target === tk && ((r.helper.arch && r.helper.arch.includes(arch)) || (r.helper.stage && r.helper.stage.includes(st)))) || null;
   };
-  G.helpWell = p => { const R = cfg().respond || {}; return p.state.frailty < (R.well_frailty === undefined ? 0.5 : R.well_frailty) && G.maxNeed(p) <= 1 - (R.well_level === undefined ? 0.4 : R.well_level); };
+  G.helpWell = p => { const R = cfg().respond; return p.state.frailty < R.well_frailty && G.maxNeed(p) <= 1 - R.well_level; };
   function respondChance(e) {
-    const R = cfg().respond || {}, to = G.get(e.to);
+    const R = cfg().respond, to = G.get(e.to);
     if (!eligibleTo(to)) return 0;
-    if (e.kind === 'self') return R.self === undefined ? 0.5 : R.self;
-    if (e.kind === 'go' && e.to === e.from) return (cfg().want || {}).respond_alone === undefined ? 0.6 : cfg().want.respond_alone;
-    if (G.maxNeed(to) > 1 - (R.own_level_block === undefined ? 0.2 : R.own_level_block)) return 0;
+    if (e.kind === 'self') return R.self;
+    if (e.kind === 'go' && e.to === e.from) return cfg().want.respond_alone;
+    if (G.maxNeed(to) > 1 - R.own_level_block) return 0;
     const row = e.kind === 'care' && G.get(e.from) ? G.helpRow(to, G.get(e.from)) : null;
-    const mw = row ? (R.mood_weight_table === undefined ? 0.3 : R.mood_weight_table) : (R.mood_weight === undefined ? 0.6 : R.mood_weight);
-    const base = row ? (G.helpWell(to) ? row.well : row.poor) : (R.base === undefined ? 0.7 : R.base);
+    const mw = row ? R.mood_weight_table : R.mood_weight;
+    const base = row ? (G.helpWell(to) ? row.well : row.poor) : R.base;
     return clamp(base * (1 - mw / 2 + mw * to.state.mood), 0, 1);
   }
   G.respondChance = respondChance;
-  const cooldown = e => S.declined.push({ from: e.from, to: e.to, key: e.need || e.action, until: Date.now() + ((cfg().respond || {}).decline_cooldown_seconds || 90) * 1000 });
+  const cooldown = e => S.declined.push({ from: e.from, to: e.to, key: e.need || e.action, until: Date.now() + cfg().respond.decline_cooldown_seconds * 1000 });
   /* 走过去：不在同一个房间就先走到对方那里 */
   function approach(e) {
-    const R = cfg().respond || {}, W = CY.world, to = G.get(e.to), from = G.get(e.from);
-    if (e.to === e.from || !W) { e.wait = R.near_seconds || 3; return; }
+    const R = cfg().respond, W = CY.world, to = G.get(e.to), from = G.get(e.from);
+    if (e.to === e.from || !W) { e.wait = R.near_seconds; return; }
     const tl = W.locationOf(from), hl = W.locationOf(to);
-    if (tl.place === hl.place && tl.room !== hl.room && W.goTo(to, tl.room, 0.7, 'help')) e.wait = R.walk_seconds || 12; else e.wait = R.near_seconds || 3;
+    if (tl.place === hl.place && tl.room !== hl.room && W.goTo(to, tl.room, cfg().walk_minutes, 'help')) e.wait = R.walk_seconds; else e.wait = R.near_seconds;
   }
 
   /* ---------- 动手 ---------- */
   const doCare = e => {
     const from = G.get(e.from), to = G.get(e.to);
-    if (G.need(from, e.need) < 0.35) return true;
+    if (G.need(from, e.need) < cfg().care_min_level) return true;
     const a = careAction(from, e.need); if (!a) return true;
-    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || (cfg().respond || {}).efficiency || 0.5));
+    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || cfg().respond.efficiency));
     G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
-    from.state.mood = clamp(from.state.mood + 0.03);
+    from.state.mood = clamp(from.state.mood + cfg().care_mood);
     const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label });
     G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); G.playFx(from.id, a.id);
     return true;
   };
   const doSelf = e => {
     const p = G.get(e.from), a = G.selfActFor(p, e.need);
-    if (a && G.need(p, e.need) > 0.4) G.selfAct(p, a, e.need, false);
+    if (a && G.need(p, e.need) > cfg().self_min_level) G.selfAct(p, a, e.need, false);
     return true;
   };
   const doGo = e => {
@@ -120,7 +120,7 @@
     }
     applyEffects(from, a, 1);
     if (to !== from) G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
-    from.state.mood = clamp(from.state.mood + (a.mood === undefined ? 0.08 : a.mood));
+    from.state.mood = clamp(from.state.mood + (a.mood === undefined ? cfg().go_mood_default : a.mood));
     G.startOuting(from, a); G.pop(from.id, 'done', '✓');
     if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }
     return true;
@@ -128,20 +128,21 @@
 
   /* ---------- 每秒 ---------- */
   G.agentTick = function (dt) {
-    const now = Date.now(), P = (G.tpl.system || {}).plan || {};
+    const now = Date.now(), P = G.S('plan');
     for (const id in G.wants) if (G.wants[id].until < now || !G.get(id) || G.flag(G.get(id), 'outing')) delete G.wants[id];
     S.declined = S.declined.filter(x => x.until > now);
     /* 向后台要一次状态和策略 */
+    if (S.planT === null) S.planT = cfg().first_plan_seconds;
     S.planT -= dt;
     if (S.planT <= 0 && CY.backend) {
-      S.planT = P.interval_seconds || 20;
+      S.planT = P.interval_seconds;
       const gm = G.world.game_minutes, minutes = S.lastMin === null ? 0 : Math.max(0, gm - S.lastMin);
       S.lastMin = gm;
       const res = CY.backend.plan(CY.backend.buildPlan({ minutes, pending: S.inbox.map(e => ({ from: e.from, to: e.to, key: e.need || e.action })), declined: S.declined.map(x => ({ from: x.from, to: x.to, key: x.key })) }));
       if (res && typeof res.then === 'function') res.then(receive); else if (res) receive(res);
     }
     /* 已发出的请求：等一会儿，掷一次响应，响应了就走过去，到了动手 */
-    const ttl = ((cfg().respond || {}).ttl_seconds || 120) * 1000;
+    const ttl = cfg().respond.ttl_seconds * 1000;
     S.inbox = S.inbox.filter(e => {
       if (now - e.born > ttl || !valid(e)) return false;
       e.wait -= dt; if (e.wait > 0) return true;

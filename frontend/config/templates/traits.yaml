@@ -1,0 +1,23 @@
+version: 4
+# 性格特征：每个角色可以带最多两个，叠加影响需求速度、自理、作息、效果和心情。
+traits:
+  clingy: { rate: { company: 1.6, play: 1.3 } }
+  independent: { rate: { company: 0.6 }, self_care: 0.2 }
+  nightowl: { sleep_shift: 3 }
+  earlybird: { sleep_shift: -2 }
+  picky: { effect: { hunger: 0.75 } }
+  sickly: { frailty: 1.6 }
+  sturdy: { frailty: 0.6 }
+  grumpy: { mood_offset: -0.1 }
+  cheerful: { mood_offset: 0.1 }
+  thirsty: { rate: { thirst: 1.5 } }
+  hearty: { rate: { hunger: 1.4 } }
+  shy: { rate: { company: 0.8 }, self_care: 0.1, mood_offset: -0.03 }
+  chatty: { rate: { company: 1.4 }, mood_offset: 0.03 }
+  curious: { rate: { play: 1.3 } }
+  stubborn: { effect: { company: 0.85, hunger: 0.9 }, mood_offset: -0.05 }
+  gentle: { mood_offset: 0.06, frailty: 0.9 }
+  playful: { rate: { play: 1.5 }, mood_offset: 0.04 }
+  anxious: { rate: { company: 1.3 }, frailty: 1.2, mood_offset: -0.05 }
+  proud: { self_care: 0.15, rate: { company: 0.8 } }
+  sentimental: { rate: { company: 1.2 } }

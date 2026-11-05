@@ -27,34 +27,9 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) { root.CY = root.CY || {}; root.CY.dispatchPolicy = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
-  /* 参数。游戏里由 templates/system.yaml 的 dispatch 覆盖；没有数据来源的参数都是假设，用到时要做敏感性分析 */
-  const DEFAULTS = {
-    step_minutes: 5,
-    watch_stages: ['infant', 'toddler'],   /* 醒着时必须有人盯着的阶段，适配层据此给快照里的人标 watch，疾病也可以标 */
-    act_at: 0.45,        /* 被照看的人某项需求压力超过它，才派人动手 */
-    sleep_at: 0.72,      /* 看护人疲劳压力到这里，有人接手就去睡 */
-    floor: 0.95,         /* 疲劳压力到这里不再优先派他，除非没有别人 */
-    nap_minutes: 120,
-    watch_extra: 0.03,   /* 盯着一个人，每游戏小时额外加的疲劳压力，和手上的活是两条独立的通道 */
-    hands_extra: 0.04,   /* 手上的活，每游戏小时额外加的疲劳压力 */
-    efficiency: 0.7,     /* 家人出手的效果，玩家自己动手是 1 */
-    depl_loss: 0.5,      /* 看护人疲劳从 sleep_at 一路涨到 1，出手效果最多再打掉这么多 */
-    elder_mult: 1.3,     /* 老人看护同样的时间更累 */
-    meal_at: 0.6,        /* 醒着的人饿到这里，家里需要有人做一顿饭 */
-    meal_gap: 180,       /* 两顿饭之间至少隔这么多游戏分钟 */
-    cook_minutes: 45,    /* 做一顿饭占手上的活这么久 */
-    lactating: ['mom', 'wife', 'young_woman'],   /* 母乳喂养时，只有这些人能喂婴儿 */
-    /* 夜里睡着的人听不听得见：睡觉压制大部分的需求响应，但哭声不好压，没声音的需求几乎听不见。
-       hear 是睡着的人听见一声哭后，这一步醒来的几率，按角色卡身份，妈妈最高，爸爸次之，老人再次；全是假设，没有数据来源 */
-    hear: { mom: 0.7, wife: 0.7, young_woman: 0.7, dad: 0.4, husband: 0.4, young_man: 0.4, default: 0.35 },
-    hear_quiet: 0.3,     /* 没有哭，只是需求高了，比如湿了，吐奶，听不见，只能看状态，声音的强度只有哭的这么多 */
-    hear_help: 0.5,      /* 夜里要人帮的人，比如夜尿多的老人想上厕所，叫人的声音强度 */
-    primary_bonus: 0.2,  /* 几个人都听见了，听得越灵的越优先，代价减去 hear 乘它，也就是妈妈先起来，除非明显更累 */
-    hear_suppress: 0.6,  /* 疲劳从 sleep_at 涨到 floor，睡着的人听见的几率最多再打掉这么多；到了 floor 就听不见了，由别人来判断 */
-    wake_cost: 0.3, busy_cost: 0.3, load_cost: 0.5, stick: 0.15, room_bonus: 0.1,
-    skip_actions: ['doctor', 'vet', 'listen', 'stayclose', 'album', 'hand', 'chat', 'walkout', 'game'],
-  };
-  const config = over => Object.assign({}, DEFAULTS, over || {});
+  /* 参数：全部来自 templates/system.yaml 的 dispatch，这里不放默认值，缺一个就报错。没有数据来源的参数都是假设，用到时要做敏感性分析 */
+  const REQUIRED = ['step_minutes', 'watch_stages', 'act_at', 'sleep_at', 'floor', 'nap_minutes', 'watch_extra', 'hands_extra', 'efficiency', 'depl_loss', 'elder_mult', 'meal_at', 'meal_gap', 'cook_minutes', 'lactating', 'hear', 'hear_quiet', 'hear_help', 'hear_suppress', 'primary_bonus', 'wake_cost', 'busy_cost', 'load_cost', 'stick', 'room_bonus', 'awake_steps', 'walk_minutes', 'care_mood', 'skip_actions'];
+  const config = over => { const C = Object.assign({}, over || {}); for (const k of REQUIRED) if (C[k] === undefined) throw new Error('缺少配置 dispatch.' + k); if (C.hear.default === undefined) throw new Error('缺少配置 dispatch.hear.default'); return C; };
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 
   /* ---------- 精力模型：疲劳怎么涨，出手效果怎么折 ---------- */
@@ -78,7 +53,7 @@
     for (const k in d.needs) { const v = d.needs[k]; if (v >= C.act_at) sg = Math.max(sg, d.night_help && k === 'toilet' ? C.hear_help : C.hear_quiet); }
     return sg;
   };
-  const hearLevel = (C, q) => { const L = C.hear || {}; return L[q.role] !== undefined ? L[q.role] : (L.default === undefined ? 0.35 : L.default); };
+  const hearLevel = (C, q) => (q.role in C.hear ? C.hear[q.role] : C.hear.default);
   const hearProb = (C, q, sig) => {
     const f = effFatigue(C, q); if (f >= C.floor) return 0;
     return hearLevel(C, q) * sig * (1 - C.hear_suppress * clamp((f - C.sleep_at) / (C.floor - C.sleep_at)));
@@ -88,7 +63,7 @@
 
   /* ---------- 本地规则决策：快照进，分配出 ---------- */
   const plan = (S, Cin) => {
-    const C = Cin || config();
+    const C = Cin;
     const ix = q => S.people.indexOf(q);
     const cg = S.people.filter(q => ['adult', 'elder'].includes(q.stage) && !q.lead && !q.away && !q.bedridden && !q.watch);
     const fat = q => effFatigue(C, q), tr = q => tier(C, q);
@@ -139,7 +114,7 @@
 
   /* ---------- 硬约束核对：外部决策（后端，AI）进来必须过这一关，不合规整份丢掉，回到本地规则 ---------- */
   const validate = (raw, S, Cin) => {
-    const C = Cin || config();
+    const C = Cin;
     const cg = new Set(S.people.filter(q => ['adult', 'elder'].includes(q.stage) && !q.lead && !q.away && !q.bedridden && !q.watch).map(q => q.id));
     const byId = {}; for (const q of S.people) byId[q.id] = q;
     let ok = !!raw && typeof raw === 'object' && raw.watch && Array.isArray(raw.tasks) && Array.isArray(raw.wake) && Array.isArray(raw.sleep);
@@ -153,5 +128,5 @@
     return { plan: Object.assign({ unmet: [], unheard: [], depleted: [], cook: null }, raw), rejected: false };
   };
 
-  return { DEFAULTS, config, plan, validate, model };
+  return { REQUIRED, config, plan, validate, model };
 });

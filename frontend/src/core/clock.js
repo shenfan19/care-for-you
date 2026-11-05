@@ -11,9 +11,9 @@
   /* 当天已过的分钟数，0 到 1439 */
   G.dayMinutes = () => {
     if (G.daySource() === 'system') { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
-    return (Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : 480)) % 1440;
+    return (Math.floor(G.world.game_minutes) + (typeof G.world.clock_shift === 'number' ? G.world.clock_shift : G.E('clock').default_shift)) % 1440;
   };
-  G.isNight = () => { const h = G.dayMinutes() / 60; return h >= 22 || h < 6; };
+  G.isNight = () => { const h = G.dayMinutes() / 60; const C = G.E('clock'); return h >= C.night_from || h < C.night_to; };
   G.clock = () => {
     const el = Math.floor(G.world.game_minutes), dm = G.dayMinutes(), pad = n => String(n).padStart(2, '0');
     return { d: Math.floor(el / 1440), h: Math.floor((el % 1440) / 60), m: el % 60, hh: pad(Math.floor(dm / 60)), mm: pad(dm % 60), src: G.daySource(), night: G.isNight(), minutes: dm };

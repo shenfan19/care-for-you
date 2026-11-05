@@ -1,0 +1,18 @@
+version: 4
+id: gecko
+label: 守宫
+food: pet_food
+needs:
+  warmth: { label: 要保温, icon: "🔥", rate: 0.05 }
+  humid: { label: 要喷水保湿, icon: "💦", rate: 0.06 }
+  thirst: { label: 口渴, icon: "💧", rate: 0.04 }
+  hunger: { label: 饥饿, icon: "🦗", rate: 0.03 }
+actions:
+  peat: { label: 自己吃东西, selfonly: true, self: true, hold: 1, min: 5, effect: { hunger: 0.7 } }
+  pdrink: { label: 自己喝水, selfonly: true, self: true, hold: 1, min: 3, effect: { thirst: 0.7 } }
+  vet: { label: 带去看兽医, hold: 8, min: 90, away: true, effect: {}, frailty: -0.25, mood: 0.05 }
+  pet: { label: 轻轻碰一下, hold: 1, min: 2, effect: {}, mood: 0.03 }
+  warm: { label: 调保温灯, hold: 4, min: 5, effect: { warmth: 0.9 } }
+  mist: { label: 喷水保湿, hold: 3, min: 5, effect: { humid: 1 } }
+  water: { label: 换水, hold: 3, min: 3, effect: { thirst: 0.9 } }
+  feed: { label: 喂食, hold: 5, min: 8, effect: { hunger: 0.9 } }
