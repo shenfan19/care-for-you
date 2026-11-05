@@ -66,7 +66,7 @@
     /* 收起时窗体底部的一行：最新的一件事 */
     if (bar) {
       const last = all.find(x => !QUIET_HIDES.includes(x.e.type)) || all[0];
-      bar.innerHTML = `<span class="lgi">📜</span>` + (last ? `<span class="t">${last.e.cm !== undefined ? fmtC(last.e.cm) : fmtT(last.e.t)}</span><span class="who">${esc(nameOf(last.pid))}</span><span class="x">${U.entryHtml(last.e)}</span>` : `<span class="mute">${esc(t('feed.empty'))}</span>`) + `<span class="chev">${U.logOpen ? '▾' : '▴'}</span>`;
+      bar.innerHTML = `<span class="lgi">📜</span>` + (last ? `<span class="t">${last.e.cm !== undefined ? fmtC(last.e.cm) : fmtT(last.e.t)}</span><span class="who">${U.nameLink(last.pid)}</span><span class="x">${U.entryHtml(last.e)}</span>` : `<span class="mute">${esc(t('feed.empty'))}</span>`) + `<span class="chev">${U.logOpen ? '▾' : '▴'}</span>`;
       if (!bar.dataset.bound) { bar.dataset.bound = '1'; const tog = e => { if (e.target.closest && e.target.closest('a.pl')) return; U.setLogOpen(!U.logOpen); U.renderFeed(true); }; bar.onclick = tog; bar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(e); } }; applyOpen(); }
     }
     if (!force && root.dataset.sig === sig) return;
@@ -93,7 +93,7 @@
       return;
     }
     root.innerHTML = (tabs || `<h2>${esc(t('feed.title'))}</h2>`) + `<div class="chips">${chips}<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button></div>${stat}` +
-      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
+      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${U.nameLink(x.pid)}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
       (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div>';
     goTab();
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });

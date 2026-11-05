@@ -168,9 +168,8 @@
           spr('toilet', 0, 0.55, 0.5); spr('bathroomSink', 0, 1.45, 0.4);
           spr('washer', 1, 0.35, 2.2); spr('shower', 0, 1.4, 3.2);
         } else if (name === 'study') {
-          spr('desk', 0, 1.5, 0.45); spr('computerScreen', 0, 1.5, 0.35, L, 1.86); spr('computerKeyboard', 0, 1.5, 0.75, L, 2.26);
-          spr('lampSquareTable', 0, 2.2, 0.35, L, 2.56);
-          spr('chairDesk', 2, 1.56, 1.5);
+          /* 双人办公桌：两张桌子并排，两个人可以同时办公，座位在 world.js 的 study.seat */
+          [0.81, 2.19].forEach(cx => { spr('desk', 0, cx, 0.45); spr('computerScreen', 0, cx, 0.35, L, cx + 0.36); spr('computerKeyboard', 0, cx, 0.75, L, cx + 0.76); spr('chairDesk', 2, cx + 0.06, 1.5); });
           spr('bookcaseOpen', 1, 0.3, 2.8); spr('pottedPlant', 0, 2.7, 3.4);
         } else if (name === 'living') {
           spr('rugRound', 0, 1.9, 2.0, 0, -9);

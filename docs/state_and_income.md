@@ -14,15 +14,17 @@ This page explains the bar under every character, how it relates to your income,
 - The load is divided by your capacity, which starts at 1. Each adult or teenager at home who is in a decent mood and not in bed adds 0.3. Efficiency is 40% plus 60% of the share of capacity that is not used up, and never below 40%.
 - So more people and more dependents mean more load and lower efficiency, while helpers lift capacity. Plants cannot be stacked to raise income.
 - The household also adds a small bonus: each family member other than you whose mood is at least 0.6 adds 0.08 to the multiplier, up to a total of 0.6. Plants and animals do not count.
-- Efficiency is shown in the small block at the top right of the game window, for example "60%". The money counter next to it shows your money and the household income per game hour, for example "301 +13.8/h". Tap the money counter to open the shop.
+- Efficiency is shown in the small block at the top right of the game window, for example "60%". The money counter next to it shows your money and the household income per game hour from everyone at their desk plus pensions, for example "301 +13.8/h". Tap the money counter to open the shop.
 
 ## Money
 
-- Money comes from work. Only a couple in the household earns, or you do if there is no couple.
-- Pay is the wage per real hour (in fast mode every game hour is scaled back, so speeding up earns nothing extra) multiplied by work focus, the efficiency and the family bonus, and only while you are sitting at the desk during work hours. Time spent caring for someone away from the desk, or on an outing, does not earn.
-- Work focus is not instant. Sitting down starts it at 10% and it climbs in a straight line to 100% over 20 game minutes. Being called away drops it back to 10% at once. So one long stretch at the desk earns more than many short ones. A partner who is away at work, or on a trip, works without interruption at full focus; the efficiency and family bonus still apply.
+- Money comes from work, and every person who works earns on their own. The people who work are the couple in the household, or you if there is no couple. Two people at home sit at two desks in the study and both earn.
+- A person earns only while they are awake and sitting at the desk during work hours. Sleeping, caring for someone away from the desk, or an outing earns nothing for that person. Someone who is away at their job elsewhere earns as before.
+- Each worker's pay is the wage per real hour (26; in fast mode every game hour is scaled back, so speeding up earns nothing extra) multiplied by work focus, the efficiency and the family bonus. The efficiency and bonus are shared by the whole household. Focus applies to you only; a partner at the desk is not interrupted and works at full focus.
+- Work focus is not instant. Sitting down starts it at 20% and it climbs in a straight line to 100% over 20 game minutes. Being called away, or going to sleep, takes the income to zero at once and resets focus to 20%. So one long stretch at the desk earns more than many short ones.
 - The 20 minutes is a game setting. The direction comes from research on attention residue after interruptions (Leroy 2009); no reliable source gives a number of minutes. The in-game Knowledge page (Settings) lists every rhythm in the game with its source or says it is a setting.
-- An elder you play receives a fixed pension of 2 per game hour.
+- Every elder in the household (visitors excluded) receives a pension of 30% of what one person earns by sitting through the whole work period, spread over 24 hours (about 2.9 per game hour). It does not need the desk and does not depend on who you play.
+- Calibration: two earners together make 52 per full hour, the pace the shop prices were set for. A single-parent household earns half of that, and a household of elders alone only the pension. These ratios are design anchors; they are not taken from household income statistics.
 - Money has no penalty. There are no debts and no deadlines. Saving is meant to be slow, so the game works as well for a few focused minutes as for leaving it open.
 
 ## The shop

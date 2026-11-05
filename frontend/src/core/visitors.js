@@ -138,6 +138,7 @@
   const addFav = (p, n) => {
     const st = p.person.visitor; if (!st) return;
     st.fav = Math.min(G.FAV.max, (st.fav || 0) + n);
+    G.world.favbest = Object.assign({}, G.world.favbest, { [st.id]: Math.max((G.world.favbest || {})[st.id] || 0, st.fav) });   /* 名录里记每位来客最高到过多少好感，人走了也留着 */
     if (!st.ok && st.fav >= G.FAV.ok) satisfy(p); else { saveVisitor(p); G.save(); }
     fire('fav', p);
   };

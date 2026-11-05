@@ -46,7 +46,7 @@
   };
   /* 键盘：Esc 关掉当前弹窗，回到游戏 */
   if (typeof document !== 'undefined') document.addEventListener('keydown', e => { if (e.key === 'Escape') { const m = $('modal'); if (m && m.style.display !== 'none' && m.innerHTML) { e.preventDefault(); U.closeDialog(); } } });
-  U.closeDialog = function () { const m = $('modal'); m.style.display = 'none'; m.innerHTML = ''; };
+  U.closeDialog = function () { const m = $('modal'); m.style.display = 'none'; m.innerHTML = ''; const tp = $('shopTip'); if (tp) tp.style.display = 'none'; };
 
   /* ---------- 顶栏：经历了多少时间，现在是几点 ---------- */
   /* 顶栏不再显示时间，信息越少越好 */

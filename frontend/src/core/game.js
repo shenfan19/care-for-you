@@ -126,7 +126,9 @@
     /* 规则配置最先读：后面的载入就要用它。文件缺了或版本比内置的旧，就用内置的 */
     {
       const sd = CY.seed.files()['templates/engine.yaml'], have = await store.read('templates/engine.yaml');
-      let ok = !!have; if (have) { try { ok = ((jsyaml.load(have) || {}).version || 1) >= ((jsyaml.load(sd) || {}).version || 1); } catch (e) { ok = false; } }
+      /* 本机副本过期有两种：版本比内置的旧，或者缺内置里有的键（改了键名忘了升版本时，缺键会让读配置报错、界面按钮失灵） */
+      const hasAll = (a, b) => Object.keys(b || {}).every(k => a && Object.prototype.hasOwnProperty.call(a, k) && (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) ? hasAll(a[k], b[k]) : true));
+      let ok = !!have; if (have) { try { const h = jsyaml.load(have) || {}, b = jsyaml.load(sd) || {}; ok = (h.version || 1) >= (b.version || 1) && hasAll(h, b); } catch (e) { ok = false; } }
       if (!ok) { if (have) await store.write('_backup/engine.yaml', have); await store.write('templates/engine.yaml', sd); }
       G.tpl.engine = (await store.readYaml('templates/engine.yaml')) || {};
     }

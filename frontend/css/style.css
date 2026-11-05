@@ -513,3 +513,17 @@ body.embed main { padding-top: 6px; }
 .cornerbox .tools { display: flex; gap: 6px; margin: 0; }
 .cornerbox .tools .icon { width: 30px; height: 30px; padding: 0; }
 body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none; } body.embed { min-height: 0; }
+
+/* 一句话提示：窗体里面，上方居中，几秒后消失，不挡操作 */
+.room .toast { display: none; position: absolute; left: 50%; top: 46px; transform: translateX(-50%); z-index: 40; max-width: 70%; padding: 6px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 2px 10px rgba(0,0,0,.15); font-size: 13px; text-align: center; pointer-events: none; }
+
+/* 来客名录 */
+.vbgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-height: 56vh; overflow-y: auto; }
+.vbk { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; text-align: center; font-size: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; color: inherit; }
+.vbk b { font-size: 13px; } .vbk .vbi { font-size: 28px; line-height: 1.2; }
+.vbk.dark { cursor: default; opacity: .55; } .vbk.dark .vbi { filter: brightness(0); opacity: .45; }
+.gift-react { margin: 6px 0; padding: 8px 10px; border-left: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--card)); border-radius: 6px; }
+
+/* 商店说明气泡：悬停或聚焦在格子上出现，在弹窗之上，不挡鼠标 */
+.shoptip { display: none; position: fixed; z-index: 100; width: 260px; max-width: calc(100vw - 16px); padding: 8px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.2); font-size: 13px; line-height: 1.5; pointer-events: none; }
+.shoptip p { margin: 4px 0; } .shoptip .money { margin-top: 4px; }

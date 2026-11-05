@@ -44,7 +44,7 @@
   /* ---------- 构建 ---------- */
   U.buildRoom = function (root) {
     U.room = root;
-    root.innerHTML = '<div class="scenewrap"><div class="scene" id="scene"></div></div><div class="stagewrap"><div class="stage" id="stage"></div></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><div class="logwin" id="logwin"><div class="logbar" id="logBar" role="button" tabindex="0" aria-expanded="false"></div><div class="logbody" id="logBody"><section id="feed"></section></div></div><div class="dlgcard" id="dlgCard"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
+    root.innerHTML = '<div class="scenewrap"><div class="scene" id="scene"></div></div><div class="stagewrap"><div class="stage" id="stage"></div></div><div class="placenav" id="placeNav"></div><button class="navarrow l" id="navL" aria-label="‹">‹</button><button class="navarrow r" id="navR" aria-label="›">›</button><div class="roster" id="roster"></div><div class="cornerbox"><button class="corner" id="cornerTime"></button><button class="corner" id="cornerFamily" style="display:none;cursor:default"></button><button class="corner" id="cornerMoney"></button><button class="corner" id="cornerMusic"></button><button class="corner" id="cornerPeople">👥</button></div><div class="logwin" id="logwin"><div class="logbar" id="logBar" role="button" tabindex="0" aria-expanded="false"></div><div class="logbody" id="logBody"><section id="feed"></section></div></div><div class="toast" id="modeToast"></div><div class="dlgcard" id="dlgCard"></div><svg id="hold" viewBox="0 0 64 64"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26"/></svg>';
     root.addEventListener('pointerdown', e => { if (!e.target.closest('#ringLayer') && !e.target.closest('.cx')) U.closeRing(); });
     document.addEventListener('pointerdown', e => { if (!root.contains(e.target) && !e.target.closest('#ringLayer')) U.closeRing(); });
     /* 左右滑动换地点 */
@@ -170,7 +170,9 @@
     if (cur && cur.place === place) {
       el._dir = dirOf(gx - cur.gx, gy - cur.gy);
       el.classList.add('walking'); clearTimeout(el._wt);
-      el._wt = setTimeout(() => { el.classList.remove('walking'); el._dir = null; if (U.renderRoom) U.renderRoom(false); }, el.classList.contains('lead') || el.classList.contains('player') ? 1300 : 7200);
+      /* 走多久由滑动动画的时长决定（样式里跟着时间倍率变），到了才算到：先走到，再躺下或坐下，不能走路姿势到点就换，人还在滑 */
+      const dur = (parseFloat(win().getComputedStyle(el).transitionDuration) || (el.classList.contains('lead') || el.classList.contains('player') ? 1.2 : 7)) * 1000;
+      el._wt = setTimeout(() => { el.classList.remove('walking'); el._dir = null; if (U.renderRoom) U.renderRoom(false); }, dur + 150);
     }
   };
 
@@ -394,15 +396,14 @@
       }
       for (const [id, d] of [['#navL', -1], ['#navR', 1]]) { const b = $r(id); if (b) b.classList.toggle('call', !!dirCall[d]); }
     }
-    const here = t('nav.here', { place: t('loc.' + at.place) + (at.room ? ' · ' + t('loc.' + at.room) : '') });
     const away = !fam && at.place !== U.viewPlace && ['hospital', 'office', 'school'].includes(U.viewPlace);   /* 家里的区域页不算出门，viewPlace 带冒号 */
     const min = away ? W.travelMin(at.place, U.viewPlace) : 0;
     const zs = '';
-    const sig = [U.viewPlace, here, away, min, pages.join(), CY.i18n.lang, zs].join('|');
+    const sig = [U.viewPlace, away, min, pages.join(), CY.i18n.lang, zs].join('|');
     if (nav.dataset.sig === sig) return;
     nav.dataset.sig = sig;
     const pn = U.pageName(U.viewPlace);
-    nav.innerHTML = `<b>${esc(pn)}</b>` + (fam ? '' : `<span class="here">${esc(here)}</span>`) +
+    nav.innerHTML = `<b>${esc(pn)}</b>` +
       (away ? `<button class="travel" id="travelBtn">${esc(t('nav.travel_hold', { place: pn, n: W.travelHold(at.place, U.viewPlace) }))}</button>` : '');
     nav.querySelectorAll('[data-d]').forEach(b => b.onclick = e => { e.stopPropagation(); U.cyclePlace(+b.dataset.d); });
     const tb = nav.querySelector('#travelBtn');

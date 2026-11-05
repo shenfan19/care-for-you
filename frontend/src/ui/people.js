@@ -10,10 +10,11 @@
     const rows = G.people.map(p => `<div class="prow" data-id="${p.id}"><span class="pav">${CY.avatar(p)}</span><span class="pn"><b>${esc(p.person.name)}</b> <span class="mute">${esc(p.person.role || '')}${p.person.archived ? ' · ' + esc(t('people.archived')) : p.person.active === false ? ' · ' + esc(t('bar.away', { name: '' }).trim()) : ''}</span></span>
       ${G.canLead(p) && p.person.active !== false ? `<button data-a="lead" ${G.protagonist() === p ? 'class="primary" disabled' : ''}>${esc(t(G.protagonist() === p ? 'people.lead_on' : 'people.lead'))}</button>` : ''}${p.person.visitor ? '' : `<button data-a="edit">${esc(t('btn.edit'))}</button>`}${p.person.archived ? `<button data-a="restore">${esc(t('btn.restore'))}</button>` : p.person.active === false ? `<button data-a="restore">${esc(t('bar.recall'))}</button>` : `<button data-a="archive">${esc(t('btn.archive'))}</button>`}<button data-a="del" class="danger">${esc(t('btn.delete'))}</button></div>`).join('');
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('people.title'))}</h2>
-      <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="mute">${esc(t('people.note'))}</span><button id="pAdd" class="primary">${esc(t('btn.add'))}</button></div>
+      <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="mute">${esc(t('people.note'))}</span><span><button id="pBook">${esc(t('book.open'))}</button> <button id="pAdd" class="primary">${esc(t('btn.add'))}</button></span></div>
       <div class="plist">${rows || `<div class="mute">${esc(t('said.nobody'))}</div>`}</div>
       <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="pClose">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelector('#pClose').onclick = U.closeDialog;
+    dlg.querySelector('#pBook').onclick = () => U.visitorBook();
     dlg.querySelector('#pAdd').onclick = () => U.addDialog(null, () => U.peopleDialog());
     dlg.querySelectorAll('.prow button').forEach(b => b.onclick = async () => {
       const id = b.closest('.prow').dataset.id, a = b.dataset.a;

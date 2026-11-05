@@ -26,16 +26,25 @@
   const refId = keys => { for (const k of keys || []) { let m; if ((m = /^act\.([^.]+)/.exec(k))) return 'act:' + m[1]; if ((m = /^need\.(.+)$/.exec(k))) return 'need:' + m[1]; if ((m = /^cond\.(.+)$/.exec(k))) return 'cond:' + m[1]; } return null; };
   /* 发生的事的文字，动作名，需求名，病名变成下划线链接，其余和 G.entryText 一样 */
   U.entryHtml = e => {
-    if (!(e.k && CY.i18n.hasOwn(e.k))) return esc(e.text);
+    if (!(e.k && CY.i18n.hasOwn(e.k))) return linkNames(esc(e.text));
     const links = [], args = {};
     for (const [k, v] of Object.entries(e.a || {})) {
       if (v && typeof v === 'object' && v.t) {
-        const txt = v.t.reduceRight((fb, key) => CY.tOr(key, fb), v.d), id = refId(v.t);
-        if (id && U.pediaHas(id)) { args[k] = '\u0001' + links.length + '\u0002'; links.push(U.pediaLink(id, txt)); } else args[k] = txt;
+        const txt = v.t.reduceRight((fb, key) => CY.tOr(key, fb), v.d), id = refId(v.t), vm = /^visitor\.([^.]+)\.name$/.exec(v.t[0] || '');
+        if (vm) { args[k] = '\u0001' + links.length + '\u0002'; links.push(`<a class="pl" href="#" data-visitor="${esc(vm[1])}">${esc(txt)}</a>`); }
+        else if (id && U.pediaHas(id)) { args[k] = '\u0001' + links.length + '\u0002'; links.push(U.pediaLink(id, txt)); } else args[k] = txt;
       } else args[k] = v;
     }
-    return esc(t(e.k, args)).replace(/\u0001(\d+)\u0002/g, (m, i) => links[i]);
+    return linkNames(esc(t(e.k, args)).replace(/\u0001(\d+)\u0002/g, (m, i) => links[i]));
   };
+  /* 文字里出现的家人名字变成下划线链接，点开看状态；只改标签之外的文字，已经是链接的不再套 */
+  const linkNames = html => {
+    const names = G.people.filter(p => p.person.name && p.person.name.length >= 2).sort((a, b) => b.person.name.length - a.person.name.length);
+    if (!names.length) return html;
+    const byName = new Map(names.map(p => [esc(p.person.name), p.id])), re = new RegExp([...byName.keys()].map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'g');
+    return html.split(/(<a[\s\S]*?<\/a>|<[^>]+>)/).map(seg => (seg[0] === '<' ? seg : seg.replace(re, n => `<a class="pl" href="#" data-person="${esc(byName.get(n))}">${n}</a>`))).join('');
+  };
+  U.nameLink = pid => { const p = G.get(pid); return p ? `<a class="pl" href="#" data-person="${esc(p.id)}">${esc(p.person.name)}</a>` : esc(pid); };
 
   /* ---------- 条目 ---------- */
   const badge = st => `<span class="kbadge ${st}">${esc(t('know.' + st))}</span>`;
@@ -144,5 +153,5 @@
   U.knowledgeDialog = () => U.pedia();
 
   /* 下划线链接：整页任何地方带 data-pedia 的链接都打开百科 */
-  if (typeof document !== 'undefined') document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a.pl[data-pedia]'); if (a) { e.preventDefault(); e.stopPropagation(); U.pedia(a.dataset.pedia); } }, true);
+  if (typeof document !== 'undefined') document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a.pl[data-pedia]'); if (a) { e.preventDefault(); e.stopPropagation(); U.pedia(a.dataset.pedia); return; } const n = e.target.closest && e.target.closest('a.pl[data-person], a.pl[data-visitor]'); if (n) { e.preventDefault(); e.stopPropagation(); if (n.dataset.person) U.statusDialog(n.dataset.person); else U.visitorDialog(n.dataset.visitor); } }, true);
 })(globalThis.CY = globalThis.CY || {});

@@ -12,7 +12,7 @@
 
   /* 工资，退休金，起始的钱，效率下限，负荷，专注，商品，床位，买菜加成：都在 templates/engine.yaml 的 economy 和 shop 里 */
   G.constGet('WAGE', () => G.E('economy').wage);
-  G.constGet('PENSION', () => G.E('economy').pension);
+  G.constGet('PENSION_RATIO', () => G.E('economy').pension_ratio);
   G.constGet('START_MONEY', () => G.E('economy').start_money);
   const today = () => Math.floor(G.world.game_minutes / 1440);
 
@@ -50,9 +50,11 @@
     const share = Math.min(1, G.burden() / G.capacity());
     return G.MOOD.eff_min + (1 - G.MOOD.eff_min) * (1 - share);
   };
-  /* 上班时每游戏小时进账多少：舒适度（效率）和家人加成都折进来，界面上显示在百分比后面。老人主角按固定退休金 */
-  /* 工作专注：进入工作不是立刻满额，坐下后从 floor 线性爬到 1，用 minutes 个游戏分钟；离开工作（离开书桌，外出办事，被叫去照顾人）立刻掉回 floor，而且离开期间仍按 floor 计收入，不是零。收入速率 = 工资 乘 专注 乘 家庭效率 乘 家人加成。
-     配偶不在家（出差，去公司）是别处没人打断的工作，专注按满额，家庭效率和加成照乘。参数出处见 CY.references 里的 focus。 */
+  /* 收入按人分别算，家里每个上班的人各挣各的，加总就是家庭收入。
+     谁挣：W.worker 认定的人（夫妻，家里没有夫妻时是主角自己），在工作时段，醒着，真的坐在办公桌前，不在医院，不在外出。不在岗就是零：睡觉，照顾别人，出门办事都不挣。
+     专注：主角自己从 floor 爬到 1（坐下后从 20% 起，被叫走立刻回到 20% 重新爬，离开期间收入是零）；别的上班的人没人打断，按满额。
+     老人另算退休金：每位老人是一个人坐满工作时段所挣的 30%，摊在 24 小时里，不用到书桌前，和谁是主角无关。
+     家庭效率和家人加成是全家共用的，对每个人的收入照乘。离线时按所有上班的人都在岗算。 */
   G.constGet('FOCUS', () => G.E('economy').focus);
   G.focus = () => (typeof G.world.focus === 'number' ? G.world.focus : G.FOCUS.floor);
   /* 走过 gmin 分钟，working 为真就爬升，否则掉回 floor；返回这段时间的平均专注，离线大步长也按线性积分，不会少算也不会多算 */
@@ -64,24 +66,31 @@
     G.world.focus = 1;
     return (tf * (f0 + 1) / 2 + (gmin - tf)) / gmin;
   };
-  /* 主角自己的工作：非老人，在工作时段，在书桌前；离线时算在岗；没有世界或不强制就位时只看时段 */
-  G.leadWorking = offline => { const W = CY.world, lead = G.protagonist(); return (!lead || G.stage(lead) !== 'elder') && G.isWorkTime() && (offline || !W || !W.enforce || (!!lead && W.worker(lead) && W.atWork())); };
+  G.workers = () => { const W = CY.world; return W ? G.activePeople().filter(p => W.worker(p) && !p.person.visitor && !G.flag(p, 'hospital') && !G.flag(p, 'outing')) : []; };
+  /* 这个人此刻是不是在岗：主角看他自己是不是坐在办公桌前，别人看世界里的位置；没有世界或不强制就位时只看时段；离线算在岗 */
+  G.atPost = (p, offline) => {
+    const W = CY.world;
+    if (!G.isWorkTime() || G.isSleeping(p)) return false;
+    if (offline || !W || !W.enforce) return true;
+    return p === G.protagonist() ? W.atWork() : W.isWorking(p);
+  };
+  /* 退休金总额里每位老人的份，每标准游戏小时：一个人坐满工作时段所挣的 30%，摊到 24 小时 */
+  G.pensionPerHour = () => { const [a, b] = G.workWindow(); return G.WAGE * G.PENSION_RATIO * (b - a) / 1440; };
+  G.pensioners = () => G.activePeople().filter(p => G.isHuman(p) && !p.person.visitor && G.stage(p) === 'elder');
   G.incomeRate = () => {
-    const lead = G.protagonist(); if (lead && G.stage(lead) === 'elder') return G.PENSION;
-    const W = CY.world, own = lead && W && W.worker(lead) && G.isWorkTime();
-    return G.WAGE * (own ? G.focus() : 1) * G.efficiency() * G.householdBonus();
+    const lead = G.protagonist(), mul = G.efficiency() * G.householdBonus();
+    let r = G.pensionPerHour() * G.pensioners().length;
+    for (const p of G.workers()) if (G.atPost(p)) r += G.WAGE * (p === lead ? G.focus() : 1) * mul;
+    return r;
   };
   /* 每次时间推进：赚钱 */
   G.economyTick = (gmin, offline) => {
-    const hours = G.econHours(gmin), W = CY.world, lead = G.protagonist();   /* 钱按现实时间：加速模式下每个游戏小时折回去 */
+    const hours = G.econHours(gmin), lead = G.protagonist();   /* 钱按现实时间：加速模式下每个游戏小时折回去 */
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
-    if (lead && G.stage(lead) === 'elder') { G.world.money += G.PENSION * hours; G.focusStep(gmin, false); }
-    else {
-      const lw = G.leadWorking(offline), k = G.focusStep(gmin, lw);
-      const away = !lw && G.isWorkTime() && !!lead && G.stage(lead) !== 'elder' && (!W || W.worker(lead));   /* 工作时段里人不在岗：按 floor 算，不是零 */
-      if (lw || away) G.world.money += G.WAGE * hours * k * G.efficiency() * G.householdBonus();
-      else if (G.isWorkTime() && W && W.enforce && !(lead && W.worker(lead)) && W.hasWorker()) G.world.money += G.WAGE * hours * G.efficiency() * G.householdBonus();   /* 别人在家办公，没人打断，专注满额 */
-    }
+    const mul = G.efficiency() * G.householdBonus();
+    let k = G.focusStep(gmin, !!lead && G.workers().includes(lead) && G.atPost(lead, offline));   /* 主角的专注：在岗就爬，不在岗掉回 floor */
+    G.world.money += G.pensionPerHour() * G.pensioners().length * hours;
+    for (const p of G.workers()) if (G.atPost(p, offline)) G.world.money += G.WAGE * hours * (p === lead ? k : 1) * mul;
     if (G.awayIncome) G.world.money += G.awayIncome(hours);
     if (G.tripTick) G.tripTick();
   };

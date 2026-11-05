@@ -27,7 +27,7 @@ const read = f => fs.readFileSync(path.join(__dirname, '..', 'config', 'template
   check('调度的参数缺一个就报错，策略模块没有默认值', /缺少配置 dispatch\.step_minutes/.test(boom(() => Pol.config({})) || '') && Object.keys(Pol.config(sys.dispatch)).length >= Pol.REQUIRED.length);
 
   /* 迁到配置里的值，行为没变：这几个是迁移前代码里写的数 */
-  check('迁移前后的值一致：工资，退休金，起始的钱，商品价格', G.WAGE === 52 && G.PENSION === 5 && G.START_MONEY === 200 && G.SHOP.find(i => i.id === 'toy').price === 80 && G.SHOP.find(i => i.id === 'wheelchair').outing_scale === 1.25);
+  check('迁移前后的值一致：工资，退休金比例，起始的钱，商品价格', G.WAGE === 26 && G.PENSION_RATIO === 0.3 && G.START_MONEY === 200 && G.SHOP.find(i => i.id === 'toy').price === 80 && G.SHOP.find(i => i.id === 'wheelchair').outing_scale === 1.25);
   check('迁移前后的值一致：来客的节奏，好感，床位', G.DOOR.arrive_from === 8 && G.FAV.ok === 30 && G.FAMILY_BEDS === 6 && G.BED_PRICE[1] === 600);
   check('迁移前后的值一致：打断间隔，需求的涨落', G.E('game').interrupt_gap_minutes.normal[1] === 180 && G.E('game').need_dynamics.frailty_up === 0.02 && G.E('game').mood_bands.great === 0.75);
 
