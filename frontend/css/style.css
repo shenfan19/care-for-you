@@ -527,3 +527,13 @@ body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none
 /* 商店说明气泡：悬停或聚焦在格子上出现，在弹窗之上，不挡鼠标 */
 .shoptip { display: none; position: fixed; z-index: 100; width: 260px; max-width: calc(100vw - 16px); padding: 8px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,.2); font-size: 13px; line-height: 1.5; pointer-events: none; }
 .shoptip p { margin: 4px 0; } .shoptip .money { margin-top: 4px; }
+
+/* 照顾统计：饼图和图例 */
+.spie { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin: 4px 0 10px; }
+.sleg { display: grid; grid-template-columns: 12px 1fr auto auto; gap: 8px; align-items: center; font-size: 13px; line-height: 1.7; }
+.sleg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* 状态面板里的两张饼图并排，窄了就上下排 */
+.spair { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.spie.v { flex-direction: column; align-items: flex-start; gap: 6px; }
+.spie.v .sleg { grid-template-columns: 12px 1fr auto auto; }

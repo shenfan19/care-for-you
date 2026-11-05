@@ -10,9 +10,9 @@
     const rows = G.people.map(p => `<div class="prow" data-id="${p.id}"><span class="pav">${CY.avatar(p)}</span><span class="pn"><b>${esc(p.person.name)}</b> <span class="mute">${esc(p.person.role || '')}${p.person.archived ? ' · ' + esc(t('people.archived')) : p.person.active === false ? ' · ' + esc(t('bar.away', { name: '' }).trim()) : ''}</span></span>
       ${G.canLead(p) && p.person.active !== false ? `<button data-a="lead" ${G.protagonist() === p ? 'class="primary" disabled' : ''}>${esc(t(G.protagonist() === p ? 'people.lead_on' : 'people.lead'))}</button>` : ''}${p.person.visitor ? '' : `<button data-a="edit">${esc(t('btn.edit'))}</button>`}${p.person.archived ? `<button data-a="restore">${esc(t('btn.restore'))}</button>` : p.person.active === false ? `<button data-a="restore">${esc(t('bar.recall'))}</button>` : `<button data-a="archive">${esc(t('btn.archive'))}</button>`}<button data-a="del" class="danger">${esc(t('btn.delete'))}</button></div>`).join('');
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('people.title'))}</h2>
-      <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="mute">${esc(t('people.note'))}</span><span><button id="pBook">${esc(t('book.open'))}</button> <button id="pAdd" class="primary">${esc(t('btn.add'))}</button></span></div>
+      <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="mute">${esc(t('people.note'))}</span><button id="pAdd">${esc(t('btn.add'))}</button></div>
       <div class="plist">${rows || `<div class="mute">${esc(t('said.nobody'))}</div>`}</div>
-      <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="pClose">${esc(t('btn.close'))}</button></div>`, true);
+      <div class="row" style="justify-content:space-between;margin-top:10px"><button id="pBook">${esc(t('book.open'))}</button><button id="pClose">${esc(t('btn.close'))}</button></div>`, true);
     dlg.querySelector('#pClose').onclick = U.closeDialog;
     dlg.querySelector('#pBook').onclick = () => U.visitorBook();
     dlg.querySelector('#pAdd').onclick = () => U.addDialog(null, () => U.peopleDialog());
@@ -73,7 +73,9 @@
       ${U.observeHtml(p)}
       <h3>${esc(t('status.needs'))}</h3>${bars}` : ''}
       <h3>${esc(dev ? t('status.selfdo', { n: Math.round(st.self_care * 100) }) : t('status.selfdo_plain'))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
+      ${!p.person.visitor && G.isHuman(p) && U.careStatsInline ? U.careStatsInline(p.id) : ''}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="stclose" class="primary">${esc(t('btn.close'))}</button></div></div></div>`, true);
     dlg.querySelector('#stclose').onclick = U.closeDialog;
+    if (U.careStatsInlineWire) U.careStatsInlineWire(dlg, p.id);
   };
 })(globalThis.CY = globalThis.CY || {});

@@ -32,15 +32,14 @@
       <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.FIGURES, CY.FIGURES.map(k => t('figure.' + k)), CY.figureOf(ini.get(G.cfg, 'ui', 'figure')))}</div>
       <div class="row">${esc(t('set.house_view'))} ${sel('house_view', ['rooms', 'house'], [t('house_view.rooms'), t('house_view.house')], ini.get(G.cfg, 'ui', 'house_view') === 'house' ? 'house' : 'rooms')}</div>
       <div class="sform">${form}</div>
-      <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px"><b>${esc(t('set.d_where'))}</b> ${esc(t('set.data_note', { where: store.backend.label }))}</div>
-      <div class="drows">
-        <div class="drow"><button id="drestore">${esc(t('set.restore'))}</button><span class="mute">${esc(t('set.d_restore_note'))}</span></div>
-        <div class="drow"><button id="dknow">${esc(t('set.know'))}</button><span class="mute">${esc(t('set.d_know_note'))}</span></div>
-        ${G.DEVTOOLS && CY.account.configured(G.cfg) ? `<div class="drow"><button id="dacct">${esc(t('acct.title'))}</button></div>` : ''}
-      </div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
       <details class="adv"><summary>${esc(t('set.advanced'))}</summary>
+      <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px"><b>${esc(t('set.d_where'))}</b> ${esc(t('set.data_note', { where: store.backend.label }))}</div>
+        <div class="drows">
+            <div class="drow"><button id="dknow">${esc(t('set.know'))}</button><span class="mute">${esc(t('set.d_know_note'))}</span></div>
+          ${G.DEVTOOLS && CY.account.configured(G.cfg) ? `<div class="drow"><button id="dacct">${esc(t('acct.title'))}</button></div>` : ''}
+        </div>
         <h3>${esc(t('set.unf_title'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.unf_note'))}</div>
         <div class="drows">
           ${G.DEVTOOLS ? `<div class="drow"><button id="dsave">${esc(t('hdr.save'))}</button><span class="mute">${esc(t('set.d_save_note'))}</span></div>` : ''}
@@ -63,11 +62,6 @@
     const ac = dlg.querySelector('#dacct'); if (ac) ac.onclick = () => U.accountDialog();
     dlg.querySelector('#dfolder').onclick = async () => {
       try { const had = await store.chooseFolder(); await G.load(); U.closeDialog(); U.afterPeopleChange(); alert(t(had ? 'set.folder_had' : 'set.folder_copied')); } catch (e) { alert(e.message); }
-    };
-    dlg.querySelector('#drestore').onclick = async () => {
-      const have = new Set(await store.list()), seed = CY.seed.files(); let n = 0;
-      for (const p in seed) if (!have.has(p)) { await store.write(p, seed[p]); n++; }
-      await G.load(); alert(t('set.restored', { n })); U.afterPeopleChange();
     };
     dlg.querySelector('#dwipe').onclick = () => U.wipeDialog();
     dlg.querySelector('#dknow').onclick = () => U.knowledgeDialog();

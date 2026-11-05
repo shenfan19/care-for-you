@@ -21,8 +21,8 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
   const P = n => G.people.find(p => p.person.name === n);
 
   /* 总开关：默认值，运行时改 */
-  check('默认：调度开，商店开，统计关', G.module('dispatch') && G.module('shop') && !G.module('ledger'));
-  G.setModule('ledger', true); check('运行时能开统计', G.module('ledger')); G.setModule('ledger', false);
+  check('默认：调度开，商店开，统计开', G.module('dispatch') && G.module('shop') && G.module('ledger'));
+  G.setModule('ledger', false); check('运行时能关统计', !G.module('ledger'));
 
   /* 统计关着，什么也不记 */
   run(60);
