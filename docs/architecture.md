@@ -70,25 +70,21 @@ sequenceDiagram
 
 A wish to go out takes the same route. The request is not a need but an outing, and a response sends the owner and the companion out through the normal outing flow.
 
-The numbers (thresholds, probabilities, weights, intervals) are in `templates/system.yaml` in the data folder. They are placeholders to be tuned, and setting `agents.request.scale` to 0 removes all requests between characters.
+The numbers (thresholds, probabilities, weights, intervals) are in `frontend/config/templates/system.yaml`, packed into the program by `tools/build_config.js`. They are placeholders to be tuned, and setting `agents.request.scale` to 0 removes all requests between characters.
 
 ## 3. Plain files
 
-Everything that decides behaviour is a readable file in the data folder. Saves are plain files too.
+A save is a set of readable files in the data folder, and the export is the same files in a zip. The game's own rules are not in the save: species, conditions, classes, character cards, lines, event rules and AI skills ship inside the program and are read from there. They are kept as YAML in `frontend/config/templates` and `frontend/src/data`, and `tools/build_config.js` packs them into scripts, because a page opened from a local file cannot read other files.
 
 | File or folder | Who edits | Holds |
 | --- | --- | --- |
 | `settings.ini` | The player | Language, theme, time, privacy; backend and account settings under advanced |
-| `world/<world id>/` | The game | `world.yaml` (clock, money, who you play, visitors met), `calendar.yaml` (one summary per game day), `curves_world.csv`. Each world has its own folder, so another world can be added later. Today there is one, `home`; saves from before schema 7 kept these files in the root and are moved on first load |
-| `templates/system.yaml` | Anyone tuning the game | Request and response probabilities, wishes, weights, polling interval |
-| `templates/species` | Anyone | Need rates per kind and life stage |
-| `templates/events/rules.yaml` | Anyone | Event rules: per-hour probability, outcome weights |
-| `templates/cards` | Anyone | One character card per kind of person, animal or plant |
-| `templates/content` | Anyone | Lines, by card, condition and voice |
-| `templates/conditions` | Anyone | Health conditions: needs, actions, first lines |
-| `templates/lm/models` | Anyone, or the LM plugin | Disease models in LM format |
+| `world/<world id>/` | The game | `world.yaml` (clock, money, who you play, visitors met), `calendar.yaml` (one summary per game day), `curves_world.csv`. Each world has its own folder, so another world can be added later. Today there is one, `home` |
+| `people/<id>/` | The game | One folder per character: `person.yaml`, `state.yaml`, `story.yaml`, `sayings.yaml`, `curves.csv`, and `journal/YYYY-MM.yaml` |
+| `custom/` | The player | Things you added yourself: imported disease packs in `custom/lm/models` and `custom/conditions`, your own visitor cards in `custom/visitors` |
+| `_backup/` | The game | Copies kept before a file is converted |
 
-A template file carries a version. If the version inside the game is newer than the file, the file is replaced and the old one is kept in the backup folder.
+Fields in a save are only ever added, never renamed or removed, so a newer version always reads an older save.
 
 ## 4. Code layout
 

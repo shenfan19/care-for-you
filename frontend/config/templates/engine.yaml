@@ -1,4 +1,4 @@
-version: 8
+version: 9
 # 规则代码里的数都写在这里，改数不改代码。源头是这个 YAML，部署前 tools/build_config.js 把它打包成 templates_packed.js；
 # 读不到的键直接报错，代码里不给默认值，所以缺了哪一项一运行就知道。改了内容把 version 加一，旧存档才会更新。
 world:
@@ -113,7 +113,6 @@ game:
   min_gap_seconds: 20                # 不管流速多快，两次打扰至少隔这么多现实秒
   retry_ms: 5000                     # 间隔算不出来时，隔多久再试
   person:
-    legacy_skin_map: [1, 2, 4, 5, 6, 7]   # 旧存档里肤色序号换成现在的肤色编号
     default_age: 35
     start_mood: 0.6
     start_frailty: 0.1

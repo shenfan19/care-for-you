@@ -99,7 +99,7 @@
       for (const k in aiSkills) out[`templates/ai/skills/${k}.yaml`] = '# AI 只能做这一件事，输入输出都受限。\n' + dump(aiSkills[k]);
       out['settings.ini'] = CY.ini.stringify({});
       out['README.txt'] = '这是 Care for You 的数据文件夹。里面全是明文文件，可以用记事本打开、修改、复制、备份。\n' +
-        'settings.ini 是参数。people 里每个角色一个文件夹。templates 是物种、疾病、类别、性格特征、物品和 AI 技能，templates/content 下按语言放着台词、说话库、问答库和提醒库。\n' +
+        'settings.ini 是参数。people 里每个角色一个文件夹。world 里是这个世界的钱，时钟，日历。custom 里是你自己放进来的东西，比如导入的疾病包。\n' +
         'people/角色/sayings.yaml 里每句话同时记着库编号 lib 和原文 text。\n' +
         '_backup 里是被覆盖前的旧版本。改坏了可以从那里取回，或者删掉对应文件让程序重新生成。\n';
       return out;

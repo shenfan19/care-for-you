@@ -14,7 +14,7 @@ const read = f => fs.readFileSync(path.join(__dirname, '..', 'config', 'template
 
   /* 配置放对了地方：modules 和 dispatch 在最外层，不在 agents 下面（曾经缩进错过，写了等于没写） */
   check('system.yaml：modules 和 dispatch 在最外层', sys.modules && sys.dispatch && !(sys.agents && (sys.agents.modules || sys.agents.dispatch)), Object.keys(sys).join());
-  check('模块开关读的是 YAML：调度开，商店开，统计关', G.module('dispatch') && G.module('shop') && !G.module('ledger'));
+  check('模块开关读的是 YAML：调度开，商店开，统计开', G.module('dispatch') && G.module('shop') && G.module('ledger'));
   check('engine.yaml 的各节都在', ['economy', 'shop', 'visitors', 'time', 'clock', 'ledger', 'household', 'needs', 'social', 'hash', 'settle', 'directives', 'game'].every(k => eng[k] !== undefined));
 
   /* 读不到的键直接报错，没有默认值 */

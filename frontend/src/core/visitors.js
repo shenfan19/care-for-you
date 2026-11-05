@@ -58,7 +58,9 @@
   /* 到来：建一个人，放在门口，之后和家里人一样自己走动 */
   G.arrive = async (id, quiet) => {
     const c = V.cards[id]; if (!c) return null;
-    const pid = await G.createPerson({ arch: c.age >= 60 ? 'neighbor' : 'friend', name: t(`visitor.${id}.name`), age: c.age, pronoun: c.pronoun, look: G.lookOf(c) });
+    const here = G.visitorPeople().find(p => p.person.visitor.id === id); if (here) return here;   /* 同一位来客不会同时在家两次：世界文件还没存盘时重载，第一位来客会再来一次；已经在家就返回他 */
+    const arch = c.age >= 60 ? 'neighbor' : 'friend';
+    const pid = await G.createPerson({ arch, name: t(`visitor.${id}.name`), roleText: CY.tOr('arch.' + arch, (CY.content.archOf(arch) || {}).role), age: c.age, pronoun: c.pronoun, look: G.lookOf(c) });
     const p = await G.loadOnePerson(pid, []);
     if (!p) return null;
     if (c.controllable === false) p.person.controllable = false;
@@ -267,9 +269,9 @@
     }
   });
 
-  /* 玩家自己放进数据文件夹的卡片：templates/visitors/*.yaml，标记非官方；文字按语言写成对象 */
+  /* 玩家自己放进存档的卡片：custom/visitors/*.yaml，标记非官方；文字按语言写成对象 */
   G.loadVisitorPacks = async () => {
-    for (const p of (await store.list()).filter(f => /^templates\/visitors\/[^/]+\.yaml$/.test(f))) {
+    for (const p of (await store.list()).filter(f => /^custom\/visitors\/[^/]+\.yaml$/.test(f))) {
       try {
         const x = await store.readYaml(p), list = x && (x.cards || (x.id ? [x] : []));
         for (const c of list || []) { if (c && c.id && c.t && !V.cards[c.id]) V.add(Object.assign({}, c, { official: false })); }

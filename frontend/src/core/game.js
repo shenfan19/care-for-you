@@ -28,31 +28,21 @@
 
   /* ---------- 载入 ---------- */
   const CONTENT_FILES = ['sayings', 'asks', 'nudges'];
-  /* 台词、说话库、问答库、提醒库是内容包，按语言放在 templates/content/语言 下，缺的从内置内容补上 */
-  async function loadContent(files) {
-    const L = CY.i18n.lang, dir = `templates/content/${L}/`;
-    /* 旧版本放在 templates/voices 和 templates/library 下的中文内容，搬到新位置，保住玩家改过的字 */
-    if (L === 'zh-CN') {
-      for (const p of files.slice()) {
-        let to = null;
-        const v = p.match(/^templates\/voices\/([^/]+)\.yaml$/), l = p.match(/^templates\/library\/([^/]+)\.yaml$/);
-        if (v) to = `${dir}voices/${v[1]}.yaml`; else if (l) to = `${dir}library/${l[1]}.yaml`;
-        if (to && !files.includes(to)) { await store.write(to, await store.read(p)); files.push(to); }
-      }
-    }
-    const seed = CY.seed.contentFiles(L);
-    for (const p in seed) {
-      if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
-      try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
-    }
+  /* 内置模板：物种，疾病，类别，角色卡，台词，规则都是程序自带的，不放进存档，直接读内置种子。玩家自己放进来的东西（导入的疾病包，自制的来客卡）放在存档的 custom/ 下。
+     种子按界面语言生成，同一种语言只生成一次 */
+  G.T = () => { const L = CY.i18n.lang; return (G._tc && G._tc.lang === L) ? G._tc.f : (G._tc = { lang: L, f: CY.seed.files() }).f; };
+  const tyaml = p => { const x = G.T()[p]; return x === undefined ? null : jsyaml.load(x); };
+  /* 台词、说话库、问答库、提醒库是内容包，按语言生成 */
+  async function loadContent() {
+    const L = CY.i18n.lang, dir = `templates/content/${L}/`, T = G.T();
     G.tpl.voices = {};
-    for (const p of files) { const m = p.match(new RegExp('^' + dir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + 'voices/([^/]+)\\.yaml$')); if (m) { const x = await store.readYaml(p); if (x) G.tpl.voices[x.id || m[1]] = x; } }
-    G.tpl.sayLib = ((await store.readYaml(dir + 'library/sayings.yaml')) || {}).items || [];
-    G.tpl.nudges = ((await store.readYaml(dir + 'library/nudges.yaml')) || {}).items || [];
-    G.tpl.asks = ((await store.readYaml(dir + 'library/asks.yaml')) || {}).items || [];
-    G.tpl.traitLines = (await store.readYaml(dir + 'traits.yaml')) || {};
+    for (const p of Object.keys(T)) { const m = p.match(new RegExp('^' + dir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + 'voices/([^/]+)\\.yaml$')); if (m) { const x = tyaml(p); if (x) G.tpl.voices[x.id || m[1]] = x; } }
+    G.tpl.sayLib = ((tyaml(dir + 'library/sayings.yaml')) || {}).items || [];
+    G.tpl.nudges = ((tyaml(dir + 'library/nudges.yaml')) || {}).items || [];
+    G.tpl.asks = ((tyaml(dir + 'library/asks.yaml')) || {}).items || [];
+    G.tpl.traitLines = tyaml(dir + 'traits.yaml') || {};
     /* 疾病的台词和事件文字：当前语言的覆盖到疾病模板上 */
-    const conds = (await store.readYaml(dir + 'conditions.yaml')) || {};
+    const conds = tyaml(dir + 'conditions.yaml') || {};
     for (const c in G.tpl.conditions) {
       const tx = conds[c], cd = G.tpl.conditions[c];
       if (!tx) continue;
@@ -68,6 +58,12 @@
   /* 系统起的名字和身份（开局预设、随机、没填名字时用的角色名）跟界面语言走；玩家自己改过的名字不动。name_auto 存名字键，玩家改名时清掉 */
   G.refreshAutoNames = async function () {
     for (const p of G.people) {
+      /* 来客的名字和身份跟界面语言走，换语言时一起换 */
+      if (p.person.visitor) {
+        const arch = p.person.archetype || p.person.card, role = CY.tOr('arch.' + arch, (CY.content.archOf(arch) || {}).role || p.person.role), name = CY.tOr('visitor.' + p.person.visitor.id + '.name', p.person.name);
+        if (name !== p.person.name || role !== p.person.role) { p.person.name = name; p.person.role = role; await store.writeYaml(`people/${p.id}/person.yaml`, p.person); }
+        continue;
+      }
       const k = p.person.name_auto; if (!k) continue;
       const arch = p.person.archetype || p.person.card, role = CY.tOr('arch.' + arch, (CY.content.archOf(arch) || {}).role || p.person.role);
       const name = CY.tOr('preset.name.' + k, role);
@@ -75,12 +71,13 @@
     }
   };
   G.reloadContent = async function () {
-    const files = await store.list();
-    for (const p of files) {
+    /* 疾病模板重新读一份干净的，再把当前语言的台词盖上去；玩家导入的疾病包在存档的 custom/conditions 下 */
+    for (const p of Object.keys(G.T())) {
       const m = p.match(/^templates\/conditions\/([^/]+)\.yaml$/);
-      if (m) { const x = await store.readYaml(p); if (x) G.tpl.conditions[x.id || m[1]] = x; }
+      if (m) { const x = tyaml(p); if (x) G.tpl.conditions[x.id || m[1]] = x; }
     }
-    await loadContent(files);
+    for (const p of (await store.list()).filter(p => /^custom\/conditions\/[^/]+\.yaml$/.test(p))) { const x = await store.readYaml(p); if (x) G.tpl.conditions[x.id || p.split('/').pop().replace('.yaml', '')] = x; }
+    await loadContent();
     await G.refreshAutoNames();
     emit();
   };
@@ -96,14 +93,11 @@
       if (person.pronoun) person.pronoun = CY.content.pron(person.pronoun);
       const species = G.tpl.species[person.species];
       if (!species) { console.warn('找不到物种模板', person.species); return null; }
-      /* 肤色色板加了两档偏白的，旧存档里的肤色序号按新色板换算，保持原来的颜色 */
-      if (person.appearance && typeof person.appearance.skin === 'number' && person.appearance.skin_v !== 2) { person.appearance.skin = G.E('game').person.legacy_skin_map[person.appearance.skin] || 2; person.appearance.skin_v = 2; }
       if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || G.E('game').person.default_age;
       const state = Object.assign({ version: 1, needs: {}, mood: G.E('game').person.start_mood, frailty: G.E('game').person.start_frailty, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
       state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || G.E('game').person.talkative_default, resp: 0, n_resp: 0, kinds: {} }, state.learn);
       const story = Object.assign({ version: 1, arcs: {}, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
       const p = { id, person, species, state, story, voice: {} };
-      if (state.needs_v !== 2) { for (const k in state.needs) if (typeof state.needs[k] === 'number') state.needs[k] = 1 - state.needs[k]; state.needs_v = 2; }   /* 旧存档存的是压力，换成水平 */
       for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 1 - (G.E('needs').init_floor + Math.random() * G.E('needs').init_spread);
       G.people.push(p);
       const sy = await store.readYaml(`people/${id}/sayings.yaml`);
@@ -119,74 +113,121 @@
   /* 世界文件的路径：world/世界编号/文件名 */
   G.worldId = () => G.E('world').default_id;
   G.wpath = f => 'world/' + G.worldId() + '/' + f;
-  G.WORLD_FILES = ['world.yaml', 'calendar.yaml', 'curves_world.csv'];
-  G.migrateWorldFiles = async () => {
-    for (const f of G.WORLD_FILES) {
-      const old = await store.read(f);
-      if (old === null) continue;
-      await store.write(G.wpath(f), old);   /* 根目录还有旧文件，说明是旧版本写的，比新位置的新：旧版本写过之后再升级也是这样，所以以旧文件为准 */
-      await store.removeDir(f);
-    }
-  };
+
   G.load = async function () {
     if (!(await store.list()).includes('settings.ini')) {
       const seed = CY.seed.files();
-      for (const p in seed) await store.write(p, seed[p]);
+      for (const p in seed) if (!/^templates\//.test(p)) await store.write(p, seed[p]);   /* 模板不进存档 */
     }
     G.cfg = ini.parse((await store.read('settings.ini')) || '');
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
-    /* 规则配置最先读：后面的载入就要用它。文件缺了或版本比内置的旧，就用内置的 */
-    {
-      const sd = CY.seed.files()['templates/engine.yaml'], have = await store.read('templates/engine.yaml');
-      /* 本机副本过期有两种：版本比内置的旧，或者缺内置里有的键（改了键名忘了升版本时，缺键会让读配置报错、界面按钮失灵） */
-      const hasAll = (a, b) => Object.keys(b || {}).every(k => a && Object.prototype.hasOwnProperty.call(a, k) && (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) ? hasAll(a[k], b[k]) : true));
-      let ok = !!have; if (have) { try { const h = jsyaml.load(have) || {}, b = jsyaml.load(sd) || {}; ok = (h.version || 1) >= (b.version || 1) && hasAll(h, b); } catch (e) { ok = false; } }
-      if (!ok) { if (have) await store.write('_backup/engine.yaml', have); await store.write('templates/engine.yaml', sd); }
-      G.tpl.engine = (await store.readYaml('templates/engine.yaml')) || {};
-    }
-    /* 世界相关的文件（world.yaml，calendar.yaml，curves_world.csv）放在 world/世界编号/ 下，给以后别的世界留出位置。旧版本放在根目录，第一次载入时搬过去 */
-    await G.migrateWorldFiles();
+    /* 规则配置最先读：后面的载入就要用它。模板是程序自带的，不在存档里 */
+    G.tpl.engine = tyaml('templates/engine.yaml') || {};
     G.world = Object.assign({ version: 1, game_minutes: 0, last_seen: '' }, await store.readYaml(G.wpath('world.yaml')));
-    delete G.world.beds;   /* 旧版本的床位数字段，现在床位是固定的，不再使用 */
     /* 新档开局对齐系统时间，之后游戏时钟自己走 */
     if (typeof G.world.clock_shift !== 'number') G.setClock(G.startMinute());
-    const files = await store.list();
-    /* 新增的模板文件补上；内置模板的版本比文件里新，就用新的覆盖，旧的留在 _backup 里 */
-    const seed = CY.seed.files();
-    for (const p in seed) {
-      if (!/^templates\//.test(p)) continue;
-      if (!files.includes(p)) { await store.write(p, seed[p]); files.push(p); continue; }
-      if (/^templates\/(species|conditions|cards)\/|^templates\/(classes|traits|system|events\/rules)\.yaml$/.test(p)) {
-        try { const cur = jsyaml.load(await store.read(p)) || {}, nv = (jsyaml.load(seed[p]) || {}).version || 1; if ((cur.version || 1) < nv) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
-      }
-    }
-    /* 疾病模型：metadata.version 比文件里新就覆盖 */
-    for (const p in seed) {
-      if (!/^templates\/lm\/models\/[^/]+\.yaml$/.test(p) || !files.includes(p)) continue;
-      try { const ver = d => parseFloat((d && (d.version || (d.metadata || {}).version)) || 1), cur = jsyaml.load(await store.read(p)) || {}; if (ver(cur) < ver(jsyaml.load(seed[p]))) await store.write(p, seed[p]); } catch (e) { await store.write(p, seed[p]); }
-    }
-    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, engine: G.tpl.engine, system: G.tpl.system };   /* engine 在最前面已经读进来了；重新载入的几个 await 之间游戏还在走，system 先留着旧的，读完再换，不然这几下读配置会报缺少 */
-    for (const p of files) {
+    const files = await store.list(), T = G.T();
+    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, engine: G.tpl.engine, system: G.tpl.system };   /* engine 在最前面已经读进来了；重新载入的几个 await 之间游戏还在走，system 先留着 */
+    for (const p of Object.keys(T)) {
       const m = p.match(/^templates\/(species|conditions)\/([^/]+)\.yaml$/);
-      if (m) { const x = await store.readYaml(p); if (x) G.tpl[m[1]][x.id || m[2]] = x; }
+      if (m) { const x = tyaml(p); if (x) G.tpl[m[1]][x.id || m[2]] = x; }
       const sk = p.match(/^templates\/ai\/skills\/([^/]+)\.yaml$/);
-      if (sk) { const x = await store.readYaml(p); if (x) G.tpl.skills[x.id || sk[1]] = x; }
+      if (sk) { const x = tyaml(p); if (x) G.tpl.skills[x.id || sk[1]] = x; }
     }
+    /* 玩家导入的疾病包在存档的 custom/conditions 下 */
+    for (const p of files) { const m = p.match(/^custom\/conditions\/([^/]+)\.yaml$/); if (m) { const x = await store.readYaml(p); if (x) G.tpl.conditions[x.id || m[1]] = x; } }
     /* 角色卡：每类典型角色一张，读进来替换内置的原型，新增的卡会出现在添加角色的列表里 */
     G.tpl.cards = {};
-    for (const p of files) { const m = p.match(/^templates\/cards\/([^/]+)\.yaml$/); if (m && !(m[1] in CY.content.LEGACY_ARCH)) { const x = await store.readYaml(p); if (x) G.tpl.cards[x.id || m[1]] = x; } }
+    for (const p of Object.keys(T)) { const m = p.match(/^templates\/cards\/([^/]+)\.yaml$/); if (m && !(m[1] in CY.content.LEGACY_ARCH)) { const x = tyaml(p); if (x) G.tpl.cards[x.id || m[1]] = x; } }
     for (const id in G.tpl.cards) {
       const c = G.tpl.cards[id], a = Object.assign({}, c, { id, role: c.label || c.role || id }), L = CY.content.archetypes, i = L.findIndex(x => x.id === id);
       if (i >= 0) L[i] = a; else L.push(a);
     }
-    G.tpl.persona = await store.readYaml('templates/ai/persona.yaml');
-    G.tpl.rules = ((await store.readYaml('templates/events/rules.yaml')) || {}).rules || [];
-    G.tpl.system = (await store.readYaml('templates/system.yaml')) || {};
-    G.tpl.classes = ((await store.readYaml('templates/classes.yaml')) || {}).classes || {};
-    G.tpl.traits = ((await store.readYaml('templates/traits.yaml')) || {}).traits || {};
-    delete G.world.inv; delete G.world.nanny; delete G.world.nanny_on;   /* 旧版的物品和保姆，保姆已经取消 */
+    G.tpl.persona = tyaml('templates/ai/persona.yaml');
+    G.tpl.rules = (tyaml('templates/events/rules.yaml') || {}).rules || [];
+    G.tpl.system = tyaml('templates/system.yaml') || {};
+    G.tpl.classes = (tyaml('templates/classes.yaml') || {}).classes || {};
+    G.tpl.traits = (tyaml('templates/traits.yaml') || {}).traits || {};
     if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
-    delete G.world.tasks;
+    if (G.loadCalendar) await G.loadCalendar();
+    if (G.loadVisitorPacks) await G.loadVisitorPacks();
+    if (G.afterLoad) G.afterLoad();
+    delete G.world.busy;
+    G.people = []; G.journal = {}; G.sayings = {};
+    const ids = [...new Set(files.map(p => (p.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].sort();
+    for (const id of ids) await G.loadOnePerson(id, files);
+    await loadContent();
+    await G.refreshAutoNames();
+    emit();
+  };
+
+  /* 读一个人进内存：载入时逐个调用，访客到来时单独调用 */
+  G.loadOnePerson = async (id, files) => {
+      const person = await store.readYaml(`people/${id}/person.yaml`);
+      if (!person) return null;
+      person.id = id;
+      /* 旧存档里的角色卡 id 和称呼，换成现在的写法 */
+      if (person.archetype) person.archetype = CY.content.archId(person.archetype);
+      if (person.card) person.card = CY.content.archId(person.card);
+      if (person.pronoun) person.pronoun = CY.content.pron(person.pronoun);
+      const species = G.tpl.species[person.species];
+      if (!species) { console.warn('找不到物种模板', person.species); return null; }
+      if (person.kind === 'human' && typeof person.age !== 'number') person.age = CY.content.AGE_OF_STAGE[person.age_stage] || G.E('game').person.default_age;
+      const state = Object.assign({ version: 1, needs: {}, mood: G.E('game').person.start_mood, frailty: G.E('game').person.start_frailty, last_seen: '', asked: [], heal: {} }, await store.readYaml(`people/${id}/state.yaml`));
+      state.learn = Object.assign({ needy: (person.personality && person.personality.talkative) || G.E('game').person.talkative_default, resp: 0, n_resp: 0, kinds: {} }, state.learn);
+      const story = Object.assign({ version: 1, arcs: {}, care_total: 0, cares_back_total: 0, revealed: false, nudge_done: 0, self_total: 0 }, await store.readYaml(`people/${id}/story.yaml`));
+      const p = { id, person, species, state, story, voice: {} };
+      for (const k of Object.keys(G.needsOf(p))) if (typeof state.needs[k] !== 'number') state.needs[k] = 1 - (G.E('needs').init_floor + Math.random() * G.E('needs').init_spread);
+      G.people.push(p);
+      const sy = await store.readYaml(`people/${id}/sayings.yaml`);
+      G.sayings[id] = (sy && sy.items) || [];
+      G.journal[id] = {};
+      for (const f of files.filter(f => f.startsWith(`people/${id}/journal/`))) {
+        const j = await store.readYaml(f);
+        G.journal[id][f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || [];
+      }
+      return p;
+  };
+
+  /* 世界文件的路径：world/世界编号/文件名 */
+  G.worldId = () => G.E('world').default_id;
+  G.wpath = f => 'world/' + G.worldId() + '/' + f;
+
+  G.load = async function () {
+    if (!(await store.list()).includes('settings.ini')) {
+      const seed = CY.seed.files();
+      for (const p in seed) if (!/^templates\//.test(p)) await store.write(p, seed[p]);   /* 模板不进存档 */
+    }
+    G.cfg = ini.parse((await store.read('settings.ini')) || '');
+    CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
+    /* 规则配置最先读：后面的载入就要用它。模板是程序自带的，不在存档里 */
+    G.tpl.engine = tyaml('templates/engine.yaml') || {};
+    G.world = Object.assign({ version: 1, game_minutes: 0, last_seen: '' }, await store.readYaml(G.wpath('world.yaml')));
+    /* 新档开局对齐系统时间，之后游戏时钟自己走 */
+    if (typeof G.world.clock_shift !== 'number') G.setClock(G.startMinute());
+    const files = await store.list(), T = G.T();
+    G.tpl = { species: {}, conditions: {}, voices: {}, sayLib: [], nudges: [], asks: [], skills: {}, persona: null, classes: {}, traits: {}, engine: G.tpl.engine, system: G.tpl.system };   /* engine 在最前面已经读进来了；重新载入的几个 await 之间游戏还在走，system 先留着 */
+    for (const p of Object.keys(T)) {
+      const m = p.match(/^templates\/(species|conditions)\/([^/]+)\.yaml$/);
+      if (m) { const x = tyaml(p); if (x) G.tpl[m[1]][x.id || m[2]] = x; }
+      const sk = p.match(/^templates\/ai\/skills\/([^/]+)\.yaml$/);
+      if (sk) { const x = tyaml(p); if (x) G.tpl.skills[x.id || sk[1]] = x; }
+    }
+    /* 玩家导入的疾病包在存档的 custom/conditions 下 */
+    for (const p of files) { const m = p.match(/^custom\/conditions\/([^/]+)\.yaml$/); if (m) { const x = await store.readYaml(p); if (x) G.tpl.conditions[x.id || m[1]] = x; } }
+    /* 角色卡：每类典型角色一张，读进来替换内置的原型，新增的卡会出现在添加角色的列表里 */
+    G.tpl.cards = {};
+    for (const p of Object.keys(T)) { const m = p.match(/^templates\/cards\/([^/]+)\.yaml$/); if (m && !(m[1] in CY.content.LEGACY_ARCH)) { const x = tyaml(p); if (x) G.tpl.cards[x.id || m[1]] = x; } }
+    for (const id in G.tpl.cards) {
+      const c = G.tpl.cards[id], a = Object.assign({}, c, { id, role: c.label || c.role || id }), L = CY.content.archetypes, i = L.findIndex(x => x.id === id);
+      if (i >= 0) L[i] = a; else L.push(a);
+    }
+    G.tpl.persona = tyaml('templates/ai/persona.yaml');
+    G.tpl.rules = (tyaml('templates/events/rules.yaml') || {}).rules || [];
+    G.tpl.system = tyaml('templates/system.yaml') || {};
+    G.tpl.classes = (tyaml('templates/classes.yaml') || {}).classes || {};
+    G.tpl.traits = (tyaml('templates/traits.yaml') || {}).traits || {};
+    if (typeof G.world.money !== 'number') G.world.money = G.START_MONEY;
     if (G.loadCalendar) await G.loadCalendar();
     if (G.loadVisitorPacks) await G.loadVisitorPacks();
     if (G.afterLoad) G.afterLoad();
@@ -197,8 +238,6 @@
     G.journal.you = {};
     for (const f of files.filter(f => f.startsWith('me/journal/'))) { const j = await store.readYaml(f); G.journal.you[f.split('/').pop().replace('.yaml', '')] = (j && j.entries) || []; }
     await loadContent(files);
-    /* 保姆已经取消：旧存档里请过的保姆，整个人从家里拿掉 */
-    for (const p of G.people.filter(x => x.person.help && x.person.help.role === 'nanny')) await G.deletePerson(p.id);
     if (G.loadCurves) await G.loadCurves();
     G.req = {}; G.toast = {}; G.fx = {}; G.crying = {}; G.act = {};
   };
@@ -220,7 +259,7 @@
       version: 2, id, active: true, name: spec.name || spec.roleText || arch.role || '', role: spec.roleText || arch.role || '',
       archetype: spec.arch || '', voice, pronoun: CY.content.pron(spec.pronoun || arch.pronoun || (human ? 'he' : 'it')),
       kind: human ? 'human' : PLANTS.includes(species) ? 'plant' : 'animal', species,
-      appearance: Object.assign({}, spec.look || arch.look || {}, typeof (spec.look || arch.look || {}).skin === 'number' ? { skin_v: 2 } : {}), personality: { talkative: G.E('game').person.talkative_default, temper: '', catchphrases: [] },
+      appearance: Object.assign({}, spec.look || arch.look || {}), personality: { talkative: G.E('game').person.talkative_default, temper: '', catchphrases: [] },
       traits: (spec.traits || []).slice(0, 2), conditions: spec.conditions || (arch.health && arch.health.conditions) || [], lines: JSON.parse(JSON.stringify((arch.dialogue && arch.dialogue.lines) || {})),
     };
     if (spec.name_auto) person.name_auto = spec.name_auto;
@@ -238,7 +277,7 @@
     if (Array.isArray(arch.self_actions)) { const def = defaultSelf(species, stg); if (arch.self_actions.slice().sort().join() !== def.slice().sort().join()) person.self_actions = arch.self_actions.slice(); }
     if (human) person.age = age;
     await store.writeYaml(`people/${id}/person.yaml`, person);
-    if (arch.health && typeof arch.health.score === 'number') await store.writeYaml(`people/${id}/state.yaml`, { version: 1, needs_v: 2, needs: {}, mood: typeof arch.health.mood === 'number' ? arch.health.mood : G.E('game').person.start_mood, frailty: +(1 - arch.health.score).toFixed(2), last_seen: '', asked: [], heal: {} });
+    if (arch.health && typeof arch.health.score === 'number') await store.writeYaml(`people/${id}/state.yaml`, { version: 1, needs: {}, mood: typeof arch.health.mood === 'number' ? arch.health.mood : G.E('game').person.start_mood, frailty: +(1 - arch.health.score).toFixed(2), last_seen: '', asked: [], heal: {} });
     return id;
   };
   G.setActive = async function (pid, on) {
@@ -522,7 +561,7 @@
       }
       for (const k of G.dirty) {
         const [kind, id, mk] = k.split('|');
-        if (kind === 'j') store.writeYaml(`${id === 'you' ? 'me' : 'people/' + id}/journal/${mk}.yaml`, { version: 1, entries: G.journal[id][mk] });
+        if (kind === 'j') store.writeYaml(`people/${id}/journal/${mk}.yaml`, { version: 1, entries: G.journal[id][mk] });
         else store.writeYaml(`people/${id}/sayings.yaml`, { version: 1, items: G.sayings[id] });
       }
       G.dirty.clear();

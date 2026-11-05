@@ -366,17 +366,18 @@
   }
   LM.Library = Library; LM.Engine = Engine; LM.compile = compile; LM.Person = Person;
 
-  /* 从数据文件夹读模型：templates/lm/models/*.yaml 和 templates/lm/classes.yaml。改了文件，重新载入页面生效 */
+  /* 读模型：内置的在程序自带的 templates/lm，玩家导入的在存档的 custom/lm/models */
   LM.build = (docs, classes) => { LM.lib = new Library(docs, classes); LM.engine = new Engine(LM.lib, 'full'); LM.engineCond = new Engine(LM.lib, 'conditions'); LM.ready = true; LM.error = null; return LM.lib; };
   LM.load = async function () {
     if (LM.ready || LM.loading) return LM.ready;
     LM.loading = true;
     try {
-      const store = CY.store, files = (await store.list()).filter(p => /^templates\/lm\/models\/[^/]+\.yaml$/.test(p)).sort();
-      const docs = [];
-      for (const p of files) docs.push([p.split('/').pop(), await store.readYaml(p)]);
-      const classes = await store.readYaml('templates/lm/classes.yaml');
-      if (!docs.length || !classes) throw new Error('数据文件夹里没有 templates/lm，点设置里的补回缺失的初始文件');
+      const store = CY.store, T = CY.game.T(), docs = [];
+      for (const p of Object.keys(T).filter(p => /^templates\/lm\/models\/[^/]+\.yaml$/.test(p)).sort()) docs.push([p.split('/').pop(), jsyaml.load(T[p])]);
+      /* 玩家导入的疾病包在存档的 custom/lm/models 下 */
+      for (const p of (await store.list()).filter(p => /^custom\/lm\/models\/[^/]+\.yaml$/.test(p)).sort()) docs.push([p.split('/').pop(), await store.readYaml(p)]);
+      const classes = T['templates/lm/classes.yaml'] ? jsyaml.load(T['templates/lm/classes.yaml']) : null;
+      if (!docs.length || !classes) throw new Error('内置的疾病模型没有载入');
       LM.build(docs, classes);
     } catch (e) { LM.error = String(e && e.message || e); }
     LM.loading = false;

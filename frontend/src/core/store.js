@@ -47,7 +47,7 @@
       try { const d = await this.dir(parts, false); await d.removeEntry(n, { recursive: true }); } catch (e) {}
     }
     async wipe() {
-      for (const n of ['people', 'templates', '_backup', 'settings.ini', 'world', 'world.yaml', 'README.txt']) { try { await this.root.removeEntry(n, { recursive: true }); } catch (e) {} }
+      for (const n of ['people', 'world', 'custom', '_backup', 'settings.ini', 'README.txt']) { try { await this.root.removeEntry(n, { recursive: true }); } catch (e) {} }
     }
     async list() {
       const out = [];

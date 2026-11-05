@@ -190,7 +190,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.game_minutes += 10; G.drive('tick', { minutes: 1 });
     check('起夜到期后按规则跌倒或住院', !!G.flag(g, 'hurt'));
     G.tpl.rules = keepFall;
-    check('规则就在数据文件夹的明文 YAML 里', (await CY.store.read('templates/events/rules.yaml')).includes('night_toilet') && G.tpl.rules.length >= 5);
+    check('规则是程序自带的明文 YAML，不在存档里', G.T()['templates/events/rules.yaml'].includes('night_toilet') && G.tpl.rules.length >= 5 && (await CY.store.list()).every(p => !p.startsWith('templates/')));
     /* 改规则文件就改行为：把夜尿起夜的频率调成零 */
     const keep = G.tpl.rules; G.tpl.rules = keep.map(r => (r.id === 'night_toilet' ? Object.assign({}, r, { rate_per_hour: 0 }) : r));
     G.clearFlag(g, 'hurt'); G.clearFlag(g, 'hospital'); delete g.state.flags.wc; g.person.conditions = ['nocturia']; G.act[gp] = 'sleeping';
@@ -431,12 +431,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   await G.load(); refs();
   check('状态文件缺字段时用默认值', typeof grandpa.state.mood === 'number' && 'thirst' in grandpa.state.needs && grandpa.state.learn.kinds && Array.isArray(grandpa.state.asked));
 
-  /* 状态存的是水平（饱食度）：旧存档存的是压力，载入时换过来，只换一次 */
+  /* 状态存的是水平（饱食度） */
   mem.set(`people/${grandpa.id}/state.yaml`, 'version: 1\nneeds:\n  thirst: 0.9\n  hunger: 0.2\n');
   await G.load(); refs();
-  check('旧存档的压力载入时换成水平，口渴 0.9 成了补水 0.1', Math.abs(G.level(grandpa, 'thirst') - 0.1) < 1e-9 && Math.abs(G.need(grandpa, 'thirst') - 0.9) < 1e-9 && Math.abs(G.level(grandpa, 'hunger') - 0.8) < 1e-9 && grandpa.state.needs_v === 2);
   G.save(true); await new Promise(r => setTimeout(r, 50)); await G.load(); refs();
-  check('换过的存档再载入不会再换一次', Math.abs(G.level(grandpa, 'thirst') - 0.1) < 1e-9);
   /* ---------- v0.5：年龄阶段、类别、自理、哭闹、代价系统 ---------- */
   const mk = async (arch, name, extra) => { const id = await G.createPerson(Object.assign({ arch, name }, extra || {})); await G.load(); refs(); return G.get(id); };
   {   /* 水平的方向：不管就往下掉，照顾就往上升，最满是 1 */
@@ -472,8 +470,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('花草和宠物各有自己的动作，花草不是人', 'sun' in G.actionsOf(flowerP) && !('feed' in G.actionsOf(flowerP)) && 'clean' in G.actionsOf(fishP) && G.askBank(flowerP).length === 0 && flowerP.person.kind === 'plant');
   [bb, sis2, eld, tdl] = [bb, sis2, eld, tdl].map(p => G.get(p.id));
   check('每种原型都能画出形象', CY.content.archetypes.every(a => /<svg/.test(CY.avatarPreview(a, a.look))));
-  check('三种人物造型都能画，有手脚的带可动的手脚，团子没有', (() => { const old = CY.figure; const ok = []; for (const fg of CY.FIGURES) { CY.figure = fg; for (const age of [0.5, 2, 8, 15, 35, 70]) { const svg = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look, age); ok.push(svg.startsWith('<svg')); if (fg !== 'dumpling') ok.push(svg.includes('class="foot l"') && svg.includes('class="hand r"')); else ok.push(svg.includes('class="bean"') && !svg.includes('class="foot')); } } CY.figure = old; return ok.every(Boolean); })());
-  check('旧设置的造型名转成新的，默认方块小人，三种手画豆子可选', CY.figureOf('classic') === 'dressed' && CY.figureOf('bean_a') === 'dumpling' && CY.figureOf('bean_b') === 'plain' && CY.figureOf('') === 'sprite' && CY.figureOf('dressed') === 'dressed' && CY.figure === 'sprite');
+  check('两种人物造型都能画，豆子带可动的手脚', (() => { const old = CY.figure; const ok = []; for (const fg of CY.FIGURES) { CY.figure = fg; for (const age of [0.5, 2, 8, 15, 35, 70]) { const svg = CY.avatarPreview(CY.content.archOf('mom'), CY.content.archOf('mom').look, age); ok.push(svg.startsWith('<svg')); if (fg === 'dressed') ok.push(svg.includes('class="foot l"') && svg.includes('class="hand r"')); } } CY.figure = old; return ok.every(Boolean); })());
+  check('造型只有两种：穿衣小豆（默认），迷你小人精灵；不认识的名字回到默认', CY.FIGURES.join() === 'dressed,sprite' && CY.figureOf('plain') === 'dressed' && CY.figureOf('dumpling') === 'dressed' && CY.figureOf('') === 'dressed' && CY.figureOf('sprite') === 'sprite' && CY.figure === 'dressed');
   check('四个方向都能画：朝上看不到脸，朝下脸转向一侧，左右是镜像', (() => { const mom = CY.content.archOf('mom'), at = d => CY.avatarPreview(mom, mom.look, 35).length && CY.avatar({ species: { id: 'human' }, state: { mood: 0.7 }, person: { age: 35, appearance: mom.look } }, d); const f = at(''), se = at('se'), sw = at('sw'), ne = at('ne'), nw = at('nw'); return CY.DIRS.length === 4 && f.includes('class="eyes"') && se.includes('class="eyes"') && sw.includes('scale(-1 1)') && !se.includes('scale(-1 1)') && !ne.includes('class="eyes"') && !nw.includes('class="eyes"') && nw.includes('scale(-1 1)') && ne.includes('data-dir="ne"') && ne.includes('class="foot l"'); })());
   check('书桌前的椅子在书房和办公室都有', (() => { const W = CY.world; const a = W.slotPoint('home', 'study', 'seat', 0), c = W.slotPoint('office', 'desk', 'player', 0); const old = Object.assign({}, W.player()); W.moveTo('home', 'study'); const s1 = W.atWork(); W.moveTo('office', 'desk'); const s2 = W.atWork(); W.moveTo('home', 'living'); const s3 = W.atWork(); Object.assign(W.player(), old); return s1 && s2 && !s3 && a.gy < 2 && c.gx < 3; })());
   check('只有夫妻办公；家里没有夫妻时才轮到主角自己', (() => { const W = CY.world, G2 = CY.game, ar = p => p.person.archetype || p.person.card, act = G2.activePeople(), couple = act.filter(p => G2.isHuman(p) && G2.stage(p) === 'adult' && ['dad', 'mom', 'husband', 'wife'].includes(ar(p))); return act.every(p => W.worker(p) === (couple.includes(p) || (!couple.length && p === G2.protagonist() && G2.isHuman(p) && G2.stage(p) === 'adult'))); })());
@@ -552,10 +550,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   /* 旧数据：缺年龄的人按阶段补年龄，旧版本的物种模板被新版覆盖 */
   const legacy = await mk('paternal_grandpa', '旧爷爷');
   const pr = ctx.jsyaml.load(mem.get(`people/${legacy.id}/person.yaml`)); delete pr.age; pr.age_stage = 'elder'; mem.set(`people/${legacy.id}/person.yaml`, ctx.jsyaml.dump(pr));
-  mem.set('templates/species/human.yaml', 'version: 1\nid: human\nlabel: 人\nneeds: {}\nactions: {}\n');
   await G.load(); refs();
   check('旧数据按阶段补上年龄', G.get(legacy.id).person.age === 75 && G.stage(G.get(legacy.id)) === 'elder');
-  check('旧版本的物种模板被新版覆盖', ctx.jsyaml.load(mem.get('templates/species/human.yaml')).version === 11 && Object.keys(G.tpl.species.human.needs).length > 5);
 
 
   /* ---------- v0.6：自己做、睡觉、性格特征、更多动作、内容包、场景 ---------- */
@@ -618,7 +614,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   check('换语言时角色换成该语言的台词，问答也换', /[A-Za-z]/.test(G.lines(G.get(eld2.id), 'request', 'thirst')[0]) && G.askBank(G.get(eld2.id)).every(q => /[A-Za-z]/.test(q.say)));
   check('称呼随语言变，句首大写', G.fmt('{ta} smiled.', G.get(eld2.id)) === 'He smiled.' && G.fmt('and {ta} left', G.get(eld2.id)) === 'and he left');
   check('疾病的台词和事件文字也换了', /[A-Za-z]/.test(G.tpl.conditions.diabetes.events.dinner.say) && G.tpl.conditions.diabetes.events.dinner.choices[0].liked === true);
-  check('内容包写成了按语言分的明文文件', mem.has('templates/content/en/voices/elder.yaml') && mem.has('templates/content/en/library/asks.yaml'));
+  check('内容包按语言生成，不进存档', !!CY.seed.contentFiles('en')['templates/content/en/voices/elder.yaml'] && !!CY.seed.contentFiles('en')['templates/content/en/library/asks.yaml'] && !mem.has('templates/content/en/voices/elder.yaml'));
   G.cfg.ui.language = 'zh-CN'; await store_write_cfg(); CY.i18n.set('zh-CN'); await G.reloadContent();
   check('切回中文后台词也回来', /[一-龥]/.test(G.lines(G.get(eld2.id), 'request', 'thirst')[0]) && G.fmt('{ta}笑了', G.get(eld2.id)) === '他笑了');
 
@@ -714,12 +710,13 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('卡里的主动帮忙', K.person.helper === true && K.person.help.efficiency === 0.3 && Wf.person.helper === true && E.person.helper === false);
     check('快照带卡和健康度', CY.protocol.person(E, {}).card === 'elder' && Math.abs(CY.protocol.person(E, {}).health - 0.6) < 0.011 && !!CY.api.cards().elder);
     /* 改卡：自理动作名单和需求速率只对新建的角色生效 */
-    const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/elder.yaml')); cardY.self_actions = ['drink']; cardY.need_rate = { thirst: 2 };
-    await CY.store.write('templates/cards/elder.yaml', ctx.jsyaml.dump(cardY)); await G.load();
+    const cardY = ctx.jsyaml.load(G.T()['templates/cards/elder.yaml']); cardY.self_actions = ['drink']; cardY.need_rate = { thirst: 2 };
+    const cardOld = G.T()['templates/cards/elder.yaml']; G.T()['templates/cards/elder.yaml'] = ctx.jsyaml.dump(cardY); await G.load();   /* 内置模板在内存里，测试里直接换一张 */
     const e2id = await G.createPerson({ arch: 'elder', name: '改卡' }); await G.load();
     const E2 = G.get(e2id); const Eold = G.get(eid);
     check('改了卡的自理名单生效', JSON.stringify(E2.person.self_actions) === '["drink"]' && G.canSelf(E2, G.allActionsOf(E2).drink) && !G.canSelf(E2, G.allActionsOf(E2).wash) && G.canSelf(Eold, G.allActionsOf(Eold).wash));
     check('改了卡的需求速率生效', E2.person.need_rate.thirst === 2);
+    G.T()['templates/cards/elder.yaml'] = cardOld; await G.load();
     await G.load();
   }
 
@@ -770,13 +767,14 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('帮忙的人先走去要照顾的人那里并带着标记', W.agents[mm2.id].room === 'living' && W.errandOf(mm2) === 'help', JSON.stringify(W.agents[mm2.id]));
     for (const x of G.people) x.person.active = true;
     /* 角色卡里的喜好优先 */
-    const cardY = ctx.jsyaml.load(await CY.store.read('templates/cards/mom.yaml')); cardY.prefs = { rooms: { yard: 1 }, restless: 1 };
-    await CY.store.write('templates/cards/mom.yaml', ctx.jsyaml.dump(cardY)); await G.load();
+    const cardY = ctx.jsyaml.load(G.T()['templates/cards/mom.yaml']); cardY.prefs = { rooms: { yard: 1 }, restless: 1 };
+    const momOld = G.T()['templates/cards/mom.yaml']; G.T()['templates/cards/mom.yaml'] = ctx.jsyaml.dump(cardY); await G.load();
     const m3id = await G.createPerson({ arch: 'mom', name: '爱院子' }); await G.load();
     const M3 = G.get(m3id); for (const x of G.people) x.person.active = x === M3; for (const k in M3.state.needs) G.setNeed(M3, k, 0.1);
     G.setClock(8 * 60 + 45);   /* 八点四十五，上班的人的日程里这个时刻没有去处，喜好才起作用；不固定时钟的话，测试会随真实时间偶尔失败 */
     const r3 = new Set(); for (let i = 0; i < 40; i++) { for (const k in W.agents) W.agents[k].next = 0; r3.add(W.locationOf(M3).room); }
     check('卡里的 prefs 决定爱去哪', r3.has('yard') && M3.person.prefs.restless === 1, [...r3].join());
+    G.T()['templates/cards/mom.yaml'] = momOld; await G.load();
     for (const x of G.people) x.person.active = true;
     G.cfg.time.daynight = keepDay[0]; G.world.clock_shift = keepDay[1];
   }
@@ -813,18 +811,17 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     for (const x of G.people) x.person.active = true;
   }
 
-  /* 旧数据文件夹：没有 card、prefs、help 的角色，带钱和保姆的旧 world.yaml，都能照常载入 */
+  /* 没有 card、prefs、help 的角色也能照常载入 */
   {
     for (const x of G.people) x.person.active = true;
     const oid = await G.createPerson({ arch: 'mom', name: '旧妈妈', helper: true });
     const py = ctx.jsyaml.load(await CY.store.read(`people/${oid}/person.yaml`)); delete py.card; delete py.prefs; delete py.help; delete py.class_override; delete py.need_rate; delete py.self_actions;
     await CY.store.write(`people/${oid}/person.yaml`, ctx.jsyaml.dump(py));
-    const wy = ctx.jsyaml.load(await CY.store.read(G.wpath('world.yaml'))); wy.money = 321; wy.inv = { food: 3 }; wy.nanny = { days_left: 2, owed: 0 }; await CY.store.write('world.yaml', ctx.jsyaml.dump(wy));   /* 旧版本把世界文件放在根目录，载入时要搬到 world/编号/ 下 */
+    const wy = ctx.jsyaml.load(await CY.store.read(G.wpath('world.yaml'))); wy.money = 321; await CY.store.write(G.wpath('world.yaml'), ctx.jsyaml.dump(wy));
     let loadErr = null; try { await G.load(); } catch (e) { loadErr = e; }
     const OM = G.get(oid);
     check('旧数据文件夹能载入', !loadErr && !!OM, loadErr && String(loadErr));
-    check('旧数据里的钱保留，物品和旧保姆被丢掉', G.world.money === 321 && !('inv' in G.world) && !('nanny' in G.world));
-    check('旧版本放在根目录的世界文件被搬进 world/编号/，根目录不再留', (await CY.store.read('world.yaml')) === null && (await CY.store.read(G.wpath('world.yaml'))) !== null);
+    check('世界文件的钱保留', G.world.money === 321);
     check('没有卡的旧角色也会走动、也能帮忙', ['living', 'kitchen', 'yard', 'study', 'toilet', 'bedroom'].includes(CY.world.locationOf(OM).room) && G.helpers().some(h => h.id === oid));
     await G.deletePerson(oid);
   }
@@ -1002,13 +999,11 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const csv = await CY.store.read('people/' + pid0 + '/curves.csv');
       check('曲线存成 CSV，列是 t，心情，虚弱，再是各项需求', /^t,mood,frailty,lv_hunger,lv_thirst\n/.test(csv), csv.slice(0, 60));
       const ex2 = await A.exportSave(), buf2 = new Uint8Array(await ex2.blob.arrayBuffer()), inf2 = await A.inspect(buf2);
+      check('导出的存档里没有 templates 和旧的 me 文件夹，规则是程序自带的', !Object.keys(inf2.files).some(f => f.startsWith('templates/') || f.startsWith('me/')));
       check('导出里有曲线和说明，manifest 记着格式和文件清单', inf2.ok && !!inf2.files['people/' + pid0 + '/curves.csv'] && !!inf2.files[G.wpath('curves_world.csv')] && !!inf2.files['README.txt'] && inf2.manifest.format.series === 'csv' && inf2.manifest.files[G.wpath('curves_world.csv')] > 0, JSON.stringify(inf2.manifest && inf2.manifest.format));
       await A.apply(inf2, 'replace'); await G.load();
       check('曲线往返后行数按上限只留最近 600 行，最后一行对得上', (G.hist[pid0] || []).length === 600 && G.hist[pid0][599].t === 699 * 15 && Math.abs(G.hist[pid0][599].needs.thirst - 0.9) < 1e-9 && G.wcurve.length === 5 && Math.abs(G.wcurve[4].focus - 0.9) < 1e-9, (G.hist[pid0] || []).length);
       const mk = extra => { const z = [{ name: 'careforyou-data/manifest.json', data: enc.encode(JSON.stringify(extra.manifest)) }, { name: 'careforyou-data/settings.ini', data: enc.encode('[ui]\nlanguage = en\n') }, { name: 'careforyou-data/world.yaml', data: enc.encode('game_minutes: 5\n') }]; for (const k in extra.files || {}) z.push({ name: 'careforyou-data/' + k, data: typeof extra.files[k] === 'string' ? enc.encode(extra.files[k]) : extra.files[k] }); return CY.store.zip(z).arrayBuffer(); };
-      const old = await A.inspect(await mk({ manifest: { schema: 5, version: '0.60.0' } }));
-      check('旧结构的存档能读，并记下升级了哪几步', old.ok && old.migrated && old.migrated.from === 5 && old.migrated.to === CY.meta.schema && old.migrated.steps.length >= 1, JSON.stringify(old.migrated));
-      check('旧结构的存档导入时，根目录的世界文件被搬进 world/编号/', !!old.files[G.wpath('world.yaml')] && !('world.yaml' in old.files), Object.keys(old.files).join());
       const nw = await A.inspect(await mk({ manifest: { schema: CY.meta.schema + 1 } }));
       check('更新结构的存档拒收，不乱读', !nw.ok && nw.error === 'newer');
       const ext = await A.inspect(await mk({ manifest: { schema: CY.meta.schema }, files: { 'people/x1/person.yaml': 'name: X\n', 'people/x1/mood_notes.csv': 't,note\n1,a\n', 'people/x1/future_thing.yaml': 'a: 1\n', 'curves_extra.csv': 't,v\n1,2\n' } }));
