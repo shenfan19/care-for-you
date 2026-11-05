@@ -14,12 +14,17 @@
     G.start();
     CY.i18n.set(CY.i18n.detect(ini.get(G.cfg, 'ui', 'language')));
     CY.i18n.applyDom(document);
-    document.title = t('app.title');
+    document.title = U.pageTitle();
     U.renderBrand();
     U.applyTheme();
     if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => U.applyTheme());
     CY.onSprites = () => { if (U.renderRoom) { U.renderRoom(true); U.renderBar && U.renderBar(); } };
     U.buildRoom($('room'));
+    /* 嵌在别的页面里（itch.io 的内嵌框，别人的网站）时，宿主页面已经有标题，游戏里就不再放品牌，设置和关于收进窗体的角落，整个游戏就是一个窗体。
+       网址带 embed=1 强制这样，embed=0 强制不这样 */
+    const embed = q.get('embed') === '1' || (q.get('embed') !== '0' && window.self !== window.top);
+    document.body.classList.toggle('embed', embed);
+    if (embed) { const tools = document.querySelector('header .tools'), box = $('room').querySelector('.cornerbox'); if (tools && box) box.appendChild(tools); }
     G.ensurePlayer().then(made => { if (made) U.afterPeopleChange(); });
     U.renderBar(); U.renderFeed(true); U.renderClock(); U.renderControls(); U.renderLife();
     let lastFeed = 0;

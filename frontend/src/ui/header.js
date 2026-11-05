@@ -16,16 +16,18 @@
   U.renderControls = function () {};
   U.syncTheme = U.applyTheme;
   /* 标题和一句话：中文界面叫"照顾你"，其他语言是 Care for You；一句话每次打开随机一句，换语言不换句 */
+  /* 标签页标题：公开版是"照顾你 · Care for You"，开发者模式加一个 · dev，两个页面开在一起也分得清 */
+  U.pageTitle = () => t('app.title') + (G.DEVTOOLS ? ' · dev' : '');
   U.renderBrand = function () {
     const name = t('brand.name'), bt = $('brandTxt');
-    if (bt) bt.innerHTML = name === 'Care for You' ? 'Care <em>for</em> You' : esc(name);
+    if (bt) bt.innerHTML = (name === 'Care for You' ? 'Care <em>for</em> You' : esc(name)) + (G.DEVTOOLS ? ' <span class="devtag">dev</span>' : '');
     const tg = $('tagline'); if (tg) { if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * 6); tg.textContent = t('tag.' + (U.tagN + 1)); }
   };
   U.applyLang = async function () {
     I.set(I.detect(ini.get(G.cfg, 'ui', 'language')));
     await G.reloadContent();
     I.applyDom(document);
-    document.title = t('app.title');
+    document.title = U.pageTitle();
     U.renderBrand();
     for (const [id, k] of [['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
     for (const k of ['feed', 'roomBar']) delete $(k).dataset.sig;

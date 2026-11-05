@@ -504,3 +504,12 @@ a.pl:hover { color: var(--accent); }
 /* 宽屏：窗体左下角的角色头像让到记录条上面；记录展开时先收起，不盖住记录 */
 @media (min-width:641px) { .room .roster { bottom: 46px; } .room.logopen .roster { display: none; } }
 .logwin { z-index: 25; } .logwin.open { background: var(--card); } .room .cornerbox { z-index: 30; }
+
+/* 开发者模式的小标 */
+.devtag { font: 600 11px/1 system-ui, sans-serif; font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: #c0392b; border-radius: 4px; padding: 2px 5px; margin-left: 6px; vertical-align: middle; }
+/* 嵌入模式：页面头部整个不要，设置和关于在窗体角落里；窗体顶到页面上缘 */
+body.embed header { display: none; }
+body.embed main { padding-top: 6px; }
+.cornerbox .tools { display: flex; gap: 6px; margin: 0; }
+.cornerbox .tools .icon { width: 30px; height: 30px; padding: 0; }
+body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none; } body.embed { min-height: 0; }
