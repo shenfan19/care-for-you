@@ -1,6 +1,8 @@
-version: 11
+version: 12
 # routine 是真实生活的作息：起床 wake，睡觉 bed，午睡 nap，三餐 meals，洗澡 bath，单位小时，spread 是每个人偏离这张表的小时数上限。婴儿不在此列，按自己的节奏。
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
+# wake_except：夜里算"睡不着"时不算的需求，默认只有疲倦，成人和老人累到极点照样睡得着，婴儿写空，累过头会哭闹睡不着。
+# 这是过渡性的字段，以后要被更深层的机制取代：由觉醒（压力，焦虑，夜里要照顾）决定入睡快慢和睡得深浅。在那之前也可以留给其他临时的或特殊的机制，比如必须有人醒着看着婴儿。
 classes:
   infant: { urgency: 3.0, self_care: 0, cries: true, cry_at: 0.8, wake_at: 0.9, wake_except: [], sleep_cycle: [180, 120], nag: 15, needs_caregiver: true }
   toddler: { urgency: 2.4, self_care: 0.05, cries: true, cry_at: 0.8, nag: 20, needs_caregiver: true, routine: { wake: 7.0, bed: 20.5, nap: [12.5, 14.5], meals: [7.5, 12.0, 18.0], bath: 19.5, spread: 0.4 } }

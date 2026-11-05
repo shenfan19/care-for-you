@@ -1,4 +1,4 @@
-version: 5
+version: 6
 # 规则代码里的数都写在这里，改数不改代码。源头是这个 YAML，部署前 tools/build_config.js 把它打包成 templates_packed.js；
 # 读不到的键直接报错，代码里不给默认值，所以缺了哪一项一运行就知道。改了内容把 version 加一，旧存档才会更新。
 economy:
@@ -117,7 +117,7 @@ game:
     start_frailty: 0.1
     talkative_default: 0.5
     id_mod: 1296                     # 角色编号里序号和随机数各取两位三十六进制
-  class_defaults: { urgency: 1, self_care: 0.3, cry_at: 0.8, wake_at: 0.95, wake_except: [rest], self_care_cap: 0.98 }   # 类别里没写的字段用这些
+  class_defaults: { urgency: 1, self_care: 0.3, cry_at: 0.8, wake_at: 0.95, wake_except: [rest], self_care_cap: 0.98 }   # 类别里没写的字段用这些；wake_except 是过渡性的字段，以后要被觉醒驱动的睡眠机制取代，在那之前也可以留给临时的或特殊的机制，比如必须有人醒着看着婴儿
   need_rate_default: 0.05            # 需求没写速率时用
   action_min: { floor: 3, hold_default: 3, hold_factor: 3 }   # 动作没写 min 时：max(floor, (hold 或 hold_default) × hold_factor) 游戏分钟
   actor_slow: { elder: 1.6 }         # 老人当主角，同一个动作要长按更久

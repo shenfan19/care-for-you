@@ -417,7 +417,9 @@
     if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && G.need(p, 'rest') > G.E('game').nap_min_level) return 'sleeping';   /* 幼儿和老人的午睡 */
     if (!inWindow(dm, a, b)) return 'awake';
     const cl = G.classOf(p);
-    /* 夜里睡不着：除了 wake_except 里列的需求（成人和老人是疲倦，累到极点照样睡得着），别的需求压力到 wake_at 就睡不着；婴儿的疲倦不在其中，累过头会哭闹睡不着 */
+    /* 夜里睡不着：除了 wake_except 里列的需求，别的需求压力到 wake_at 就睡不着。
+       wake_except 是过渡性的字段：现在它只是把疲倦从"睡不着"里拿掉，让累垮的成人深睡；以后要被更深层的机制取代，用觉醒（压力，焦虑，夜里要照顾）决定入睡快慢和睡得深浅，累到睡不着和累到叫不醒由同一条规则长出来。
+       在那之前，这个字段也可以留给其他临时的或特殊的机制，比如"必须有人醒着看着婴儿"这一类，写在类别或角色数据里，不写进代码。婴儿的疲倦不在其中，累过头会哭闹睡不着 */
     if (Math.max(0, ...Object.keys(p.state.needs).filter(k => !cl.wake_except.includes(k)).map(k => G.need(p, k))) > cl.wake_at) return 'awake';
     return cl.sleep_cycle ? ((dm % cl.sleep_cycle[0]) < cl.sleep_cycle[1] ? 'sleeping' : 'awake') : 'sleeping';
   };
