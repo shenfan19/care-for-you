@@ -34,8 +34,12 @@
       people: G.activePeople().filter(p => G.isHuman(p)).map(p => {
         const loc = W ? W.locationOf(p) : { place: 'home', room: 'living' };
         const needs = {}; for (const k in p.state.needs) needs[k] = G.need(p, k);
+        const cds = (p.person.conditions || []).map(c => G.tpl.conditions[c] || {}), st = G.stage(p);
         return {
-          id: p.id, stage: G.stage(p), lactating: C.lactating.includes(p.person.archetype || p.person.card || ''), dep: !!G.classOf(p).needs_caregiver,
+          /* watch，dep，night_help 由阶段和疾病数据决定；roll 每人每步掷一个，策略自己不掷骰子 */
+          watch: C.watch_stages.includes(st) || cds.some(c => c.needs_watch), cries: !!G.classOf(p).cries, cry_at: G.classOf(p).cry_at, night_help: cds.some(c => c.night_help),
+          role: p.person.archetype || p.person.card || '', roll: Math.random(),
+          id: p.id, stage: st, lactating: C.lactating.includes(p.person.archetype || p.person.card || ''), dep: !!G.classOf(p).needs_caregiver || cds.some(c => c.dispatch_care),
           lead: p === lead, asleep: G.isSleeping(p), bedridden: !!G.bedridden(p),
           away: !!(G.flag(p, 'hospital') || G.flag(p, 'outing') || loc.place !== 'home'), room: loc.room,
           fatigue: needs.rest === undefined ? 0 : needs.rest, needs, urgency: G.urgency(p), hands: (D.state.hands[p.id] || 0) > now,
@@ -109,6 +113,7 @@
       }
     }
     S.depletedSteps = (S.depletedSteps || 0) + plan.depleted.length;
+    S.unheard = (S.unheard || 0) + (plan.unheard || []).length;   /* 有声音或需要，但睡着的人都没听见 */
   };
 
   D.tick = function () {

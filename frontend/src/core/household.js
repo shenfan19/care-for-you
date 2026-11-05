@@ -101,6 +101,8 @@
   };
 
   /* ---------- 谁能帮别人：卡里写了 help.proactive 的成人，没做主角，不是婴幼儿。帮不帮、帮谁由 agents.js 按后台的策略决定 ---------- */
+  /* 疾病数据里标了 needs_escort 的人，比如帕金森，不会自己一个人出门，要有人陪 */
+  G.needsEscort = p => !!p && (p.person.conditions || []).some(c => (G.tpl.conditions[c] || {}).needs_escort);
   G.canHelp = p => !!p.person.helper && G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)) && p !== G.protagonist();
   G.helpers = () => G.activePeople().filter(p => G.canHelp(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty') && G.maxNeed(p) < 0.8);
 

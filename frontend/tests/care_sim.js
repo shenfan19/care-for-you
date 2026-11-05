@@ -1,5 +1,5 @@
 /* 看护调度仿真：没有玩家，全家自己过几天，量每个人睡了多少，谁被需求压了多久，宝宝有没有人管。
-   用法：node tests/care_sim.js [天数=3] [家庭=trio|duo|duo_gma|duo_gma_gpa|single3|single3_gma|five|family] [种子=1]，环境变量 CARE_FEED=breast 母乳喂养，默认配方奶
+   用法：node tests/care_sim.js [天数=3] [家庭=trio|duo|duo_gma|duo_gma_gpa|single3|single3_gma|forget|nocturia|five|family] [种子=1]，环境变量 CARE_FEED=breast 母乳喂养，默认配方奶
    步长：每步现实 5 秒，流速 60，所以一步是 5 个游戏分钟，精度低于一小时。
    输出每人每天的指标，CARE_SIM_JSON=1 时最后多输出一行 JSON，给结构设计迭代做对比。 */
 const { ctx, CY, G } = require('./harness');
@@ -12,6 +12,8 @@ const FAMILIES = {
   duo_gma_gpa: [['mom', '妈妈'], ['baby', '宝宝'], ['paternal_grandma', '奶奶'], ['paternal_grandpa', '爷爷']],
   single3: [['mom', '妈妈'], ['baby', '宝宝'], ['toddler_2', '二岁'], ['daughter', '女儿']],
   single3_gma: [['mom', '妈妈'], ['baby', '宝宝'], ['toddler_2', '二岁'], ['daughter', '女儿'], ['paternal_grandma', '奶奶']],
+  forget: [['mom', '妈妈'], ['dad', '爸爸'], ['paternal_grandpa', '爷爷', ['forgetful']]],
+  nocturia: [['mom', '妈妈'], ['dad', '爸爸'], ['paternal_grandpa', '爷爷', ['nocturia']]],
   five: [['paternal_grandpa', '爷爷'], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler_2', '二岁'], ['baby', '宝宝']],
   family: [['paternal_grandpa', '爷爷'], ['paternal_grandma', '奶奶'], ['mom', '妈妈'], ['dad', '爸爸'], ['toddler_2', '二岁'], ['baby', '宝宝'], ['daughter', '女儿']],
 };
@@ -22,7 +24,7 @@ const FAMILIES = {
   CY.i18n.set('zh-CN');
   await G.load();
   G.cfg.interrupt.frequency = 'off';
-  for (const [arch, name] of FAMILIES[kind]) await G.createPerson({ arch, name });
+  for (const [arch, name, conditions] of FAMILIES[kind]) await G.createPerson({ arch, name, conditions });
   await G.load();
   G.world.intro_done = true; G.cfg.play.backend_provider = 'builtin'; G.cfg.play.condition_models = 'false';
   G.world.protagonist = null; CY.world.enforce = false;
@@ -63,7 +65,7 @@ const FAMILIES = {
   let careN = 0; for (const p of G.people) for (const m of Object.values(G.journal[p.id] || {})) for (const e of m) if (e.type === 'care') careN++;
   out.requests = G.agentState.seq; out.care_events = careN; out.dispatch = G.dispatch.stat;
   for (const n of names) { const p = G.people.find(q => q.person.name === n); out.people[n].wakes_per_night = ((G.dispatch.stat.wakeBy || {})[p.id] || 0) / days; }
-  console.log('- 被叫醒次数每天：' + names.map(n => n + ' ' + out.people[n].wakes_per_night.toFixed(1)).join('，') + `；做饭 ${G.dispatch.stat.meals || 0} 顿，换班 ${G.dispatch.stat.handoffs || 0} 次`);
+  console.log('- 被叫醒次数每天：' + names.map(n => n + ' ' + out.people[n].wakes_per_night.toFixed(1)).join('，') + `；做饭 ${G.dispatch.stat.meals || 0} 顿，换班 ${G.dispatch.stat.handoffs || 0} 次，睡着没听见 ${G.dispatch.stat.unheard || 0} 步`);
   console.log(`- 后台发出的请求 ${out.requests} 个，家人之间的照顾记录 ${careN} 条`);
   if (process.env.CARE_SIM_JSON) console.log('JSON ' + JSON.stringify(out));
   process.exit(0);

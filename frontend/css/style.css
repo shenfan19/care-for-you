@@ -485,3 +485,22 @@ a.pl:hover { color: var(--accent); }
 .ltab { border-collapse: collapse; font-size: 13px; margin: 4px 0; }
 .ltab th, .ltab td { border: 1px solid var(--line); padding: 3px 8px; text-align: center; }
 .ltab th { font-weight: 600; background: var(--soft); }
+
+/* 游戏窗体里的记录：收起时底部一行最新的事，展开成面板盖住窗体下半部分 */
+.logwin { position: absolute; left: 0; right: 0; bottom: 0; z-index: 8; display: flex; flex-direction: column; border-radius: 0 0 16px 16px; background: color-mix(in srgb, var(--card) 94%, transparent); border-top: 1px solid var(--line); backdrop-filter: blur(3px); }
+.logbar { display: flex; gap: 8px; align-items: baseline; padding: 7px 12px; cursor: pointer; font-size: 13px; white-space: nowrap; overflow: hidden; }
+.logbar .t { color: var(--mute); font-size: 12px; } .logbar .who { color: var(--accent); } .logbar .x { flex: 1; overflow: hidden; text-overflow: ellipsis; } .logbar .chev { color: var(--mute); }
+.logbody { display: none; padding: 4px 14px 12px; max-height: min(46vh, 360px); overflow-y: auto; border-top: 1px solid var(--line); }
+.logwin.open .logbody { display: block; }
+.logwin .tlbox { max-height: none; overflow: visible; }
+.logwin #feed h2 { margin: 6px 0; font-size: 15px; }
+.ltab .sel { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.ltab a { color: inherit; text-decoration: underline; }
+.lfocus { margin: 6px 0; padding: 6px 8px; border-left: 3px solid var(--accent); background: var(--soft); }
+.lgtab h3 { font-size: 14px; margin: 12px 0 4px; }
+
+/* 窄屏：窗体底部右侧的角落按钮让到记录条上面；记录展开时按钮回到上面，不盖住记录 */
+@media (max-width:640px) { .room .cornerbox { bottom: 46px; } .room.logopen .cornerbox { top: 8px; bottom: auto; } }
+/* 宽屏：窗体左下角的角色头像让到记录条上面；记录展开时先收起，不盖住记录 */
+@media (min-width:641px) { .room .roster { bottom: 46px; } .room.logopen .roster { display: none; } }
+.logwin { z-index: 25; } .logwin.open { background: var(--card); } .room .cornerbox { z-index: 30; }

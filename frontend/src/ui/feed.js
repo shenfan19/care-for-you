@@ -1,4 +1,6 @@
-/* 发生的事。说过的话仍然记在人物文件夹里，不在页面上单列。 */
+/* 发生的事。记录在游戏窗体里：收起时窗体底部只有最新的一句，点一下展开成面板；说过的话仍然记在人物文件夹里，不在页面上单列。
+   标签可以注册：U.registerLogTab({ id, label, visible, render, bind, sig })，别的模块自己挂上来，记录本身不知道它们是谁，没有它们也完整；
+   U.logView 是记录当前的选择（看谁的），挂上来的标签可以读，也可以用 U.logGo(标签, 谁) 把记录切过去，这是记录和统计联动的唯一接口。 */
 (function (CY) {
   const G = CY.game, ini = CY.ini, store = CY.store, C = CY.content, A = CY.archive, I = CY.i18n;
   const t = (k, v) => CY.t(k, v);
@@ -11,6 +13,13 @@
   const fmtT = ts => { const d = new Date(ts); return t('fmt.datetime', { m: d.getMonth() + 1, d: d.getDate(), hh: String(d.getHours()).padStart(2, '0'), mm: String(d.getMinutes()).padStart(2, '0') }); };
   const fmtC = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');   /* 游戏里的几点 */
   const view = { who: '', more: 40, quiet: false, tab: 'events', cwho: '', off: {} };
+  U.logView = view; U.logTabs = [];
+  U.registerLogTab = tab => { U.logTabs.push(tab); };
+  /* 窗体里的记录面板：开合状态 */
+  U.logOpen = (() => { try { return localStorage.getItem('care.logopen') === '1'; } catch (e) { return false; } })();
+  const applyOpen = () => { const w = $('logwin'), b = $('logBar'); if (!w) return; w.classList.toggle('open', U.logOpen); if (U.room) U.room.classList.toggle('logopen', U.logOpen); if (b) b.setAttribute('aria-expanded', U.logOpen ? 'true' : 'false'); try { localStorage.setItem('care.logopen', U.logOpen ? '1' : '0'); } catch (e) { /* 记不住也没关系 */ } };
+  U.setLogOpen = on => { U.logOpen = !!on; applyOpen(); if (U.logOpen) U.renderFeed(true); };
+  U.logGo = (tab, who) => { if (who !== undefined) { view.who = who; view.more = 40; } if (tab) view.tab = tab; U.setLogOpen(true); U.renderFeed(true); };
   const SERIES_COLORS = ['#c8794a', '#4f9bb3', '#7aa05a', '#b36ab0', '#d1a23b', '#6f7fc4', '#c4566b', '#4aa08a', '#8a7a66', '#e0864f'];
   const QUIET_HIDES = ['event', 'self'];
 
@@ -52,8 +61,14 @@
   }
   U.renderFeed = function (force) {
     const all = entries(), list = all.filter(x => (!view.who || x.pid === view.who) && !(view.quiet && QUIET_HIDES.includes(x.e.type)));
-    const sig = view.tab + view.cwho + JSON.stringify(view.off) + Object.values(G.hist).map(h => h.length).join() + view.who + view.more + view.quiet + all.length + I.lang + G.people.map(p => p.id + p.person.name + p.story.care_total).join();
-    const root = $('feed');
+    const sig = view.tab + view.cwho + JSON.stringify(view.off) + Object.values(G.hist).map(h => h.length).join() + view.who + view.more + view.quiet + all.length + I.lang + G.people.map(p => p.id + p.person.name + p.story.care_total).join() + U.logTabs.map(x => (x.visible() && x.sig ? x.sig() : '')).join('|');
+    const root = $('feed'), bar = $('logBar');
+    /* 收起时窗体底部的一行：最新的一件事 */
+    if (bar) {
+      const last = all.find(x => !QUIET_HIDES.includes(x.e.type)) || all[0];
+      bar.innerHTML = `<span class="lgi">📜</span>` + (last ? `<span class="t">${last.e.cm !== undefined ? fmtC(last.e.cm) : fmtT(last.e.t)}</span><span class="who">${esc(nameOf(last.pid))}</span><span class="x">${U.entryHtml(last.e)}</span>` : `<span class="mute">${esc(t('feed.empty'))}</span>`) + `<span class="chev">${U.logOpen ? '▾' : '▴'}</span>`;
+      if (!bar.dataset.bound) { bar.dataset.bound = '1'; const tog = e => { if (e.target.closest && e.target.closest('a.pl')) return; U.setLogOpen(!U.logOpen); U.renderFeed(true); }; bar.onclick = tog; bar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(e); } }; applyOpen(); }
+    }
     if (!force && root.dataset.sig === sig) return;
     root.dataset.sig = sig;
     const chips = [`<button class="chip ${view.who ? '' : 'on'}" data-w="">${esc(t('feed.all'))}</button>`].concat(G.people.map(p => `<button class="chip ${view.who === p.id ? 'on' : ''}" data-w="${p.id}">${esc(p.person.name)}</button>`)).join('');
@@ -61,20 +76,26 @@
       const p = G.get(view.who), n = ty => all.filter(x => x.pid === p.id && x.e.type === ty).length;
       return `<div class="mute stat">${esc(t('feed.stat', { care: p.story.care_total, talk: n('talk'), missed: n('missed') }))}${p.story.revealed ? esc(t('feed.stat_back', { name: p.person.name, n: p.story.cares_back_total })) : ''}</div>`;
     })() : '';
-    if (!curvesOn()) view.tab = 'events';
-    const tabs = curvesOn() ? `<div class="chips tabs" style="margin-bottom:8px"><button class="chip ${view.tab === 'events' ? 'on' : ''}" data-tab="events">${esc(t('feed.title'))}</button><button class="chip ${view.tab === 'curves' ? 'on' : ''}" data-tab="curves">${esc(t('feed.tab_curves'))}</button></div>` : '';
+    const extra = U.logTabs.filter(x => x.visible());
+    const ids = ['events'].concat(curvesOn() ? ['curves'] : [], extra.map(x => x.id));
+    if (!ids.includes(view.tab)) view.tab = 'events';
+    const tabBtn = (id, label) => `<button class="chip ${view.tab === id ? 'on' : ''}" data-tab="${id}">${esc(label)}</button>`;
+    const tabs = ids.length > 1 ? `<div class="chips tabs" style="margin-bottom:8px">${tabBtn('events', t('feed.title'))}${curvesOn() ? tabBtn('curves', t('feed.tab_curves')) : ''}${extra.map(x => tabBtn(x.id, x.label())).join('')}</div>` : '';
+    const goTab = () => root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
+    const cur = extra.find(x => x.id === view.tab);
+    if (cur) { root.innerHTML = tabs + cur.render(view); goTab(); if (cur.bind) cur.bind(root, view); return; }
     if (view.tab === 'curves') {
       root.innerHTML = tabs + renderCurves(root);
-      root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
+      goTab();
       root.querySelectorAll('[data-cw]').forEach(b => b.onclick = () => { view.cwho = b.dataset.cw; U.renderFeed(true); });
       root.querySelectorAll('[data-call]').forEach(b => b.onclick = () => { const p = G.get(view.cwho); const ks = p ? Object.keys(G.needsOf(p)).concat(['mood', 'frailty']) : []; for (const k of ks) view.off[k] = b.dataset.call === '0'; U.renderFeed(true); });
       root.querySelectorAll('[data-ck]').forEach(b => b.onclick = () => { view.off[b.dataset.ck] = !view.off[b.dataset.ck]; U.renderFeed(true); });
       return;
     }
-    root.innerHTML = (curvesOn() ? tabs : `<h2>${esc(t('feed.title'))}</h2>`) + `<div class="chips">${chips}<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button></div>${stat}` +
+    root.innerHTML = (tabs || `<h2>${esc(t('feed.title'))}</h2>`) + `<div class="chips">${chips}<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button></div>${stat}` +
       '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${esc(nameOf(x.pid))}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
       (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div>';
-    root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
+    goTab();
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });
     $('quietBtn').onclick = () => { view.quiet = !view.quiet; view.more = 40; U.renderFeed(true); };
     const mb = $('moreBtn'); if (mb) mb.onclick = () => { view.more += 60; U.renderFeed(true); };

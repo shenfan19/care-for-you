@@ -299,7 +299,7 @@
     return m;
   };
   G.classOf = p => {
-    const c = Object.assign({ urgency: 1, self_care: 0.3 }, G.tpl.classes[G.classKey(p)], p.person.class_override);
+    const c = Object.assign({ urgency: 1, self_care: 0.3, cry_at: 0.8, wake_at: 0.95 }, G.tpl.classes[G.classKey(p)], p.person.class_override);   /* cry_at 会哭的类别，需求压力到这里就哭；wake_at 夜里需求压力到这里就睡不着；sleep_cycle 没有昼夜作息的类别，睡几分钟醒几分钟 */
     c.self_care = clamp(c.self_care + G.traitMods(p).self_care, 0, 0.98);
     return c;
   };
@@ -411,9 +411,9 @@
     const [a, b] = G.sleepWindow(p), dm = G.dayMinutes(), R = G.routineOf(p);
     if (R && R.nap && inWindow(dm, R.nap[0], R.nap[1]) && G.need(p, 'rest') > 0.3) return 'sleeping';   /* 幼儿和老人的午睡 */
     if (!inWindow(dm, a, b)) return 'awake';
-    const st = G.stage(p);
-    if (st === 'infant') return G.maxNeed(p) > 0.9 ? 'awake' : (dm % 180) < 120 ? 'sleeping' : 'awake';
-    return G.maxNeed(p) > 0.95 ? 'awake' : 'sleeping';
+    const cl = G.classOf(p);
+    if (G.maxNeed(p) > cl.wake_at) return 'awake';
+    return cl.sleep_cycle ? ((dm % cl.sleep_cycle[0]) < cl.sleep_cycle[1] ? 'sleeping' : 'awake') : 'sleeping';
   };
   G.isSleeping = p => G.act[p.id] === 'sleeping';
   G.moodBand = p => (p.state.mood > 0.75 ? 'great' : p.state.mood > 0.5 ? 'ok' : p.state.mood > 0.3 ? 'low' : 'bad');
@@ -609,7 +609,7 @@
   G.selfActFor = selfActionFor;
   G.selfAct = selfAct;
 
-  /* 卧床：老人虚弱度到 0.8 躺下，降到 0.55 以下才起来。坐轮椅的家人本来就坐着，不算。躺着的人不能散步，去不了公园和街上，有轮椅才能被推出去 */
+  /* 卧床：类别数据 bedrest，老人是虚弱度到 0.8 躺下，降到 0.55 以下才起来。坐轮椅的家人本来就坐着，不算。躺着的人不能散步，去不了公园和街上，有轮椅才能被推出去 */
   G.bedridden = p => !!(p && p.state && p.state.bedrest);
   G.usable = (p, d) => {
     if (d.outing && d.outing.group && G.outingBlocked && G.outingBlocked(p)) return false;   /* 家里不能单独留下需要看护的人 */
@@ -639,9 +639,10 @@
   };
   G.bedCheck = p => {
     const s = p.state;
-    if (!G.isHuman(p) || G.stage(p) !== 'elder' || p.person.visitor || (p.person.archetype || p.person.card) === 'wheelchair_user') { if (s.bedrest) delete s.bedrest; return; }
-    if (!s.bedrest && s.frailty >= 0.8) { s.bedrest = true; G.logK(p.id, 'frail', 'log.bedrest', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.bedrest'), p), 'soft'); }
-    else if (s.bedrest && s.frailty < 0.55) { delete s.bedrest; G.logK(p.id, 'recovered', 'log.bedrest_end', { name: p.person.name }); }
+    const br = G.isHuman(p) ? G.classOf(p).bedrest : null;   /* 类别数据：[躺下的虚弱度, 起来的虚弱度]，有滞后；没写的类别不会卧床 */
+    if (!br || p.person.visitor || (p.person.archetype || p.person.card) === 'wheelchair_user') { if (s.bedrest) delete s.bedrest; return; }
+    if (!s.bedrest && s.frailty >= br[0]) { s.bedrest = true; G.logK(p.id, 'frail', 'log.bedrest', { name: p.person.name }); G.toastFor(p, G.fmt(t('toast.bedrest'), p), 'soft'); }
+    else if (s.bedrest && s.frailty < br[1]) { delete s.bedrest; G.logK(p.id, 'recovered', 'log.bedrest_end', { name: p.person.name }); }
   };
   /* 虚弱度跨过 0.7 或 0.5 时记一笔，游戏自己算的和后端给的都走这里 */
   G.frailCross = (p, was) => {
@@ -1101,7 +1102,7 @@
     /* 婴幼儿需求严重时会一直哭闹，直到有人管 */
     const was = G.crying; G.crying = {};
     for (const p of G.activePeople()) {
-      if (!G.classOf(p).cries || G.maxNeed(p) <= 0.8 || G.isSleeping(p)) continue;
+      if (!G.classOf(p).cries || G.maxNeed(p) <= G.classOf(p).cry_at || G.isSleeping(p)) continue;
       G.crying[p.id] = true;
       if (!was[p.id]) G.logK(p.id, 'cry', 'log.cry', { name: p.person.name, need: G.refNeed(G.topNeed(p), G.needsOf(p)[G.topNeed(p)]) });
     }

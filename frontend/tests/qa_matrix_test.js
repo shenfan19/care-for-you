@@ -131,6 +131,13 @@ const FAMILY = ['dad', 'mom', 'baby', 'toddler', 'daughter', 'teen', 'paternal_g
     CY.i18n.set('zh-CN');
     check('商店与动作八语言齐全', miss.length === 0, '\n  ' + miss.slice(0, 40).join('\n  '));
   }
+  /* 疾病的标记：并进调度的和要人陪的 */
+  {
+    const T = G.tpl.conditions;
+    check('疾病数据的标记：记性变差要盯，夜尿多夜里要人帮，帕金森要人陪', T.forgetful.needs_watch && T.forgetful.dispatch_care && T.nocturia.night_help && T.nocturia.dispatch_care && T.parkinson.needs_escort);
+    const gp = P('paternal_grandpa'); gp.person.conditions = ['parkinson']; check('帕金森的人要人陪，不会自己出门', G.needsEscort(gp));
+    gp.person.conditions = ['diabetes']; check('糖尿病的人不受这条限制', !G.needsEscort(gp)); gp.person.conditions = [];
+  }
   /* 7 百科和设置新增的界面文字八种语言都有，百科的键是拼出来的，静态扫描查不到，这里逐个查 */
   {
     const langs = ['zh-CN', 'zh-TW', 'en', 'fr', 'ja', 'ko', 'es', 'de'], miss = [];

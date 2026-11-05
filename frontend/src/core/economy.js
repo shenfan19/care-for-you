@@ -95,7 +95,7 @@
     { id: 'fruit', cat: 'daily', price: 200, icon: '🍎', boost: { need: 'hunger', scale: 1.4 } },
     { id: 'books', cat: 'daily', price: 400, icon: '📚', boost: { need: 'play', scale: 1, mood: 0.04, stages: ['child', 'teen', 'adult', 'elder'] } },
     { id: 'stroller', cat: 'daily', price: 400, icon: '👶' },
-    { id: 'wheelchair', cat: 'daily', price: 600, icon: '♿' },
+    { id: 'wheelchair', cat: 'daily', price: 600, icon: '♿', outing_scale: 1.25 },
     { id: 'cabinet', cat: 'decor', price: 300, icon: '🏺' },
     { id: 'decor1', cat: 'decor', price: 160, icon: '🪴' }, { id: 'decor2', cat: 'decor', price: 350, icon: '🛋', needs: 'decor1' }, { id: 'decor3', cat: 'decor', price: 550, icon: '📻', needs: 'decor2' },
   ];
@@ -135,13 +135,12 @@
       if (!b || !G.hasItem(it.id) || (b.stages && !b.stages.includes(st)) || !(a.effect && a.effect[b.need] > 0)) continue;
       o.scale[b.need] = (o.scale[b.need] || 1) * (b.scale || 1); o.mood += b.mood || 0;
     }
-    if (a.outing && G.hasItem('wheelchair') && G.needsChair(p)) o.all = G.WHEELCHAIR.outing_scale;   /* 轮椅出门的好处多一些 */
+    if (a.outing && G.hasItem('wheelchair') && G.needsChair(p)) o.all = G.SHOP.find(x => x.id === 'wheelchair').outing_scale;   /* 轮椅出门的好处多一些 */
     return o;
   };
-  /* 轮椅：腿脚不便的老人，也就是体弱到一定程度或有关节炎，没有轮椅就出不了门，也没法自己去想去的地方；有了就能出去，出门的好处多两成半。
-     卧床的老人也要用轮椅出门，卧床老人更完整的行动设计还没做 */
-  G.WHEELCHAIR = { legs_frailty: 0.5, conditions: ['arthritis'], outing_scale: 1.25 };
-  G.legsBad = p => !!p && G.isHuman(p) && G.stage(p) === 'elder' && !G.bedridden(p) && !p.person.visitor && (p.state.frailty >= G.WHEELCHAIR.legs_frailty || (p.person.conditions || []).some(c => G.WHEELCHAIR.conditions.includes(c)));
+  /* 轮椅：腿脚不便的人没有轮椅出不了门，也没法自己去想去的地方；有了就能出去，出门的好处按商品上的 outing_scale 多一些。卧床的人也要用轮椅出门，卧床老人更完整的行动设计还没做。
+     谁算腿脚不便是数据：类别里写了 legs_frailty（老人 0.5）的，虚弱度到这里；或者得了标了 legs_bad 的病（关节炎） */
+  G.legsBad = p => { const cl = p && G.isHuman(p) ? G.classOf(p) : null; return !!cl && cl.legs_frailty !== undefined && !G.bedridden(p) && !p.person.visitor && (p.state.frailty >= cl.legs_frailty || (p.person.conditions || []).some(c => (G.tpl.conditions[c] || {}).legs_bad)); };
   G.needsChair = p => G.bedridden(p) || G.legsBad(p);
   G.owned = id => !!(G.world.owned && G.world.owned[id]);
   G.canBuy = id => { const it = G.SHOP.find(x => x.id === id); return G.module('shop') && !!it && !G.owned(id) && G.world.money >= it.price && (!it.needs || G.owned(it.needs)); };

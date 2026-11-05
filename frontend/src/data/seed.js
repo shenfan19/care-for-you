@@ -383,23 +383,35 @@ agents:
     efficiency: 0.7           # 家人出手的效果，玩家自己动手是 1
     depl_loss: 0.5            # 疲劳从 sleep_at 涨到 1，出手效果最多再打掉这么多
     elder_mult: 1.3           # 老人看护同样的时间更累
+    hear:                     # 夜里睡着的人听见哭声后，这一步醒来的几率，按角色卡身份；妈妈最高，爸爸次之，老人再次；全是假设
+      mom: 0.7
+      wife: 0.7
+      young_woman: 0.7
+      dad: 0.4
+      husband: 0.4
+      young_man: 0.4
+      default: 0.35
+    hear_quiet: 0.3           # 没哭只是需求高了，听不见，只能看状态，信号只有哭的这么多
+    hear_help: 0.5            # 夜里要人帮的人叫人的信号强度，比如夜尿多
+    primary_bonus: 0.2        # 几个人都听见了，听得越灵的越优先，妈妈先起来，除非明显更累
+    hear_suppress: 0.6        # 疲劳从 sleep_at 涨到 floor，听见的几率最多再打掉这么多；到了 floor 听不见，由别人判断
     meal_at: 0.6              # 醒着的人饿到这里，家里需要有人做一顿饭
     meal_gap: 180             # 两顿饭之间至少隔这么多游戏分钟
     cook_minutes: 45          # 做一顿饭占手上的活这么久
     lactating: [mom, wife, young_woman]   # 母乳喂养时，只有这些人能喂婴儿
 `;
 
-  /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求严重会不停哭闹 */
-  F['templates/classes.yaml'] = `version: 8
+  /* 类别：人按年龄阶段，其余按物种。urgency 是被需要的紧迫程度，self_care 是没人管时自己解决需求的可能，cries 为真时需求压力到 cry_at 就会不停哭闹，wake_at 是夜里需求压力到这里就睡不着，sleep_cycle 是没有昼夜作息的婴儿睡几分钟醒几分钟，写成 [一个周期，其中睡的分钟]，这些默认是 0.8，0.95，没有。bedrest 是 [躺下的虚弱度，起来的虚弱度]，写了才会卧床；legs_frailty 是虚弱度到这里算腿脚不便 */
+  F['templates/classes.yaml'] = `version: 10
 # routine 是真实生活的作息：起床 wake，睡觉 bed，午睡 nap，三餐 meals，洗澡 bath，单位小时，spread 是每个人偏离这张表的小时数上限。婴儿不在此列，按自己的节奏。
 # 不同类别的人和动物在没人管的时候表现不同。婴儿完全不能自理，会哭闹，老人能自己吃饭睡觉，花草不会说话但会慢慢蔫掉。
 classes:
-  infant: { urgency: 3.0, self_care: 0, cries: true, nag: 15, needs_caregiver: true }
-  toddler: { urgency: 2.4, self_care: 0.05, cries: true, nag: 20, needs_caregiver: true, routine: { wake: 7.0, bed: 20.5, nap: [12.5, 14.5], meals: [7.5, 12.0, 18.0], bath: 19.5, spread: 0.4 } }
+  infant: { urgency: 3.0, self_care: 0, cries: true, cry_at: 0.8, wake_at: 0.9, sleep_cycle: [180, 120], nag: 15, needs_caregiver: true }
+  toddler: { urgency: 2.4, self_care: 0.05, cries: true, cry_at: 0.8, nag: 20, needs_caregiver: true, routine: { wake: 7.0, bed: 20.5, nap: [12.5, 14.5], meals: [7.5, 12.0, 18.0], bath: 19.5, spread: 0.4 } }
   child: { urgency: 1.5, self_care: 0.35, needs_caregiver: true, routine: { wake: 6.8, bed: 21.0, meals: [7.2, 12.0, 18.0], bath: 20.0, spread: 0.5 } }
   teen: { urgency: 1.0, self_care: 0.7, routine: { wake: 7.0, bed: 23.0, meals: [7.3, 12.3, 18.3], bath: 21.5, spread: 0.7 } }
   adult: { urgency: 0.8, self_care: 0.9, routine: { wake: 6.5, bed: 22.5, meals: [7.3, 12.3, 18.5], bath: 21.0, spread: 0.6 } }
-  elder: { urgency: 1.6, self_care: 0.6, routine: { wake: 5.8, bed: 21.5, nap: [13.0, 14.5], meals: [7.0, 12.0, 17.5], bath: 20.0, spread: 0.4 } }
+  elder: { urgency: 1.6, self_care: 0.6, bedrest: [0.8, 0.55], legs_frailty: 0.5, routine: { wake: 5.8, bed: 21.5, nap: [13.0, 14.5], meals: [7.0, 12.0, 17.5], bath: 20.0, spread: 0.4 } }
   cat: { urgency: 1.0, self_care: 0.3, nag: 40 }
   dog: { urgency: 1.1, self_care: 0.1, nag: 35 }
   rabbit: { urgency: 1.0, self_care: 0.1 }
@@ -505,9 +517,10 @@ events:
       - { label: 不放盐，多放姜, pulse: salt_low, mood: -0.02, frailty: -0.04, reply: "{ta}皱了皱眉，还是吃光了。" }
 `;
 
-  F['templates/conditions/arthritis.yaml'] = `version: 4
+  F['templates/conditions/arthritis.yaml'] = `version: 5
 id: arthritis
 label: 关节炎
+legs_bad: true          # 算腿脚不便，没有轮椅出不了门
 needs:
   joint: { label: 关节疼, icon: "🔥", rate: 0.05 }
 actions:
@@ -546,9 +559,11 @@ lines:
     breath: ["{ta}咳了几声，喘得有点急。", "{ta}按着胸口，呼吸有点重。"]
 `;
 
-  F['templates/conditions/forgetful.yaml'] = `version: 4
+  F['templates/conditions/forgetful.yaml'] = `version: 5
 id: forgetful
 label: 记性变差
+needs_watch: true       # 醒着时要有人盯着，进看护调度的盯人通道
+dispatch_care: true     # 由看护调度派人照顾
 needs:
   reorient: { label: 又问了一遍, icon: "❓", rate: 0.05 }
 actions:
@@ -575,9 +590,10 @@ lines:
     chest: ["{ta}按着胸口，慢慢坐了下来。", "{ta}说有点闷，歇一会儿就好。"]
 `;
 
-  F['templates/conditions/parkinson.yaml'] = `version: 4
+  F['templates/conditions/parkinson.yaml'] = `version: 5
 id: parkinson
 label: 帕金森
+needs_escort: true      # 不会自己一个人出门，要有人陪
 needs:
   medicine: { label: 该吃药了, icon: "💊", rate: 0.06 }
   tremor: { label: 手在抖, icon: "🤲", rate: 0.05 }
@@ -604,9 +620,11 @@ lines:
     lowmood: ["{ta}坐在窗边，很久没有说话。", "{ta}说：没什么，就是提不起劲。"]
 `;
 
-  F['templates/conditions/nocturia.yaml'] = `version: 4
+  F['templates/conditions/nocturia.yaml'] = `version: 5
 id: nocturia
 label: 夜尿多
+night_help: true        # 夜里想上厕所要人帮，声音不大
+dispatch_care: true     # 由看护调度派人照顾
 needs:
   toilet: { label: 想上厕所, icon: "🚽", rate: 0.05 }
 actions:
