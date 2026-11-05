@@ -283,14 +283,13 @@
 const BEAN_STAGE = { infant: { w: 66, h: 62 }, toddler: { w: 64, h: 70 }, child: { w: 62, h: 80 }, teen: { w: 60, h: 90 }, adult: { w: 64, h: 92 }, elder: { w: 66, h: 88 } };
 let beanUid = 0;
 
-/* V: 'A' 纯豆，没有手脚；'B' 加手脚；'C' 上半肤色下半衣服，加手脚 */
-function beanDraw(o, V) {
+/* 穿衣小豆：上半肤色，下半衣服，有手有脚 */
+function beanDraw(o) {
   const id = 'bn' + (beanUid++), B = BEAN_STAGE[o.stage], w = B.w, h = B.h, bot = 122, top = bot - h, cx = 50, L = cx - w / 2, R = cx + w / 2;
   const sk = SKIN[o.skin] || SKIN[1], hc = HAIR[o.hair] || HAIR.black, cloth = o.cloth, small = ['infant', 'toddler', 'child'].includes(o.stage);
   const r1 = Math.min(h * 0.5, w * 0.62), y1 = top + r1, y2 = bot - h * 0.12;
   const shape = `M${L} ${y1} A${w / 2} ${r1} 0 0 1 ${R} ${y1} L${R} ${y2} Q${R} ${bot} ${R - w * 0.22} ${bot} L${L + w * 0.22} ${bot} Q${L} ${bot} ${L} ${y2}Z`;
   const eyeY = top + r1 * 0.98, eyeDx = Math.min(11, w * 0.2), mood = o.mood;
-  const hasLimbs = V !== 'A';
   const dir = o.dir, away = dir === 'ne' || dir === 'nw', turned = dir === 'se' || dir === 'sw', mirror = dir === 'sw' || dir === 'nw', fx = turned ? 11 : 0;
   let back = '', front = '';
   const fy = top + r1 * 0.6;
@@ -319,21 +318,15 @@ function beanDraw(o, V) {
   const glasses = o.glasses && o.glasses !== 'none' && !o.asleep ? `<g fill="none" stroke="#3e3a36" stroke-width="1.6"><circle cx="${cx - eyeDx}" cy="${eyeY}" r="6.8"/><circle cx="${cx + eyeDx}" cy="${eyeY}" r="6.8"/><path d="M${cx - eyeDx + 6.8} ${eyeY} L${cx + eyeDx - 6.8} ${eyeY}"/></g>` : '';
   const beard = o.beard && !small ? `<path d="M${cx - w * 0.42} ${eyeY + 6} Q${cx - w * 0.44} ${eyeY + 24} ${cx} ${eyeY + 27} Q${cx + w * 0.44} ${eyeY + 24} ${cx + w * 0.42} ${eyeY + 6} Q${cx} ${eyeY + 13} ${cx - w * 0.42} ${eyeY + 6}Z" fill="${hc}"/>` : '';
 
-  /* 躯体：A 和 B 是整只衣服色的豆加肤色脸盘；C 上半肤色，下半衣服 */
+  /* 躯体：上半肤色，下半衣服 */
   let torso;
-  const stroke = `stroke="${dark(V === 'C' ? sk[0] : cloth, 0.8)}" stroke-width="1"`;
-  if (V === 'C') {
+  const stroke = `stroke="${dark(sk[0], 0.8)}" stroke-width="1"`;
+  {
     const sp = top + h * 0.6;
     torso = `<path d="${shape}" fill="${sk[0]}" ${stroke}/><g clip-path="url(#${id})"><rect x="${L - 2}" y="${sp}" width="${w + 4}" height="${h}" fill="${cloth}"/><path d="M${L - 2} ${sp} Q${cx} ${sp + 9} ${R + 2} ${sp}" fill="none" stroke="${dark(cloth, 0.78)}" stroke-width="1.4"/></g>`;
-  } else {
-    torso = `<path d="${shape}" fill="${cloth}" ${stroke}/>${away ? '' : `<ellipse cx="${cx + fx * 0.7}" cy="${eyeY + 3}" rx="${w * 0.44}" ry="${r1 * 0.8}" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>`}`;
   }
-  const limbs = hasLimbs
-    ? `<ellipse class="foot l" cx="${cx - w * 0.2}" cy="${bot + 1}" rx="${small ? 7 : 8.5}" ry="4.5" fill="#4a4048"/><ellipse class="foot r" cx="${cx + w * 0.2}" cy="${bot + 1}" rx="${small ? 7 : 8.5}" ry="4.5" fill="#4a4048"/>`
-    : '';
-  const hands = hasLimbs
-    ? `<ellipse class="hand l" cx="${L - 1}" cy="${top + h * 0.7}" rx="5" ry="6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/><ellipse class="hand r" cx="${R + 1}" cy="${top + h * 0.7}" rx="5" ry="6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>`
-    : '';
+  const limbs = `<ellipse class="foot l" cx="${cx - w * 0.2}" cy="${bot + 1}" rx="${small ? 7 : 8.5}" ry="4.5" fill="#4a4048"/><ellipse class="foot r" cx="${cx + w * 0.2}" cy="${bot + 1}" rx="${small ? 7 : 8.5}" ry="4.5" fill="#4a4048"/>`;
+  const hands = `<ellipse class="hand l" cx="${L - 1}" cy="${top + h * 0.7}" rx="5" ry="6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/><ellipse class="hand r" cx="${R + 1}" cy="${top + h * 0.7}" rx="5" ry="6" fill="${sk[0]}" stroke="${sk[1]}" stroke-width="1"/>`;
   const lean = o.stage === 'elder' ? ' transform="rotate(-2 50 122)"' : '';
   /* 朝上的人看不见脸，长头发垂在身后，画在躯体上面 */
   const face = away ? '' : `<g${fx ? ` transform="translate(${cx + fx} 0) scale(.86 1) translate(${-cx} 0)"` : ''}>${cheeks}${eyes}${lids}${glasses}${beard}</g>`;
@@ -347,18 +340,17 @@ function beanDraw(o, V) {
     ${mirror ? '<g transform="translate(100 0) scale(-1 1)">' : '<g>'}<ellipse cx="50" cy="127" rx="${w * 0.6}" ry="3.5" fill="#00000018"/>
     ${body}</g></svg>`;
 }
-  const beanHuman = (p, V, dir) => {
+  const beanHuman = (p, dir) => {
     const a = p.person.appearance || {}, G = CY.game;
     const stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
-    return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: a.cloth || '#8fa3b8', glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)), dir: dir || '' }, V);
+    return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: a.cloth || '#8fa3b8', glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)), dir: dir || '' });
   };
   const DRAW = { hedgehog, duck, ferret, axolotl, chicken, orchid, bamboo, cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
-  /* CY.figure：人的造型，设置里选。dressed 上半肤色下半衣服，默认；plain 整只衣服色加肤色脸盘，有手脚；dumpling 同 plain 但没有手脚。
-     只换人，动物和花草不变。旧设置文件里的 classic 和 bean_a、bean_b、bean_c 按对应关系转过来 */
-  const FIG_V = { sprite: 'C', blocky: 'C', dressed: 'C', plain: 'B', dumpling: 'A' };
-  CY.FIGURES = ['sprite', 'blocky', 'dressed', 'plain', 'dumpling'];
-  CY.figureOf = v => ({ classic: 'dressed', bean_c: 'dressed', bean_b: 'plain', bean_a: 'dumpling' }[v]) || (CY.FIGURES.includes(v) ? v : 'sprite');
-  CY.figure = 'sprite';
+  /* CY.figure：人的造型，设置里选。dressed 穿衣小豆，默认，上半肤色下半衣服，精灵图没加载完时也退回它；sprite 迷你小人精灵，Kenney 素材渲染，动物和花草也跟着用精灵。
+     只换人，动物和花草不变 */
+  CY.FIGURES = ['dressed', 'sprite'];
+  CY.figureOf = v => (CY.FIGURES.includes(v) ? v : 'dressed');
+  CY.figure = 'dressed';
   CY.DIRS = ['se', 'sw', 'ne', 'nw'];
   /* ---------- 人物精灵：Kenney 的 CC0 小人渲染成四个朝向，站，走，坐，睡四种姿势。肤色在浏览器里按玩家的选择重着色 ----------
      图没加载完，或者没有图像环境（测试），就先画原来的矢量豆子。 */
@@ -408,22 +400,12 @@ function beanDraw(o, V) {
     const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 0.85;   /* 宠物比人小，也不比宝宝大 */
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${Math.max(10, e.w * k * 0.4).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
   };
-  /* Blocky Characters：十八个像素风的角色，按编号固定挑一个，不能改颜色，只用来比较效果 */
-  const blockySprite = (p, dir, pose) => {
-    const M = (CY.isoSprites || {}).blocky; if (!M || typeof document === 'undefined') return null;
-    const a = (p.person && p.person.appearance) || {}, G1 = CY.game, st = G1 && p.species.food !== undefined ? G1.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
-    /* 十八个里机器人，兽人，忍者，海盗，碰撞假人不是家人，只在普通人里挑；老人挑戴眼镜和留胡子的 */
-    const pool = (st === 'elder' ? ['i', 'k', 'm'] : ['a', 'b', 'c', 'e', 'f', 'j', 'n', 'q', 'k', 'm']).filter(c => M[c]), key = M[a.blocky] ? a.blocky : pool[hashOf((p.person && p.person.id) || p.id || 'x') % pool.length], m = M[key];
-    const rot = pose === 'sleep' ? 0 : ROT[dir] || 0, e = m && m[pose] && m[pose][rot]; if (!e) return null;
-    const G = CY.game, stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35), k = 1.65 * (STAGE_K[stage] || 1) * (pose === 'sleep' ? 0.85 : 1);
-    return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${(22 * (STAGE_K[stage] || 1)).toFixed(1)}" ry="4" fill="#00000022"/><image href="assets/iso/blocky/${key}_${pose}_${rot}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
-  };
   CY.avatar = (p, dir, pose) => {
-    if (DRAW[p.species.id]) { const G0 = CY.game; return !['sprite', 'blocky'].includes(CY.figure) ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
+    if (DRAW[p.species.id]) { const G0 = CY.game; return CY.figure !== 'sprite' ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
     const G = CY.game, asleep = pose !== 'awake' && !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p) && !G.flag(p, 'outing'))));
     const wc = ((p.person && (p.person.archetype || p.person.card)) || '') === 'wheelchair_user';   /* 坐轮椅的家人一直坐在轮椅里，睡着了才躺下 */
     const pz = asleep ? 'sleep' : (wc || (G && G.usingWheelchair && G.usingWheelchair(p) && pose !== 'sit')) ? 'chair' : pose === 'sit' ? 'sit' : dir && pose !== 'stand' ? 'walk' : 'stand';
-    return (CY.figure === 'sprite' ? sprite : CY.figure === 'blocky' ? (a, b, c) => blockySprite(a, b, c === 'chair' ? 'sit' : c) : () => null)(p, dir || '', pz) || beanHuman(p, FIG_V[CY.figure] || 'C', dir);
+    return (CY.figure === 'sprite' ? sprite : () => null)(p, dir || '', pz) || beanHuman(p, dir);
   };
   /* 为添加角色对话框的预览用，不需要完整的 p */
   CY.avatarPreview = (arch, look, age) => {

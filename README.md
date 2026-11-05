@@ -104,7 +104,6 @@ Code is released under the [MIT License](LICENSE). Copyright (c) 2026 Fan Shen.
 | Characters | [Kenney, Mini Characters 1](https://kenney.nl) | CC0 1.0 | Rendered the same way in four directions and four poses. Skin tones are recolored in the game with an SVG filter and a mask. |
 | YAML parsing | [js-yaml](https://github.com/nodeca/js-yaml) | MIT | Shipped in `frontend/vendor`. |
 | Rendering tool | [three.js](https://threejs.org) | MIT | Used only by the rendering tool, not shipped with the game. |
-| Optional blocky characters | [Kenney, Blocky Characters](https://kenney.nl) | CC0 1.0 | An alternative set of figures chosen in the settings. |
 | Street backdrop | [Kenney, City Kit Commercial](https://kenney.nl) | CC0 1.0 | Small buildings behind the street. |
 | Food items | [Kenney, Food Kit](https://kenney.nl/assets/food-kit) | CC0 1.0 | Food on the kitchen table and in the shop, rendered the same way. |
 | Shopping props | [Kenney, Mini Market](https://kenney.nl/assets/mini-market) | CC0 1.0 | Shopping cart and market props, rendered the same way. |

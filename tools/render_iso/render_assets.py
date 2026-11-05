@@ -27,16 +27,15 @@ FURN = _path('furniture', 'KENNEY_FURNITURE')
 CHAR = _path('chars', 'KENNEY_CHARS')
 PETS = _path('pets', 'KENNEY_PETS')
 CARS = _path('cars', 'KENNEY_CARS')
-BLOCKY = _path('blocky', 'KENNEY_BLOCKY')
 CITY = _path('city', 'KENNEY_CITY')
 MARKET = _path('market', 'KENNEY_MARKET')
 FOOD = _path('food', 'KENNEY_FOOD')
-MAP = {'/food/': FOOD, '/market/': MARKET, '/blocky/': BLOCKY, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
+MAP = {'/food/': FOOD, '/market/': MARKET, '/city/': CITY, '/cars/': CARS, '/three/': THREE_DIR, '/furn/': FURN, '/char/': CHAR, '/pets/': PETS, '/': HERE}
 
 class H(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         path = path.split('?', 1)[0]
-        for pre in ('/food/', '/three/', '/furn/', '/char/', '/pets/', '/cars/', '/blocky/', '/city/', '/market/'):
+        for pre in ('/food/', '/three/', '/furn/', '/char/', '/pets/', '/cars/', '/city/', '/market/'):
             if path.startswith(pre): return os.path.join(MAP[pre], *path[len(pre):].split('/')).replace('%20', ' ')
         return os.path.join(HERE, path.lstrip('/') or 'render.html')
     def log_message(self, *a): pass
@@ -49,7 +48,6 @@ def serve():
 
 FURN_SCALE = 1.9   # Kenney 家具的一个单位约 1.8 米，乘 1.9 后一格地砖约 1 米，单人床约 1.1 格宽 2.1 格长
 CITY_SCALE = 1.1   # 街道背景的楼，只做远景，宽约 1 格，高约 1.5 格
-BLOCKY_SCALE = 0.55   # Blocky Characters，成年人约 80 像素高
 CAR_SCALE = 0.8   # 小汽车约 2.2 格长，和人物的比例合适
 CHAR_SCALE = 1.6   # Mini Characters 乘 1.6 后成人约 76 像素高，和现在的人物大小相当
 FURNITURE = json.load(open(os.path.join(HERE, 'furniture_list.json'), encoding='utf-8'))
@@ -116,17 +114,6 @@ def main(kind):
                     bx = r['box']; m[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay'], 'cx': round((bx[0] + bx[2]) / 2, 3), 'cz': round((bx[1] + bx[3]) / 2, 3), 'sx': round(bx[2] - bx[0], 3), 'sz': round(bx[3] - bx[1], 3)}
                 m['size'] = [round(v, 3) for v in r['size']]
                 print(name, m['size'])
-        if kind == 'blocky':
-            os.makedirs(os.path.join(OUT, 'blocky'), exist_ok=True)
-            POSES = {'stand': ('idle', 0.0), 'walk': ('walk', 0.12), 'sit': ('sit', 5.0), 'sleep': ('die', 5.0)}
-            for c in 'abcdefghijklmnopqr':
-                name = 'character-' + c; m = manifest.setdefault('blocky', {}).setdefault(c, {})
-                for pose, (clip, t) in POSES.items():
-                    for rot in range(4):
-                        r = pg.evaluate('o => window.renderModel(o)', {'url': '/blocky/%s.glb' % name, 'rot': rot, 'scale': BLOCKY_SCALE, 'clip': clip, 't': t})
-                        open(os.path.join(OUT, 'blocky', '%s_%s_%d.png' % (c, pose, rot)), 'wb').write(base64.b64decode(r['png'].split(',', 1)[1]))
-                        m.setdefault(pose, {})[str(rot)] = {'w': r['w'], 'h': r['h'], 'ax': r['ax'], 'ay': r['ay']}
-                print(c, m['stand']['0'], r['clips'][:5])
         if kind == 'cars':
             os.makedirs(os.path.join(OUT, 'furn'), exist_ok=True)
             for name in ['taxi', 'ambulance', 'sedan', 'van', 'delivery', 'suv', 'police', 'firetruck', 'cone', 'garbage-truck']:
