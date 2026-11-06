@@ -336,7 +336,7 @@ function beanDraw(o) {
       ${face}
       ${hands}
     </g>`;
-  return `<svg viewBox="0 0 100 135" class="av"${dir ? ` data-dir="${dir}"` : ''}><defs><clipPath id="${id}"><path d="${shape}"/></clipPath></defs>
+  return `<svg viewBox="0 0 100 135" class="av" data-top="${top}"${dir ? ` data-dir="${dir}"` : ''}><defs><clipPath id="${id}"><path d="${shape}"/></clipPath></defs>
     ${mirror ? '<g transform="translate(100 0) scale(-1 1)">' : '<g>'}<ellipse cx="50" cy="127" rx="${w * 0.6}" ry="3.5" fill="#00000018"/>
     ${body}</g></svg>`;
 }
@@ -402,6 +402,7 @@ function beanDraw(o) {
     const base = `assets/iso/pet/${p.species.id}_${pose}_${rot}`, k = 0.85;   /* 宠物比人小，也不比宝宝大 */
     return `<svg viewBox="0 0 100 130" class="av" style="overflow:visible"><ellipse cx="50" cy="124" rx="${Math.max(10, e.w * k * 0.4).toFixed(1)}" ry="4" fill="#00000022"/><image href="${base}.png" x="${(50 - e.ax * k).toFixed(1)}" y="${(124 - e.ay * k).toFixed(1)}" width="${(e.w * k).toFixed(1)}" height="${(e.h * k).toFixed(1)}"/></svg>`;
   };
+  CY.avatarBean = (p, dir) => beanHuman(p, dir || 'se');   /* 分享卡用：不管设置里选了哪种造型，画成穿衣小豆，纯矢量，能放进画布 */
   CY.avatar = (p, dir, pose) => {
     if (DRAW[p.species.id]) { const G0 = CY.game; return CY.figure !== 'sprite' ? DRAW[p.species.id](p) : petSprite(p, dir || '', !!(G0 && G0.isSleeping && p.id && G0.isSleeping(p))) || DRAW[p.species.id](p); }
     const G = CY.game, asleep = pose !== 'awake' && !!(G && G.isSleeping && p.id && (G.isSleeping(p) || (G.bedridden && G.bedridden(p) && !G.flag(p, 'outing'))));

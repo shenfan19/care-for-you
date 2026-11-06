@@ -36,6 +36,9 @@
     const pick = (side, other) => Object.entries(sum.acts).filter(([k]) => k.split('>')[side] === who).map(([k, c]) => { const x = k.split('>')[other]; return [x === who ? t('stats.self') : nameOf(sum, x), c.n]; }).sort((a, b) => b[1] - a[1]);
     return { given: pick(0, 1), got: pick(1, 0) };
   };
+  /* 分享卡用：某个人在某个时间范围里照顾了谁，谁照顾了他，名字已经翻成当前语言 */
+  U.careSlices = (pid, rng) => { const sum = G.ledger && G.ledger.enabled() ? G.ledger.sum(...rangeOf(rng || 'all')) : { acts: {}, names: {} }; return slicesOf(sum, pid); };
+  U.careColors = COLORS;
   /* 嵌在人物状态面板里的两张饼图，带时间范围。模块关着或者没有这个人就什么也不画 */
   U.careStatsInline = function (pid) {
     const me = G.get(pid); if (!me || !G.ledger || !G.ledger.enabled()) return '';

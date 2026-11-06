@@ -251,7 +251,7 @@
       const dir = fam ? '' : c._dir || (working ? 'ne' : face);
       c.classList.toggle('working', working && !c._dir);
       const look = JSON.stringify(p.person.appearance) + (p.person.age_stage || '') + Math.round(p.state.mood * 3) + (G.isSleeping(p) ? 'z' : '') + (fam ? 'F' : 'M') + dir;
-      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, G.isSleeping(p) && c._dir ? 'awake' : working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; const ims = [...c.querySelectorAll('.body image')].map(im => parseFloat(im.getAttribute('y'))).filter(v => !isNaN(v)); c.style.setProperty('--hd', ims.length ? Math.max(0, Math.min(...ims) / 130).toFixed(3) : 0); }
+      if (force || c.dataset.av !== look) { c.querySelector('.body').innerHTML = CY.avatar(p, dir, G.isSleeping(p) && c._dir ? 'awake' : working && !c._dir ? 'sit' : face ? 'stand' : ''); c.dataset.av = look; const ims = [...c.querySelectorAll('.body image')].map(im => parseFloat(im.getAttribute('y'))).filter(v => !isNaN(v)); const bs = c.querySelector('.body svg[data-top]'); c.style.setProperty('--hd', ims.length ? Math.max(0, Math.min(...ims) / 130).toFixed(3) : bs ? Math.max(0, (+bs.dataset.top - 4) / 135).toFixed(3) : 0); }   /* 豆子没有图片可量，头顶在哪一高度由画法给出，宝宝比大人矮，状态跟着头顶走 */
       c.classList.toggle('frail', p.state.frailty >= 0.7);
       c.classList.toggle('crying', !!G.crying[p.id]);
       c.classList.toggle('sleeping', G.isSleeping(p) && !c._dir);
