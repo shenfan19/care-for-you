@@ -14,22 +14,21 @@
   const wrapper = (ctx, text, maxW) => { const out = []; let line = ''; for (const ch of Array.from(text)) { if (ctx.measureText(line + ch).width > maxW) { out.push(line); line = ch; } else line += ch; } if (line) out.push(line); return out; };
 
   /* 卡片的底：背景，卡片面，左上角一个标题块：亮色的大标题 Care for You，旁边是和页面顶上同一句随机的话，再下面是游戏网址，
-     话和网址用普通的颜色和字体。返回标题块的下沿，内容从它下面开始 */
+     话和网址同用低调的颜色，普通字体，话略大一点。返回标题块的下沿，内容从它下面开始 */
   function frame(canvas, W, H) {
     const v = palette(), ctx = canvas.getContext('2d');
     canvas.width = W; canvas.height = H;
     ctx.fillStyle = v('--bg'); ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = v('--card'); roundRect(ctx, 70, 70, W - 140, H - 140, 36); ctx.fill();
-    ctx.fillStyle = v('--accent'); roundRect(ctx, 130, 130, 90, 10, 5); ctx.fill();
     ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 76px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText('Care for You', 130, 235);
+    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 76px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText('Care for You', 130, 215);
     if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * 6);
     const tag = t('tag.' + (U.tagN + 1)); let size = 32;
-    ctx.fillStyle = v('--ink'); ctx.font = `${size}px ${FONT}`;
+    ctx.fillStyle = v('--mute'); ctx.font = `${size}px ${FONT}`;
     while (ctx.measureText(tag).width > W - 260 && size > 20) { size -= 2; ctx.font = `${size}px ${FONT}`; }
-    ctx.fillText(tag, 130, 290);
-    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`; ctx.fillText(G.E('share').url, 130, 334);
-    return { ctx, v, top: 334 };
+    ctx.fillText(tag, 130, 268);
+    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`; ctx.fillText(G.E('share').url, 130, 312);
+    return { ctx, v, top: 312 };
   }
   /* 左下角只留一句存档被改过的提示，标题和网址都在左上角 */
   function foot(ctx, v, H) {
