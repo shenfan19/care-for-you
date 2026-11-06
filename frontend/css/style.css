@@ -29,8 +29,8 @@ main { max-width:980px; margin:0 auto; padding:14px 20px 80px; }
 .stat { font-size:13px; margin-bottom:6px; }
 
 /* 时间线与说过的话 */
-.tl { padding:6px 0; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:baseline; }
-.tl .t { color:var(--mute); font-size:12px; min-width:84px; line-height:1.3; } .tl .who { min-width:44px; color:var(--accent); } .tl .x { flex:1; }
+.tl { padding:2px 0; display:flex; gap:8px; align-items:baseline; line-height:1.4; }
+.tl .t { color:var(--mute); font-size:12px; white-space:nowrap; } .tl .who { color:var(--accent); white-space:nowrap; } .tl .x { flex:1; }
 .said-you { color:var(--ok) !important; }
 details { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:6px 12px; margin-bottom:6px; }
 summary { cursor:pointer; }
@@ -544,7 +544,22 @@ body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none
   .room .cornerbox { top: 34px; bottom: auto; left: 8px; right: 8px; justify-content: flex-end; }
   .roster { left: 8px; right: 8px; top: auto; bottom: 8px; }
   .logwin { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; border-radius: 14px 14px 0 0; border: 1px solid var(--line); border-bottom: none; box-shadow: 0 -4px 16px #0002; background: var(--card); padding-bottom: env(safe-area-inset-bottom); }
-  .logwin .logbody { max-height: 55vh; }
   .logbar { padding: 10px 12px; }
   main { padding-bottom: 84px; }
+}
+
+/* 记录展开：不显示收起时的那一条，最上面是固定的标签行，折叠按钮在最右；下面的列表单独滚动，不含标签；整个展开不超过四成高，底部半透明 */
+.logwin.open { display: flex; flex-direction: column; max-height: 40%; background: color-mix(in srgb, var(--card) 84%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.logwin.open .logbar { display: none; }
+.logwin.open .logbody { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; max-height: none; overflow: hidden; border-top: none; padding: 8px 12px 6px; }
+.loghead { flex: none; } .logrow { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.logrow .chips { flex: 1; min-width: 0; margin: 0; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .logrow .chips::-webkit-scrollbar { display: none; }
+.logrow .chip { flex: none; white-space: nowrap; font-size: 13px; padding: 1px 10px; }
+.logfold { flex: none; padding: 0 10px; font-size: 14px; line-height: 1.6; border-radius: 14px; color: var(--mute); }
+.logscroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+.logscroll .stat { font-size: 12px; margin: 2px 0 4px; }
+@media (max-width: 640px) {
+  .logwin.open { max-height: 40vh; }
+  .logwin .logbody { max-height: none; }
+  .tl .pill { display: none; }
 }

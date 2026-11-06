@@ -80,21 +80,27 @@
     const ids = ['events'].concat(curvesOn() ? ['curves'] : [], extra.map(x => x.id));
     if (!ids.includes(view.tab)) view.tab = 'events';
     const tabBtn = (id, label) => `<button class="chip ${view.tab === id ? 'on' : ''}" data-tab="${id}">${esc(label)}</button>`;
-    const tabs = ids.length > 1 ? `<div class="chips tabs" style="margin-bottom:8px">${tabBtn('events', t('feed.title'))}${curvesOn() ? tabBtn('curves', t('feed.tab_curves')) : ''}${extra.map(x => tabBtn(x.id, x.label())).join('')}</div>` : '';
+    const tabBtns = ids.length > 1 ? `${tabBtn('events', t('feed.title'))}${curvesOn() ? tabBtn('curves', t('feed.tab_curves')) : ''}${extra.map(x => tabBtn(x.id, x.label())).join('')}` : '';
+    /* 展开后上面一条是固定的：标签在左，折叠按钮在最右；下面才是滚动的列表。收起时的那一条最新事件展开后不显示，免得和列表第一行重复 */
+    const fold = `<button class="logfold" id="logFold" title="${esc(t('btn.close'))}" aria-label="${esc(t('btn.close'))}">▾</button>`;
+    const row = (inner, withFold) => `<div class="logrow"><div class="chips scrollx">${inner}</div>${withFold ? fold : ''}</div>`;
+    const head = chipsInner => `<div class="loghead">${tabBtns ? row(tabBtns, !chipsInner) : ''}${chipsInner ? row(chipsInner, true) : ''}</div>`;
+    const wireFold = () => { const fb = $('logFold'); if (fb) fb.onclick = () => U.setLogOpen(false); };
     const goTab = () => root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
     const cur = extra.find(x => x.id === view.tab);
-    if (cur) { root.innerHTML = tabs + cur.render(view); goTab(); if (cur.bind) cur.bind(root, view); return; }
+    if (cur) { root.innerHTML = head('') + '<div class="logscroll">' + cur.render(view) + '</div>'; goTab(); wireFold(); if (cur.bind) cur.bind(root, view); return; }
     if (view.tab === 'curves') {
-      root.innerHTML = tabs + renderCurves(root);
-      goTab();
+      root.innerHTML = head('') + '<div class="logscroll">' + renderCurves(root) + '</div>';
+      goTab(); wireFold();
       root.querySelectorAll('[data-cw]').forEach(b => b.onclick = () => { view.cwho = b.dataset.cw; U.renderFeed(true); });
       root.querySelectorAll('[data-call]').forEach(b => b.onclick = () => { const p = G.get(view.cwho); const ks = p ? Object.keys(G.needsOf(p)).concat(['mood', 'frailty']) : []; for (const k of ks) view.off[k] = b.dataset.call === '0'; U.renderFeed(true); });
       root.querySelectorAll('[data-ck]').forEach(b => b.onclick = () => { view.off[b.dataset.ck] = !view.off[b.dataset.ck]; U.renderFeed(true); });
       return;
     }
-    root.innerHTML = (tabs || `<h2>${esc(t('feed.title'))}</h2>`) + `<div class="chips">${chips}<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button></div>${stat}` +
-      '<div class="tlbox">' + (list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)}<br>${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${U.nameLink(x.pid)}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`) +
-      (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div>';
+    const rows = list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)} ${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${U.nameLink(x.pid)}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`;
+    root.innerHTML = head(chips + `<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button>`) +
+      `<div class="logscroll">${stat}<div class="tlbox">${rows}` + (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div></div>';
+    wireFold();
     goTab();
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });
     $('quietBtn').onclick = () => { view.quiet = !view.quiet; view.more = 40; U.renderFeed(true); };
