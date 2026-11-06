@@ -47,7 +47,7 @@ CY.i18n.register("ko", {
 });
 CY.i18n.register("ko", { "title.uncle": "삼촌", "title.aunt": "이모",
   "visit.fam.med.peer": "{guest}은(는) {who}와(과) 각자 날마다 먹는 약 이야기를 하며 제시간에 먹자고 서로 일러 주었습니다.", "visit.fam.sci.peer": "{guest}은(는) {who}와(과) 나란히 창가에 서서 내일 비가 올지 이야기했습니다.", "visit.fam.art.peer": "{guest}은(는) {who}에게 옛 시 한 구절을 읊어 주었고, 두 사람 모두 고개를 끄덕였습니다.", "visit.fam.edu.peer": "{guest}은(는) {who}와(과) 각자 읽은 옛 책 이야기를 나눴습니다.", "visit.fam.pol.peer": "{guest}은(는) {who}에게 차를 따라 주었고, 두 사람은 별말 없이 나란히 앉아 있었습니다.", "visit.fam.trv.peer": "{guest}은(는) {who}와(과) 각자 고향의 날씨와 음식 이야기를 나눴습니다." });
-CY.i18n.register("ko", { "corner.rate_tip": "+ 숫자는 일할 때 게임 시간 1시간당 가계 총수입입니다. 쾌적도가 높을수록 늘어납니다." });
+CY.i18n.register("ko", { "corner.rate_tip": "지금 가계는 시간당 약 {n}을 벌고 있습니다. 쉬지 않고 일할수록, 가족이 만족하고 집이 편안할수록 수입이 늘어납니다. 일이 끊기면 다시 몰입 상태로 돌아가기까지 시간이 걸리고, 그다음에야 효율이 회복됩니다." });
 
 CY.i18n.asks("ko", {
   "archimedes": ["내게 설 자리 하나만 주면 지구를 움직여 보이겠소. 믿겠소?", "믿습니다. 하지만 먼저 충분히 긴 지렛대를 주십시오.", "믿지 않습니다. 토론해 봅시다.", "좋소! 지렛대를 그려 보시오. 한 치씩 계산해 봅시다."],

@@ -47,7 +47,7 @@ CY.i18n.register("de", {
 });
 CY.i18n.register("de", { "title.uncle": "Onkel", "title.aunt": "Tante",
   "visit.fam.med.peer": "{guest} sprach mit {who} über die Medizin, die beide täglich nehmen, und sie erinnerten einander, sie pünktlich zu nehmen.", "visit.fam.sci.peer": "{guest} stand neben {who} am Fenster, und beide fragten sich, ob es morgen regnen werde.", "visit.fam.art.peer": "{guest} trug {who} eine alte Verszeile vor, und beide nickten.", "visit.fam.edu.peer": "{guest} sprach mit {who} über die alten Bücher, die beide gelesen hatten.", "visit.fam.pol.peer": "{guest} schenkte {who} eine Tasse Tee ein, und die beiden saßen nebeneinander, ohne viel zu sagen.", "visit.fam.trv.peer": "{guest} sprach mit {who} über das Wetter und das Essen in ihren Heimatorten." });
-CY.i18n.register("de", { "corner.rate_tip": "Die +-Zahl ist das Haushaltseinkommen pro Spielstunde bei der Arbeit. Mehr Wohlbefinden bringt mehr." });
+CY.i18n.register("de", { "corner.rate_tip": "Der Haushalt verdient gerade etwa {n} pro Stunde. Wer ununterbrochen arbeitet, verdient mehr, ein zufriedenes, komfortables Zuhause ebenso. Nach einer Unterbrechung dauert es eine Weile, bis man wieder im Fluss ist und die Effizienz zurückkehrt." });
 
 CY.i18n.asks("de", {
   "archimedes": ["Gib mir einen Standpunkt, und ich bewege die Erde. Glaubst du mir?", "Ja, aber gib mir erst einen ausreichend langen Hebel.", "Nein. Lass uns darüber streiten.", "Gut! Zeichne mir deinen Hebel, und wir rechnen ihn Zoll für Zoll durch."],

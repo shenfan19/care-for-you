@@ -47,7 +47,7 @@ CY.i18n.register("fr", {
 });
 CY.i18n.register("fr", { "title.uncle": "Tonton", "title.aunt": "Tata",
   "visit.fam.med.peer": "{guest} parla avec {who} des médicaments que chacun prend chaque jour, et ils se rappelèrent de les prendre à l'heure.", "visit.fam.sci.peer": "{guest} se tint à côté de {who} à la fenêtre, et tous deux se demandèrent s'il pleuvrait demain.", "visit.fam.art.peer": "{guest} récita un vieux vers à {who}, et tous deux hochèrent la tête.", "visit.fam.edu.peer": "{guest} parla avec {who} des vieux livres que chacun avait lus.", "visit.fam.pol.peer": "{guest} versa une tasse de thé à {who}, et les deux restèrent assis côte à côte sans dire grand-chose.", "visit.fam.trv.peer": "{guest} parla avec {who} du temps et de la cuisine de leurs pays." });
-CY.i18n.register("fr", { "corner.rate_tip": "Le chiffre précédé de + est le revenu du foyer par heure de jeu pendant le travail. Plus de confort rapporte plus." });
+CY.i18n.register("fr", { "corner.rate_tip": "Le foyer gagne environ {n} par heure en ce moment. Travailler sans interruption rapporte plus, un foyer heureux et confortable aussi. Après une interruption, il faut un moment pour retrouver le rythme avant que l'efficacité revienne." });
 
 CY.i18n.asks("fr", {
   "archimedes": ["Donne-moi un point d'appui et je soulèverai la Terre. Me crois-tu ?", "Oui, mais donne-moi d'abord un levier assez long.", "Non. Discutons-en.", "Bien ! Dessine-moi ton levier et nous le calculerons pouce par pouce."],

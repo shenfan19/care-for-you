@@ -47,7 +47,7 @@ CY.i18n.register("es", {
 });
 CY.i18n.register("es", { "title.uncle": "tío", "title.aunt": "tía",
   "visit.fam.med.peer": "{guest} habló con {who} de las medicinas que toma cada uno a diario, y se recordaron que debían tomarlas a su hora.", "visit.fam.sci.peer": "{guest} se puso junto a {who} en la ventana, y los dos se preguntaron si llovería mañana.", "visit.fam.art.peer": "{guest} recitó un verso antiguo a {who}, y los dos asintieron.", "visit.fam.edu.peer": "{guest} habló con {who} de los libros viejos que había leído cada uno.", "visit.fam.pol.peer": "{guest} sirvió una taza de té a {who}, y los dos se sentaron uno al lado del otro sin decir mucho.", "visit.fam.trv.peer": "{guest} habló con {who} del tiempo y de la comida de sus tierras." });
-CY.i18n.register("es", { "corner.rate_tip": "La cifra con + son los ingresos del hogar por hora de juego mientras se trabaja. Más bienestar rinde más." });
+CY.i18n.register("es", { "corner.rate_tip": "El hogar gana ahora unos {n} por hora. Trabajar sin interrupciones rinde más, y también un hogar contento y cómodo. Tras una interrupción cuesta un rato volver a concentrarse antes de recuperar la eficiencia." });
 
 CY.i18n.asks("es", {
   "archimedes": ["Dame un punto de apoyo y moveré la Tierra. ¿Me crees?", "Sí, pero primero dame una palanca lo bastante larga.", "No. Debatámoslo.", "¡Bien! Dibújame tu palanca y la calcularemos pulgada a pulgada."],

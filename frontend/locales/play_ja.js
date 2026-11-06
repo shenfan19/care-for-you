@@ -47,7 +47,7 @@ CY.i18n.register("ja", {
 });
 CY.i18n.register("ja", { "title.uncle": "おじさん", "title.aunt": "おばさん",
   "visit.fam.med.peer": "{guest}は{who}と、それぞれ毎日飲んでいる薬の話をして、時間どおりに飲もうと言い合った。", "visit.fam.sci.peer": "{guest}は{who}と並んで窓辺に立ち、明日は雨が降るだろうかと話した。", "visit.fam.art.peer": "{guest}は{who}に古い詩の一節を詠んで聞かせ、二人ともうなずいた。", "visit.fam.edu.peer": "{guest}は{who}と、それぞれが読んだ古い本の話をした。", "visit.fam.pol.peer": "{guest}は{who}にお茶を注ぎ、二人は並んで座り、あまり言葉を交わさなかった。", "visit.fam.trv.peer": "{guest}は{who}と、それぞれの故郷の天気や食べ物の話をした。" });
-CY.i18n.register("ja", { "corner.rate_tip": "+の数字は、仕事中のゲーム内1時間あたりの世帯収入です。快適度が高いほど増えます。" });
+CY.i18n.register("ja", { "corner.rate_tip": "いま世帯で1時間あたり約 {n} の収入です。仕事を続けるほど収入は増え、家族が満足して快適なほど増えます。中断した後は、集中状態に戻るまで少し時間がかかり、それから効率が戻ります。" });
 
 CY.i18n.asks("ja", {
   "archimedes": ["足場を一つくれれば、地球を動かしてみせよう。信じるかね？", "信じます。でもまず、十分に長いてこをください。", "信じません。議論しましょう。", "よし！てこを描いてみなさい。一寸ずつ計算しよう。"],

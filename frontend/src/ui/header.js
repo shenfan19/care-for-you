@@ -58,11 +58,11 @@
     if (!tm || !mn) return;
     const c = G.clock();
     const gd = G.gameDate();
-    tm.textContent = t('corner.day', { m: Math.floor((gd.n - 1) / 30) + 1, d: (gd.n - 1) % 30 + 1 }) + ' · ' + U.fmtTime(c.minutes) + (G.isFast() ? ' ⏩' : '');
+    tm.textContent = t('corner.day', { n: gd.n }) + ' · ' + U.fmtTime(c.minutes) + (G.isFast() ? ' ⏩' : '');
     tm.title = ''; tm.classList.toggle('unread', G.unread().length > 0);
     tm.style.cursor = 'pointer';
     tm.onclick = e => { e.stopPropagation(); U.calendarDialog(); };
-    const lead0 = G.protagonist(), rate = Math.round(G.incomeRate() * 10) / 10; mn.textContent = '💰 ' + Math.floor(G.world.money || 0) + (lead0 && rate > 0 ? ' +' + rate + '/h' : ''); mn.title = t('corner.money_tip') + ' ' + t('corner.rate_tip');
+    const lead0 = G.protagonist(), rate = Math.round(G.incomeRate() * 10) / 10; mn.textContent = '💰 ' + Math.floor(G.world.money || 0); mn.title = t('corner.money_tip') + '\n' + t('corner.rate_tip', { n: rate });   /* 格子里只有钱数，每小时进账和怎么才赚得多放在悬停的说明里 */
     const fm = root.querySelector('#cornerFamily'), lead = G.protagonist();
     if (fm) { const show = lead && CY.world && CY.world.worker(lead); fm.style.display = show ? '' : 'none'; if (show) { const e = Math.round(G.efficiency() * 100); fm.textContent = '🏠 ' + e + '%'; fm.title = t('corner.eff_tip', { n: e }); } }
     mn.onclick = () => { if (G.module('shop')) U.shopDialog(); };
