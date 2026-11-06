@@ -14,8 +14,6 @@
     async chat(messages, cfg) {
       const url = String(ini.get(cfg, 'ai', 'base_url')).replace(/\/+$/, '') + '/chat/completions';
       const headers = { 'Content-Type': 'application/json' };
-      const key = ini.get(cfg, 'ai', 'api_key');
-      if (key) headers.Authorization = 'Bearer ' + key;
       const r = await fetch(url, { method: 'POST', headers, body: JSON.stringify({ model: ini.get(cfg, 'ai', 'model'), messages, temperature: 0.8, max_tokens: 200 }) });
       if (!r.ok) throw new Error('AI 服务返回 ' + r.status);
       const j = await r.json();

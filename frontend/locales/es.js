@@ -28,7 +28,7 @@ CY.i18n.register("es", {
 "wipe.title": "Borrar todos los datos locales", "wipe.body": "Esto elimina todos los personajes, registros y ajustes de este dispositivo y no se puede deshacer.",
 "wipe.save_first": "Descargar antes un guardado", "wipe.sure": "Entiendo que no se puede deshacer", "wipe.go": "Borrar",
 "save.title": "Guardar y descargar", "save.s1": "Guardar la partida", "save.s1_note": "Descarga un zip con todos los archivos de datos, dos hojas de cálculo y un manifiesto. Puedes importarlo después, usarlo de copia de seguridad o para cambiar de dispositivo.",
-"save.s1_btn": "Descargar guardado", "save.s1_key": "Incluir la clave de IA (desactivado por defecto)", "save.s2": "Descargar la aplicación local", "save.s2_note": "Descarga el juego entero. Descomprímelo y haz doble clic en index.html para jugar en tu equipo, sin internet ni servidor.",
+"save.s1_btn": "Descargar guardado", "save.s2": "Descargar la aplicación local", "save.s2_note": "Descarga el juego entero. Descomprímelo y haz doble clic en index.html para jugar en tu equipo, sin internet ni servidor.",
 "save.s2_btn": "Descargar aplicación", "save.s2_with": "Incluir también mi guardado", "save.s2_working": "Empaquetando…", "save.s2_fail": "Falló. Una página abierta desde un archivo no puede leer los archivos del programa; abre el juego desde una dirección web e inténtalo de nuevo.",
 "save.s3": "Importar un guardado", "save.s3_note": "Elige un zip de guardado que descargaste antes. El archivo se lee solo en este dispositivo y no se sube a ningún sitio.",
 "save.s4": "Sincronización en la nube", "save.s4_note": "Aún no está disponible. Si más adelante se añaden cuentas, no se subirá nada sin tu consentimiento explícito, y podrás retirarlo y borrar en cualquier momento.",

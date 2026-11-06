@@ -139,7 +139,7 @@
     };
     if (!open) {
       const nav = GROUPS.map(g => `<div class="pg" data-g="${g}"><div class="pgh">${esc(t('pedia.g_' + g))}</div>${ix.list.filter(e => e.group === g).map(e => `<button class="pi" data-pid="${esc(e.id)}" data-t="${esc(e.title.toLowerCase())}">${e.icon ? esc(e.icon) + ' ' : ''}${esc(e.title)}</button>`).join('')}</div>`).join('');
-      const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('pedia.title'))}</h2>
+      const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('pedia.title'))} <span class="mute" style="font-weight:normal;font-size:12px">${esc(t('set.know_warn'))}</span></h2>
         <div class="pedia" id="pedia"><div class="pnav"><input type="search" class="psearch" placeholder="${esc(t('pedia.search'))}" aria-label="${esc(t('pedia.search'))}">${nav}</div><div class="pbody"></div></div>
         <div class="row" style="justify-content:flex-end;margin-top:10px"><button id="kclose" class="primary">${esc(t('btn.close'))}</button></div>`, true);
       dlg.querySelector('#kclose').onclick = U.closeDialog;

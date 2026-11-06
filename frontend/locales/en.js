@@ -39,8 +39,7 @@ CY.i18n.register('en', {
 
   'save.title': 'Save & download',
   'save.s1': 'Save your game', 'save.s1_note': 'Downloads a zip with all data files, two spreadsheets and a manifest. You can import it back later, or use it as a backup or to move devices.',
-  'save.s1_btn': 'Download save', 'save.s1_key': 'Include AI key (off by default)',
-  'save.s2': 'Download the local app', 'save.s2_note': 'Downloads the whole game. Unzip it and double-click index.html to play on your own machine, with no internet and no server.',
+  'save.s1_btn': 'Download save', 'save.s2': 'Download the local app', 'save.s2_note': 'Downloads the whole game. Unzip it and double-click index.html to play on your own machine, with no internet and no server.',
   'save.s2_btn': 'Download app', 'save.s2_with': 'Include my save too', 'save.s2_working': 'Packing…',
   'save.s2_fail': 'Packing failed. A page opened from a file cannot read the program files; open the game from a web address and try again.',
   'save.s3': 'Import a save', 'save.s3_note': 'Pick a save zip you downloaded earlier. The file is read on this device only and is not uploaded anywhere.',
@@ -153,7 +152,6 @@ CY.i18n.register('en', {
   'ini.ai.provider': 'none; openai_compat for any service compatible with /chat/completions; mock for tests',
   'ini.ai.base_url': 'Service address; for a local model use something like http://localhost:11434/v1',
   'ini.ai.model': 'Model name',
-  'ini.ai.api_key': 'Key. Note: this file is plain text, do not share it',
   'ini.ai.autonomy': 'text_only rewrites lines only; suggest can also propose personality tweaks that you confirm; bounded makes tiny automatic tweaks',
   'ini.ai.max_calls_per_hour': 'Maximum calls per hour, to keep cost under control',
   'ini.ai.share_replies': 'Allow sending your own answers to the AI as context',

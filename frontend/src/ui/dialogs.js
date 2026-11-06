@@ -32,12 +32,13 @@
       <div class="row">${esc(t('set.figure'))} ${sel('figure', CY.figuresAvailable(), CY.figuresAvailable().map(k => t('figure.' + k)), CY.figureOf(ini.get(G.cfg, 'ui', 'figure')))}</div>
       <div class="row">${esc(t('set.house_view'))} ${sel('house_view', ['rooms', 'house'], [t('house_view.rooms'), t('house_view.house')], ini.get(G.cfg, 'ui', 'house_view') === 'house' ? 'house' : 'rooms')}</div>
       <div class="sform">${form}</div>
+      <h3>${esc(t('set.know'))} <span class="mute" style="font-weight:normal;font-size:12px">${esc(t('set.know_warn'))}</span></h3>
+      <div class="row"><button id="dknow">${esc(t('set.know_open'))}</button><span class="mute">${esc(t('set.d_know_note'))}</span></div>
       <h3>${esc(t('set.danger'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.wipe_note'))}</div>
       <div class="row"><button id="dwipe" class="danger">${esc(t('set.wipe'))}</button></div>
       <details class="adv"><summary>${esc(t('set.advanced'))}</summary>
       <h3>${esc(t('set.data'))}</h3><div class="mute" style="margin-bottom:6px"><b>${esc(t('set.d_where'))}</b> ${esc(t('set.data_note', { where: store.backend.label }))}</div>
         <div class="drows">
-            <div class="drow"><button id="dknow">${esc(t('set.know'))}</button><span class="mute">${esc(t('set.d_know_note'))}</span></div>
           ${G.DEVTOOLS && CY.account.configured(G.cfg) ? `<div class="drow"><button id="dacct">${esc(t('acct.title'))}</button></div>` : ''}
         </div>
         <h3>${esc(t('set.unf_title'))}</h3><div class="mute" style="margin-bottom:6px">${esc(t('set.unf_note'))}</div>
@@ -93,7 +94,7 @@
   U.saveDialog = function () {
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('save.title'))}</h2>
       <h3>${esc(t('save.s1'))}</h3><div class="mute">${esc(t('save.s1_note'))}</div>
-      <div class="row" style="margin-top:6px"><button id="vsave" class="primary">${esc(t('save.s1_btn'))}</button><label><input type="checkbox" id="vkey"> ${esc(t('save.s1_key'))}</label></div>
+      <div class="row" style="margin-top:6px"><button id="vsave" class="primary">${esc(t('save.s1_btn'))}</button></div>
       <h3>${esc(t('save.s2'))}</h3><div class="mute">${esc(t('save.s2_note'))}</div>
       <div class="row" style="margin-top:6px"><button id="vapp">${esc(t('save.s2_btn'))}</button><label><input type="checkbox" id="vwith" checked> ${esc(t('save.s2_with'))}</label></div>
       <div class="mute" id="vmsg"></div>
@@ -105,7 +106,7 @@
     dlg.querySelector('#vclose').onclick = U.closeDialog;
     dlg.querySelector('#vsave').onclick = async () => {
       G.save(true); await new Promise(r => setTimeout(r, 200));
-      const s = await A.exportSave({ keepKey: dlg.querySelector('#vkey').checked }); A.saveBlob(s.blob, s.name);
+      const s = await A.exportSave(); A.saveBlob(s.blob, s.name);
     };
     dlg.querySelector('#vapp').onclick = async () => {
       msg(t('save.s2_working'));
@@ -160,7 +161,7 @@
       driven: `<h3>${esc(t('driven.h_engine'))}</h3><p>${esc(t('data.intro'))}</p><h4>${esc(t('data.h1'))}</h4><p>${esc(t('data.p1'))}</p><h4>${esc(t('data.h2'))}</h4><p>${esc(t('data.p2'))}</p><h4>${esc(t('data.h3'))}</h4><p>${esc(t('data.p3'))}</p>
         <h3>${esc(t('driven.api_h'))}</h3>${para(['driven.api_p'])}`,
       /* 作者与致谢：作者（姓名，个人项目，联系方式），Care for You，Life Matters，致谢 */
-      author: `<h3>${esc(t('author.h_author'))}</h3><p>Fan Shen</p>${para(['about.p4', 'about.p2'])}<p>${esc(t('about.homepage'))}：${link(PAGE)}<br>GitHub：${link(GH)}<br>${esc(t('about.feedback'))}：${link(ISSUES)}<br>${esc(t('au.mail'))}：contact@careforyou.dev</p>
+      author: `<h3>${esc(t('author.h_author'))}</h3>${para(['author.intro'])}<p>${esc(t('about.homepage'))}：${link(PAGE)}<br>GitHub：${link(GH)}<br>${esc(t('about.feedback'))}：${link(ISSUES)}<br>${esc(t('au.mail'))}：contact@careforyou.dev</p>
         <h3>Care for You</h3>${para(['author.cfy_p1', 'author.cfy_p2'])}<h3>Life Matters</h3>${para(['author.lm_p1', 'author.lm_p2'])}<h3>${esc(t('au.credits'))}</h3>${para(['author.thanks_ai', 'cred.p3'])}`,
     };
     const dlg = U.dialog(`<h2 style="margin:0 0 2px">${esc(t('about.title'))}</h2>${tab === 'about' ? `<div class="mute" style="font-size:12px;margin-bottom:8px">${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</div>` : ''}<div class="chips">${tabs.map(k => `<button class="chip ${k === tab ? 'on' : ''}" data-t="${k}">${esc(t('about.tab_' + k))}</button>`).join('')}</div>

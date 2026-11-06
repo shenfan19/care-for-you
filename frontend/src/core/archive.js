@@ -1,5 +1,5 @@
 /* 存档与运行包。
-   存档：数据文件夹的 zip，加一份 manifest 和两份表格，默认不带 AI 密钥。
+   存档：数据文件夹的 zip，加一份 manifest 和两份表格。
    运行包：整个网页程序的 zip，解压后双击 index.html 就能在本地运行，可以顺带带上一份存档。
    导入：读存档 zip，检查每个文件的路径和格式，再选择覆盖或合并。 */
 (function (CY) {
@@ -28,14 +28,6 @@
   const ROOT = 'careforyou-data/';
   const stamp = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`; };
 
-  /* 去掉 AI 密钥，除非调用方明确要带上 */
-  function scrub(text, keepKey) {
-    if (keepKey) return text;
-    const cfg = ini.parse(text);
-    if (cfg.ai && cfg.ai.api_key) cfg.ai.api_key = '';
-    return ini.stringify(cfg);
-  }
-
   /* ---------- 存档 ---------- */
   A.README = `Care for You save
 This zip is a plain copy of the game's data folder. Open any file in a text editor.
@@ -46,7 +38,7 @@ This zip is a plain copy of the game's data folder. Open any file in a text edit
 - world/<world id>/curves_world.csv: money, focus, efficiency and family bonus on the same clock.
 - people/<id>/journal/YYYY-MM.yaml: what happened, by real month.
 - custom/: things you added yourself, such as imported disease packs and your own visitor cards. The game's own rules are part of the program, not of the save.
-- settings.ini: preferences. The AI key is left out unless you chose to include it.
+- settings.ini: preferences.
 - summary/*.csv: readable tables of sayings and journal. Ignored on import.
 Any new kind of record is simply a new yaml or csv file in these folders. A save from an older schema is upgraded step by step on import; a save from a newer schema is refused.
 `;
@@ -54,7 +46,6 @@ Any new kind of record is simply a new yaml or csv file in these folders. A save
     const G = CY.game, files = [];
     for (const p of await store.list()) {
       let text = (await store.read(p)) || '';
-      if (p === 'settings.ini') text = scrub(text, opts.keepKey);
       files.push({ name: ROOT + p, data: enc.encode(text) });
     }
     const extra = CY.ui && CY.ui.summaryFiles ? CY.ui.summaryFiles() : {};
@@ -62,7 +53,7 @@ Any new kind of record is simply a new yaml or csv file in these folders. A save
     if (!files.some(f => f.name === ROOT + 'README.txt')) files.push({ name: ROOT + 'README.txt', data: enc.encode(A.README) });
     const manifest = { app: meta.app, version: meta.version, schema: meta.schema, created: new Date().toISOString(), language: CY.i18n.lang,
       format: { data: 'yaml', series: 'csv', tables: 'summary/*.csv', encoding: 'utf-8' },
-      people: G.people.map(p => ({ id: p.id, name: p.person.name, role: p.person.role })), game_minutes: Math.floor(G.world.game_minutes), includes_ai_key: !!opts.keepKey,
+      people: G.people.map(p => ({ id: p.id, name: p.person.name, role: p.person.role })), game_minutes: Math.floor(G.world.game_minutes),
       files: Object.fromEntries(files.map(f => [f.name.slice(ROOT.length), f.data.length])) };
     files.push({ name: ROOT + 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
     return { blob: store.zip(files), name: `careforyou-save-${stamp()}.zip` };
@@ -137,7 +128,6 @@ Any new kind of record is simply a new yaml or csv file in these folders. A save
         let text = info.files[p];
         if (p === 'settings.ini') {
           const cfg = ini.parse(text);
-          if (keep.ai && keep.ai.api_key && !(cfg.ai && cfg.ai.api_key)) { cfg.ai = cfg.ai || {}; cfg.ai.api_key = keep.ai.api_key; }
           text = ini.stringify(cfg);
         }
         await store.write(p, text);
