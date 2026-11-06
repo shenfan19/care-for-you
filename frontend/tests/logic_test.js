@@ -1374,6 +1374,39 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('一动手就醒', G.activityOf(dad) === 'awake');
     W.enforce = false; for (const x of G.people) x.person.active = true;
   }
+  {   /* 在家办公的人：平时全天办公，周日休息和工作大约 1 比 3，每个人每天不一样，同一天不变 */
+    const T = G.T(), key = 'templates/engine.yaml', off = T[key];
+    T[key] = off.replace(/rest_day: -?\d+/, 'rest_day: 0'); await G.load();
+    const W = CY.world, n = G.gameDate().n, sunday = new Date(2026, 10, 8), start = new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate() - (n - 1));
+    const fmt = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    G.world.start_date = fmt(start);
+    let work = 0; const N = 400; for (let i = 0; i < N; i++) if (W.workHour({ id: 'p' + i }, 10)) work++;
+    check('周日工作时段大约四分之三在工作，其余休息', work / N > 0.65 && work / N < 0.85, String(work / N));
+    check('同一个人同一天同一个时段结果不变', [0, 1, 2, 3].every(i => W.workHour({ id: 'same' }, 10) === W.workHour({ id: 'same' }, 10)));
+    G.world.start_date = fmt(new Date(2026, 10, 5, 12));
+    const thursday = new Date(2026, 10, 5); thursday.setDate(thursday.getDate() - (n - 1)); G.world.start_date = fmt(thursday);
+    check('平时全天在家办公', Array.from({ length: 200 }, (_, i) => W.workHour({ id: 'p' + i }, 10)).every(Boolean));
+    G.world.start_date = fmt(start);
+    G.world.start_date = fmt(start);
+    T[key] = off; await G.load();
+  }
+  {   /* 主角不被操作时：像别的角色一样，需求压力高了自己动手；玩家一动手就不自动 */
+    const W = CY.world, lead = G.people.find(p => G.isHuman(p) && G.stage(p) === 'adult' && p.person.active !== false);
+    if (lead) {
+      for (const x of G.people) x.person.active = true;
+      G.setProtagonist(lead.id); W.enforce = true; W.holding = false; W.player().act = null;
+      for (const k in lead.state.needs) G.setNeed(lead, k, 0.1);
+      G.setNeed(lead, 'hunger', 0.95);
+      G.setClock(14 * 60); W.moveTo('home', 'living');   /* 下午两点，在客厅：夜里在卧室闲着会躺下睡，那就不是自己动手的场合 */
+      let own = 0; G.bus.on('care', e => { if (e.kind === 'self' && e.actor === lead.id) own++; });
+      const rnd = Math.random; W.lastActive = Date.now();
+      Math.random = () => 0; G.advance(1, false);
+      check('玩家刚操作过，主角不自动行动', own === 0, String(own));
+      W.lastActive = Date.now() - 60000; G.advance(1, false); Math.random = rnd;
+      check('玩家一段时间没动手，主角自己动手', own > 0, String(own));
+      W.enforce = false;
+    }
+  }
   console.log(fails ? `失败 ${fails} 项` : '全部通过');
   process.exit(fails ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(1); });

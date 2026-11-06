@@ -109,13 +109,20 @@
   /* 日程：一天的默认去处，只给一个倾向，需求会盖过它。上班的人白天在书房办公，中午和傍晚去厨房，晚上在客厅看电视，夜里回卧室。
      老人早晚在院子，上午在客厅，中午和傍晚去厨房。其他人没有固定日程，按各自喜好和需求走 */
   const inH = (hr, a, b) => hr >= a && hr < b;
+  /* 在家办公的人，平时工作时段都在书房；休息日（周日）每个整块时间有一部分用来休息，休息时没有固定去处，按自己的喜好走，休息和工作大约 1 比 3。
+     用人的编号，日期，时段做稳定的哈希，同一个人同一天同一个时段永远是同一个结果，刷新页面也不变，不同的人不同的天不一样 */
+  W.workHour = (p, hr) => {
+    const R = G.E('game').week, d = G.dateOf(G.gameDate().n);
+    if (d.weekday !== R.rest_day) return true;
+    return hash(p.id + ':' + d.iso + ':' + Math.floor(hr / R.block_hours)) % 1000 / 1000 >= R.rest_share;
+  };
   W.routineRoom = (p, hr) => {
     if (!p || !G.isHuman(p)) return null;
     if (hr === undefined) hr = G.dayMinutes() / 60;
     const st = G.stage(p);
     if (hr >= 22 || hr < 7) return (W.bedOf(p) || { room: W.ownRoom(p) }).room;
     if (inH(hr, 19, 22)) return W.immobile(p) ? null : 'living';
-    if (W.worker(p)) return inH(hr, 7, 8.5) || inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : inH(hr, 9, 12) || inH(hr, 13, 18) ? 'study' : null;
+    if (W.worker(p)) return inH(hr, 7, 8.5) || inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : inH(hr, 9, 12) || inH(hr, 13, 18) ? (W.workHour(p, hr) ? 'study' : null) : null;
     if (st === 'elder') return inH(hr, 8, 10) || inH(hr, 15, 17.5) ? 'yard' : inH(hr, 10, 12) ? 'living' : inH(hr, 12, 13) || inH(hr, 18, 19) ? 'kitchen' : null;
     return null;
   };

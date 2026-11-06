@@ -41,6 +41,9 @@
     const arch = p => p.person.archetype || p.person.card, live = G.activePeople().filter(G.canLead);
     return live.find(p => arch(p) === 'dad') || live.find(p => arch(p) === 'mom') || live.find(p => G.stage(p) === 'adult') || live[0] || null;
   };
+  /* 操纵对象不被操作的时候：玩家一段时间没有动手，没有在长按，也没有在做自己的动作，他就像别的角色一样，需求压力高了自己动手。
+     测试和没有世界的场合（W.enforce 为假）不触发。玩家随时可以自己做，自己做的和自动的走同一条路 */
+  G.leadAuto = () => { const W = CY.world; return !!(W && W.enforce && !W.holding && !W.actPose() && Date.now() - W.lastActive >= G.E('game').lead_auto.idle_seconds * 1000); };
   G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
   /* 记事件用的角色：事件必须挂在一个真角色身上，没有一个叫"你"的角色。挂在操纵对象身上，没有操纵对象就挂在第一个人身上 */
   G.youId = () => { const p = G.protagonist() || G.activePeople().find(G.isHuman) || G.people[0]; return p ? p.id : 'you'; };

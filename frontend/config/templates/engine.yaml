@@ -1,4 +1,4 @@
-version: 10
+version: 11
 # 规则代码里的数都写在这里，改数不改代码。源头是这个 YAML，部署前 tools/build_config.js 把它打包成 templates_packed.js；
 # 读不到的键直接报错，代码里不给默认值，所以缺了哪一项一运行就知道。改了内容把 version 加一，旧存档才会更新。
 share:
@@ -113,6 +113,8 @@ game:
   interrupt_gap_minutes: { often: [20, 60], normal: [60, 180], rare: [240, 600] }   # 两次打扰之间隔多少游戏分钟，在范围里随机
   test_gap_seconds: [15, 40]         # 测试档，现实秒
   min_gap_seconds: 20                # 不管流速多快，两次打扰至少隔这么多现实秒
+  week: { rest_day: 0, rest_share: 0.25, block_hours: 2 }   # 在家办公的人，休息日（0 是周日）工作时段里每个整块（block_hours 小时）有 rest_share 的概率休息，休息和工作大约 1 比 3，每个人每天各不相同，同一天里不变；平时全天办公
+  lead_auto: { idle_seconds: 12 }    # 玩家这么久没有操作，操纵对象就像别的角色一样，需求压力高了自己动手，不操作也会行动；玩家随时可以自己做
   retry_ms: 5000                     # 间隔算不出来时，隔多久再试
   person:
     default_age: 35

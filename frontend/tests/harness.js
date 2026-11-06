@@ -23,4 +23,6 @@ for (const f of ['src/data/content.js', 'src/data/cards_packed.js', 'src/data/co
 const CY = ctx.CY, G = CY.game;
 /* 测试和仿真默认用加速模式（120 倍）：几分钟走完一天。普通模式（一比一）由专门的测试覆盖 */
 { const cfg = CY.ini.parse(CY.seed.files()['settings.ini']); cfg.time = cfg.time || {}; cfg.time.mode = 'fast'; cfg.time.fast_speed = '2'; mem.set('settings.ini', CY.ini.stringify(cfg)); }
+/* 默认不设休息日：在家办公的人周日有一部分时间休息，位置会随日期变，测试不能看哪天跑就变。休息日由专门的测试打开 */
+{ const T = G.T(); T['templates/engine.yaml'] = T['templates/engine.yaml'].replace(/rest_day: \d+/, 'rest_day: -1'); }
 module.exports = { ctx, CY, G, root, fs, vm, path, zlib, mem };
