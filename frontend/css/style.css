@@ -563,3 +563,6 @@ body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none
   .logwin .logbody { max-height: none; }
   .tl .pill { display: none; }
 }
+
+/* 标题旁的一句话换句时淡出淡入 */
+header .tagline { transition: opacity .6s; }

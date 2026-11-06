@@ -16,6 +16,7 @@
     CY.i18n.applyDom(document);
     document.title = U.pageTitle();
     U.renderBrand();
+    U.startTagline();
     U.applyTheme();
     if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => U.applyTheme());
     CY.onSprites = () => { if (U.renderRoom) { U.renderRoom(true); U.renderBar && U.renderBar(); } };

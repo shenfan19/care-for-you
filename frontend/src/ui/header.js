@@ -19,10 +19,21 @@
   /* 标题和一句话：中文界面叫"照顾你"，其他语言是 Care for You；一句话每次打开随机一句，换语言不换句 */
   /* 标签页标题：公开版是"照顾你 · Care for You"，开发者模式加一个 · dev，两个页面开在一起也分得清 */
   U.pageTitle = () => t('app.title') + (G.DEVTOOLS ? ' · dev' : '');
+  /* 一句话在语言包里是 tag.1，tag.2，……，有几句就有几句，每种语言句数和顺序一致；每隔 game.tagline_seconds 秒换一句不同的，换语言不换句，分享卡用当前这一句 */
+  U.tagCount = () => { let n = 0; while (CY.i18n.has('tag.' + (n + 1))) n++; return n; };
+  U.nextTagline = () => {
+    const n = U.tagCount(); if (n < 2) return;
+    let k; do { k = Math.floor(Math.random() * n); } while (k === U.tagN);
+    U.tagN = k;
+    const tg = $('tagline'); if (!tg) return;
+    tg.style.opacity = '0';
+    setTimeout(() => { tg.textContent = t('tag.' + (U.tagN + 1)); tg.style.opacity = ''; }, 600);
+  };
+  U.startTagline = () => { clearInterval(U._tagT); U._tagT = setInterval(U.nextTagline, G.E('game').tagline_seconds * 1000); };
   U.renderBrand = function () {
     const name = t('brand.name'), bt = $('brandTxt');
     if (bt) bt.innerHTML = (name === 'Care for You' ? 'Care <em>for</em> You' : esc(name)) + (G.DEVTOOLS ? ' <span class="devtag">dev</span>' : '');
-    const tg = $('tagline'); if (tg) { if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * 6); tg.textContent = t('tag.' + (U.tagN + 1)); }
+    const tg = $('tagline'); if (tg) { if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * U.tagCount()); tg.textContent = t('tag.' + (U.tagN + 1)); }
   };
   U.applyLang = async function () {
     I.set(I.detect(ini.get(G.cfg, 'ui', 'language')));
