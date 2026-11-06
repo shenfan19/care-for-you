@@ -163,7 +163,7 @@
         <h3>${esc(t('driven.api_h'))}</h3>${para(['driven.api_p'])}`,
       /* 作者与致谢：作者（姓名，个人项目，联系方式），Care for You，Life Matters，致谢 */
       author: `<h3>${esc(t('author.h_author'))}</h3><p>${esc(t('author.intro')).replace('Fan Shen', link(PAGE, 'Fan Shen'))}</p><p>${[link(SITE, t('author.main_site')), link(ITCH, t('author.itch')), link(GH, t('author.code')), link('https://doi.org/' + DOI, 'DOI'), link(ISSUES, t('about.feedback')), link('mailto:contact@careforyou.dev', t('au.mail'))].join(' · ')}</p>
-        <h3>Care for You</h3><p>${esc(t('author.cfy_p1'))}${sep}${esc(t('author.cfy_p2'))}</p><h3>Life Matters</h3><p>${esc(t('author.lm_p1'))}${sep}${esc(t('author.lm_more'))} ${link(LMSITE)}</p><h3>${esc(t('au.credits'))}</h3><p>${esc(t('author.thanks_ai'))}${sep}${esc(t('cred.p3'))}</p>`,
+        <h3>Care for You</h3><p>${esc(t('author.cfy_p1'))}${sep}${esc(t('author.cfy_p2'))}</p><h3>Life Matters</h3><p>${esc(t('author.lm_p1')).replace('Life Matters', link(LMSITE, 'Life Matters'))}${sep}${esc(t('author.lm_dev'))}</p><h3>${esc(t('au.credits'))}</h3><p>${esc(t('author.thanks_ai'))}${sep}${esc(t('cred.p3'))}</p>`,
     };
     const dlg = U.dialog(`<h2 style="margin:0 0 2px">${esc(t('about.title'))}</h2>${tab === 'about' ? `<div class="mute" style="font-size:12px;margin-bottom:8px">${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</div>` : ''}<div class="chips">${tabs.map(k => `<button class="chip ${k === tab ? 'on' : ''}" data-t="${k}">${esc(t('about.tab_' + k))}</button>`).join('')}</div>
       <div class="aboutbody">${body[tab]}</div><div class="row" style="justify-content:flex-end;margin-top:10px"><button id="aclose">${esc(t('btn.close'))}</button></div>`, true);

@@ -50,3 +50,4 @@ CY.i18n.register("zh-CN", {"about.tab_about": "简介和免责声明", "set.know
 CY.i18n.register("zh-CN", {"author.game": "游戏", "author.cfy_p1": "我做这个游戏，是因为作为父亲，亲眼看到妻子和长辈每天的付出和照顾，想看看大家到底做了什么。", "author.lm_p1": "Life Matters（LM）是我的一个开放研究项目，用 YAML 构造 LM format 格式，汇总部分医学、心理学、社会学研究成果，并以动力学模型描述日常生活中各个要素如何影响健康。Care 的第二种引擎是 LM 的 JS 简化版，其中部分模型从 LM 的转换插件导出，并根据接口适配性与仿真效果做了少许调整。", "author.thanks_ai": "游戏从代码、文本到画面全面使用 vibe coding 完成，感谢 AI 让我在工作之余实现了这个小游戏的设想。"});
 CY.i18n.register("zh-CN", {"author.lm_more": "详见"});
 CY.i18n.register("zh-CN", {"author.main_site": "主站", "author.itch": "itch 镜像", "author.code": "源码"});
+CY.i18n.register("zh-CN", {"author.lm_dev": "目前仍在开发中。"});

@@ -101,3 +101,4 @@ CY.i18n.register("ko", {"about.tab_about": "소개 및 면책 조항", "set.know
 CY.i18n.register("ko", {"author.game": "게임", "author.cfy_p1": "이 게임은 아버지로서, 아내와 어른들이 매일 쏟는 정성과 돌봄을 곁에서 보면서, 모두가 실제로 무엇을 하고 있는지 보고 싶어서 만들었습니다.", "author.lm_p1": "Life Matters(LM)는 제 공개 연구 프로젝트로, YAML로 LM format을 구성해 의학, 심리학, 사회학 연구 성과 일부를 모으고, 일상생활의 여러 요소가 건강에 어떤 영향을 주는지 동역학 모델로 기술합니다. Care의 두 번째 엔진은 LM의 JS 간소화 버전이며, 모델 일부는 LM의 변환 플러그인으로 내보낸 뒤 인터페이스 적합성과 시뮬레이션 결과에 맞춰 약간 조정했습니다.", "author.thanks_ai": "게임은 코드와 글, 화면까지 전부 vibe coding으로 만들었습니다. AI 덕분에 일하는 틈틈이 이 작은 게임의 구상을 실현할 수 있었습니다. 감사합니다."});
 CY.i18n.register("ko", {"author.lm_more": "자세한 내용은"});
 CY.i18n.register("ko", {"author.main_site": "본 사이트", "author.itch": "itch 미러", "author.code": "소스 코드"});
+CY.i18n.register("ko", {"author.lm_dev": "현재도 개발 중입니다."});

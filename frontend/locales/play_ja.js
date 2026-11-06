@@ -101,3 +101,4 @@ CY.i18n.register("ja", {"about.tab_about": "はじめにと免責事項", "set.k
 CY.i18n.register("ja", {"author.game": "ゲーム", "author.cfy_p1": "私がこのゲームを作ったのは、父親として、妻や年長の家族が毎日注いでいる労力と世話を目の当たりにし、みんなが実際に何をしているのか見てみたいと思ったからです。", "author.lm_p1": "Life Matters（LM）は私の公開研究プロジェクトで、YAML で LM format を構築し、医学・心理学・社会学の研究成果の一部をまとめ、日常生活の各要素が健康にどう影響するかを力学モデルで記述します。Care の二つ目のエンジンは LM の JS 簡易版で、モデルの一部は LM の変換プラグインから書き出し、インターフェースへの適合とシミュレーション結果に応じて少し調整しています。", "author.thanks_ai": "ゲームはコード、文章、画面まで全面的に vibe coding で作りました。AI のおかげで、仕事の合間にこの小さなゲームの構想を形にできました。感謝しています。"});
 CY.i18n.register("ja", {"author.lm_more": "詳しくは"});
 CY.i18n.register("ja", {"author.main_site": "メインサイト", "author.itch": "itch ミラー", "author.code": "ソースコード"});
+CY.i18n.register("ja", {"author.lm_dev": "現在も開発中です。"});
