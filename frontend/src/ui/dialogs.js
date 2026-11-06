@@ -153,7 +153,7 @@
     const link = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${esc(text || href)}</a>`;
     const ISSUES = 'https://github.com/shenfan19/care-for-you/issues', GH = 'https://github.com/shenfan19/care-for-you';
     const sep = /^(zh|ja)/.test(CY.i18n.lang) ? '' : ' ';   /* 中日文句子之间不加空格，其他语言加 */
-    const PAGE = 'https://shenfan19.github.io', SITE = 'https://careforyou.dev', DOI = '10.5281/zenodo.23984050', LMSITE = 'https://lifematters.dev', ITCH = 'https://shenfan19.itch.io/care-for-you';
+    const PAGE = 'https://shenfan19.github.io', DOI = '10.5281/zenodo.23984050', LMSITE = 'https://lifematters.dev';
     const body = {
       /* 关于：简介，免责声明（第二项） */
       about: `<h3>${esc(t('about.h_intro'))}</h3>${para(['about.p1', 'about.how', 'about.p3'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}`,
@@ -162,7 +162,7 @@
       driven: `<h3>${esc(t('driven.h_engine'))}</h3><p>${esc(t('data.intro'))}</p><h4>${esc(t('data.h1'))}</h4><p>${esc(t('data.p1'))}</p><h4>${esc(t('data.h2'))}</h4><p>${esc(t('data.p2'))}</p><h4>${esc(t('data.h3'))}</h4><p>${esc(t('data.p3'))}</p>
         <h3>${esc(t('driven.api_h'))}</h3>${para(['driven.api_p'])}`,
       /* 作者与致谢：作者（姓名，个人项目，联系方式），Care for You，Life Matters，致谢 */
-      author: `<h3>${esc(t('author.h_author'))}</h3><p>${esc(t('author.intro')).replace('Fan Shen', link(PAGE, 'Fan Shen'))}</p><p>${esc(t('author.game'))}：${link(SITE)} · ${link(ITCH)}<br>Repo：${link(GH)} · DOI：${link('https://doi.org/' + DOI, DOI)}<br>${esc(t('about.feedback'))}：${link(ISSUES)} · ${link('mailto:contact@careforyou.dev', 'contact@careforyou.dev')}</p>
+      author: `<h3>${esc(t('author.h_author'))}</h3><p>${esc(t('author.intro')).replace('Fan Shen', link(PAGE, 'Fan Shen'))}</p><p>Repo：${link(GH)}<br>DOI：${link('https://doi.org/' + DOI, DOI)}<br>${esc(t('about.feedback'))}：${link(ISSUES)}<br>${esc(t('au.mail'))}：${link('mailto:contact@careforyou.dev', 'contact@careforyou.dev')}</p>
         <h3>Care for You</h3><p>${esc(t('author.cfy_p1'))}${sep}${esc(t('author.cfy_p2'))}</p><h3>Life Matters</h3><p>${esc(t('author.lm_p1'))}${sep}${esc(t('author.lm_more'))} ${link(LMSITE)}</p><h3>${esc(t('au.credits'))}</h3><p>${esc(t('author.thanks_ai'))}${sep}${esc(t('cred.p3'))}</p>`,
     };
     const dlg = U.dialog(`<h2 style="margin:0 0 2px">${esc(t('about.title'))}</h2>${tab === 'about' ? `<div class="mute" style="font-size:12px;margin-bottom:8px">${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</div>` : ''}<div class="chips">${tabs.map(k => `<button class="chip ${k === tab ? 'on' : ''}" data-t="${k}">${esc(t('about.tab_' + k))}</button>`).join('')}</div>

@@ -1,8 +1,9 @@
-version: 11
+version: 12
 # 规则代码里的数都写在这里，改数不改代码。源头是这个 YAML，部署前 tools/build_config.js 把它打包成 templates_packed.js；
 # 读不到的键直接报错，代码里不给默认值，所以缺了哪一项一运行就知道。改了内容把 version 加一，旧存档才会更新。
 share:
-  url: "https://careforyou.dev"   # 分享卡左下角的网址，写信和发推广时靠它回到游戏
+  url: "https://careforyou.dev"   # 分享卡顶上的网址，写信和发推广时靠它回到游戏
+  itch: "https://shenfan19.itch.io/care-for-you"   # 分享卡上同一行的第二个网址，itch 页
 world:
   default_id: home           # 世界编号：存档里世界相关的文件放在 world/编号/ 下，现在只有家庭穿越世界，以后加别的世界（比如中古欧洲）各占一个文件夹
 economy:
