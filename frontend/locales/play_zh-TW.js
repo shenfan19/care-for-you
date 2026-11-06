@@ -347,3 +347,5 @@ CY.i18n.register("zh-TW", {"stats.title": "照顧統計", "stats.open": "照顧�
 CY.i18n.register("zh-TW", {"gift.go_shop": "去商店的禮物區買"});
 CY.i18n.register("zh-TW", {"about.feedback": "回饋"});
 CY.i18n.register("zh-TW", {"about.tab_driven": "資料驅動", "data.intro": "角色什麼時候要什麼、說什麼、誰幫誰，都由資料決定，不寫死在程式裡。這一頁寫給想了解內部、或想換上自己模型的研究者。遊戲有三種驅動方式，只有第一種完整，也是預設的。", "driven.lm_h": "與 Life Matters 的關係", "driven.lm_p1": "Life Matters（LM）是同一作者的開放研究專案，用純文字 YAML 描述日常生活方式如何透過微分方程影響健康。第二種方式讀的就是這套格式，遊戲裡的疾病模型由 LM 模型經轉換外掛匯出，轉換不了的地方會報錯，不會悄悄改動。", "driven.lm_p2": "遊戲是 LM 的一個下游使用者，不是 LM 本身，也不是對模型的驗證。這些模型的驗證覆蓋有限，歡迎意見和批評。", "driven.api_h": "介面", "driven.api_p": "三種方式共用同一套 JSON 介面：遊戲送出每個角色狀態的快照，後端回傳要執行的指令。協定說明和一個最小範例後端在 GitHub 倉庫裡，結構說明見 docs/architecture.md。遠端後端出錯時會退回內建後端。"});
+CY.i18n.register("zh-TW", {"about.tab_driven": "引擎和介面", "about.tab_author": "作者與致謝", "about.h_intro": "簡介", "about.h_contact": "聯絡", "driven.h_engine": "三種引擎", "about.homepage": "個人主頁", "data.p2": "把需求、心情和身體當成連續變化的數值，按方程一步步積分，直接在瀏覽器裡算，模型是資料資料夾裡的明文 YAML。在進階設定裡把後端改成 lm 就能用。只管需求、心情和虛弱度，事件和台詞仍由查表決定。驗證覆蓋有限，目前不建議作為真實參考。"});
+CY.i18n.register("zh-TW", {"priv.p3": "網頁本身是靜態的，預設不會把你的遊戲資料傳到任何地方。只有你自己在進階設定裡打開遠端後端或 AI 接入才會傳送，傳什麼見「引擎和介面」一頁。"});
