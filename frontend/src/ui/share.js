@@ -27,7 +27,7 @@
     ctx.fillStyle = v('--mute'); ctx.font = `${size}px ${FONT}`;
     while (ctx.measureText(tag).width > W - 260 && size > 20) { size -= 2; ctx.font = `${size}px ${FONT}`; }
     ctx.fillText(tag, 130, 268);
-    const S = G.E('share'), links = [S.url, S.itch].map(u => u.replace(/^https?:\/\//, '')).join('   ·   '); let ls = 28;
+    const S = G.E('share'), links = [S.url, S.itch].join('   ·   '); let ls = 28;
     ctx.fillStyle = v('--mute'); ctx.font = `${ls}px ${FONT}`;
     while (ctx.measureText(links).width > W - 260 && ls > 18) { ls -= 2; ctx.font = `${ls}px ${FONT}`; }
     ctx.fillText(links, 130, 312);
