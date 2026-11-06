@@ -264,7 +264,7 @@
       if (!kin.length) continue;
       const q = kin[Math.floor(Math.random() * kin.length)], grp = GROUP[G.stage(q)], key = `visit.fam.${c.field}.${grp === 'elder' && c.age >= V.SENIOR_AGE ? 'peer' : grp}`;
       st.fam_day = day();
-      G.settleNote(key, { guest: nameRef(st.id), who: q.person.name });
+      G.settleNote(key, { guest: nameRef(st.id), who: G.settleNameRef(q) });
       if (G.toastFor) G.toastFor(p, t(key, { guest: p.person.name, who: q.person.name }), 'soft');
     }
   });

@@ -8,7 +8,26 @@
   G.loadCalendar = async () => { G.cal = Object.assign({ version: 1, days: [] }, await store.readYaml(G.wpath('calendar.yaml'))); };
   G.saveCalendar = () => { if (G._calDirty) { G._calDirty = false; store.writeYaml(G.wpath('calendar.yaml'), G.cal); } };
 
-  const blank = n => ({ n, care: {}, fam: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
+  /* 自动称呼保存翻译键，玩家起的名字保存原文；离开家庭后仍能翻译历史记录。 */
+  G.settleNameRef = p => {
+    if (p.person.visitor) return G.ref('visitor.' + p.person.visitor.id + '.name', p.person.name);
+    return G.ref(p.person.name_auto ? ['preset.name.' + p.person.name_auto, 'arch.' + (p.person.archetype || p.person.card)] : [], p.person.name);
+  };
+  /* 旧日历只有名字文本：仅在仍能明确对应到自动命名角色时恢复引用，不猜玩家自定义姓名。 */
+  const legacyNameRef = value => {
+    if (typeof value !== 'string') return value;
+    if (G.people.some(p => !p.person.name_auto && !p.person.visitor && p.person.name === value)) return value;
+    const matches = G.people.filter(p => {
+      if (!p.person.name_auto && !p.person.visitor) return false;
+      const ref = G.settleNameRef(p); if (!ref || !ref.t) return false;
+      return p.person.name === value || Object.values(CY.i18n.packs).some(pack => {
+        const name = ref.t.map(k => pack[k]).find(x => x !== undefined);
+        return name === value;
+      });
+    }).map(G.settleNameRef);
+    return matches.length && matches.every(ref => JSON.stringify(ref.t) === JSON.stringify(matches[0].t)) ? matches[0] : value;
+  };
+  const blank = n => ({ n, names: {}, care: {}, fam: {}, acts: {}, cry: {}, self: {}, recovered: [], frail: [], bought: [], notes: [], money0: Math.round(G.world.money || 0) });
   const today = () => {
     const n = G._closing || G._dayN || G.gameDate().n;   /* 事记在还没收口的那一天，午夜过了到翻日之间的一小段也算前一天 */
     if (!G.world.today || G.world.today.n !== n) G.world.today = blank(n);
@@ -23,12 +42,13 @@
   const log0 = G.log;
   G.log = function (pid, type, text, meta) {
     try {
-      const d = today(), p = G.get(pid), name = p ? p.person.name : '', k = meta && meta.k;
+      const d = today(), p = G.get(pid), name = p ? p.id : '', k = meta && meta.k;
+      if (p) { d.names = d.names || {}; d.names[name] = G.settleNameRef(p); }
       if (type === 'care' && p && k === 'log.care') {
         const id = G.actIdOf(meta);
         if (p.person.visitor) {
           const key = actKey(id), dup = d.notes.some(n => n.k === key && n.a.who === name);
-          if (!dup) d.notes.push({ k: key, a: { name: G.ref('visitor.' + p.person.visitor.id + '.name', name), who: name } });
+          if (!dup) d.notes.push({ k: key, a: { name: G.settleNameRef(p), who: name } });
         } else {
           d.care[name] = (d.care[name] || 0) + 1;
           d.fam = d.fam || {}; (d.fam[name] = d.fam[name] || {})[id] = (d.fam[name][id] || 0) + 1;
@@ -49,6 +69,7 @@
 
   G.composeDay = (d, offline) => {
     const L = [], line = (k, a) => L.push({ k: variant('settle.' + k, d.n), a: a || {} });
+    const nameOf = id => (d.names || {})[id] || legacyNameRef(id);
     if (offline) {
       line('away');
       for (const n of d.notes.slice(0, G.E('settle').offline_notes)) L.push(n);
@@ -63,15 +84,15 @@
     const fam = Object.entries(d.fam || {}).sort((a, b) => (d.care[b[0]] || 0) - (d.care[a[0]] || 0)).slice(0, 2);
     for (const [name, acts] of fam) {
       const id = Object.entries(acts).sort((a, b) => b[1] - a[1])[0][0];
-      line('fam_' + (['meal', 'rest', 'street', 'park', 'walk', 'chat', 'play', 'bath', 'doctor', 'medicine', 'sugar', 'water', 'hand', 'soothe', 'read', 'homework', 'game', 'pet'].includes(id) ? id : 'other'), { name });
+      line('fam_' + (['meal', 'rest', 'street', 'park', 'walk', 'chat', 'play', 'bath', 'doctor', 'medicine', 'sugar', 'water', 'hand', 'soothe', 'read', 'homework', 'game', 'pet'].includes(id) ? id : 'other'), { name: nameOf(name) });
     }
     const cr = top(d.cry);
-    if (cr) line('cry', { name: cr[0] });
-    if (d.frail.length) line('frail', { name: d.frail[0] });
-    else if (d.recovered.length) line('recovered', { name: d.recovered[0] });
+    if (cr) line('cry', { name: nameOf(cr[0]) });
+    if (d.frail.length) line('frail', { name: nameOf(d.frail[0]) });
+    else if (d.recovered.length) line('recovered', { name: nameOf(d.recovered[0]) });
     else {
       const s = top(d.self);
-      if (s) line('self', { name: s[0] });
+      if (s) line('self', { name: nameOf(s[0]) });
     }
     if (d.bought.length) line('bought', { item: d.bought[0] });
     const people = G.activePeople().filter(p => p.person.kind === 'human');
@@ -99,7 +120,10 @@
   };
   G.dayEndHooks.unshift(G.closeDay);
 
-  G.settleText = line => (line.k && CY.i18n.has(line.k) ? t(line.k, Object.fromEntries(Object.entries(line.a || {}).map(([k, v]) => [k, v && v.t ? (v.t.reduceRight((fb, kk) => CY.tOr(kk, fb), v.d)) : v]))) : line.text || '');
+  G.settleText = line => (line.k && CY.i18n.has(line.k) ? t(line.k, Object.fromEntries(Object.entries(line.a || {}).map(([k, value]) => {
+    const v = ['name', 'who', 'guest'].includes(k) ? legacyNameRef(value) : value;
+    return [k, v && v.t ? v.t.reduceRight((fb, kk) => CY.tOr(kk, fb), v.d) : v];
+  }))) : line.text || '');
   /* 存档被手动改过的标记：存盘时写入关键数字的校验，载入时对不上就记一个“已编辑”，分享卡片上会标出来。
      只是诚实的标注，不是防作弊；存档本来就是明文，鼓励自己改着玩 */
   G.sigOf = (money, souvN, days) => { const H = G.E('hash'); let h = H.sig_seed; for (const c of `${Math.floor(money || 0)}|${souvN}|${days}|care`) h = ((h * H.sig_mult) ^ c.charCodeAt(0)) >>> 0; return h.toString(16); };
