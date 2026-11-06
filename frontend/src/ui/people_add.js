@@ -18,12 +18,17 @@
   U.addDialog = function (archId, done, editPid) {
     const O = CY.avatarOptions;
     const editP = editPid && G.get(editPid);
+    const newLook = arch => {
+      const look = Object.assign({}, arch.look);
+      if (!editP && arch.species === 'human') look.cloth = CY.pickCloth(G.people.filter(G.isHuman).map(p => p.person.appearance.cloth));
+      return look;
+    };
     const arch0 = (editP && C.archOf(editP.person.archetype)) || C.archOf(archId) || C.archetypes[0];
     /* 人数严格限定在床位：没有空床就不能再添人，婴儿睡婴儿床不占床位，动物和花草不占 */
     if (!editP && arch0.species === 'human' && C.stageOf(arch0.age) !== 'infant' && G.bedsFree() <= 0) { U.flash && U.flash(t('add.no_bed')); return; }
     const st = editP
       ? { away: editP.person.away || '', arch: arch0.id, name: editP.person.name, pronoun: editP.person.pronoun, age: G.isHuman(editP) ? G.age(editP) : arch0.age, look: Object.assign({}, editP.person.appearance), cond: (editP.person.conditions || [])[0] || '', sev: (((editP.person.cond_set || {})[(editP.person.conditions || [])[0]]) || {}).severity || '', traits: (editP.person.traits || []).slice(), helper: !!editP.person.helper }
-      : { away: '', arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: Object.assign({}, arch0.look), cond: '', sev: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };
+      : { away: '', arch: arch0.id, name: '', pronoun: arch0.pronoun, age: arch0.age, look: newLook(arch0), cond: '', sev: '', traits: [], helper: !!(arch0.help && arch0.help.proactive) };
     const sw = (k, vals, cur, hexOf) => `<span class="sws">${vals.map((v, i) => `<span class="sw ${String(cur) === String(v) ? 'on' : ''}" data-k="${k}" data-v="${v}" style="background:${hexOf ? hexOf(v, i) : v}"></span>`).join('')}</span>`;
     const sel = (k, vals, labels, cur) => `<select data-s="${k}">${vals.map((v, i) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${esc(labels[i])}</option>`).join('')}</select>`;
     const GROUPS = ['family', 'animal', 'plant'];
@@ -57,7 +62,7 @@
         <div class="row" style="justify-content:flex-end;margin:12px 0 0"><button id="acancel">${esc(t('btn.cancel'))}</button><button id="aok" class="primary">${esc(t(editP ? 'btn.save' : 'add.ok'))}</button></div></div></div>`, true);
       dlg.querySelector('#an').oninput = e => { st.name = e.target.value; };
       dlg.querySelector('#aa').onchange = e => {
-        const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age = a.age; st.look = Object.assign({}, a.look); st.helper = !!(a.help && a.help.proactive);
+        const a = C.archOf(e.target.value); st.arch = a.id; st.pronoun = a.pronoun; st.age = a.age; st.look = newLook(a); st.helper = !!(a.help && a.help.proactive);
         if (a.species !== 'human') st.cond = '';
         render();
       };
@@ -145,7 +150,14 @@
   };
   U.createMembers = async function (members) {
     let lead = null;
-    for (const m of members) { const id = await G.createPerson({ away: m.away, arch: m.arch, name: m.name, name_auto: m.name_key || (m.lead ? 'self' : m.arch), roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age }); if (m.lead) lead = id; }
+    const used = G.people.filter(G.isHuman).map(p => p.person.appearance.cloth);
+    for (const m of members) if ((C.archOf(m.arch) || {}).species === 'human' && m.look && m.look.cloth) used.push(m.look.cloth);
+    for (const m of members) {
+      const arch = C.archOf(m.arch) || {}, look = Object.assign({}, arch.look, m.look);
+      if (arch.species === 'human' && !(m.look && m.look.cloth)) { look.cloth = CY.pickCloth(used); used.push(look.cloth); }
+      const id = await G.createPerson({ away: m.away, arch: m.arch, name: m.name, name_auto: m.name_key || (m.lead ? 'self' : m.arch), roleText: U.archName(m.arch), conditions: m.conditions || [], age: m.age, look });
+      if (m.lead) lead = id;
+    }
     await G.load();
     if (lead) G.setProtagonist(lead);
   };

@@ -10,7 +10,19 @@
     tan: ['#d3a56c', '#f1dab5', '#b4854d'], brown: ['#8a5a3a', '#d6b48f', '#6b4429'], green: ['#6f9f5a', '#c9dcae', '#557d44'], yellow: ['#e5c24f', '#f7e8a8', '#b3922f'],
     rose: ['#e98aa0', '#f9d3dc', '#c9607c'],
   };
-  const CLOTHES = ['#7f9580', '#b58aa5', '#7d8fa8', '#c28a6e', '#6f86a0', '#c07a6b', '#d4a24c', '#5f8a7a', '#e7a6a1', '#8fbf9f', '#4f6d8f', '#9a8fc0'];
+  const CLOTH_FAMILIES = {
+    green: ['#7f9580', '#5f8a7a', '#8fbf9f'], rose: ['#b58aa5'], blue: ['#7d8fa8', '#6f86a0', '#4f6d8f'],
+    warm: ['#c28a6e', '#c07a6b', '#e7a6a1'], gold: ['#d4a24c'], purple: ['#9a8fc0'],
+  };
+  const CLOTHES = Object.values(CLOTH_FAMILIES).flat();
+  /* 开局配色：先用未出现的色系，用完后均衡复用；同色系里也优先选没用过的颜色。 */
+  CY.pickCloth = (used = []) => {
+    const pick = rows => rows[Math.floor(Math.random() * rows.length)];
+    const leastUsed = (rows, count) => { const min = Math.min(...rows.map(count)); return rows.filter(row => count(row) === min); };
+    const families = Object.values(CLOTH_FAMILIES);
+    const family = pick(leastUsed(families, colors => used.filter(color => colors.includes(color)).length));
+    return pick(leastUsed(family, color => used.filter(value => value === color).length));
+  };
   const dark = (hex, k = 0.82) => '#' + [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * k).toString(16).padStart(2, '0')).join('');
   const shadow = w => `<ellipse cx="50" cy="127" rx="${w}" ry="3.5" fill="#00000018"/>`;
 
@@ -417,7 +429,7 @@ function beanDraw(o) {
   };
   CY.avatarOptions = {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],
-    glasses: ['none', 'round', 'square'], clothes: CLOTHES, coat: Object.keys(COAT), coatHex: Object.fromEntries(Object.entries(COAT).map(([k, v]) => [k, v[0]])),
+    glasses: ['none', 'round', 'square'], clothes: CLOTHES, clothesFamilies: CLOTH_FAMILIES, coat: Object.keys(COAT), coatHex: Object.fromEntries(Object.entries(COAT).map(([k, v]) => [k, v[0]])),
     coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'], guineapig: ['tan', 'white', 'brown', 'gray'], hedgehog: ['brown', 'gray', 'tan', 'white'], duck: ['yellow', 'white', 'brown', 'gray'], ferret: ['tan', 'brown', 'white', 'black'], axolotl: ['rose', 'white', 'gray', 'black'], chicken: ['white', 'brown', 'yellow', 'black'], orchid: ['rose', 'white', 'yellow', 'green'], bamboo: ['green', 'yellow', 'tan', 'brown'], gecko: ['green', 'yellow', 'brown', 'black'] },
   };
   /* 统计和分享共用角色主色；不为重色另选颜色。无人形衣服的角色用毛色或花草颜色。 */
