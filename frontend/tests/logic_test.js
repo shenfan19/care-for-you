@@ -1391,9 +1391,10 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     T[key] = off; await G.load();
   }
   {   /* 主角不被操作时：像别的角色一样，需求压力高了自己动手；玩家一动手就不自动 */
-    const W = CY.world, lead = G.people.find(p => G.isHuman(p) && G.stage(p) === 'adult' && p.person.active !== false);
+    const W = CY.world, lid = await G.createPerson({ arch: 'dad', name: '自动主角' }); await G.load();   /* 用新建的爸爸，不挑第一个成年人：编号带时间，排在最前的人每次不同，有的被前面的测试改过自理名单 */
+    const lead = G.get(lid);
     if (lead) {
-      for (const x of G.people) x.person.active = true;
+      for (const x of G.people) x.person.active = x.id === lid;
       G.setProtagonist(lead.id); W.enforce = true; W.holding = false; W.player().act = null;
       for (const k in lead.state.needs) G.setNeed(lead, k, 0.1);
       G.setNeed(lead, 'hunger', 0.95);
