@@ -355,3 +355,4 @@ CY.i18n.register("zh-TW", {"author.game": "遊戲", "author.cfy_p1": "我做這�
 CY.i18n.register("zh-TW", {"author.lm_more": "詳見"});
 CY.i18n.register("zh-TW", {"author.main_site": "主站", "author.itch": "itch 鏡像", "author.code": "原始碼"});
 CY.i18n.register("zh-TW", {"author.lm_dev": "目前仍在開發中。"});
+CY.i18n.register("zh-TW", {"author.lm_p1a": "Life Matters（LM）是我的一個開放研究專案，用 YAML 構造 LM format 格式，彙總部分醫學、心理學、社會學研究成果，並以動力學模型描述日常生活中各個要素如何影響健康。", "author.lm_p1b": "Care 的第二種引擎是 LM 的 JS 簡化版，其中部分模型從 LM 的轉換外掛匯出，並根據介面適配性與模擬效果做了少許調整。"});

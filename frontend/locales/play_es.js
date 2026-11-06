@@ -102,3 +102,4 @@ CY.i18n.register("es", {"author.game": "Juego", "author.cfy_p1": "Hice este jueg
 CY.i18n.register("es", {"author.lm_more": "Más información en"});
 CY.i18n.register("es", {"author.main_site": "Sitio principal", "author.itch": "espejo en itch", "author.code": "Código"});
 CY.i18n.register("es", {"author.lm_dev": "Sigue en desarrollo."});
+CY.i18n.register("es", {"author.lm_p1a": "Life Matters (LM) es uno de mis proyectos de investigación abiertos. Construye el formato LM en YAML para reunir parte de los resultados de la medicina, la psicología y la sociología, y describe con modelos dinámicos cómo los elementos de la vida cotidiana afectan a la salud.", "author.lm_p1b": "El segundo motor de Care es una versión simplificada de LM en JS; parte de sus modelos se exportó con el plugin de conversión de LM, con pequeños ajustes por la adaptación a la interfaz y el comportamiento de las simulaciones."});
