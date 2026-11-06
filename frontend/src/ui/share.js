@@ -1,5 +1,5 @@
 /* 分享卡片：日历里选中的某一天，和人物页里的某个人，玩家自己点开，在本机用画布画成一张图，保存或交给系统分享。
-   没有全局的总数分享：总数会变成成就展示，违背了叙事。不联网，不上传；图上只有一个地方带链接，就是左上角的游戏网址（站点和 itch 页），
+   没有全局的总数分享：总数会变成成就展示，违背了叙事。不联网，不上传；图上只有一个地方带链接，就是左上角的游戏网址（站点和 itch 页，各占一行），
    写信和发推广时靠它回到游戏，网址写在 engine.yaml 的 share.url 和 share.itch。游戏里没有任何地方推荐或奖励分享。 */
 (function (CY) {
   const G = CY.game, U = CY.ui = CY.ui || {};
@@ -27,11 +27,10 @@
     ctx.fillStyle = v('--mute'); ctx.font = `${size}px ${FONT}`;
     while (ctx.measureText(tag).width > W - 260 && size > 20) { size -= 2; ctx.font = `${size}px ${FONT}`; }
     ctx.fillText(tag, 130, 268);
-    const S = G.E('share'), links = [S.url, S.itch].join('   ·   '); let ls = 28;
-    ctx.fillStyle = v('--mute'); ctx.font = `${ls}px ${FONT}`;
-    while (ctx.measureText(links).width > W - 260 && ls > 18) { ls -= 2; ctx.font = `${ls}px ${FONT}`; }
-    ctx.fillText(links, 130, 312);
-    return { ctx, v, top: 312 };
+    const S = G.E('share'); let y = 312;
+    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`;
+    for (const u of [S.url, S.itch]) { ctx.fillText(u, 130, y); y += 40; }
+    return { ctx, v, top: y - 40 };
   }
   /* 左下角只留一句存档被改过的提示，标题和网址都在左上角 */
   function foot(ctx, v, H) {
