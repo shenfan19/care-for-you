@@ -7,13 +7,57 @@
   const esc = U.esc;
   const FONT = 'system-ui, "PingFang SC", "Microsoft YaHei", sans-serif';
 
+  /* 主界面入口：先展开日期或角色，再选具体一项；只列已有结算的日期。 */
+  U.sharePopover = anchor => {
+    const days = G.cal.days.slice().sort((a, b) => b.n - a.n);
+    const people = G.people.filter(p => G.isHuman(p));
+    const dayLabel = rec => { const d = G.dateOf(rec.n); return d.iso + ' · ' + t('cal.wd' + d.weekday); };
+    const dayRows = days.map(rec => `<button type="button" data-share-day="${rec.n}">${esc(dayLabel(rec))}</button>`).join('');
+    const personRows = people.map(p => `<button type="button" data-share-person="${esc(p.id)}"><span>${esc(p.person.name)}</span><small class="mute">${esc(p.person.role || '')}</small></button>`).join('');
+    U.popover(anchor, `<details><summary>${esc(t('share.choose_day'))}</summary><div class="share-options">${dayRows || `<p class="mute">${esc(t('cal.none'))}</p>`}</div></details>
+      <details><summary>${esc(t('share.choose_person'))}</summary><div class="share-options">${personRows || `<p class="mute">${esc(t('said.nobody'))}</p>`}</div></details>`, box => {
+      box.classList.add('share-pop');
+      const room = anchor.closest('.room'), bottom = Math.min(window.innerHeight, room ? room.getBoundingClientRect().bottom : window.innerHeight);
+      box.style.maxHeight = Math.max(80, Math.min(320, bottom - box.getBoundingClientRect().top - 12)) + 'px';
+      box.querySelectorAll('details').forEach(section => section.addEventListener('toggle', () => { if (section.open) box.querySelectorAll('details').forEach(other => { if (other !== section) other.open = false; }); }));
+      const back = () => { U.closeDialog(); anchor.focus(); };
+      box.querySelectorAll('[data-share-day]').forEach(b => b.onclick = () => { const rec = G.dayRecord(+b.dataset.shareDay); if (rec) { U.closePopover(); U.shareDayCard(rec, back); } });
+      box.querySelectorAll('[data-share-person]').forEach(b => b.onclick = () => { if (G.get(b.dataset.sharePerson)) { U.closePopover(); U.sharePersonCard(b.dataset.sharePerson, back); } });
+    }, true);
+  };
+
   function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
   }
   const palette = () => { const css = getComputedStyle(document.documentElement); return k => css.getPropertyValue(k).trim() || '#888'; };
   const wrapper = (ctx, text, maxW) => { const out = []; let line = ''; for (const ch of Array.from(text)) { if (ctx.measureText(line + ch).width > maxW) { out.push(line); line = ch; } else line += ch; } if (line) out.push(line); return out; };
 
-  /* 卡片的底：背景，卡片面，左上角一个标题块：亮色的大标题 Care for You，旁边是和页面顶上同一句随机的话，再下面是游戏网址，
+  /* 图表各有自己的文字列。优先按词换行，过长的单词或无空格的名字再逐字折行。 */
+  const chartLines = (ctx, text, maxW) => {
+    const lines = []; let line = '';
+    for (const word of text.match(/\S+\s*/gu) || []) {
+      if (line && ctx.measureText(line + word.trimEnd()).width > maxW) { lines.push(line.trimEnd()); line = ''; }
+      for (const ch of Array.from(word)) {
+        if (!line && /\s/u.test(ch)) continue;
+        if (line && ctx.measureText((line + ch).trimEnd()).width > maxW) { lines.push(line.trimEnd()); line = ''; }
+        line += ch;
+      }
+    }
+    if (line.trimEnd()) lines.push(line.trimEnd());
+    return lines;
+  };
+  const fitHeading = (ctx, text, width, size, minSize) => {
+    let rows;
+    do { ctx.font = `bold ${size}px ${FONT}`; rows = chartLines(ctx, text, width); if (rows.length <= 2 || size <= minSize) break; size -= 2; } while (true);
+    if (rows.length > 2) {
+      rows = rows.slice(0, 2); let last = rows[1];
+      while (last && ctx.measureText(last + '…').width > width) last = Array.from(last).slice(0, -1).join('');
+      rows[1] = last.trimEnd() + '…';
+    }
+    return { rows, size };
+  };
+
+  /* 卡片的底：背景，卡片面，左上角一个标题块：亮色的大标题 Care for You，标题旁用小字说明是小游戏，下面是和页面顶上同一句随机的话，再下面是游戏网址，
      话和网址同用低调的颜色，普通字体，话略大一点。返回标题块的下沿，内容从它下面开始 */
   function frame(canvas, W, H) {
     const v = palette(), ctx = canvas.getContext('2d');
@@ -22,6 +66,9 @@
     ctx.fillStyle = v('--card'); roundRect(ctx, 70, 70, W - 140, H - 140, 36); ctx.fill();
     ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = v('--accent'); ctx.font = `italic 600 76px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText('Care for You', 130, 215);
+    const gameX = 130 + ctx.measureText('Care for You').width + 24, gameLabel = t('share.game_label');
+    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`;
+    ctx.fillText(gameLabel, gameX, 215, W - 130 - gameX);
     if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * 6);
     const tag = t('tag.' + (U.tagN + 1)); let size = 32;
     ctx.fillStyle = v('--mute'); ctx.font = `${size}px ${FONT}`;
@@ -57,23 +104,26 @@
       await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
       ctx.drawImage(img, 135, top + 40, 250, 338);
     } catch (e) { /* 没有头像也能出卡 */ }
-    ctx.fillStyle = v('--ink'); ctx.font = `bold 72px ${FONT}`;
-    let y = top + 130; for (const row of wrapper(ctx, p.person.name, W - 560)) { ctx.fillText(row, 440, y); y += 84; }
+    ctx.fillStyle = v('--ink');
+    const nameHeading = fitHeading(ctx, p.person.name, W - 570, 72, 44);
+    let y = top + 130; for (const row of nameHeading.rows) { ctx.fillText(row, 440, y); y += nameHeading.size + 12; }
     ctx.fillStyle = v('--mute'); ctx.font = `38px ${FONT}`;
     const age = G.isHuman(p) ? ' · ' + t('status.age', { n: +G.age(p).toFixed(0) }) : '';
     ctx.fillText((p.person.role || '') + age, 440, y + 6);
     ctx.fillText(t('mood.' + st.mood), 440, y + 66);
     // 两张饼图
-    const sl = U.careSlices ? U.careSlices(pid, 'all') : { given: [], got: [] }, cols = U.careColors || ['#c8794a', '#4f9bb3', '#7aa05a', '#b36ab0', '#d1a23b'];
+    const sl = U.careSlices ? U.careSlices(pid, 'all') : { given: [], got: [] };
     const pie = (cx, cy, r, slices, title) => {
-      ctx.fillStyle = v('--ink'); ctx.font = `bold 34px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText(title, cx, cy - r - 30);
+      ctx.fillStyle = v('--ink'); ctx.textAlign = 'center';
+      const titleRows = fitHeading(ctx, title, 380, 34, 26).rows;
+      titleRows.forEach((row, i) => ctx.fillText(row, cx, cy - r - 30 - (titleRows.length - 1 - i) * 40));
       const total = slices.reduce((a, s) => a + s[1], 0);
-      if (!total) { ctx.strokeStyle = v('--line'); ctx.lineWidth = 18; ctx.beginPath(); ctx.arc(cx, cy, r - 9, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = v('--mute'); ctx.font = `30px ${FONT}`; ctx.fillText(t('stats.none'), cx, cy + 10); }
+      if (!total) { ctx.strokeStyle = v('--line'); ctx.lineWidth = 18; ctx.beginPath(); ctx.arc(cx, cy, r - 9, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = v('--mute'); ctx.font = `26px ${FONT}`; const rows = chartLines(ctx, t('stats.none'), 280); rows.forEach((row, i) => ctx.fillText(row, cx, cy + 10 + (i - (rows.length - 1) / 2) * 34)); }
       else {
         let a0 = -Math.PI / 2;
-        slices.forEach(([, n], i) => { const a1 = a0 + n / total * Math.PI * 2; ctx.fillStyle = cols[i % cols.length]; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a0, a1); ctx.closePath(); ctx.fill(); ctx.strokeStyle = v('--card'); ctx.lineWidth = 4; ctx.stroke(); a0 = a1; });
+        slices.forEach(([, n, color]) => { const a1 = a0 + n / total * Math.PI * 2; ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a0, a1); ctx.closePath(); ctx.fill(); ctx.strokeStyle = v('--card'); ctx.lineWidth = 4; ctx.stroke(); a0 = a1; });
         ctx.textAlign = 'left'; ctx.font = `30px ${FONT}`;
-        slices.slice(0, 3).forEach(([name0, n], i) => { let name = name0; while (name.length > 1 && ctx.measureText(name).width > 190) name = name.slice(0, -2) + '…'; const ly = cy + r + 55 + i * 46; ctx.fillStyle = cols[i % cols.length]; ctx.fillRect(cx - 150, ly - 24, 26, 26); ctx.fillStyle = v('--ink'); ctx.fillText(name, cx - 112, ly); ctx.textAlign = 'right'; ctx.fillStyle = v('--mute'); ctx.fillText(Math.round(n / total * 100) + '%', cx + 150, ly); ctx.textAlign = 'left'; });
+        slices.slice(0, 3).forEach(([name0, n, color], i) => { let name = name0; while (name.length > 1 && ctx.measureText(name).width > 190) name = name.slice(0, -2) + '…'; const ly = cy + r + 55 + i * 46; ctx.fillStyle = color; ctx.fillRect(cx - 150, ly - 24, 26, 26); ctx.fillStyle = v('--ink'); ctx.fillText(name, cx - 112, ly); ctx.textAlign = 'right'; ctx.fillStyle = v('--mute'); ctx.fillText(Math.round(n / total * 100) + '%', cx + 150, ly); ctx.textAlign = 'left'; });
       }
       ctx.textAlign = 'left';
     };
@@ -95,6 +145,6 @@
     const send = dlg.querySelector('#shSend');
     if (send) send.onclick = async () => { const b = await toBlob(), f = new File([b], filename, { type: 'image/png' }); try { if (navigator.canShare({ files: [f] })) await navigator.share({ files: [f] }); } catch (e) { /* 取消分享不算错误 */ } };
   }
-  U.shareDayCard = rec => shareDialog(cv => U.drawDayCard(cv, rec), 'care-for-you-day.png', () => (U.afterShareClose ? U.afterShareClose(rec) : U.closeDialog()));
-  U.sharePersonCard = pid => shareDialog(cv => U.drawPersonCard(cv, pid), 'care-for-you-person.png', () => U.statusDialog(pid));
+  U.shareDayCard = (rec, onClose) => shareDialog(cv => U.drawDayCard(cv, rec), 'care-for-you-day.png', onClose || (() => (U.afterShareClose ? U.afterShareClose(rec) : U.closeDialog())));
+  U.sharePersonCard = (pid, onClose) => shareDialog(cv => U.drawPersonCard(cv, pid), 'care-for-you-person.png', onClose || (() => U.statusDialog(pid)));
 })(globalThis.CY = globalThis.CY || {});

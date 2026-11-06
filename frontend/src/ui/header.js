@@ -36,12 +36,13 @@
     const tg = $('tagline'); if (tg) { if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * U.tagCount()); tg.textContent = t('tag.' + (U.tagN + 1)); }
   };
   U.applyLang = async function () {
+    U.closePopover();
     I.set(I.detect(ini.get(G.cfg, 'ui', 'language')));
     await G.reloadContent();
     I.applyDom(document);
     document.title = U.pageTitle();
     U.renderBrand();
-    for (const [id, k] of [['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
+    for (const [id, k] of [['shareBtn', 'settle.share'], ['gearBtn', 'hdr.settings'], ['aboutBtn', 'hdr.about']]) $(id).setAttribute('aria-label', t(k));
     for (const k of ['feed', 'roomBar']) delete $(k).dataset.sig;
     if (U.room) { U.renderRoom(true); }
     U.renderClock(); U.renderBar(); U.renderFeed(true);
@@ -50,6 +51,7 @@
 
   /* ---------- 通用弹窗 ---------- */
   U.dialog = function (html, wide) {
+    U.closePopover();
     const m = $('modal');
     m.innerHTML = `<div class="box ${wide ? 'wide' : ''}">${html}</div>`;
     m.style.display = 'grid';
@@ -57,7 +59,7 @@
     return m.firstChild;
   };
   /* 键盘：Esc 关掉当前弹窗，回到游戏 */
-  if (typeof document !== 'undefined') document.addEventListener('keydown', e => { if (e.key === 'Escape') { const m = $('modal'); if (m && m.style.display !== 'none' && m.innerHTML) { e.preventDefault(); U.closeDialog(); } } });
+  if (typeof document !== 'undefined') document.addEventListener('keydown', e => { if (e.key === 'Escape') { const pop = $('cornerPop'); if (pop) { const anchor = $(pop.dataset.for); e.preventDefault(); U.closePopover(); if (anchor) anchor.focus(); return; } const m = $('modal'); if (m && m.style.display !== 'none' && m.innerHTML) { e.preventDefault(); U.closeDialog(); } } });
   U.closeDialog = function () { const m = $('modal'); m.style.display = 'none'; m.innerHTML = ''; const tp = $('shopTip'); if (tp) tp.style.display = 'none'; };
 
   /* ---------- 顶栏：经历了多少时间，现在是几点 ---------- */
@@ -91,16 +93,17 @@
   };
 
   /* ---------- 角落按钮的小下拉：点一下弹出，点别处收起。不是点击就切换，免得不小心改了看不到 ---------- */
-  U.closePopover = function () { const p = document.getElementById('cornerPop'); if (p) p.remove(); document.removeEventListener('click', U.popOutside, true); };
-  U.popOutside = e => { const p = document.getElementById('cornerPop'); if (p && !p.contains(e.target)) U.closePopover(); };
-  U.popover = function (anchor, html, wire) {
+  U.closePopover = function () { const p = document.getElementById('cornerPop'); if (p) { const anchor = $(p.dataset.for); if (anchor && anchor.hasAttribute('aria-expanded')) anchor.setAttribute('aria-expanded', 'false'); p.remove(); } document.removeEventListener('click', U.popOutside, true); };
+  U.popOutside = e => { const p = document.getElementById('cornerPop'), anchor = p && $(p.dataset.for); if (p && !p.contains(e.target) && !(anchor && anchor.contains(e.target))) U.closePopover(); };
+  U.popover = function (anchor, html, wire, below) {
     const open = document.getElementById('cornerPop'), same = open && open.dataset.for === anchor.id;
     U.closePopover(); if (same) return;
     const box = document.createElement('div'); box.id = 'cornerPop'; box.className = 'cpop'; box.dataset.for = anchor.id; box.innerHTML = html;
+    if (anchor.hasAttribute('aria-expanded')) anchor.setAttribute('aria-expanded', 'true');
     const host = anchor.closest('.cornerbox') || document.body; host.appendChild(box);
     const hb = host.getBoundingClientRect(), ab = anchor.getBoundingClientRect();
     box.style.right = Math.max(0, hb.right - ab.right) + 'px'; box.style.top = (ab.bottom - hb.top + 6) + 'px';
-    if (window.innerWidth <= 640) { box.style.top = 'auto'; box.style.bottom = (hb.bottom - ab.top + 6) + 'px'; }
+    if (window.innerWidth <= 640 && !below) { box.style.top = 'auto'; box.style.bottom = (hb.bottom - ab.top + 6) + 'px'; }
     wire(box); setTimeout(() => document.addEventListener('click', U.popOutside, true), 0);
   };
   /* 声音：总静音，音乐，音效 */

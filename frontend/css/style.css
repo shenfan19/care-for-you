@@ -510,6 +510,13 @@ body.embed header { display: none; }
 body.embed main { padding-top: 6px; }
 .cornerbox .tools { display: flex; gap: 6px; margin: 0; }
 .cornerbox .tools .icon { width: 30px; height: 30px; padding: 0; }
+.cornerbox .tools .icon svg { vertical-align:middle; }
+.cpop.share-pop { min-width:0; width:260px; max-width:calc(100vw - 56px); max-height:min(320px, 45vh); overflow-y:auto; gap:4px; }
+.share-pop summary { cursor:pointer; padding:8px 4px; font-weight:600; }
+.share-options { display:grid; gap:4px; padding:2px 0 6px; }
+.share-options button { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; text-align:left; padding:8px 10px; overflow-wrap:anywhere; }
+.share-options button span { min-width:0; } .share-options small { flex:none; max-width:45%; }
+.share-options p { margin:4px; }
 body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none; } body.embed { min-height: 0; }
 
 /* 一句话提示：窗体里面，上方居中，几秒后消失，不挡操作 */

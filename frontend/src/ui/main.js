@@ -39,6 +39,8 @@
     });
     G.backendError = () => U.flash(t('backend.error'));
     CY.world.enforce = true;
+    $('shareBtn').setAttribute('aria-label', t('settle.share'));
+    $('shareBtn').onclick = e => { e.stopPropagation(); U.sharePopover(e.currentTarget); };
     $('gearBtn').onclick = () => U.settingsDialog();
     if (G.DEVTOOLS) { const b = document.createElement('button'); b.id = 'devBtn'; b.className = 'icon'; b.textContent = '🛠'; b.title = '开发者面板'; $('gearBtn').parentNode.insertBefore(b, $('gearBtn')); b.onclick = () => U.devDialog(); }
     $('aboutBtn').onclick = () => U.aboutDialog();

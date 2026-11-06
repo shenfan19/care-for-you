@@ -343,7 +343,7 @@ function beanDraw(o) {
   const beanHuman = (p, dir) => {
     const a = p.person.appearance || {}, G = CY.game;
     const stage = G && p.species.food !== undefined ? G.stage(p) : CY.content.stageOf(typeof p.person.age === 'number' ? p.person.age : 35);
-    return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: a.cloth || '#8fa3b8', glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)), dir: dir || '' });
+    return beanDraw({ stage: BEAN_STAGE[stage] ? stage : 'adult', skin: a.skin === undefined ? 1 : a.skin, hair: a.hair_color || 'black', style: a.hair_style || 'short', cloth: CY.avatarColor(p), glasses: a.glasses, beard: a.beard, mood: p.state.mood, asleep: !!(G && G.isSleeping && p.id && G.isSleeping(p)), dir: dir || '' });
   };
   const DRAW = { hedgehog, duck, ferret, axolotl, chicken, orchid, bamboo, cat, dog, rabbit, hamster, bird, fish, turtle, snake, guineapig: hamster, gecko: snake, succulent, flower, tree, cactus };
   /* CY.figure：人的造型，设置里选。dressed 穿衣小豆，默认，上半肤色下半衣服，精灵图没加载完时也退回它；sprite 迷你小人精灵，Kenney 素材渲染，动物和花草也跟着用精灵。
@@ -419,5 +419,11 @@ function beanDraw(o) {
     skin: SKIN.map(s => s[0]), hairColor: Object.keys(HAIR), hairColorHex: HAIR, hairStyle: ['short', 'long', 'bob', 'ponytail', 'bun', 'curly', 'bald'],
     glasses: ['none', 'round', 'square'], clothes: CLOTHES, coat: Object.keys(COAT), coatHex: Object.fromEntries(Object.entries(COAT).map(([k, v]) => [k, v[0]])),
     coatBySpecies: { cat: ['orange', 'gray', 'black', 'white'], dog: ['tan', 'brown', 'black', 'white'], rabbit: ['white', 'gray', 'brown', 'black'], hamster: ['tan', 'white', 'brown', 'gray'], bird: ['yellow', 'green', 'white', 'gray'], fish: ['orange', 'white', 'yellow', 'black'], turtle: ['green', 'brown', 'tan', 'yellow'], snake: ['green', 'yellow', 'brown', 'black'], succulent: ['green', 'tan', 'gray', 'brown'], cactus: ['green', 'tan', 'gray', 'brown'], flower: ['rose', 'orange', 'yellow', 'white'], tree: ['green', 'tan', 'brown', 'yellow'], guineapig: ['tan', 'white', 'brown', 'gray'], hedgehog: ['brown', 'gray', 'tan', 'white'], duck: ['yellow', 'white', 'brown', 'gray'], ferret: ['tan', 'brown', 'white', 'black'], axolotl: ['rose', 'white', 'gray', 'black'], chicken: ['white', 'brown', 'yellow', 'black'], orchid: ['rose', 'white', 'yellow', 'green'], bamboo: ['green', 'yellow', 'tan', 'brown'], gecko: ['green', 'yellow', 'brown', 'black'] },
+  };
+  /* 统计和分享共用角色主色；不为重色另选颜色。无人形衣服的角色用毛色或花草颜色。 */
+  CY.avatarColor = p => {
+    const a = p && p.person.appearance || {}, species = p && p.species.id;
+    const coats = CY.avatarOptions.coatBySpecies[species];
+    return coats ? (COAT[a.coat] || COAT[coats[0]])[0] : a.cloth || '#8fa3b8';
   };
 })(globalThis.CY = globalThis.CY || {});
