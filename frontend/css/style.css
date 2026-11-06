@@ -286,7 +286,7 @@ header { align-items:center; }
 @media (max-width:480px) { .tiles { grid-template-columns:1fr; } }
 .corner { position:absolute; top:8px; z-index:9; padding:3px 10px; border-radius:12px; font-size:13px; background:color-mix(in srgb, var(--card) 82%, transparent); border:1px solid var(--line); font-variant-numeric:tabular-nums; line-height:1.4; }
 #cornerTime { cursor:pointer; user-select:none; } .cornerbox { position:absolute; top:8px; right:10px; z-index:9; display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; max-width:calc(100% - 20px); }
-header .tagline { flex:1; margin:0 0 0 18px; color:var(--mute); font-size:14px; font-style:italic; align-self:center; min-width:0; }
+header .tagline { flex:1; margin:0 0 4px 18px; color:var(--mute); font-size:14px; font-style:italic; align-self:flex-end; min-width:0; }
 @media (max-width:760px) { header .tagline { flex-basis:100%; margin:2px 0 0 4px; font-size:13px; } }   /* 窄屏一句话排在标题下面，不隐藏 */
 .cpop { position:absolute; z-index:40; width:max-content; min-width:340px; max-width:calc(100vw - 24px); padding:10px 12px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 6px 18px #0003; font-size:13px; display:grid; gap:8px; }
 .cpop .prow2 { white-space:nowrap; display:flex; align-items:center; justify-content:space-between; gap:10px; } .cpop input[type=range] { flex:1; min-width:120px; margin:0; } .cpop .tsel select { font:inherit; padding:1px 2px; } .cpop .tsel { white-space:nowrap; } .cpop input[type=time] { font:inherit; width:104px; } .cpop .prow2 > span:last-child { white-space:nowrap; } .cpop .seg button { white-space:nowrap; }

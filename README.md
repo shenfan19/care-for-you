@@ -47,7 +47,7 @@ Everything is stored on your own device as plain files. No account is needed, an
 
 ## Status
 
-Early version, currently 0.69. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
+Early version, currently 0.71. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
 
 ## Not a health product
 
