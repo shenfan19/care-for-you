@@ -3,7 +3,7 @@ message: >-
   If you use this software, please cite it using the metadata below.
 title: "Care for You"
 type: software
-version: "0.70.0"
+version: "0.71.0"
 date-released: "2026-11-05"
 authors:
   - family-names: Shen
