@@ -102,4 +102,4 @@ CY.i18n.register("ja", {"author.game": "ゲーム", "author.cfy_p1": "私がこ�
 CY.i18n.register("ja", {"author.lm_more": "詳しくは"});
 CY.i18n.register("ja", {"author.main_site": "メインサイト", "author.itch": "itch ミラー", "author.code": "ソースコード"});
 CY.i18n.register("ja", {"author.lm_dev": "現在も開発中です。"});
-CY.i18n.register("ja", {"author.lm_p1a": "Life Matters（LM）は私の主な研究プロジェクトで、Care は余暇で作った小さなプロジェクトです。LM は YAML で LM format を構築し、医学・心理学・社会学の研究成果の一部をまとめ、日常生活の各要素が健康にどう影響するかを力学モデルで記述します。", "author.lm_p1b": "Care の二つ目のエンジンは LM の JS 簡易版で、モデルの一部は LM の変換プラグインから書き出し、インターフェースへの適合とシミュレーション結果に応じて少し調整しています。"});
+CY.i18n.register("ja", {"author.lm_p1a": "Life Matters（LM）は私の主な研究プロジェクトで、YAML で LM format を構築し、医学・心理学・社会学の研究成果の一部をまとめ、日常生活の各要素が健康にどう影響するかを力学モデルで記述します。", "author.lm_p1b": "Care の二つ目のエンジンは LM の JS 簡易版で、モデルの一部は LM の変換プラグインから書き出し、インターフェースへの適合とシミュレーション結果に応じて少し調整しています。"});
