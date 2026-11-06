@@ -536,9 +536,13 @@ body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none
 .spie.v { flex-direction: column; align-items: flex-start; gap: 6px; }
 .spie.v .sleg { grid-template-columns: 12px 1fr auto auto; }
 
-/* 手机（640 以内）：时间，钱，按钮仍在场景右下角；记录是贴底的抽屉，展开最多占六成屏幕，点它的标题条收起，不再顶到上面和按钮叠在一起；记录由 U.layoutNarrow 搬到页面最外层，因为场景容器里的 fixed 不相对窗口 */
+/* 手机（640 以内）：时间，钱，按钮在窗口右上，人物卡在窗口左下；记录是贴底的抽屉，展开最多占六成屏幕，点它的标题条收起，不再顶到上面和按钮叠在一起；记录由 U.layoutNarrow 搬到页面最外层，因为场景容器里的 fixed 不相对窗口 */
 @media (max-width: 640px) {
-  .room .cornerbox { top: auto; bottom: 10px; }
+  /* 窗口比场景高：上面留一条放标题和按钮，下面留一条放人物卡，都在窗口里面，和桌面一样；场景保持 800 比 520 的比例，放在中间 */
+  .room.iso { aspect-ratio: auto; height: calc((100vw - 40px) * .65 + 190px); margin-bottom: 0; overflow: hidden; }
+  .room.iso .scenewrap, .room.iso .stagewrap { inset: auto; left: 0; right: 0; top: 100px; height: 65cqw; }
+  .room .cornerbox { top: 34px; bottom: auto; left: 8px; right: 8px; justify-content: flex-end; }
+  .roster { left: 8px; right: 8px; top: auto; bottom: 8px; }
   .logwin { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; border-radius: 14px 14px 0 0; border: 1px solid var(--line); border-bottom: none; box-shadow: 0 -4px 16px #0002; background: var(--card); padding-bottom: env(safe-area-inset-bottom); }
   .logwin .logbody { max-height: 55vh; }
   .logbar { padding: 10px 12px; }

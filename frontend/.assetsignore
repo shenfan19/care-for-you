@@ -1,0 +1,12 @@
+# Files in frontend/ that the website does not need. Cloudflare skips them when it publishes.
+tests/
+config/
+demo3d/
+temp_bean/
+lab.html
+src/data/cards/
+src/data/visitors/
+src/data/lm/
+assets/iso/manifest.json
+*.md
+.assetsignore

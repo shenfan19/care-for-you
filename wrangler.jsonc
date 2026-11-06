@@ -1,0 +1,7 @@
+{
+  // Cloudflare Workers Builds deploys this repository on every push to main.
+  // The name must match the Worker created in the Cloudflare dashboard.
+  "name": "care-for-you",
+  "compatibility_date": "2025-11-01",
+  "assets": { "directory": "./frontend" }
+}
