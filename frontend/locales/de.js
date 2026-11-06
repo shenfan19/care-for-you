@@ -4,7 +4,7 @@ CY.i18n.register("de", {
 "room.empty": "Noch ist niemand da.", "room.away": "{name} vom Schreibtisch weggehen lassen", "room.bar": "Stimmung {mood} %  Gebrechlichkeit {frail} %", "room.info": "Nachsehen, wie es {name} geht",
 "ask.own": "Eigene Antwort…", "ask.send": "Sagen", "pick.reroll": "Keine davon", "nudge.yes": "Okay, mache ich", "nudge.no": "Später", "unit.sec": "{n} s", "unit.min": "{n} Min.", "unit.hour": "{n} Std.",
 "clock.dh": "{d} T {h} Std.", "clock.hm": "{h} Std. {m} Min.", "clock.m": "{m} Min.", "bar.away": "{name} ist weggegangen", "bar.recall": "zurückrufen",
-"feed.title": "Was passiert ist", "feed.all": "Alle", "feed.quiet": "Alltägliches ausblenden", "feed.stat": "{care} Mal gekümmert, {talk} Mal gesprochen, {missed} Mal verpasst", "feed.stat_back": ", {n} Aufmerksamkeiten von {name}",
+"feed.title": "Was passiert ist", "feed.all": "Alle", "feed.stat": "{care} Mal gekümmert, {talk} Mal gesprochen, {missed} Mal verpasst", "feed.stat_back": ", {n} Aufmerksamkeiten von {name}",
 "feed.day": "Tag {n}", "feed.empty": "Es ist noch nichts passiert.", "feed.more": "Mehr anzeigen", "fmt.datetime": "{d}.{m}. {hh}:{mm}",
 "said.you": "Du", "said.nobody": "Noch keine Figuren.",
 "type.care": "Fürsorge", "type.talk": "Gespräch", "type.missed": "Verpasst", "type.cares_back": "Aufmerksamkeit", "type.glance": "Ein Blick", "type.event": "Ereignis", "type.frail": "Gebrechlich", "type.recovered": "Erholt", "type.reveal": "Der Moment", "type.picked": "Erinnert", "type.nudge": "Erinnerung", "type.cry": "Weinen", "type.self": "Allein",

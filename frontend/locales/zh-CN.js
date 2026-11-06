@@ -9,7 +9,7 @@ CY.i18n.register('zh-CN', {
   'clock.dh': '{d} 天 {h} 小时', 'clock.hm': '{h} 小时 {m} 分', 'clock.m': '{m} 分钟',
 
   'bar.away': '{name}暂时离开', 'bar.recall': '叫回来',
-  'feed.title': '发生的事', 'feed.all': '大家', 'feed.quiet': '隐藏日常动态', 'feed.stat': '一共照顾了 {care} 次，谈话 {talk} 次，没赶上 {missed} 次',
+  'feed.title': '发生的事', 'feed.all': '大家', 'feed.stat': '一共照顾了 {care} 次，谈话 {talk} 次，没赶上 {missed} 次',
   'feed.stat_back': '，{name}给你的心意 {n} 次', 'feed.day': '第 {n} 天', 'feed.empty': '还没有发生什么。', 'feed.more': '再看一些',
   'fmt.datetime': '{m}月{d}日 {hh}:{mm}',
   'said.you': '你',   'said.nobody': '还没有角色。',

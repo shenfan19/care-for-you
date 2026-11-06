@@ -4,7 +4,7 @@ CY.i18n.register("ja", {
 "room.empty": "まだ誰もいません。", "room.away": "{name}をデスクから離れさせる", "room.bar": "気分 {mood}%　衰弱 {frail}%", "room.info": "{name}の様子を見る",
 "ask.own": "自分の言葉で…", "ask.send": "言う", "pick.reroll": "どれも違う", "nudge.yes": "うん、行く", "nudge.no": "あとで", "unit.sec": "{n}秒", "unit.min": "{n}分", "unit.hour": "{n}時間",
 "clock.dh": "{d}日 {h}時間", "clock.hm": "{h}時間{m}分", "clock.m": "{m}分", "bar.away": "{name}は席を外しています", "bar.recall": "呼び戻す",
-"feed.title": "できごと", "feed.all": "みんな", "feed.quiet": "日常のできごとを隠す", "feed.stat": "お世話 {care}回、会話 {talk}回、間に合わなかった {missed}回", "feed.stat_back": "、{name}からの気遣い {n}回",
+"feed.title": "できごと", "feed.all": "みんな", "feed.stat": "お世話 {care}回、会話 {talk}回、間に合わなかった {missed}回", "feed.stat_back": "、{name}からの気遣い {n}回",
 "feed.day": "{n}日目", "feed.empty": "まだ何も起きていません。", "feed.more": "もっと見る", "fmt.datetime": "{m}/{d} {hh}:{mm}",
 "said.you": "あなた", "said.nobody": "まだキャラクターがいません。",
 "type.care": "お世話", "type.talk": "会話", "type.missed": "間に合わず", "type.cares_back": "気遣い", "type.glance": "ふと見られた", "type.event": "できごと", "type.frail": "衰弱", "type.recovered": "回復", "type.reveal": "あの瞬間", "type.picked": "思い出した言葉", "type.nudge": "リマインド", "type.cry": "泣いている", "type.self": "自分で",

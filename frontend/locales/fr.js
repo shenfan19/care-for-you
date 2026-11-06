@@ -4,7 +4,7 @@ CY.i18n.register("fr", {
 "room.empty": "Personne ici pour l'instant.", "room.away": "Laisser {name} s'éloigner du bureau", "room.bar": "Humeur {mood} %  Fragilité {frail} %", "room.info": "Voir comment va {name}",
 "ask.own": "Votre réponse…", "ask.send": "Dire", "pick.reroll": "Aucune de celles-ci", "nudge.yes": "D'accord, j'y vais", "nudge.no": "Plus tard", "unit.sec": "{n} s", "unit.min": "{n} min", "unit.hour": "{n} h",
 "clock.dh": "{d} j {h} h", "clock.hm": "{h} h {m} min", "clock.m": "{m} min", "bar.away": "{name} s'est éloigné", "bar.recall": "rappeler",
-"feed.title": "Ce qui s'est passé", "feed.all": "Tout le monde", "feed.quiet": "Masquer le quotidien", "feed.stat": "{care} soins, {talk} conversations, {missed} occasions manquées", "feed.stat_back": ", {n} gentillesses de {name}",
+"feed.title": "Ce qui s'est passé", "feed.all": "Tout le monde", "feed.stat": "{care} soins, {talk} conversations, {missed} occasions manquées", "feed.stat_back": ", {n} gentillesses de {name}",
 "feed.day": "Jour {n}", "feed.empty": "Rien ne s'est encore passé.", "feed.more": "Afficher plus", "fmt.datetime": "{d}/{m} {hh}:{mm}",
 "said.you": "Vous", "said.nobody": "Aucun personnage pour l'instant.",
 "type.care": "Soin", "type.talk": "Conversation", "type.missed": "Manqué", "type.cares_back": "Gentillesse", "type.glance": "Un regard", "type.event": "Événement", "type.frail": "Fragile", "type.recovered": "Rétabli", "type.reveal": "Le moment", "type.picked": "Souvenir", "type.nudge": "Rappel", "type.cry": "Pleurs", "type.self": "Seul",

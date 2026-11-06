@@ -4,7 +4,7 @@ CY.i18n.register("es", {
 "room.empty": "Todavía no hay nadie.", "room.away": "Dejar que {name} se aparte del escritorio", "room.bar": "Ánimo {mood}%  Fragilidad {frail}%", "room.info": "Ver cómo está {name}",
 "ask.own": "Tu respuesta…", "ask.send": "Decir", "pick.reroll": "Ninguna de estas", "nudge.yes": "Vale, voy", "nudge.no": "Luego", "unit.sec": "{n} s", "unit.min": "{n} min", "unit.hour": "{n} h",
 "clock.dh": "{d} d {h} h", "clock.hm": "{h} h {m} min", "clock.m": "{m} min", "bar.away": "{name} se ha apartado", "bar.recall": "llamar",
-"feed.title": "Lo que pasó", "feed.all": "Todos", "feed.quiet": "Ocultar lo cotidiano", "feed.stat": "{care} cuidados, {talk} charlas, {missed} veces que no llegaste", "feed.stat_back": ", {n} detalles de {name}",
+"feed.title": "Lo que pasó", "feed.all": "Todos", "feed.stat": "{care} cuidados, {talk} charlas, {missed} veces que no llegaste", "feed.stat_back": ", {n} detalles de {name}",
 "feed.day": "Día {n}", "feed.empty": "Todavía no ha pasado nada.", "feed.more": "Ver más", "fmt.datetime": "{d}/{m} {hh}:{mm}",
 "said.you": "Tú", "said.nobody": "Todavía no hay personajes.",
 "type.care": "Cuidado", "type.talk": "Charla", "type.missed": "No llegaste", "type.cares_back": "Detalle", "type.glance": "Una mirada", "type.event": "Suceso", "type.frail": "Frágil", "type.recovered": "Recuperado", "type.reveal": "El momento", "type.picked": "Recuerdo", "type.nudge": "Recordatorio", "type.cry": "Llanto", "type.self": "Por su cuenta",

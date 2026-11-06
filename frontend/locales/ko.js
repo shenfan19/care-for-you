@@ -4,7 +4,7 @@ CY.i18n.register("ko", {
 "room.empty": "아직 아무도 없습니다.", "room.away": "{name}을(를) 잠시 자리에서 물러나게 하기", "room.bar": "기분 {mood}%  쇠약 {frail}%", "room.info": "{name}의 상태 보기",
 "ask.own": "직접 말하기…", "ask.send": "말하기", "pick.reroll": "이 중에 없어요", "nudge.yes": "응, 갈게", "nudge.no": "나중에", "unit.sec": "{n}초", "unit.min": "{n}분", "unit.hour": "{n}시간",
 "clock.dh": "{d}일 {h}시간", "clock.hm": "{h}시간 {m}분", "clock.m": "{m}분", "bar.away": "{name}이(가) 자리를 비웠습니다", "bar.recall": "불러오기",
-"feed.title": "있었던 일", "feed.all": "모두", "feed.quiet": "일상 소식 숨기기", "feed.stat": "돌봄 {care}회, 대화 {talk}회, 놓친 것 {missed}회", "feed.stat_back": ", {name}의 마음 씀 {n}회",
+"feed.title": "있었던 일", "feed.all": "모두", "feed.stat": "돌봄 {care}회, 대화 {talk}회, 놓친 것 {missed}회", "feed.stat_back": ", {name}의 마음 씀 {n}회",
 "feed.day": "{n}일째", "feed.empty": "아직 아무 일도 없었습니다.", "feed.more": "더 보기", "fmt.datetime": "{m}/{d} {hh}:{mm}",
 "said.you": "나", "said.nobody": "아직 캐릭터가 없습니다.",
 "type.care": "돌봄", "type.talk": "대화", "type.missed": "놓침", "type.cares_back": "마음 씀", "type.glance": "눈길", "type.event": "사건", "type.frail": "쇠약", "type.recovered": "회복", "type.reveal": "그 순간", "type.picked": "떠올린 말", "type.nudge": "알림", "type.cry": "울음", "type.self": "스스로",

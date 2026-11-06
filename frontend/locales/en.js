@@ -9,7 +9,7 @@ CY.i18n.register('en', {
   'clock.dh': '{d} d {h} h', 'clock.hm': '{h} h {m} min', 'clock.m': '{m} min',
 
   'bar.away': '{name} stepped away', 'bar.recall': 'call back',
-  'feed.title': 'What happened', 'feed.all': 'Everyone', 'feed.quiet': 'Hide everyday chatter', 'feed.stat': 'Cared {care} times, talked {talk} times, missed {missed} times',
+  'feed.title': 'What happened', 'feed.all': 'Everyone', 'feed.stat': 'Cared {care} times, talked {talk} times, missed {missed} times',
   'feed.stat_back': ', {n} kindnesses from {name}', 'feed.day': 'Day {n}', 'feed.empty': 'Nothing has happened yet.', 'feed.more': 'Show more',
   'fmt.datetime': '{m}/{d} {hh}:{mm}',
   'said.you': 'You',   'said.nobody': 'No characters yet.',

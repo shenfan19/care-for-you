@@ -12,12 +12,20 @@
   U.typeName = typeName;
   const fmtT = ts => { const d = new Date(ts); return t('fmt.datetime', { m: d.getMonth() + 1, d: d.getDate(), hh: String(d.getHours()).padStart(2, '0'), mm: String(d.getMinutes()).padStart(2, '0') }); };
   const fmtC = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');   /* 游戏里的几点 */
-  const view = { who: '', more: 40, quiet: false, tab: 'events', cwho: '', off: {} };
+  const view = { who: '', more: 40, tab: 'events', cwho: '', off: {} };
   U.logView = view; U.logTabs = [];
   U.registerLogTab = tab => { U.logTabs.push(tab); };
   /* 窗体里的记录面板：开合状态 */
   U.logOpen = (() => { try { return localStorage.getItem('care.logopen') === '1'; } catch (e) { return false; } })();
   const applyOpen = () => { const w = $('logwin'), b = $('logBar'); if (!w) return; w.classList.toggle('open', U.logOpen); if (U.room) U.room.classList.toggle('logopen', U.logOpen); if (b) b.setAttribute('aria-expanded', U.logOpen ? 'true' : 'false'); try { localStorage.setItem('care.logopen', U.logOpen ? '1' : '0'); } catch (e) { /* 记不住也没关系 */ } };
+  /* 展开后整个面板不超过四成高（宽屏是窗体的四成，手机是屏幕的四成），列表要有明确的最大高度才会滚动：
+     只靠弹性布局限不住，列表会被裁掉又滚不动 */
+  U.sizeLog = () => {
+    const w = $('logwin'), sc = w && w.querySelector('.logscroll'), hd = w && w.querySelector('.loghead'); if (!sc || !hd) return;
+    const narrow = window.innerWidth <= 640, limit = Math.floor((narrow ? window.innerHeight : (U.room ? U.room.clientHeight : window.innerHeight)) * 0.4);
+    sc.style.maxHeight = Math.max(60, limit - hd.offsetHeight - 16) + 'px';
+  };
+  if (typeof window !== 'undefined') window.addEventListener('resize', () => { if (U.sizeLog) U.sizeLog(); });
   U.setLogOpen = on => { U.logOpen = !!on; applyOpen(); if (U.logOpen) U.renderFeed(true); };
   U.logGo = (tab, who) => { if (who !== undefined) { view.who = who; view.more = 40; } if (tab) view.tab = tab; U.setLogOpen(true); U.renderFeed(true); };
   const SERIES_COLORS = ['#c8794a', '#4f9bb3', '#7aa05a', '#b36ab0', '#d1a23b', '#6f7fc4', '#c4566b', '#4aa08a', '#8a7a66', '#e0864f'];
@@ -60,8 +68,8 @@
     return `<div class="chips" style="margin-top:8px">${pchips}</div><div class="chips" style="margin-top:6px">${allBtns}${schips}</div>${svg}`;
   }
   U.renderFeed = function (force) {
-    const all = entries(), list = all.filter(x => (!view.who || x.pid === view.who) && !(view.quiet && QUIET_HIDES.includes(x.e.type)));
-    const sig = view.tab + view.cwho + JSON.stringify(view.off) + Object.values(G.hist).map(h => h.length).join() + view.who + view.more + view.quiet + all.length + I.lang + G.people.map(p => p.id + p.person.name + p.story.care_total).join() + U.logTabs.map(x => (x.visible() && x.sig ? x.sig() : '')).join('|');
+    const all = entries(), list = all.filter(x => !view.who || x.pid === view.who);
+    const sig = view.tab + view.cwho + JSON.stringify(view.off) + Object.values(G.hist).map(h => h.length).join() + view.who + view.more + all.length + I.lang + G.people.map(p => p.id + p.person.name + p.story.care_total).join() + U.logTabs.map(x => (x.visible() && x.sig ? x.sig() : '')).join('|');
     const root = $('feed'), bar = $('logBar');
     /* 收起时窗体底部的一行：最新的一件事 */
     if (bar) {
@@ -85,7 +93,7 @@
     const fold = `<button class="logfold" id="logFold" title="${esc(t('btn.close'))}" aria-label="${esc(t('btn.close'))}">▾</button>`;
     const row = (inner, withFold) => `<div class="logrow"><div class="chips scrollx">${inner}</div>${withFold ? fold : ''}</div>`;
     const head = chipsInner => `<div class="loghead">${tabBtns ? row(tabBtns, !chipsInner) : ''}${chipsInner ? row(chipsInner, true) : ''}</div>`;
-    const wireFold = () => { const fb = $('logFold'); if (fb) fb.onclick = () => U.setLogOpen(false); };
+    const wireFold = () => { const fb = $('logFold'); if (fb) fb.onclick = () => U.setLogOpen(false); U.sizeLog(); };
     const goTab = () => root.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { view.tab = b.dataset.tab; U.renderFeed(true); });
     const cur = extra.find(x => x.id === view.tab);
     if (cur) { root.innerHTML = head('') + '<div class="logscroll">' + cur.render(view) + '</div>'; goTab(); wireFold(); if (cur.bind) cur.bind(root, view); return; }
@@ -98,12 +106,11 @@
       return;
     }
     const rows = list.slice(0, view.more).map(x => `<div class="tl"><span class="t">${x.e.cm !== undefined ? fmtC(x.e.cm) : fmtT(x.e.t)} ${esc(t('feed.day', { n: x.e.day || '?' }))}</span><span class="who">${U.nameLink(x.pid)}</span><span class="pill">${esc(typeName(x.e.type))}</span><span class="x">${U.entryHtml(x.e)}</span></div>`).join('') || `<div class="mute">${esc(t('feed.empty'))}</div>`;
-    root.innerHTML = head(chips + `<button class="chip ${view.quiet ? 'on' : ''}" id="quietBtn">${esc(t('feed.quiet'))}</button>`) +
+    root.innerHTML = head(chips) +
       `<div class="logscroll">${stat}<div class="tlbox">${rows}` + (list.length > view.more ? `<div class="row" style="margin-top:8px"><button id="moreBtn">${esc(t('feed.more'))}</button></div>` : '') + '</div></div>';
     wireFold();
     goTab();
     root.querySelectorAll('.chip[data-w]').forEach(b => b.onclick = () => { view.who = b.dataset.w; view.more = 40; U.renderFeed(true); });
-    $('quietBtn').onclick = () => { view.quiet = !view.quiet; view.more = 40; U.renderFeed(true); };
     const mb = $('moreBtn'); if (mb) mb.onclick = () => { view.more += 60; U.renderFeed(true); };
   };
 
