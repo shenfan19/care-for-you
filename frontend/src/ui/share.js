@@ -13,47 +13,53 @@
   const palette = () => { const css = getComputedStyle(document.documentElement); return k => css.getPropertyValue(k).trim() || '#888'; };
   const wrapper = (ctx, text, maxW) => { const out = []; let line = ''; for (const ch of Array.from(text)) { if (ctx.measureText(line + ch).width > maxW) { out.push(line); line = ch; } else line += ch; } if (line) out.push(line); return out; };
 
-  /* 卡片的底：背景，卡片面，顶上的色条和名字 */
+  /* 卡片的底：背景，卡片面，左上角一个标题块：亮色的大标题 Care for You，旁边是和页面顶上同一句随机的话，再下面是游戏网址，
+     话和网址用普通的颜色和字体。返回标题块的下沿，内容从它下面开始 */
   function frame(canvas, W, H) {
     const v = palette(), ctx = canvas.getContext('2d');
     canvas.width = W; canvas.height = H;
     ctx.fillStyle = v('--bg'); ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = v('--card'); roundRect(ctx, 70, 70, W - 140, H - 140, 36); ctx.fill();
-    ctx.fillStyle = v('--accent'); roundRect(ctx, 130, 150, 90, 10, 5); ctx.fill();
-    ctx.textBaseline = 'alphabetic'; ctx.fillStyle = v('--mute'); ctx.font = `34px ${FONT}`; ctx.fillText('Care for You', 130, 220);
-    return { ctx, v };
+    ctx.fillStyle = v('--accent'); roundRect(ctx, 130, 130, 90, 10, 5); ctx.fill();
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 76px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText('Care for You', 130, 235);
+    if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * 6);
+    const tag = t('tag.' + (U.tagN + 1)); let size = 32;
+    ctx.fillStyle = v('--ink'); ctx.font = `${size}px ${FONT}`;
+    while (ctx.measureText(tag).width > W - 260 && size > 20) { size -= 2; ctx.font = `${size}px ${FONT}`; }
+    ctx.fillText(tag, 130, 290);
+    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`; ctx.fillText(G.E('share').url, 130, 334);
+    return { ctx, v, top: 334 };
   }
-  /* 左下角：被改过的存档标一句，一句话，游戏网址。每一张卡都有，网址是这张图最重要的一行 */
+  /* 左下角只留一句存档被改过的提示，标题和网址都在左上角 */
   function foot(ctx, v, H) {
-    ctx.fillStyle = v('--mute'); ctx.font = `30px ${FONT}`;
-    if (G.world.edited) ctx.fillText(t('share.edited'), 130, H - 235);
-    ctx.fillText(t('share.foot'), 130, H - 185);
-    ctx.fillStyle = v('--accent'); ctx.font = `bold 40px ${FONT}`; ctx.fillText(G.E('share').url, 130, H - 125);
+    if (!G.world.edited) return;
+    ctx.fillStyle = v('--mute'); ctx.font = `26px ${FONT}`; ctx.fillText(t('share.edited'), 130, H - 100);
   }
 
   /* 每日结算的分享卡：日期，三到五句话，纪念品 */
   U.drawDayCard = function (canvas, rec) {
-    const W = 1080, H = 1350, { ctx, v } = frame(canvas, W, H), d = G.dateOf(rec.n);
-    ctx.fillStyle = v('--ink'); ctx.font = `bold 64px ${FONT}`; ctx.fillText(t('cal.md', { m: d.month, d: d.day }) + ' ' + t(['cal.wd0', 'cal.wd1', 'cal.wd2', 'cal.wd3', 'cal.wd4', 'cal.wd5', 'cal.wd6'][d.weekday]), 130, 330);
+    const W = 1080, H = 1350, { ctx, v, top } = frame(canvas, W, H), d = G.dateOf(rec.n);
+    ctx.fillStyle = v('--ink'); ctx.font = `bold 64px ${FONT}`; ctx.fillText(t('cal.md', { m: d.month, d: d.day }) + ' ' + t(['cal.wd0', 'cal.wd1', 'cal.wd2', 'cal.wd3', 'cal.wd4', 'cal.wd5', 'cal.wd6'][d.weekday]), 130, top + 120);
     ctx.font = `44px ${FONT}`;
-    let y = 440;
-    for (const l of rec.lines) for (const row of wrapper(ctx, G.settleText(l), W - 260)) { if (y > H - 320) break; ctx.fillText(row, 130, y); y += 70; }
+    let y = top + 230;
+    for (const l of rec.lines) for (const row of wrapper(ctx, G.settleText(l), W - 260)) { if (y > H - 170) break; ctx.fillText(row, 130, y); y += 70; }
     foot(ctx, v, H);
   };
 
   /* 人物卡：头像，名字，身份和年龄，两张饼图（他照顾了谁，谁照顾了他）。数据是全部时间的统计，没有记录时饼是空环 */
   U.drawPersonCard = async function (canvas, pid) {
     const p = G.get(pid); if (!p) return;
-    const W = 1080, H = 1350, { ctx, v } = frame(canvas, W, H), st = G.statusOf(p);
+    const W = 1080, H = 1350, { ctx, v, top } = frame(canvas, W, H), st = G.statusOf(p);
     // 头像：画成穿衣小豆，矢量，放得进画布；画不出来就只写名字
     try {
       const svg = CY.avatarBean(p).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="540" ');
       const img = new Image(); img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
       await new Promise((res, rej) => { img.onload = res; img.onerror = rej; });
-      ctx.drawImage(img, 135, 240, 250, 338);
+      ctx.drawImage(img, 135, top + 40, 250, 338);
     } catch (e) { /* 没有头像也能出卡 */ }
     ctx.fillStyle = v('--ink'); ctx.font = `bold 72px ${FONT}`;
-    let y = 340; for (const row of wrapper(ctx, p.person.name, W - 560)) { ctx.fillText(row, 440, y); y += 84; }
+    let y = top + 130; for (const row of wrapper(ctx, p.person.name, W - 560)) { ctx.fillText(row, 440, y); y += 84; }
     ctx.fillStyle = v('--mute'); ctx.font = `38px ${FONT}`;
     const age = G.isHuman(p) ? ' · ' + t('status.age', { n: +G.age(p).toFixed(0) }) : '';
     ctx.fillText((p.person.role || '') + age, 440, y + 6);
@@ -72,8 +78,8 @@
       }
       ctx.textAlign = 'left';
     };
-    pie(335, 800, 140, sl.given, t('stats.given', { name: p.person.name }));
-    pie(745, 800, 140, sl.got, t('stats.received', { name: p.person.name }));
+    pie(335, 925, 135, sl.given, t('stats.given', { name: p.person.name }));
+    pie(745, 925, 135, sl.got, t('stats.received', { name: p.person.name }));
     foot(ctx, v, H);
   };
 

@@ -18,10 +18,11 @@
     const vc = G.visitorCard(p), st = p.person.visitor;
     const profile = vc ? `${t('visitor.' + vc.id + '.era')} · ${t('field.' + vc.field)}` : '';
     const favLine = `${U.favStars(st.fav)}${st.ok ? ' · ' + t('gift.fav_ok') : ''}`;
-    const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><div class="mute">${esc(p.person.name)} · ${esc(profile)}</div><div style="margin:4px 0">${esc(favLine)}</div>${note ? `<p class="gift-react">${esc(note)}</p>` : ''}<p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${grid ? `<div class="giftgrid vbody">${grid}</div>` : `<p class="mute">${esc(t('gift.empty'))}</p>`}
+    const dlg = U.dialog(`<h2 style="margin-top:0">🎁 ${esc(t('gift.title'))}</h2><div class="mute">${esc(p.person.name)} · ${esc(profile)}</div><div style="margin:4px 0">${esc(favLine)}</div>${note ? `<p class="gift-react">${esc(note)}</p>` : ''}<p class="mute">${esc(t('gift.pick', { name: p.person.name, n: G.giftsLeft() }))}</p>${grid ? `<div class="giftgrid vbody">${grid}</div>` : `<p class="mute">${esc(t('gift.empty'))}${G.module('shop') ? ` <a href="#" id="toShop" class="pl">${esc(t('gift.go_shop'))}</a>` : ''}</p>`}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="vClose" class="primary">${esc(t('cal.close'))}</button></div>`, true);
     note = '';
     dlg.querySelector('#vClose').onclick = () => U.closeDialog();
+    const ts = dlg.querySelector('#toShop'); if (ts) ts.onclick = e => { e.preventDefault(); U.shopDialog(); };
     dlg.querySelectorAll('[data-item]').forEach(b => b.onclick = () => {
       const r = G.giveGift(pid, b.dataset.item);
       if (r.error === 'limit' || r.error === 'done' || r.error === 'money') { note = r.error === 'limit' ? t('gift.limit') : r.error === 'done' ? t('gift.done', { name: p.person.name }) : t('gift.money'); return U.giftDialog(pid); }

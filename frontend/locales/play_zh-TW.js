@@ -139,7 +139,7 @@ CY.i18n.register("zh-TW", {
   "shop.sec_home": "家裡的東西",
   "shop.sec_gifts": "送客人的禮物",
   "shop.gift_note": "禮物不是件件都合對方的心意：送到心儀的，好感一下子加很多；送一般的，加得不多。好感到了，對方會留下回禮。每樣最多備三件。送的時候，在客人身上的行動圈裡長按「送禮」。",
-  "gift.empty": "揹包是空的。點錢的格子，去商店的禮物區買。",
+  "gift.empty": "背包是空的。",
   "start.lead_title": "你是誰？",
   "start.lead_note": "選一位家人，你就是 ta。之後可以隨時修改：點右上角的 👥，在角色旁邊選「{btn}」。",
   "start.next": "繼續",
@@ -344,3 +344,4 @@ CY.i18n.register("zh-TW", {"feed.tab_curves": "狀態曲線", "curves.mood": "�
 CY.i18n.register("zh-TW", {"curves.all": "全選", "curves.none": "全不選"});
 CY.i18n.register("zh-TW", {"gift.hint_fields": "{fields}一類的人，也許會喜歡它。", "book.title": "來客名錄", "book.open": "來客名錄", "book.note": "來過的人會亮起來。點一位看介紹。", "book.unknown": "？？？", "book.got": "回禮：", "book.not_yet": "還沒有收到回禮"});
 CY.i18n.register("zh-TW", {"stats.title": "照顧統計", "stats.open": "照顧統計", "stats.given": "{name} 照顧了誰", "stats.received": "誰照顧了 {name}", "stats.pie": "圓餅圖", "stats.table": "表格", "stats.today": "今天", "stats.yesterday": "昨天", "stats.week": "最近七天", "stats.all": "全部", "stats.self": "自己", "stats.times": "{n} 次", "stats.none": "這一段沒有記錄。", "stats.table_note": "列是出手的人，欄是被照顧的人，格子是次數。", "stats.total": "一共", "stats.cared": "被照顧"});
+CY.i18n.register("zh-TW", {"gift.go_shop": "去商店的禮物區買"});
