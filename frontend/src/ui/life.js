@@ -22,7 +22,7 @@
     const giftTile = g => tile(g.icon, t('gift.' + g.id), `<button data-g="${g.id}" ${money < g.price || (inv[g.id] || 0) >= G.DOOR.gift_max ? 'disabled' : ''}>💰 ${g.price}</button>`, inv[g.id] ? esc(t('gift.have', { n: inv[g.id] })) : '', 'gift:' + g.id);
     const gifts = V ? Object.values(V.GIFTS).sort((a, b) => a.price - b.price).map(giftTile).join('') : '';
     const sec = (key, note, body, wide) => `<h3>${esc(t(key))}</h3>${note ? `<div class="mute" style="margin-bottom:6px">${esc(t(note))}</div>` : ''}<div class="giftgrid${wide ? ' wide' : ''}">${body}</div>`;
-    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('shop.title'))}</h2><div class="money big">💰 ${Math.floor(money)}</div><div class="mute" style="margin:6px 0">${esc(t('shop.note'))}</div>
+    const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('shop.title'))}</h2><div class="money big">💰 ${Math.floor(money)}</div><div class="mute" style="margin:2px 0 6px;font-size:13px">${esc(t('corner.rate_tip', { n: Math.round(G.incomeRate() * 10) / 10 }))}</div><div class="mute" style="margin:6px 0">${esc(t('shop.note'))}</div>
       ${sec('shop.sec_bed', '', bed)}${sec('shop.sec_daily', '', G.SHOP.filter(i => i.cat === 'daily').map(item).join(''))}${sec('shop.sec_decor', 'shop.decor_note', G.SHOP.filter(i => i.cat === 'decor').map(item).join(''))}${sec('shop.sec_gifts', 'shop.gift_note', gifts)}
       <div class="row" style="justify-content:flex-end;margin-top:12px"><button id="shclose" class="primary">${esc(t('btn.close'))}</button></div>`, true);
     dlg.scrollTop = keep;
