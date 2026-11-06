@@ -300,7 +300,7 @@ CY.i18n.register("zh-CN", {"card.title": "角色卡", "card.note": "这一类角
 CY.i18n.register("zh-CN", {"badge.help": "去帮忙"});
 
 CY.i18n.register("zh-CN", {"social.pets": "{a}和{b}追着玩了一阵。"});
-CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天", "brand.name": "照顾你", "tag.1": "手停一停，照看一下家里人。", "tag.2": "没有什么急事，只是有人想让你抬抬头。", "tag.3": "给自己一个离开工作五分钟的小借口。", "tag.4": "没有分数，没人记你做得怎么样。", "tag.5": "你照看他们，他们也在悄悄照看你。", "tag.6": "慢一点，他们会等你。", "app.title": "照顾你 · Care for You"});
+CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天", "brand.name": "照顾你", "app.title": "照顾你 · Care for You"});
 CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天"});
 CY.i18n.register("zh-CN", {"lbl.interrupt.countdown_seconds": "提醒倒计时，秒", "lbl.economy.work_hours": "工作时段", "lbl.audio.music_volume": "背景音乐", "lbl.audio.sfx_volume": "音效", });
 CY.i18n.register("zh-CN", {"about.p1": "照顾你是一个在网页里玩的小游戏。家里有老人、宝宝、猫狗、花草，你一边工作，他们会不定时来叫你一声：要杯水，说句话，陪一会儿。你停下手，照看一下，再回去做自己的事。没有分数，没有失败，不用下载，不用账号。", "about.how": "点一个人看他想要什么，按住动作键，等圆圈走满就做完了。点窗体右上角的时间可以调快慢。开着标签页放在一边做自己的事就行。", "about.title": "关于照顾你"});
@@ -326,3 +326,4 @@ CY.i18n.register("zh-CN", {"cond.sev": "病情", "cond.sev_mild": "轻", "cond.s
 CY.i18n.register("zh-CN", {"import.pack": "疾病包：{names}，共 {n} 个文件。只放进模板文件夹，不动存档里的角色。"});
 CY.i18n.register('zh-CN', {'act.invite_rest': '请ta睡一会儿'});
 CY.i18n.register('zh-CN', {'act.gift': '送礼'});
+CY.i18n.register("zh-CN", {"tag.1": "没有什么急事，只是有人想让你抬抬头。", "tag.2": "给自己一个离开工作五分钟的小借口。", "tag.3": "生活没有分数，没人记你做得怎么样。", "tag.4": "你照看他们，他们也在悄悄照看你。", "tag.5": "慢一点，他们会等你。", "tag.6": "水烧开了，没人催，先把手头这句话写完。", "tag.7": "孩子在客厅自己玩了一会儿，安静得有点让人起疑。", "tag.8": "老人把药盒又摆正了一遍。", "tag.9": "今天谁都没出大事，这本身就值得记一笔。", "tag.10": "有人在厨房里小声哼着歌，没人打断。", "tag.11": "工作做不完，晚饭还是要吃的。", "tag.12": "猫趴在键盘旁边，也算在场。", "tag.13": "被叫了一声，回头，就是一整天里最重要的五分钟。", "tag.14": "照顾人的一天，没有一件事能写进简历。", "tag.15": "窗外天快黑了，家里的灯一盏一盏亮起来。", "tag.16": "有人刚睡着，声音放轻一点。", "tag.17": "一杯水递过去，没有人说谢谢，也没有人需要。", "tag.18": "一个下午能做完的事，其实不多。", "tag.19": "抬头看一眼，大家都还好。", "tag.20": "最难的不是大事，是每天都要做的小事。", "tag.21": "有些事做了没人看见，但有人因此睡得安稳。"});

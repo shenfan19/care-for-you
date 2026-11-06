@@ -547,7 +547,7 @@ CY.i18n.register("zh-TW", {"card.title": "角色卡", "card.note": "這一類角
 CY.i18n.register("zh-TW", {"badge.help": "去幫忙"});
 
 CY.i18n.register("zh-TW", {"social.pets": "{a}和{b}追著玩了一陣。"});
-CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "brand.name": "照顧你", "tag.1": "手停一停，照看一下家裡人。", "tag.2": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.3": "給自己一個離開工作五分鐘的小藉口。", "tag.4": "沒有分數，沒人記你做得怎麼樣。", "tag.5": "你照看他們，他們也在悄悄照看你。", "tag.6": "慢一點，他們會等你。", "app.title": "照顧你 · Care for You"});
+CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天", "brand.name": "照顧你", "app.title": "照顧你 · Care for You"});
 CY.i18n.register("zh-TW", {"corner.day": "第 {n} 天"});
 CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到 100，0 是關掉。現場合成的安靜音樂，夜裡更低更慢。瀏覽器要求先點一下頁面才會出聲", "ini.audio.mute": "為 true 時音樂和音效全部靜音，不改兩個音量的值", "lbl.audio.mute": "全部靜音", "ini.audio.sfx_volume": "音效音量，0 到 100，0 是關掉。點按、有人開口、完成打勾、發生了事情時的輕響"});
 CY.i18n.register("zh-TW", {"lbl.interrupt.countdown_seconds": "提醒倒數，秒", "lbl.economy.work_hours": "工作時段", "lbl.audio.music_volume": "背景音樂", "lbl.audio.sfx_volume": "音效", });
@@ -574,3 +574,4 @@ CY.i18n.register("zh-TW", {"cond.sev": "病情", "cond.sev_mild": "輕", "cond.s
 CY.i18n.register("zh-TW", {"import.pack": "疾病包：{names}，共 {n} 個檔案。只放進模板資料夾，不動存檔裡的角色。"});
 CY.i18n.register('zh-TW', {'act.invite_rest': '請ta睡一會兒'});
 CY.i18n.register('zh-TW', {'act.gift': '送禮'});
+CY.i18n.register("zh-TW", {"tag.1": "沒有什麼急事，只是有人想讓你抬抬頭。", "tag.2": "給自己一個離開工作五分鐘的小藉口。", "tag.3": "生活沒有分數，沒人記你做得怎麼樣。", "tag.4": "你照看他們，他們也在悄悄照看你。", "tag.5": "慢一點，他們會等你。", "tag.6": "水燒開了，沒人催，先把手頭這句話寫完。", "tag.7": "孩子在客廳自己玩了一會兒，安靜得有點讓人起疑。", "tag.8": "老人把藥盒又擺正了一遍。", "tag.9": "今天誰都沒出大事，這本身就值得記一筆。", "tag.10": "有人在廚房裡小聲哼著歌，沒人打斷。", "tag.11": "工作做不完，晚飯還是要吃的。", "tag.12": "貓趴在鍵盤旁邊，也算在場。", "tag.13": "被叫了一聲，回頭，就是一整天裡最重要的五分鐘。", "tag.14": "照顧人的一天，沒有一件事能寫進履歷。", "tag.15": "窗外天快黑了，家裡的燈一盞一盞亮起來。", "tag.16": "有人剛睡著，聲音放輕一點。", "tag.17": "一杯水遞過去，沒有人說謝謝，也沒有人需要。", "tag.18": "一個下午能做完的事，其實不多。", "tag.19": "抬頭看一眼，大家都還好。", "tag.20": "最難的不是大事，是每天都要做的小事。", "tag.21": "有些事做了沒人看見，但有人因此睡得安穩。"});
