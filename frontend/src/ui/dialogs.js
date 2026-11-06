@@ -147,16 +147,18 @@
   /* ---------- 关于：个人项目的说明、隐私与免责、致谢、版本 ---------- */
   U.aboutDialog = function (tab) {
     tab = tab || 'about';
-    const M = CY.meta, tabs = ['about', 'data'];
+    const M = CY.meta, tabs = ['about', 'data', 'driven'];
     const para = keys => keys.map(k => `<p>${esc(t(k))}</p>`).join('');
     const link = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${esc(text || href)}</a>`;
     const ISSUES = 'https://github.com/shenfan19/care-for-you/issues', GH = 'https://github.com/shenfan19/care-for-you';
     const body = {
       /* 关于：简介，还在打磨，个人项目以 MIT 发布，GitHub 页，反馈页，邮件，最后是致谢。没有名字，作者与致谢并进这一页 */
       about: para(['about.p1', 'about.how', 'about.p3', 'about.p4', 'about.p2']) + `<p>GitHub：${link(GH)}<br>${esc(t('about.feedback'))}：${link(ISSUES)}<br>${esc(t('au.mail'))}：contact@careforyou.dev</p><h3>${esc(t('au.credits'))}</h3>${para(['cred.p3', 'cred.p2'])}`,
-      data: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}<h3>${esc(t('data.head'))}</h3><p>${esc(t('data.intro'))}</p>
-        <h4>${esc(t('data.h1'))}</h4><p>${esc(t('data.p1'))}</p><h4>${esc(t('data.h2'))}</h4><p>${esc(t('data.p2'))}</p><h4>${esc(t('data.h3'))}</h4><p>${esc(t('data.p3'))}</p>
+      data: `<h3>${esc(t('priv.h1'))}</h3>${para(['priv.p1', 'priv.p2', 'priv.p3'])}
         <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}`,
+      /* 数据驱动：写给研究者的说明和接口，三种路径，与 LM 的关系，不躲不藏 */
+      driven: `<p>${esc(t('data.intro'))}</p><h4>${esc(t('data.h1'))}</h4><p>${esc(t('data.p1'))}</p><h4>${esc(t('data.h2'))}</h4><p>${esc(t('data.p2'))}</p><h4>${esc(t('data.h3'))}</h4><p>${esc(t('data.p3'))}</p>
+        <h3>${esc(t('driven.lm_h'))}</h3>${para(['driven.lm_p1', 'driven.lm_p2'])}<h3>${esc(t('driven.api_h'))}</h3>${para(['driven.api_p'])}`,
     };
     const dlg = U.dialog(`<h2 style="margin:0 0 2px">${esc(t('about.title'))}</h2>${tab === 'about' ? `<div class="mute" style="font-size:12px;margin-bottom:8px">${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</div>` : ''}<div class="chips">${tabs.map(k => `<button class="chip ${k === tab ? 'on' : ''}" data-t="${k}">${esc(t('about.tab_' + k))}</button>`).join('')}</div>
       <div class="aboutbody">${body[tab]}</div><div class="row" style="justify-content:flex-end;margin-top:10px"><button id="aclose">${esc(t('btn.close'))}</button></div>`, true);
