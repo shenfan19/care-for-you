@@ -15,7 +15,7 @@ META = open(os.path.join(SRC, 'src', 'core', 'meta.js'), encoding='utf-8').read(
 VERSION = META.split("version: '")[1].split("'")[0]
 SITE = '--site' in sys.argv
 ARGS = [a for a in sys.argv[1:] if a != '--site']
-OUT = ARGS[0] if ARGS else os.path.join(ROOT, 'care-for-you-%s-%s.zip' % (VERSION, 'site' if SITE else 'itch'))
+OUT = ARGS[0] if ARGS else os.path.join(ROOT, '..', 'care-for-you-%s-%s.zip' % (VERSION, 'site' if SITE else 'itch'))   # outside the repo
 LIMIT = None if SITE else 1000
 
 SKIP_TOP = {'tests', 'temp_bean', 'demo3d', 'config'}
