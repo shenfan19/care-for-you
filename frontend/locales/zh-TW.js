@@ -162,7 +162,7 @@ CY.i18n.register("zh-TW", {
  "about.tab_credits": "致謝與許可",
  "about.tab_version": "版本",
  "about.p1": "手停一停，照看一下家裡人。你在工作，他們會不定時來叫你一聲。沒有分數，也沒有懲罰。",
- "about.p2": "這是沈凡的個人專案，以 MIT 授權條款發布。",
+ "about.p2": "這是一個個人專案，以 MIT 授權發布。",
  'set.time_mode': '時間',
  'set.time_mode_note': '標準模式下現實 1 秒是遊戲 1 分鐘，現實 24 分鐘是遊戲裡的一天，適合開在工作旁邊掛著。加速模式是它的幾倍。兩種模式每現實秒賺的錢一樣，加速不多賺。',
  'time_mode.normal': '標準（現實 1 秒 = 遊戲 1 分鐘）',
@@ -197,7 +197,7 @@ CY.i18n.register("zh-TW", {
  "visitor.intro": "來客介紹",
  "visitor.wiki": "在維基百科上了解更多",
  "about.p3": "遊戲裡的角色都是虛構的。遊戲不提供也不鼓勵複製已故的人。你記起的話，只是你自己對一類人的印象。",
- "about.p4": "目前是早期版本，會有不完善的地方。歡迎提意見：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。",
+ "about.p4": "還在打磨，歡迎意見和建議。",
  "priv.h1": "資料放在哪裡",
  "priv.p1": "所有遊戲資料只儲存在你自己的裝置上，是可讀的純文字（YAML 和 CSV）。遊戲原始碼以 MIT 授權公開，你可以自己核對它做了什麼。",
  "priv.p2": "目前沒有賬號，沒有伺服器，沒有統計，沒有廣告，也不使用 cookie 或第三方追蹤。",
@@ -553,7 +553,7 @@ CY.i18n.register("zh-TW", {"ini.audio.music_volume": "背景音樂音量，0 到
 CY.i18n.register("zh-TW", {"lbl.interrupt.countdown_seconds": "提醒倒數，秒", "lbl.economy.work_hours": "工作時段", "lbl.audio.music_volume": "背景音樂", "lbl.audio.sfx_volume": "音效", });
 CY.i18n.register("zh-TW", {"about.p1": "照顧你是一個在網頁裡玩的小遊戲。家裡有老人、寶寶、貓狗、花草，你一邊工作，他們會不定時來叫你一聲：要杯水，說句話，陪一會兒。你停下手，照看一下，再回去做自己的事。沒有分數，沒有失敗，不用下載，不用帳號。", "about.how": "點一個人看他想要什麼，按住動作鍵，等圓圈走滿就做完了。點視窗右上角的時間可以調快慢。開著分頁放在一邊做自己的事就行。", "about.title": "關於照顧你"});
 CY.i18n.register("zh-TW", {"about.tab_data": "資料驅動", "data.intro": "角色什麼時候要什麼，說什麼話，都是資料決定的，不是寫死在程式裡的。驅動方式有三種，現在只有第一種是完整可用的，預設也只用第一種。", "data.h1": "一，機率查表，已完成，預設", "data.p1": "每個人的需求按各自的速度增長，什麼時候出事、說哪句話、誰幫誰，都是查明文檔案裡的表和機率。檔案在資料資料夾裡，用記事本改了就生效。也可以換成你自己的程式，介面公開。", "data.h2": "二，數值積分，未完成", "data.p2": "把需求、心情和身體當成連續變化的數值，按方程一步步推進，而不是查表。目前只有一個可以自己執行的實驗後端，還沒有接進遊戲的介面，也沒有經過驗證，不建議當真。", "data.h3": "三，AI 接入，未完成", "data.p3": "AI 接入讓外部的 AI 服務來改寫台詞，預設關閉，目前只是實驗。只有你在進階設定裡打開並填入服務位址，才會把角色的名字、身分和目前情緒等少量內容傳給你選的服務，你回答過的話預設不傳。服務由第三方提供，怎麼處理資料由它的政策決定。金鑰以明文存在設定檔裡，不要把設定檔分享給別人，存檔下載預設不含金鑰。", "priv.p3": "網頁本身是靜態的，預設不會把你的遊戲資料傳到任何地方。只有你自己在進階設定裡打開遠端後端或 AI 接入才會傳送，傳什麼見「資料驅動」一頁。", "cred.p3": "畫面素材來自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
-CY.i18n.register("zh-TW", {"about.tab_data": "資料與隱私", "about.tab_author": "作者與致謝", "data.head": "資料怎麼驅動", "about.p4": "目前是早期版本，會有不完善的地方。歡迎到 GitHub 倉庫提 issue 回饋：", "au.page": "個人主頁", "au.issues": "意見與問題", "au.mail": "郵件", "au.credits": "致謝與授權"});
+CY.i18n.register("zh-TW", {"about.tab_data": "資料與隱私", "data.head": "資料怎麼驅動", "about.p4": "還在打磨，歡迎意見和建議。", "au.issues": "意見與問題", "au.mail": "郵件", "au.credits": "致謝"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材來自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
 CY.i18n.register("zh-TW", {"data.h2": "二，數值積分，實驗階段", "data.p2": "把需求、心情和身體當成連續變化的數值，按方程一步步積分，直接在瀏覽器裡算，模型是資料資料夾裡的明文 YAML。在進階設定裡把後端改成 lm 就能用。只管需求、心情和虛弱度，事件和台詞仍由查表決定。數值沒有經過驗證，不建議當真。"});
 CY.i18n.register("zh-TW", {"cred.p3": "畫面素材來自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});

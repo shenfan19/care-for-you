@@ -41,7 +41,7 @@ CY.i18n.register("ko", {
 "gate.fail": "저장소를 열 수 없습니다", "gate.perm": "지난번에 데이터 폴더 {name}을(를) 선택했습니다. 브라우저가 접근 권한을 다시 확인해야 합니다.", "gate.continue": "이 폴더 계속 사용", "gate.browser": "대신 브라우저 저장소 사용",
 "about.title": "Care for You 소개", "about.tab_about": "소개", "about.tab_privacy": "개인정보와 면책", "about.tab_credits": "크레딧과 라이선스", "about.tab_version": "버전",
 "about.p1": "잠깐 손을 멈추고 집안 식구를 돌봐 주세요. 일하는 동안 가끔 당신을 부릅니다. 점수도 벌도 없습니다.",
-"about.p2": "Fan Shen의 개인 프로젝트이며 MIT 라이선스로 배포됩니다.",
+"about.p2": "개인 프로젝트이며 MIT 라이선스로 공개되어 있습니다.",
 'set.time_mode': '시간',
 'set.time_mode_note': '표준에서는 현실 1초가 게임 1분이고, 현실 24분이 게임 속 하루입니다. 일하는 옆에 켜 두기 좋습니다. 빠르게는 그 몇 배입니다. 돈은 현실 1초당 똑같이 법니다.',
 'time_mode.normal': '표준 (현실 1초 = 게임 1분)',
@@ -76,7 +76,7 @@ CY.i18n.register("ko", {
 "visitor.intro": "방문객 소개",
 "visitor.wiki": "위키백과에서 더 보기",
 "about.p3": "모든 캐릭터는 가상입니다. 세상을 떠난 사람을 재현하는 것을 게임은 제공하지도 권하지도 않습니다. 떠올린 말은 어떤 유형의 사람에 대한 나만의 인상일 뿐입니다.",
-"about.p4": "초기 버전이라 거친 부분이 있습니다. 의견은 contact@careforyou.dev 또는 github.com/shenfan19/care-for-you 의 issue로 보내 주세요.",
+"about.p4": "아직 다듬는 중입니다. 의견과 제안을 환영합니다.",
 "priv.h1": "데이터가 있는 곳", "priv.p1": "모든 게임 데이터는 사용자의 기기에만 읽을 수 있는 텍스트(YAML과 CSV)로 저장됩니다. 소스 코드는 MIT 라이선스로 공개되어 있어 게임이 무엇을 하는지 직접 확인할 수 있습니다.",
 "priv.p2": "현재 계정, 서버, 분석, 광고, 쿠키, 제3자 추적이 없습니다.", "priv.p3": "페이지 자체는 정적이며, 실행 중에 게임 데이터를 어디로도 보내지 않습니다.",
 "priv.h3": "내 권리", "priv.p6": "설정에 로컬 데이터를 모두 삭제하는 버튼이 있으며, 삭제하면 되돌릴 수 없습니다. 이 버전에서는 저장 파일 내려받기와 불러오기를 제공하지 않습니다.",
@@ -178,7 +178,7 @@ CY.i18n.register("ko", {"corner.day": "{n}일째"});
 CY.i18n.register("ko", {"lbl.interrupt.countdown_seconds": "알림 카운트다운, 초", "lbl.economy.work_hours": "근무 시간", "lbl.audio.music_volume": "음악", "lbl.audio.sfx_volume": "효과음", });
 CY.i18n.register("ko", {"about.p1": "Care for You는 브라우저에서 하는 작은 게임입니다. 일을 하는 동안 집의 사람, 반려동물, 식물이 이따금 당신을 부릅니다. 물 한 잔, 말 한마디, 잠시 곁에 있어 달라는 것입니다. 손을 멈추고 돌본 다음 하던 일로 돌아갑니다. 점수도 실패도 없고, 내려받을 것도 계정도 필요 없습니다.", "about.how": "사람을 눌러 무엇을 원하는지 보고, 동작을 길게 눌러 원이 가득 차면 끝납니다. 창 오른쪽 위의 시간을 누르면 속도를 바꿀 수 있습니다. 탭을 열어 두고 하던 일을 하면 됩니다."});
 CY.i18n.register("ko", {"about.tab_data": "데이터 구동", "data.intro": "누가 언제 무엇을 원하고 무슨 말을 하는지는 프로그램에 박혀 있는 것이 아니라 데이터가 정합니다. 구동 방식은 세 가지이고, 완성된 것은 첫째뿐이며 기본으로 쓰는 것도 그것뿐입니다.", "data.h1": "하나, 확률표 조회, 완성, 기본", "data.p1": "각자의 필요는 제 속도로 늘어나고, 무슨 일이 생기는지, 어떤 대사를 하는지, 누가 누구를 돕는지는 일반 텍스트 파일의 표와 확률을 찾아 정합니다. 파일은 데이터 폴더에 있고 메모장으로 고치면 바로 적용됩니다. 직접 만든 프로그램으로 바꿀 수도 있고 인터페이스는 공개되어 있습니다.", "data.h2": "둘, 수치 적분, 미완성", "data.p2": "필요, 기분, 몸을 연속으로 변하는 수치로 보고, 표 조회가 아니라 방정식으로 한 걸음씩 나아갑니다. 지금은 직접 실행할 수 있는 실험용 백엔드만 있고, 게임 화면에는 연결되지 않았으며 검증도 하지 않았습니다. 진지하게 받아들이지 마세요.", "data.h3": "셋, AI 연결, 미완성", "data.p3": "AI 연결은 외부 AI 서비스가 대사를 고쳐 쓰게 하는 것입니다. 기본은 꺼짐이며 실험 단계입니다. 고급 설정에서 켜고 서비스 주소를 넣었을 때만 캐릭터의 이름, 역할, 현재 기분 같은 소량의 내용이 선택한 서비스로 전송됩니다. 당신이 답한 말은 기본으로 보내지 않습니다. 서비스는 제3자가 운영하며 데이터 처리는 그쪽 정책을 따릅니다. 키는 설정 파일에 평문으로 저장되므로 그 파일을 남에게 공유하지 마세요. 내려받는 저장 파일에는 기본으로 키가 들어가지 않습니다.", "priv.p3": "웹페이지 자체는 정적이며 기본으로 게임 데이터를 어디로도 보내지 않습니다. 고급 설정에서 직접 원격 백엔드나 AI 연결을 켰을 때만 전송되며, 무엇을 보내는지는 「데이터 구동」 페이지에 적혀 있습니다.", "cred.p3": "그래픽 소재는 Kenney(CC0 1.0, kenney.nl)의 Furniture Kit, Mini Characters, Cube Pets, Car Kit, City Kit Commercial, Food Kit, Mini Market입니다."});
-CY.i18n.register("ko", {"about.tab_data": "데이터와 개인정보", "about.tab_author": "작가와 감사", "data.head": "어떻게 구동되는가", "about.p4": "초기 버전이라 거친 부분이 있습니다. 의견은 GitHub 저장소의 issue로 남겨 주세요:", "au.page": "개인 페이지", "au.issues": "의견과 문제", "au.mail": "이메일", "au.credits": "감사와 라이선스"});
+CY.i18n.register("ko", {"about.tab_data": "데이터와 개인정보", "data.head": "어떻게 구동되는가", "about.p4": "아직 다듬는 중입니다. 의견과 제안을 환영합니다.", "au.issues": "의견과 문제", "au.mail": "이메일", "au.credits": "감사의 말"});
 CY.i18n.register("ko", {"cred.p3": "그래픽 소재는 Kenney(CC0 1.0, kenney.nl)의 Furniture Kit, Mini Characters, Cube Pets, Car Kit, City Kit Commercial, Food Kit, Mini Market입니다."});
 CY.i18n.register("ko", {"data.h2": "둘, 수치 적분, 실험 단계", "data.p2": "필요, 기분, 몸을 연속으로 변하는 수치로 보고 방정식으로 한 걸음씩 적분하며, 계산은 브라우저 안에서 합니다. 모델은 데이터 폴더의 일반 텍스트 YAML입니다. 고급 설정에서 백엔드를 lm으로 바꾸면 쓸 수 있습니다. 필요, 기분, 허약도만 다루고 사건과 대사는 여전히 표 조회로 정해집니다. 수치는 검증되지 않았으니 진지하게 받아들이지 마세요."});
 CY.i18n.register("ko", {"cred.p3": "그래픽 소재는 Kenney(CC0 1.0, kenney.nl)의 Furniture Kit, Mini Characters, Cube Pets, Car Kit, City Kit Commercial, Food Kit, Mini Market입니다."});

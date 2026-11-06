@@ -92,3 +92,4 @@ CY.i18n.register("ja", {"curves.all": "すべて選択", "curves.none": "すべ�
 CY.i18n.register("ja", {"gift.hint_fields": "{fields}の人が喜ぶかもしれません。", "book.title": "来客名簿", "book.open": "来客名簿", "book.note": "訪れた人は明るくなります。タップして紹介を見られます。", "book.unknown": "？？？", "book.got": "お返し：", "book.not_yet": "まだお返しはありません"});
 CY.i18n.register("ja", {"stats.title": "お世話の統計", "stats.open": "お世話の統計", "stats.given": "{name}がお世話した相手", "stats.received": "{name}をお世話した人", "stats.pie": "円グラフ", "stats.table": "表", "stats.today": "今日", "stats.yesterday": "昨日", "stats.week": "直近7日", "stats.all": "すべて", "stats.self": "自分", "stats.times": "{n}回", "stats.none": "この期間の記録はありません。", "stats.table_note": "行はお世話をした人、列はお世話された人、数字は回数です。", "stats.total": "合計", "stats.cared": "お世話された"});
 CY.i18n.register("ja", {"gift.go_shop": "お店のギフト売り場で買う"});
+CY.i18n.register("ja", {"about.feedback": "フィードバック"});

@@ -56,7 +56,7 @@ CY.i18n.register('zh-CN', {
 
   'about.title': '关于 Care for You', 'about.tab_about': '关于', 'about.tab_privacy': '隐私与免责', 'about.tab_credits': '致谢与许可', 'about.tab_version': '版本',
   'about.p1': '手停一停，照看一下家里人。你在工作，他们会不定时来叫你一声。没有分数，也没有惩罚。',
-  'about.p2': '这是沈凡的个人项目，以 MIT 许可证发布。',
+  'about.p2': '这是一个个人项目，以 MIT 许可证发布。',
   'set.time_mode': '时间',
   'set.time_mode_note': '标准模式下现实 1 秒是游戏 1 分钟，现实 24 分钟是游戏里的一天，适合开在工作旁边挂着。加速模式是它的几倍。两种模式每现实秒赚的钱一样，加速不多赚。',
   'time_mode.normal': '标准（现实 1 秒 = 游戏 1 分钟）',
@@ -91,7 +91,7 @@ CY.i18n.register('zh-CN', {
   'visitor.intro': '来客介绍',
   'visitor.wiki': '在维基百科上了解更多',
   'about.p3': '游戏里的角色都是虚构的。游戏不提供也不鼓励复制已故的人。你记起的话，只是你自己对一类人的印象。',
-  'about.p4': '目前是早期版本，会有不完善的地方。欢迎提意见：contact@careforyou.dev，或在 github.com/shenfan19/care-for-you 提 issue。',
+  'about.p4': '还在打磨，欢迎意见和建议。',
   'priv.h1': '数据放在哪里',
   'priv.p1': '所有游戏数据只保存在你自己的设备上，是可读的纯文本（YAML 和 CSV）。游戏源代码以 MIT 许可证公开，你可以自己核对它做了什么。',
   'priv.p2': '目前没有账号，没有服务器，没有统计，没有广告，也不使用 cookie 或第三方追踪。',
@@ -305,7 +305,7 @@ CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天"});
 CY.i18n.register("zh-CN", {"lbl.interrupt.countdown_seconds": "提醒倒计时，秒", "lbl.economy.work_hours": "工作时段", "lbl.audio.music_volume": "背景音乐", "lbl.audio.sfx_volume": "音效", });
 CY.i18n.register("zh-CN", {"about.p1": "照顾你是一个在网页里玩的小游戏。家里有老人、宝宝、猫狗、花草，你一边工作，他们会不定时来叫你一声：要杯水，说句话，陪一会儿。你停下手，照看一下，再回去做自己的事。没有分数，没有失败，不用下载，不用账号。", "about.how": "点一个人看他想要什么，按住动作键，等圆圈走满就做完了。点窗体右上角的时间可以调快慢。开着标签页放在一边做自己的事就行。", "about.title": "关于照顾你"});
 CY.i18n.register("zh-CN", {"about.tab_data": "数据驱动", "data.intro": "角色什么时候要什么，说什么话，都是数据决定的，不是写死在程序里的。驱动方式有三种，现在只有第一种是完整可用的，默认也只用第一种。", "data.h1": "一，概率查表，已完成，默认", "data.p1": "每个人的需求按各自的速度增长，什么时候出事、说哪句话、谁帮谁，都是查明文文件里的表和概率。文件在数据文件夹里，用记事本改了就生效。也可以换成你自己的程序，接口公开。", "data.h2": "二，数值积分，未完成", "data.p2": "把需求、心情和身体当成连续变化的数值，按方程一步步推进，而不是查表。目前只有一个可以自己运行的实验后端，还没有接进游戏的界面，也没有经过验证，不建议当真。", "data.h3": "三，AI 接入，未完成", "data.p3": "AI 接入让外部的 AI 服务来改写台词，默认关闭，目前只是实验。只有你在高级设置里打开并填入服务地址，才会把角色的名字、身份和当前情绪等少量内容发给你选的服务，你回答过的话默认不发。服务由第三方提供，怎么处理数据由它的政策决定。密钥明文存在设置文件里，不要把设置文件分享给别人，存档下载默认不含密钥。", "priv.p3": "网页本身是静态的，默认不会把你的游戏数据发到任何地方。只有你自己在高级设置里打开远程后端或 AI 接入才会发送，发什么见\"数据驱动\"一页。", "cred.p3": "画面素材来自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
-CY.i18n.register("zh-CN", {"about.tab_data": "数据与隐私", "about.tab_author": "作者与致谢", "data.head": "数据怎么驱动", "about.p4": "目前是早期版本，会有不完善的地方。欢迎到 GitHub 仓库提 issue 反馈：", "au.page": "个人主页", "au.issues": "意见与问题", "au.mail": "邮件", "au.credits": "致谢与许可"});
+CY.i18n.register("zh-CN", {"about.tab_data": "数据与隐私", "data.head": "数据怎么驱动", "about.p4": "还在打磨，欢迎意见和建议。", "au.issues": "意见与问题", "au.mail": "邮件", "au.credits": "致谢"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材来自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
 CY.i18n.register("zh-CN", {"data.h2": "二，数值积分，实验阶段", "data.p2": "把需求、心情和身体当成连续变化的数值，按方程一步步积分，直接在浏览器里算，模型是数据文件夹里的明文 YAML。在高级设置里把后端改成 lm 就能用。只管需求、心情和虚弱度，事件和台词仍由查表决定。数值没有经过验证，不建议当真。"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材来自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});

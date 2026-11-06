@@ -92,3 +92,4 @@ CY.i18n.register("ko", {"curves.all": "모두 선택", "curves.none": "모두 �
 CY.i18n.register("ko", {"gift.hint_fields": "{fields} 분야의 사람이 좋아할지도 모릅니다.", "book.title": "방문객 명부", "book.open": "방문객 명부", "book.note": "다녀간 사람은 밝아집니다. 눌러서 소개를 볼 수 있습니다.", "book.unknown": "???", "book.got": "답례:", "book.not_yet": "아직 답례가 없습니다"});
 CY.i18n.register("ko", {"stats.title": "돌봄 통계", "stats.open": "돌봄 통계", "stats.given": "{name}이(가) 돌본 사람", "stats.received": "{name}을(를) 돌본 사람", "stats.pie": "원그래프", "stats.table": "표", "stats.today": "오늘", "stats.yesterday": "어제", "stats.week": "최근 7일", "stats.all": "전체", "stats.self": "자기 자신", "stats.times": "{n}회", "stats.none": "이 기간의 기록이 없습니다.", "stats.table_note": "행은 돌본 사람, 열은 돌봄을 받은 사람, 칸은 횟수입니다.", "stats.total": "합계", "stats.cared": "돌봄 받음"});
 CY.i18n.register("ko", {"gift.go_shop": "상점의 선물 코너에서 사기"});
+CY.i18n.register("ko", {"about.feedback": "피드백"});

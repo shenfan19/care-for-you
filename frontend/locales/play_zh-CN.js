@@ -41,3 +41,4 @@ CY.i18n.register("zh-CN", {"curves.all": "全选", "curves.none": "全不选"});
 CY.i18n.register("zh-CN", {"gift.hint_fields": "{fields}一类的人，也许会喜欢它。", "book.title": "来客名录", "book.open": "来客名录", "book.note": "来过的人会亮起来。点一位看介绍。", "book.unknown": "？？？", "book.got": "回礼：", "book.not_yet": "还没有收到回礼"});
 CY.i18n.register("zh-CN", {"stats.title": "照顾统计", "stats.open": "照顾统计", "stats.given": "{name} 照顾了谁", "stats.received": "谁照顾了 {name}", "stats.pie": "饼图", "stats.table": "表格", "stats.today": "今天", "stats.yesterday": "昨天", "stats.week": "最近七天", "stats.all": "全部", "stats.self": "自己", "stats.times": "{n} 次", "stats.none": "这一段没有记录。", "stats.table_note": "行是出手的人，列是被照顾的人，格子是次数。", "stats.total": "一共", "stats.cared": "被照顾"});
 CY.i18n.register("zh-CN", {"gift.go_shop": "去商店的礼物区买"});
+CY.i18n.register("zh-CN", {"about.feedback": "反馈"});
