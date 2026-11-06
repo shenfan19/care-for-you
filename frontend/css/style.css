@@ -536,11 +536,9 @@ body.embed main { padding-bottom: 0; } body.embed #roomBar:empty { display: none
 .spie.v { flex-direction: column; align-items: flex-start; gap: 6px; }
 .spie.v .sleg { grid-template-columns: 12px 1fr auto auto; }
 
-/* 手机（640 以内）：时间，钱，按钮排在场景上面，不盖场景；记录是贴底的抽屉，展开最多占六成屏幕，点它的标题条收起；记录由 U.layoutNarrow 搬到页面最外层，因为场景容器里的 fixed 不相对窗口 */
+/* 手机（640 以内）：时间，钱，按钮仍在场景右下角；记录是贴底的抽屉，展开最多占六成屏幕，点它的标题条收起，不再顶到上面和按钮叠在一起；记录由 U.layoutNarrow 搬到页面最外层，因为场景容器里的 fixed 不相对窗口 */
 @media (max-width: 640px) {
-  .room .cornerbox { top: auto; bottom: 100%; left: 0; right: 0; margin-bottom: 8px; max-width: none; justify-content: flex-start; gap: 5px; }
-  .cornerbox .corner { padding: 2px 8px; font-size: 12px; }
-  .cornerbox .tools .icon { width: 28px; height: 28px; }
+  .room .cornerbox { top: auto; bottom: 10px; }
   .logwin { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; border-radius: 14px 14px 0 0; border: 1px solid var(--line); border-bottom: none; box-shadow: 0 -4px 16px #0002; background: var(--card); padding-bottom: env(safe-area-inset-bottom); }
   .logwin .logbody { max-height: 55vh; }
   .logbar { padding: 10px 12px; }

@@ -42,12 +42,11 @@
   U.fmtMinutes = m => (m >= 60 ? t('unit.hour', { n: +(m / 60).toFixed(1) }) : t('unit.min', { n: Math.round(m) }));
 
   /* ---------- 构建 ---------- */
-  /* 手机宽度（640 以内）：顶部按钮排在场景上方，要给它留出位置；记录搬到页面最外层做贴底抽屉。宽屏时都放回窗体里 */
+  /* 手机宽度（640 以内）：记录搬到页面最外层做贴底抽屉，宽屏时放回窗体里 */
   U.layoutNarrow = function () {
-    const room = U.room; if (!room) return;
-    const box = room.querySelector('.cornerbox'), log = doc().getElementById('logwin'), narrow = win().innerWidth <= 640;
-    if (log) { const host = narrow ? doc().body : room; if (log.parentNode !== host) host.appendChild(log); }
-    if (box) { const mt = narrow ? Math.ceil(box.offsetHeight) + 8 + 'px' : ''; if (room.style.marginTop !== mt) room.style.marginTop = mt; }
+    const room = U.room, log = doc().getElementById('logwin'); if (!room || !log) return;
+    const host = win().innerWidth <= 640 ? doc().body : room;
+    if (log.parentNode !== host) host.appendChild(log);
   };
   U.buildRoom = function (root) {
     U.room = root;
