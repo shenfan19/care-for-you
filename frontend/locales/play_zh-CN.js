@@ -49,3 +49,4 @@ CY.i18n.register("zh-CN", {"author.h_author": "作者", "author.cfy_p1": "我做
 CY.i18n.register("zh-CN", {"about.tab_about": "简介和免责声明", "set.know_warn": "（AI 生成，尚未完整校对，如需使用请自行核对出处。）", "set.know_open": "打开", "author.intro": "这是 Fan Shen 的个人项目，以 MIT 许可证发布，目前仍在继续开发中，欢迎意见和建议。", "data.p3": "AI 接入让外部的 AI 服务来改写台词，默认关闭，目前只是实验。它按发布者自己的后端接口设计，玩家不需要，也不会在游戏里填写密钥。只有在高级设置里打开并填入后端地址，才会把角色的名字、身份和当前情绪等少量内容发给这个后端，你回答过的话默认不发。后端背后的服务由第三方提供，怎么处理数据由它的政策决定。"});
 CY.i18n.register("zh-CN", {"author.game": "游戏", "author.cfy_p1": "我做这个游戏，是因为作为父亲，亲眼看到妻子和长辈每天的付出和照顾，想看看大家到底做了什么。", "author.lm_p1": "Life Matters（LM）是我的一个开放研究项目，用 YAML 构造 LM format 格式，汇总部分医学、心理学、社会学研究成果，并以动力学模型描述日常生活中各个要素如何影响健康。Care 的第二种引擎是 LM 的 JS 简化版，其中部分模型从 LM 的转换插件导出，并根据接口适配性与仿真效果做了少许调整。", "author.thanks_ai": "游戏从代码、文本到画面全面使用 vibe coding 完成，感谢 AI 让我在工作之余实现了这个小游戏的设想。"});
 CY.i18n.register("zh-CN", {"author.lm_more": "详见"});
+CY.i18n.register("zh-CN", {"author.main_site": "主站", "author.itch": "itch 镜像", "author.code": "源码"});
