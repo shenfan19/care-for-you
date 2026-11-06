@@ -157,7 +157,7 @@
         <h4>${esc(t('data.h1'))}</h4><p>${esc(t('data.p1'))}</p><h4>${esc(t('data.h2'))}</h4><p>${esc(t('data.p2'))}</p><h4>${esc(t('data.h3'))}</h4><p>${esc(t('data.p3'))}</p>
         <h3>${esc(t('priv.h3'))}</h3>${para(['priv.p6', 'priv.p7', 'priv.p8'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}`,
       author: `<h3>Fan Shen</h3>${para(['about.p2'])}<p>${esc(t('au.page'))}：${link(PAGE)}<br>GitHub：${link(GH)}<br>${esc(t('au.mail'))}：contact@careforyou.dev</p>
-        <h3>${esc(t('au.credits'))}</h3>${para(['cred.p1', 'cred.p2', 'cred.p3'])}`,
+        <h3>${esc(t('au.credits'))}</h3>${para(['cred.p3', 'cred.p2'])}`,
     };
     const dlg = U.dialog(`<h2 style="margin-top:0">${esc(t('about.title'))}</h2><div class="chips">${tabs.map(k => `<button class="chip ${k === tab ? 'on' : ''}" data-t="${k}">${esc(t('about.tab_' + k))}</button>`).join('')}</div>
       <div class="aboutbody">${body[tab]}</div><div class="row" style="justify-content:space-between;margin-top:10px"><span class="mute" style="font-size:12px">${esc(t('ver.line', { app: M.app, v: M.version, schema: M.schema, date: M.released }))}</span><button id="aclose">${esc(t('btn.close'))}</button></div>`, true);

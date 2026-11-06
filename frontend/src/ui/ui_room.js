@@ -60,6 +60,7 @@
     /* 鼠标悬停：移到谁身上，谁的菜单就弹出，不用点 */
     root.addEventListener('pointermove', onHover);
     win().addEventListener('resize', () => U.layoutNarrow());
+    if (U.applyTheme) U.applyTheme();
     U.renderRoom(true);
     U.layoutNarrow();
   };

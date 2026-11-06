@@ -114,6 +114,7 @@ game:
   retry_ms: 5000                     # 间隔算不出来时，隔多久再试
   person:
     default_age: 35
+    figure_scale: { dressed: 0.78, sprite: 1 }   # 场景里人物的大小倍数，穿衣小豆比迷你小人大，缩小一点才和房子，头顶的状态搭
     start_mood: 0.6
     start_frailty: 0.1
     talkative_default: 0.5

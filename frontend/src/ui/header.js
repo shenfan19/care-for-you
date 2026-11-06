@@ -10,6 +10,7 @@
     let th = ini.get(G.cfg, 'ui', 'theme');
     if (th !== 'light' && th !== 'dark') th = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     CY.figure = CY.figureOf(ini.get(G.cfg, 'ui', 'figure'));
+    if (U.room) U.room.style.setProperty('--fig', String(G.E('game').person.figure_scale[CY.figure] || 1));   /* 人物大小倍数在 engine.yaml 的 game.person.figure_scale */
     for (const d of [document, U.pipDoc]) if (d) { d.documentElement.dataset.theme = th; }
   };
   /* 顶栏已经没有语言和明暗的快捷控件，都在设置里 */

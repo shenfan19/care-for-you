@@ -190,9 +190,9 @@ button.danger { color:#b3261e; }
 /* 斜视的房子：只在斜视的页面里，房间是固定比例的画面，小人按格子位置摆在上面。全家总览页保持原来的样子 */
 .room.iso { padding:0; min-height:0; aspect-ratio:800 / 520; container-type:inline-size; width:100%; overflow:hidden; }
 .room.iso .stage { position:absolute; inset:0; display:block; pointer-events:none; z-index:4; }
-.room.iso .cx { position:absolute; width:8cqw; transform:translate(-50%, -88%); pointer-events:auto; z-index:calc(10 + var(--z, 0)); }
+.room.iso .cx { position:absolute; width:calc(8cqw * var(--fig, 1)); transform:translate(-50%, -88%); pointer-events:auto; z-index:calc(10 + var(--z, 0)); }
 .room.iso .cx.talk { z-index:calc(1000 + var(--z, 0)); }
-.room.iso .cx .body { height:10.4cqw; } 
+.room.iso .cx .body { height:calc(10.4cqw * var(--fig, 1)); } 
 .room.iso .cx .nm { font-size:clamp(9px, 1.35cqw, 12px); padding:0 2px; white-space:nowrap; }
 .room.iso .cx .badges { top:-8px; } .room.iso .cx .badges span { width:18px; height:18px; font-size:11px; }
 .room.iso .cx.player { pointer-events:none; } .room.iso .cx.player .nm { color:var(--mute); }
@@ -224,7 +224,7 @@ button.danger { color:#b3261e; }
 
 /* 窄屏：房间里只留头像和徽标，名单变成底部一排可横滑的小卡片 */
 @media (max-width: 640px) {
-  .room.iso .cx { width:10cqw; } .room.iso .cx .nm { display:none; }
+  .room.iso .cx { width:calc(10cqw * var(--fig, 1)); } .room.iso .cx .nm { display:none; }
   .room.iso .cx .badges span { width:14px; height:14px; font-size:9px; }
   .room.iso { overflow:visible; margin-bottom:70px; }
   .room.iso .scene { border-radius:16px; overflow:hidden; }
@@ -365,7 +365,7 @@ button.corner.unread { position:relative; }
 .cx[data-st=need] .body { animation:needyglow 6s ease-in-out infinite; }
 .cx[data-st=act] .av, .cx[data-st=act] .body { animation:none; filter:none; }
 @keyframes needyglow { 0%, 62%, 100% { filter:none; } 78% { filter:drop-shadow(0 0 9px var(--accent)); } }
-.room.iso .cx .tears { height:10.4cqw; }
+.room.iso .cx .tears { height:calc(10.4cqw * var(--fig, 1)); }
 @media (prefers-reduced-motion: reduce) { .cx[data-st=need] .body, .cx[data-st=cry] .av { animation:none; } }
 
 /* 对话卡：固定在房间底部，一次一张，选项横着排，不盖住太多场景 */
@@ -415,8 +415,8 @@ button.corner.unread { position:relative; }
 .room.iso .cx .nm { transform:scale(calc(1 / var(--zoom, 1))); transform-origin:50% 0; }
 .room.iso .cx .nm b { font-weight:600; color:var(--mute); }
 .room.iso .cx.sel .nm b, .room.iso .cx.hov .nm b { color:var(--ink); }
-.room.iso .cx .badges { top:calc(var(--hd, 0) * 10.4cqw - 6px); transform:scale(calc(1 / var(--zoom, 1))); transform-origin:50% 100%; }
-.room.iso .cx .slot { margin-bottom:calc(var(--hd, 0) * -10.4cqw); transform:scale(calc(1 / var(--zoom, 1))); transform-origin:0 100%; }
+.room.iso .cx .badges { top:calc(var(--hd, 0) * 10.4cqw * var(--fig, 1) - 6px); transform:scale(calc(1 / var(--zoom, 1))); transform-origin:50% 100%; }
+.room.iso .cx .slot { margin-bottom:calc(var(--hd, 0) * -10.4cqw * var(--fig, 1)); transform:scale(calc(1 / var(--zoom, 1))); transform-origin:0 100%; }
 .placenav .zones { display:inline-flex; gap:4px; margin-left:4px; }
 .placenav .zone { position:relative; padding:1px 8px; font-size:15px; line-height:1.4; background:var(--card); }
 .placenav .zone.on { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 16%, var(--card)); }
