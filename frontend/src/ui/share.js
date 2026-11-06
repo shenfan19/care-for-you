@@ -11,7 +11,7 @@
   U.sharePopover = anchor => {
     const days = G.cal.days.slice().sort((a, b) => b.n - a.n);
     const people = G.people.filter(p => G.isHuman(p));
-    const dayLabel = rec => { const d = G.dateOf(rec.n); return d.iso + ' · ' + t('cal.wd' + d.weekday); };
+    const dayLabel = rec => { const d = G.dateOf(rec.n); return d.iso + ' · ' + t(['cal.wd0', 'cal.wd1', 'cal.wd2', 'cal.wd3', 'cal.wd4', 'cal.wd5', 'cal.wd6'][d.weekday]); };
     const dayRows = days.map(rec => `<button type="button" data-share-day="${rec.n}">${esc(dayLabel(rec))}</button>`).join('');
     const personRows = people.map(p => `<button type="button" data-share-person="${esc(p.id)}"><span>${esc(p.person.name)}</span><small class="mute">${esc(p.person.role || '')}</small></button>`).join('');
     U.popover(anchor, `<details><summary>${esc(t('share.choose_day'))}</summary><div class="share-options">${dayRows || `<p class="mute">${esc(t('cal.none'))}</p>`}</div></details>
