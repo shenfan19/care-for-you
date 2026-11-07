@@ -6,6 +6,7 @@
     ['time', 'mode', 'standard', 'standard 标准模式，现实 1 秒是游戏 1 分钟，现实 24 分钟是游戏一天，适合挂机；fast 加速，倍数见 fast_speed，赚钱仍按标准模式算，不随加速增加'],
     ['time', 'fast_speed', '2', '加速模式是标准模式的几倍，2，4 或 6'],
     ['time', 'daynight', 'auto', 'auto 用游戏内时钟；system 一律跟随系统时钟；game 一律用游戏内时钟'],
+    ['play', 'lead_auto', 'true', '开启时，闲置的主控角色会自理和照顾家人。关闭后，能办公的成年人在工作时段回书桌，其余情况原地待命，仍可接受照顾'],
     ['play', 'backend_provider', 'builtin', 'builtin 是内置后端，规则和台词是程序自带的；lm 是内置的数值积分后端，在浏览器里直接积分需求，心情，虚弱度，模型是程序自带的，实验阶段；http 是把状态发给一个远程后端'],
     ['play', 'condition_models', 'true', '为 true 时，得了病的角色，其疾病部分由浏览器里的积分引擎按内置的疾病模型计算，读数只在开发者模式里显示；没有疾病模型的角色不受影响。关掉就退回纯概率表'],
     ['play', 'backend_url', '', '远程后端的地址，只在 backend_provider 为 http 时用。发出去的只有状态快照，不含名字'],

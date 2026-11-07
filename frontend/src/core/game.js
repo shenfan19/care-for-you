@@ -758,7 +758,7 @@
       if (prevAct === 'awake' && act === 'sleeping') G.toastFor(p, t('toast.sleep', { name: p.person.name }), 'soft');
       /* 没人管的时候，有的会自己动手：老人自己倒水做饭，孩子能做的少，婴儿什么也做不了 */
       const sc = G.classOf(p).self_care;
-      if (sc > 0 && !sleeping && (p !== G.protagonist() || G.leadAuto())) for (const k in defs) {
+      if (sc > 0 && !sleeping && G.canAutoAct(p)) for (const k in defs) {
         if (G.need(p, k) > G.E('game').need_dynamics.self_act_level && Math.random() < sc * hp * G.E('game').need_dynamics.self_act_rate * boost) {
           const a = selfActionFor(p, k);
           if (a && selfAct(p, a, k, offline)) { if (p === G.protagonist() && a.at && CY.world.doAt) CY.world.doAt(a); break; }   /* 主角自己做的事要走到那个房间，摆那个姿势，和玩家点出来的一样 */

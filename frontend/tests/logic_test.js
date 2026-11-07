@@ -1372,6 +1372,21 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     check('夜里在卧室闲着，主角也躺下睡', G.activityOf(dad) === 'sleeping');
     W.lastActive = Date.now();
     check('一动手就醒', G.activityOf(dad) === 'awake');
+    const setting = G.cfg.play.lead_auto;
+    G.cfg.play.lead_auto = 'false';
+    const idleTick = () => { W.lastActive = Date.now() - W.IDLE_MS - 100; W.tick(); };
+    G.setClock(10 * 60);
+    G.get(gId).person.active = false;
+    W.moveTo('home', 'kitchen'); idleTick();
+    check('关闭自动行动，独居的主控成年人在工作时段回书桌', W.player().room === 'study' && W.atWork());
+    G.setClock(20 * 60); W.moveTo('home', 'kitchen'); idleTick();
+    check('关闭自动行动，能办公的成年人下班后留在原处', W.player().room === 'kitchen');
+    G.get(gId).person.active = true;
+    G.setProtagonist(gId); G.setClock(9 * 60); W.moveTo('home', 'study'); idleTick();
+    check('关闭自动行动，长辈原地待命，在书房也不办公', W.player().room === 'study' && !W.atWork());
+    G.setClock(23 * 60); W.moveTo('home', W.bedOf(G.get(gId)).room); idleTick();
+    check('关闭自动行动，夜里在卧室闲置也不自动躺下', G.activityOf(G.get(gId)) === 'awake');
+    if (setting === undefined) delete G.cfg.play.lead_auto; else G.cfg.play.lead_auto = setting;
     W.enforce = false; for (const x of G.people) x.person.active = true;
   }
   {   /* 在家办公的人：平时全天办公，周日休息和工作大约 1 比 3，每个人每天不一样，同一天不变 */
@@ -1403,8 +1418,88 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
       const rnd = Math.random; W.lastActive = Date.now();
       Math.random = () => 0; G.advance(1, false);
       check('玩家刚操作过，主角不自动行动', own === 0, String(own));
-      W.lastActive = Date.now() - 60000; G.advance(1, false); Math.random = rnd;
+      W.lastActive = Date.now() - 60000; G.advance(1, false);
       check('玩家一段时间没动手，主角自己动手', own > 0, String(own));
+      const ownBefore = own, setting = G.cfg.play.lead_auto;
+      G.cfg.play.lead_auto = 'false';
+      W.player().act = null; W.lastActive = Date.now() - 60000;
+      G.setNeed(lead, 'hunger', 0.95); G.advance(1, false);
+      check('关闭自动行动后主角闲置也不自理', own === ownBefore);
+      if (setting === undefined) delete G.cfg.play.lead_auto; else G.cfg.play.lead_auto = setting;
+      Math.random = rnd;
+      W.enforce = false;
+    }
+  }
+  {   /* 闲置主角走完整的计划、走动、照护流程，接手后停掉已排队的动作。 */
+    const W = CY.world, ids = [];
+    for (const arch of ['dad', 'mom', 'baby']) ids.push(await G.createPerson({ arch, helper: arch !== 'baby' }));
+    await G.load();
+    const [lead, helper, baby] = ids.map(G.get);
+    for (const p of G.people) {
+      p.person.active = ids.includes(p.id);
+      if (!p.person.active) continue;
+      G.act[p.id] = 'awake';
+      for (const k in p.state.needs) G.setNeed(p, k, 0.1);
+    }
+    G.setProtagonist(lead.id);
+    G.setClock(14 * 60);
+    W.enforce = true;
+    W.escort = false;
+    W.moveTo('home', 'study');
+    const idle = () => { W.lastActive = Date.now() - G.E('game').lead_auto.idle_seconds * 1000 - 1000; };
+    const planCare = () => {
+      G.agentState.inbox = [];
+      G.agentState.declined = [];
+      G.agentState.planT = 0;
+      G.agentState.lastMin = G.world.game_minutes - 600;
+      G.agentTick(20);
+    };
+    const rnd = Math.random, setting = G.cfg.play.lead_auto;
+    try {
+      Math.random = () => 0;
+      helper.person.active = false;
+      G.setNeed(baby, 'hunger', 0.95);
+      planCare();
+      check('刚操作过的主角不会接到自动照护任务', G.agentState.inbox.length === 0);
+      idle(); planCare();
+      W.tick();
+      check('闲置主角接到宝宝的请求并留在宝宝旁边', G.agentState.inbox.some(e => e.to === lead.id && e.from === baby.id) && W.player().room === W.locationOf(baby).room);
+      W.holding = true;
+      G.agentTick(20);
+      check('开始长按后取消主角已接到的照护', G.need(baby, 'hunger') === 0.95 && !G.agentState.inbox.some(e => e.to === lead.id));
+      W.holding = false;
+      idle(); planCare(); G.agentTick(20);
+      check('闲置主角能完成照护', G.need(baby, 'hunger') < 0.95);
+
+      baby.person.active = false;
+      helper.person.active = true;
+      G.cfg.play.lead_auto = 'false';
+      G.setNeed(lead, 'thirst', 0.95);
+      idle(); planCare(); G.agentTick(20); G.agentTick(20);
+      check('关闭自动行动仍可接受家人帮忙倒水', G.need(lead, 'thirst') < 0.95);
+
+      baby.person.active = true;
+      helper.person.active = false;
+      G.setNeed(baby, 'hunger', 0.95);
+      G.setNeed(lead, 'thirst', 0.1);
+      idle(); planCare();
+      check('关闭自动行动后主角不接家人的照护请求', !G.agentState.inbox.some(e => e.to === lead.id));
+      G.cfg.play.lead_auto = 'true';
+      const D = G.dispatch, C = D.cfg();
+      D.state.duty = {}; D.state.hands = {};
+      const plan = D.plan(D.snapshot(), C);
+      check('看护调度也会把任务派给闲置主角', plan.tasks.some(task => task.cg === lead.id && task.target === baby.id));
+      W.holding = true; D.apply(plan, C);
+      check('接手后不执行上一轮派给主角的照护', G.need(baby, 'hunger') === 0.95);
+      W.holding = false;
+      G.cfg.play.lead_auto = 'false'; D.apply(plan, C);
+      check('关闭后看护调度不会派主角或执行已派任务', G.need(baby, 'hunger') === 0.95 && !D.plan(D.snapshot(), C).tasks.some(task => task.cg === lead.id));
+      G.cfg.play.lead_auto = 'true'; D.apply(plan, C);
+      check('闲置主角可以完成看护调度的任务', G.need(baby, 'hunger') < 0.95);
+    } finally {
+      Math.random = rnd;
+      if (setting === undefined) delete G.cfg.play.lead_auto; else G.cfg.play.lead_auto = setting;
+      W.holding = false;
       W.enforce = false;
     }
   }

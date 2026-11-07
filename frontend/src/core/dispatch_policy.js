@@ -10,7 +10,7 @@
      meal_due     家里是否该做一顿饭
      duty         { 婴幼儿id: 现任看护人id }
      people[]     { id, stage, role, dep, watch, cries, cry_at, night_help, lead, asleep, bedridden, away, room, lactating, fatigue, needs{需求:压力}, urgency, hands, roll }
-                  stage 是 infant toddler child teen adult elder 之一；dep 是需要被照顾的人；lead 是玩家扮演的主角；
+                  stage 是 infant toddler child teen adult elder 之一；dep 是需要被照顾的人；lead 是暂不参与自动行动的主控角色；
                   watch 是醒着时需要有人盯着，由阶段或疾病决定；dep 是会被派去做事的人；cries 是需求重了会哭，cry_at 是哭的阈值，来自类别数据，有 cries 就必须给；night_help 是夜里要人帮，比如夜尿多；
                   role 是角色卡的身份，决定夜里听见的程度；roll 是适配层给每个人每一步掷好的 0 到 1 的数，策略本身不掷骰子，所以仍是纯函数；
                   fatigue 和 needs 都是压力，0 是正常，1 是到顶；hands 为真是手上的活还没做完；urgency 是紧迫度乘最高需求。

@@ -127,8 +127,13 @@
     return null;
   };
   W.ROUTINE_W = 7;
-  /* 主角空闲时回到的地方：照日程走，没有日程就是客厅 */
-  W.workRoom = () => { const l = G.protagonist(); return (l && W.routineRoom(l)) || 'living'; };
+  const canWorkNow = p => W.worker(p) && G.isWorkTime() && W.workHour(p, G.dayMinutes() / 60);
+  /* 初始位置和回家落点：关闭自动行动时，工作时段可办公的人进书房，其余进客厅。 */
+  W.workRoom = () => {
+    const lead = G.protagonist();
+    if (!G.leadAutoEnabled()) return canWorkNow(lead) ? W.WORK.room : 'living';
+    return W.routineRoom(lead) || 'living';
+  };
   /* 宝宝还不会走，只待在垫子和婴儿床上 */
   W.immobile = p => !!p && G.isHuman(p) && (G.stage(p) === 'infant' || (G.stage(p) === 'toddler' && G.age(p) < 2.5));
   W.driven = p => !!p && p === G.protagonist();
@@ -217,7 +222,8 @@
   W.roomOfNow = q => (W.agents[q.id] ? W.agents[q.id].room : 'living');
   /* 叫一个人走到某个房间去，比如大人去照顾哭的孩子。被悬停或点选的人不动 */
   W.goTo = (p, room, minutes, errand) => {
-    if (W.frozen.has(p.id) || W.driven(p)) return false;
+    if (W.frozen.has(p.id) || !G.canAutoAct(p)) return false;
+    if (W.driven(p)) W.moveTo(W.player().place, room, false);
     const A = W.agents[p.id] || (W.agents[p.id] = { room, next: 0 });
     A.room = room; A.next = Date.now() + (minutes ? minutes * 60000 : 40000); A.errand = errand || null;
     return true;
@@ -312,10 +318,21 @@
   W.IDLE_MS = 4000;       /* 动作停下后，原地停几秒再自动回去 */
   W.lastActive = Date.now();
   /* 坐在电脑前：家里的书房和办公室的工位，椅子在桌子前面，人朝着桌子，也就是背对着我们 */
-  W.atWork = () => { const pl = W.player(); return !W.holding && ((pl.place === 'home' && pl.room === 'study') || (pl.place === 'office' && pl.room === 'desk')); };
+  W.atWork = () => {
+    const pl = W.player();
+    const atSeat = (pl.place === 'home' && pl.room === 'study') || (pl.place === 'office' && pl.room === 'desk');
+    return !W.holding && atSeat && (G.leadAutoEnabled() || canWorkNow(G.protagonist()));
+  };
   W.atDesk = () => { const pl = W.player(); return pl.place === 'home' && pl.room === 'study' && !W.holding; };
   W.where = () => ({ place: W.player().place, room: W.player().room });
-  W.setPlayer = to => { const pl = W.player(); pl.place = to.place; pl.room = to.room; pl.gx = to.gx; pl.gy = to.gy; pl.act = null; pl.bed = false; W.lastActive = Date.now(); };
+  W.setPlayer = (to, manual = true) => {
+    Object.assign(W.player(), { place: to.place, room: to.room, gx: to.gx, gy: to.gy, act: null, bed: false });
+    if (manual) {
+      W.lastActive = Date.now();
+      const lead = G.protagonist();
+      if (lead) delete W.agents[lead.id];
+    }
+  };
   /* 主角在做一件自己的事：动作带 at（房间）和 pose（姿势），做到时间到为止，期间不会自己走开。小睡就是躺到自己的床上。
      夜里在卧室，闲着几秒，也会躺下睡；动手做别的事就醒。别的人睡不睡看作息，主角睡不睡看他在不在床上 */
   W.actPose = () => {
@@ -326,6 +343,11 @@
   W.leadSleeping = () => {
     const lead = G.protagonist(); if (!lead) return false;
     if (W.actPose() === 'sleep') return true;
+    if (G.leadAuto()) {
+      if (G.flag(lead, 'nap')) return true;
+      if (G.flag(lead, 'awake')) return false;
+    }
+    if (!G.leadAutoEnabled()) return false;  /* 手动睡觉和接受照顾产生的小睡仍然有效 */
     const pl = W.player(), hr = G.dayMinutes() / 60;
     return (hr >= 22 || hr < 7) && pl.place === 'home' && pl.room === (W.bedOf(lead) || { room: W.ownRoom(lead) }).room && !W.holding && Date.now() - W.lastActive > W.IDLE_MS;
   };
@@ -338,7 +360,7 @@
     pl.act = { pose: a.pose || 'stand', until: G.world.game_minutes + (a.min || 5), rested: a.pose === 'sleep' };
     if (a.pose === 'sleep') W.toBed();
   };
-  W.moveTo = (place, room) => { const a = W.playerAnchor(place, room); W.setPlayer({ place, room, gx: a.gx, gy: a.gy }); };
+  W.moveTo = (place, room, manual = true) => { const a = W.playerAnchor(place, room); W.setPlayer({ place, room, gx: a.gx, gy: a.gy }, manual); };
   W.visual = () => { const pl = W.player(); return { place: pl.place, gx: pl.gx, gy: pl.gy }; };
 
   /* 要照顾这个人：在别的地点就先去那里，同一个地点就直接出现在他旁边 */
@@ -368,18 +390,23 @@
     return true;
   };
 
-  /* 每秒：主角所在的地点没有人了就回家；动作停下几秒后，勾了自动回岗位就回到工作的位置 */
+  /* 每秒：外面的地点没人了就回家。关闭自动行动时，只有可办公的人在工作时段自动回桌。 */
   W.tick = () => {
     if (!W.enforce) return;
     const pl = W.player();
     if (W.holding) { W.lastActive = Date.now(); return; }
     if (G.world.trip) return;   /* 主角在买菜的路上，到时间由 G.tripTick 送回家 */
-    if (!W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.escort = false; W.moveTo(W.WORK.place, W.workRoom()); return; }
+    if (pl.place !== W.WORK.place && !W.othersPlaces().includes(pl.place) && G.activePeople().length) { W.escort = false; W.moveTo(W.WORK.place, W.workRoom()); return; }
     if (W.escort && pl.place !== W.WORK.place) return;   /* 陪着出门的人还在外面，主角不先回去 */
     if (W.leadSleeping() && !W.player().bed) { W.toBed(); return; }
     if (W.actPose() || (W.leadSleeping() && W.player().bed)) return;   /* 做着自己的事，或者正睡着，不自己走开 */
+    const lead = G.protagonist(), agent = lead && W.agents[lead.id];
+    if (agent && agent.errand && agent.next > Date.now() && G.canAutoAct(lead)) return;
     if (Date.now() - W.lastActive < W.IDLE_MS) return;
-    if (pl.place !== W.WORK.place || pl.room !== W.workRoom()) { W.moveTo(W.WORK.place, W.workRoom()); }
+    const auto = G.leadAutoEnabled();
+    if (!auto && !canWorkNow(lead)) return;
+    const room = auto ? W.workRoom() : W.WORK.room;
+    if (pl.place !== W.WORK.place || pl.room !== room) W.moveTo(W.WORK.place, room, auto);
   };
 
   G.worldTick = W.tick;

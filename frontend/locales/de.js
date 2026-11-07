@@ -203,4 +203,6 @@ CY.i18n.register("de", {"tag.1": "Nichts ist dringend. Jemand möchte nur, dass 
 
 CY.i18n.register("de", {"share.choose_day":"Einen Tag teilen","share.choose_person":"Eine Figur teilen"});
 
-CY.i18n.register("de", {"share.game_label":"ein kleines Spiel"});
+CY.i18n.register("de", {"share.stats_note": "Diese Statistik bezieht sich nur auf den aktuellen Spielstand und hat keine Aussagekraft für die Realität.", "share.game_label": "Ein entspannendes Browserspiel rund ums Kümmern"});
+
+CY.i18n.register("de", {"lbl.play.lead_auto":"Gesteuerte Figur handelt selbstständig","ini.play.lead_auto":"Ist die Option an, versorgt sich deine Figur in Ruhe selbst und hilft der Familie. Ist sie aus, gehen berufstätige Erwachsene zur Arbeitszeit an den Schreibtisch. Sonst bleibt die Figur an Ort und Stelle und kann weiterhin Hilfe bekommen."});

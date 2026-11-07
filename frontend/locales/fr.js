@@ -204,4 +204,6 @@ CY.i18n.register("fr", {"tag.1": "Rien d'urgent ici. Quelqu'un voudrait juste qu
 
 CY.i18n.register("fr", {"share.choose_day":"Partager une journée","share.choose_person":"Partager un personnage"});
 
-CY.i18n.register("fr", {"share.game_label":"un petit jeu"});
+CY.i18n.register("fr", {"share.stats_note": "Ces statistiques concernent uniquement la sauvegarde actuelle du jeu et n’ont aucune portée dans la réalité.", "share.game_label": "Un jeu de navigateur sur le soin au quotidien"});
+
+CY.i18n.register("fr", {"lbl.play.lead_auto":"Actions automatiques du personnage contrôlé","ini.play.lead_auto":"Quand cette option est activée, ton personnage prend soin de lui et aide sa famille pendant les temps morts. Désactivée, les adultes qui travaillent retournent à leur bureau aux heures de travail. Sinon, ton personnage reste sur place et peut toujours recevoir des soins."});

@@ -61,9 +61,9 @@
   /* 个人卡的判断，随快照发给后台：后台挑接收者、挑动作时只看这些，不用去读游戏内部。
      help 是这个人能不能帮别人，role 为 helper；care_needs 是别人能替他做的需求，self_needs 是他自己能做的需求；go_actions 是他能去的外出动作 */
   P.abilities = p => {
-    const G = CY.game, acts = Object.values(G.actionsOf(p)), care = new Set(), self = new Set(), go = [];
+    const G = CY.game, acts = Object.values(G.allActionsOf(p)), care = new Set(), self = new Set(), go = [];
     for (const a of acts) {
-      if (a.outing) { if (!a.manual) go.push(a.id); continue; }   /* manual 的外出，比如看医生，只由玩家带去，不进家人自己想去的清单 */
+      if (a.outing) { if (!a.manual && p !== G.protagonist()) go.push(a.id); continue; }   /* 主角和看医生等外出仍由玩家决定 */
       if (a.selfonly || a.away) continue;
       for (const k in a.effect || {}) if (a.effect[k] > 0) care.add(k);
     }

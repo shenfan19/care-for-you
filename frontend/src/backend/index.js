@@ -51,7 +51,12 @@
   /* 状态和策略：前台定期要一次。pending 是还在路上的请求，declined 是刚被拒绝的，后台据此不重复发 */
   B.buildPlan = (extra = {}) => {
     const G = CY.game, P = CY.protocol, names = B.names();
-    return { v: P.V, kind: 'plan', world: P.world(), minutes: extra.minutes || 0, people: G.people.filter(p => p.person.active !== false).map(p => P.person(p, { names })), pending: extra.pending || [], declined: extra.declined || [] };
+    const people = G.activePeople().map(p => {
+      const snapshot = P.person(p, { names });
+      if (snapshot.protagonist) snapshot.autonomous = !G.playerControls(p);
+      return snapshot;
+    });
+    return { v: P.V, kind: 'plan', world: P.world(), minutes: extra.minutes || 0, people, pending: extra.pending || [], declined: extra.declined || [] };
   };
   const fail = (e) => {
     if (!B.failed) { B.failed = true; CY.game.backendError && CY.game.backendError(e); }

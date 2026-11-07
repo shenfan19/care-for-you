@@ -1,6 +1,6 @@
 /* 分享卡片：日历里选中的某一天，和人物页里的某个人，玩家自己点开，在本机用画布画成一张图，保存或交给系统分享。
-   没有全局的总数分享：总数会变成成就展示，违背了叙事。不联网，不上传；图上只有一个地方带链接，就是左上角的游戏网址，
-   写信和发推广时靠它回到游戏，网址写在 engine.yaml 的 share.url。游戏里没有任何地方推荐或奖励分享。 */
+   没有全局的总数分享：总数会变成成就展示，违背了叙事。不联网，不上传；标题右侧放主站的二维码，
+   二维码矩阵随游戏打包，不请求外部服务。游戏里没有任何地方推荐或奖励分享。 */
 (function (CY) {
   const G = CY.game, U = CY.ui = CY.ui || {};
   const t = (k, v) => CY.t(k, v);
@@ -57,25 +57,40 @@
     return { rows, size };
   };
 
-  /* 卡片的底：背景，卡片面，左上角一个标题块：亮色的大标题 Care for You，标题旁用小字说明是小游戏，下面是和页面顶上同一句随机的话，再下面是游戏网址，
-     话和网址同用低调的颜色，普通字体，话略大一点。返回标题块的下沿，内容从它下面开始 */
+  /* 共用标题区：左侧是标题、游戏类型和短句，右侧是主站二维码及网址。 */
   function frame(canvas, W, H) {
     const v = palette(), ctx = canvas.getContext('2d');
     canvas.width = W; canvas.height = H;
     ctx.fillStyle = v('--bg'); ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = v('--card'); roundRect(ctx, 70, 70, W - 140, H - 140, 36); ctx.fill();
     ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 76px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText('Care for You', 130, 215);
-    const gameX = 130 + ctx.measureText('Care for You').width + 24, gameLabel = t('share.game_label');
-    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`;
-    ctx.fillText(gameLabel, gameX, 215, W - 130 - gameX);
+    const qrY = 130, qrSize = 198;
     if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * 6);
-    const tag = t('tag.' + (U.tagN + 1)); let size = 32;
-    ctx.fillStyle = v('--mute'); ctx.font = `${size}px ${FONT}`;
-    while (ctx.measureText(tag).width > W - 260 && size > 20) { size -= 2; ctx.font = `${size}px ${FONT}`; }
-    ctx.fillText(tag, 130, 268);
-    ctx.fillStyle = v('--mute'); ctx.font = `28px ${FONT}`; ctx.fillText(G.E('share').url, 130, 312);
-    return { ctx, v, top: 312 };
+    ctx.font = `26px ${FONT}`;
+    const tagRows = chartLines(ctx, t('tag.' + (U.tagN + 1)), 560);
+    const titleY = qrY + qrSize / 2 - 2, labelY = titleY + 47;
+    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 64px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText(t('app.title'), 130, titleY);
+    ctx.fillStyle = v('--mute'); ctx.font = `24px ${FONT}`;
+    ctx.fillText(t('share.game_label'), 130, labelY, 560);
+    ctx.fillStyle = v('--mute'); ctx.font = `26px ${FONT}`;
+    const tagY = labelY + 50;
+    tagRows.forEach((row, i) => ctx.fillText(row, 130, tagY + i * 34));
+    {
+      const code = CY.shareQR, x = 752, cells = code.rows.length + 8;
+      // 深色卡使用低亮度暖灰底，同时保持深码浅底及四格留白。
+      const dark = document.documentElement.dataset.theme === 'dark';
+      ctx.fillStyle = dark ? '#b8aa98' : v('--card');
+      roundRect(ctx, x, qrY, qrSize, qrSize, 12); ctx.fill();
+      ctx.fillStyle = v(dark ? '--card' : '--ink');
+      code.rows.forEach((row, r) => Array.from(row).forEach((cell, c) => {
+        if (cell !== '1') return;
+        const left = Math.round((c + 4) * qrSize / cells), top = Math.round((r + 4) * qrSize / cells);
+        ctx.fillRect(x + left, qrY + top, Math.round((c + 5) * qrSize / cells) - left, Math.round((r + 5) * qrSize / cells) - top);
+      }));
+      ctx.fillStyle = v('--mute'); ctx.font = `20px ${FONT}`;
+      ctx.fillText(code.url, x + (qrSize - ctx.measureText(code.url).width) / 2, qrY + qrSize + 18);
+    }
+    return { ctx, v, top: Math.max(360, tagY + (tagRows.length - 1) * 34 + 12) };
   }
   /* 左下角只留一句存档被改过的提示，标题和网址都在左上角 */
   function foot(ctx, v, H) {
@@ -85,18 +100,23 @@
 
   /* 每日结算的分享卡：日期，三到五句话，纪念品 */
   U.drawDayCard = function (canvas, rec) {
-    const W = 1080, H = 1350, { ctx, v, top } = frame(canvas, W, H), d = G.dateOf(rec.n);
+    const W = 1080, d = G.dateOf(rec.n);
+    let H = 1350, { ctx, v, top } = frame(canvas, W, H);
+    ctx.font = `44px ${FONT}`;
+    const rows = rec.lines.flatMap(l => wrapper(ctx, G.settleText(l), W - 260));
+    const needed = top + 230 + Math.max(0, rows.length - 1) * 70 + 170;
+    if (needed > H) { H = needed; ({ ctx, v, top } = frame(canvas, W, H)); }
     ctx.fillStyle = v('--ink'); ctx.font = `bold 64px ${FONT}`; ctx.fillText(t('cal.md', { m: d.month, d: d.day }) + ' ' + t(['cal.wd0', 'cal.wd1', 'cal.wd2', 'cal.wd3', 'cal.wd4', 'cal.wd5', 'cal.wd6'][d.weekday]), 130, top + 120);
     ctx.font = `44px ${FONT}`;
     let y = top + 230;
-    for (const l of rec.lines) for (const row of wrapper(ctx, G.settleText(l), W - 260)) { if (y > H - 170) break; ctx.fillText(row, 130, y); y += 70; }
+    for (const row of rows) { ctx.fillText(row, 130, y); y += 70; }
     foot(ctx, v, H);
   };
 
   /* 人物卡：头像，名字，身份和年龄，两张饼图（他照顾了谁，谁照顾了他）。数据是全部时间的统计，没有记录时饼是空环 */
   U.drawPersonCard = async function (canvas, pid) {
     const p = G.get(pid); if (!p) return;
-    const W = 1080, H = 1350, { ctx, v, top } = frame(canvas, W, H), st = G.statusOf(p);
+    const W = 1080, H = 1480, { ctx, v, top } = frame(canvas, W, H), st = G.statusOf(p);
     // 头像：画成穿衣小豆，矢量，放得进画布；画不出来就只写名字
     try {
       const svg = CY.avatarBean(p).replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="540" ');
@@ -129,6 +149,10 @@
     };
     pie(335, 925, 135, sl.given, t('stats.given', { name: p.person.name }));
     pie(745, 925, 135, sl.got, t('stats.received', { name: p.person.name }));
+    ctx.fillStyle = v('--mute'); ctx.font = `26px ${FONT}`;
+    const noteRows = chartLines(ctx, t('share.stats_note'), W - 260);
+    const noteBottom = H - (G.world.edited ? 164 : 120);
+    noteRows.forEach((row, i) => ctx.fillText(row, 130, noteBottom - (noteRows.length - 1 - i) * 34));
     foot(ctx, v, H);
   };
 

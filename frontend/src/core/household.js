@@ -43,13 +43,21 @@
   };
   /* 操纵对象不被操作的时候：玩家一段时间没有动手，没有在长按，也没有在做自己的动作，他就像别的角色一样，需求压力高了自己动手。
      测试和没有世界的场合（W.enforce 为假）不触发。玩家随时可以自己做，自己做的和自动的走同一条路 */
-  G.leadAuto = () => { const W = CY.world; return !!(W && W.enforce && !W.holding && !W.actPose() && Date.now() - W.lastActive >= G.E('game').lead_auto.idle_seconds * 1000); };
+  G.leadAuto = () => {
+    const W = CY.world;
+    if (!W || !W.enforce || W.holding || G.world.trip || (W.escort && W.player().place !== 'home')) return false;
+    return Date.now() - W.lastActive >= G.E('game').lead_auto.idle_seconds * 1000 && !W.actPose();
+  };
   G.protagonist = () => { const p = G.world.protagonist && G.get(G.world.protagonist); return p && p.person.active !== false && G.canLead(p) ? p : null; };
+  G.playerControls = p => !!p && p === G.protagonist() && !G.leadAuto();
+  G.leadAutoEnabled = () => ini.bool(G.cfg, 'play', 'lead_auto');
+  G.canAutoAct = p => p !== G.protagonist() || (G.leadAutoEnabled() && G.leadAuto());
   /* 记事件用的角色：事件必须挂在一个真角色身上，没有一个叫"你"的角色。挂在操纵对象身上，没有操纵对象就挂在第一个人身上 */
   G.youId = () => { const p = G.protagonist() || G.activePeople().find(G.isHuman) || G.people[0]; return p ? p.id : 'you'; };
   G.setProtagonist = id => {
     const p = id ? G.get(id) : null;
     if (id && !G.canLead(p)) return false;
+    if (CY.world && p !== G.protagonist()) CY.world.lastActive = Date.now();
     G.world.protagonist = id || null;
     if (p) { p.person.active = true; G.clearFlag(p, 'hospital'); G.clearFlag(p, 'outing'); }
     G.save(); emit(); return true;
@@ -103,10 +111,10 @@
     }
   };
 
-  /* ---------- 谁能帮别人：卡里写了 help.proactive 的成人，没做主角，不是婴幼儿。帮不帮、帮谁由 agents.js 按后台的策略决定 ---------- */
+  /* ---------- 谁能帮别人：角色卡允许帮忙，且当前没有被玩家操作。 ---------- */
   /* 疾病数据里标了 needs_escort 的人，比如帕金森，不会自己一个人出门，要有人陪 */
   G.needsEscort = p => !!p && (p.person.conditions || []).some(c => (G.tpl.conditions[c] || {}).needs_escort);
-  G.canHelp = p => !!p.person.helper && G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)) && p !== G.protagonist();
+  G.canHelp = p => !!p.person.helper && G.isHuman(p) && !['infant', 'toddler'].includes(G.stage(p)) && G.canAutoAct(p);
   G.helpers = () => G.activePeople().filter(p => G.canHelp(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty') && G.maxNeed(p) < G.E('household').helper_max_need);
 
   /* ---------- 人和人之间：在同一个房间的两个人，偶尔自己聊几句、玩一会儿、逗逗宠物，需求会降一点，发生的事里留一句 ---------- */

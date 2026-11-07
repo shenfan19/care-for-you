@@ -25,8 +25,8 @@
 
   /* ---------- 上游：游戏状态到快照 ---------- */
   D.snapshot = () => {
-    const C = cfg(), lead = G.protagonist(), now = G.world.game_minutes, W = CY.world;
-    const eaters = G.activePeople().filter(q => G.isHuman(q) && !['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && q !== lead);
+    const C = cfg(), now = G.world.game_minutes, W = CY.world;
+    const eaters = G.activePeople().filter(q => G.isHuman(q) && !['infant', 'toddler'].includes(G.stage(q)) && !G.isSleeping(q) && !G.playerControls(q));
     const mealT = D.state.mealT === undefined ? -1e9 : D.state.mealT;
     return {
       t: now, night: !!G.isNight(), duty: Object.assign({}, D.state.duty), feeding: G.world.feeding || 'formula',
@@ -34,13 +34,13 @@
       people: G.activePeople().filter(p => G.isHuman(p)).map(p => {
         const loc = W ? W.locationOf(p) : { place: 'home', room: 'living' };
         const needs = {}; for (const k in p.state.needs) needs[k] = G.need(p, k);
-        const cds = (p.person.conditions || []).map(c => G.tpl.conditions[c] || {}), st = G.stage(p);
+        const cds = (p.person.conditions || []).map(c => G.tpl.conditions[c] || {}), st = G.stage(p), controlled = G.playerControls(p);
         return {
           /* watch，dep，night_help 由阶段和疾病数据决定；roll 每人每步掷一个，策略自己不掷骰子 */
-          watch: C.watch_stages.includes(st) || cds.some(c => c.needs_watch), cries: !!G.classOf(p).cries, cry_at: G.classOf(p).cry_at, night_help: cds.some(c => c.night_help),
+          watch: !controlled && (C.watch_stages.includes(st) || cds.some(c => c.needs_watch)), cries: !!G.classOf(p).cries, cry_at: G.classOf(p).cry_at, night_help: cds.some(c => c.night_help),
           role: p.person.archetype || p.person.card || '', roll: Math.random(),
-          id: p.id, stage: st, lactating: C.lactating.includes(p.person.archetype || p.person.card || ''), dep: !!G.classOf(p).needs_caregiver || cds.some(c => c.dispatch_care),
-          lead: p === lead, asleep: G.isSleeping(p), bedridden: !!G.bedridden(p),
+          id: p.id, stage: st, lactating: C.lactating.includes(p.person.archetype || p.person.card || ''), dep: !controlled && (!!G.classOf(p).needs_caregiver || cds.some(c => c.dispatch_care)),
+          lead: !G.canAutoAct(p), asleep: G.isSleeping(p), bedridden: !!G.bedridden(p),
           away: !!(G.flag(p, 'hospital') || G.flag(p, 'outing') || loc.place !== 'home'), room: loc.room,
           fatigue: needs.rest === undefined ? 0 : needs.rest, needs, urgency: G.urgency(p), hands: (D.state.hands[p.id] || 0) > now,
         };
@@ -52,7 +52,7 @@
   /* 挑一个能缓解这项需求的照顾动作：效果里有这项，收益是各项效果乘当前压力之和，最大的赢 */
   const careActionFor = (target, need, C) => {
     let best = null, gain = 0;
-    for (const a of Object.values(G.actionsOf(target))) {
+    for (const a of Object.values(G.allActionsOf(target))) {
       if (a.selfonly || C.skip_actions.includes(a.id) || a.away || a.outing) continue;
       if (a.gate && G.need(target, a.gate.need) < a.gate.min) continue;
       const e = a.effect && a.effect[need]; if (!(e > 0)) continue;
@@ -64,10 +64,11 @@
   D.apply = (plan, C) => {
     C = C || cfg();
     const now = G.world.game_minutes, W = CY.world, st = D.state, step = C.step_minutes, S = D.stat;
-    const get = id => G.get(id), ok = q => q && q.person.active !== false && !G.flag(q, 'hospital') && !G.flag(q, 'outing');
+    const get = id => G.get(id), ok = q => q && q.person.active !== false && !G.playerControls(q) && !G.flag(q, 'hospital') && !G.flag(q, 'outing');
+    const canAct = q => ok(q) && G.canAutoAct(q);
     const tire = (q, x) => G.setNeed(q, 'rest', G.need(q, 'rest') + x);
     for (const id of plan.wake) {
-      const q = get(id); if (!ok(q) || q === G.protagonist()) continue;
+      const q = get(id); if (!canAct(q)) continue;
       G.clearFlag(q, 'nap'); G.setFlag(q, 'awake', { minutes: step * C.awake_steps }); G.act[q.id] = G.activityOf(q);
       S.wakes = (S.wakes || 0) + 1; S.wakeBy = S.wakeBy || {}; S.wakeBy[id] = (S.wakeBy[id] || 0) + 1;
       G.bus.emit('wake', { actor: id, night: !!G.isNight() });
@@ -75,7 +76,7 @@
     for (const id in plan.watch) {
       const dep = get(id), who = plan.watch[id] && get(plan.watch[id]);
       if (!dep) continue;
-      if (!ok(who) || who === G.protagonist()) { delete st.duty[id]; S.unmetMin = (S.unmetMin || 0) + step; continue; }
+      if (!canAct(who)) { delete st.duty[id]; S.unmetMin = (S.unmetMin || 0) + step; continue; }
       if (st.duty[id] && st.duty[id] !== who.id) S.handoffs = (S.handoffs || 0) + 1;
       st.duty[id] = who.id;
       G.setFlag(who, 'awake', { minutes: step * C.awake_steps });
@@ -87,11 +88,11 @@
     }
     for (const id in st.duty) { const dep = get(id); if (!dep || G.isSleeping(dep) || !(id in plan.watch)) delete st.duty[id]; }
     for (const id of plan.sleep) {
-      const q = get(id); if (!ok(q) || q === G.protagonist() || G.isSleeping(q)) continue;
+      const q = get(id); if (!canAct(q) || G.isSleeping(q)) continue;
       G.clearFlag(q, 'awake'); G.setFlag(q, 'nap', { minutes: C.nap_minutes }); G.act[q.id] = G.activityOf(q); S.sleeps = (S.sleeps || 0) + 1;
     }
     for (const k of plan.tasks) {
-      const who = get(k.cg), dep = get(k.target); if (!ok(who) || !dep || G.need(dep, k.need) < C.act_at) continue;
+      const who = get(k.cg), dep = get(k.target); if (!canAct(who) || !ok(dep) || G.need(dep, k.need) < C.act_at) continue;
       const a = careActionFor(dep, k.need, C); if (!a) continue;
       applyEffects(dep, a, P.model.efficiency(C, G.need(who, 'rest')));
       dep.state.mood = clamp(dep.state.mood + C.care_mood);
@@ -105,7 +106,7 @@
     }
     if (plan.cook) {
       const who = get(plan.cook), meal = G.tpl.species.human.actions && G.tpl.species.human.actions.meal;
-      if (ok(who) && meal) {
+      if (canAct(who) && meal) {
         G.logK(who.id, 'event', 'log.cooked', { name: who.person.name });   /* 先记谁做了饭，再记全家吃上了 */
         G.shareMeal(who, meal, C.efficiency); st.mealT = now; st.hands[who.id] = now + C.cook_minutes;
         tire(who, P.model.handsFatigue(C, C.cook_minutes));

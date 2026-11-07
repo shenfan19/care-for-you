@@ -203,4 +203,6 @@ CY.i18n.register("es", {"tag.1": "Nada es urgente. Solo alguien quiere que levan
 
 CY.i18n.register("es", {"share.choose_day":"Compartir un día","share.choose_person":"Compartir un personaje"});
 
-CY.i18n.register("es", {"share.game_label":"un pequeño juego"});
+CY.i18n.register("es", {"share.stats_note": "Estas estadísticas solo reflejan la partida guardada actual y no tienen significado en el mundo real.", "share.game_label": "Un juego de navegador sobre cuidar a otros"});
+
+CY.i18n.register("es", {"lbl.play.lead_auto":"Acciones automáticas del personaje que controlas","ini.play.lead_auto":"Si está activada, tu personaje se cuida y ayuda a la familia cuando está libre. Si la desactivas, los adultos que trabajan vuelven al escritorio durante su horario. En los demás casos, el personaje se queda donde está y aún puede recibir cuidados."});

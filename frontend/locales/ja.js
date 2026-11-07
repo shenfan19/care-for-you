@@ -203,4 +203,6 @@ CY.i18n.register("ja", {"tag.1": "急ぎのことはありません。ただ、�
 
 CY.i18n.register("ja", {"share.choose_day":"一日をシェア","share.choose_person":"キャラクターをシェア"});
 
-CY.i18n.register("ja", {"share.game_label":"小さなゲーム"});
+CY.i18n.register("ja", {"share.stats_note": "現在のゲームのセーブデータのみの統計であり、現実世界での意味を持ちません。", "share.game_label": "お世話を楽しむブラウザゲーム"});
+
+CY.i18n.register("ja", {"lbl.play.lead_auto":"操作キャラクターの自動行動","ini.play.lead_auto":"オンの場合、操作していない間は自分の世話をし、家族を手伝います。オフの場合、仕事ができる大人は勤務時間中に机に戻り、それ以外はその場で待機します。家族からの世話は引き続き受けられます。"});

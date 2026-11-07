@@ -108,6 +108,7 @@ Request:
 ```
 
 - pending: requests still on their way. declined: requests just turned down. The backend uses them to avoid repeating itself. key is a need name or an outing action name.
+- In a plan request, the protagonist snapshot includes `autonomous`. When true, the protagonist is idle and can receive family care. Check `abilities.help` before assigning them to provide care. The game rechecks player control and settings before carrying out a queued request.
 
 Response:
 

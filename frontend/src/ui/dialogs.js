@@ -11,12 +11,17 @@
   /* 声音，时间倍率，时间模式，工作时段，时间制式都在角落按钮和日历菜单里，设置里不再重复 */
   const SKIP = new Set(['audio.music_volume', 'audio.sfx_volume', 'audio.mute', 'economy.work_hours', 'ui.clock_12h', 'time.speed', 'time.mode', 'time.fast_speed', 'time.daynight', 'ui.theme', 'ui.language', 'ui.figure', 'ui.house_view', 'play.last_mode']);
   U.settingsDialog = function () {
+    const leadAutoKey = 'play.lead_auto';
     /* AI、账号、后端、对外接口都在底部的高级设置里，默认折叠 */
-    const ADV = k => /^(ai|account|interaction)\./.test(k) || /^play\.(backend_|needs_source|api_bridge|condition_models)/.test(k);
+    const ADV = k => k === leadAutoKey || /^(ai|account|interaction)\./.test(k) || /^play\.(backend_|needs_source|api_bridge|condition_models)/.test(k);
     const rows = (list, basic) => { let sec = ''; return list.map(([s, k, d, note]) => {
       const v = ini.get(G.cfg, s, k), key = s + '.' + k;
       const head = s !== sec ? `<h3>${esc(t('sec.' + s))}</h3>` : ''; sec = s;
       const opts = OPT[key] || (d === 'true' || d === 'false' ? ['true', 'false'] : null);
+      if (key === leadAutoKey) {
+        const label = t('lbl.' + key), detail = t('ini.' + key);
+        return head + `<div class="srow"><label class="k" for="leadAuto">${esc(label)}</label><input type="checkbox" id="leadAuto" data-k="${key}" style="justify-self:start" aria-describedby="leadAutoNote" ${ini.bool(G.cfg, s, k) ? 'checked' : ''}><span class="mute n" id="leadAutoNote">${esc(detail)}</span></div>`;
+      }
       const input = /_volume$/.test(k) ? `<input type="range" min="0" max="100" step="5" data-k="${key}" value="${esc(v)}" style="flex:1"><span class="vv" style="width:2.5em;text-align:right">${esc(v)}</span>` : opts ? `<select data-k="${key}">${opts.map(o => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>` : `<input data-k="${key}" ${k === 'api_key' ? 'type="password"' : ''} value="${esc(v)}">`;
       return head + `<div class="srow"><span class="k">${esc(basic ? CY.tOr('lbl.' + key, k) : k)}</span>${input}${basic ? '' : `<span class="mute n">${esc(CY.tOr('ini.' + key, note))}</span>`}</div>`;
     }).join(''); };
@@ -56,7 +61,7 @@
     /* 改了就生效，不用另外保存 */
     dlg.querySelectorAll('input[type=range]').forEach(el => el.oninput = () => { const vv = el.parentNode.querySelector('.vv'); if (vv) vv.textContent = el.value; });
     dlg.querySelectorAll('[data-k]').forEach(el => el.onchange = async () => {
-      const [sc, k] = el.dataset.k.split('.'); G.cfg[sc] = G.cfg[sc] || {}; G.cfg[sc][k] = el.value.trim();
+      const [sc, k] = el.dataset.k.split('.'); G.cfg[sc] = G.cfg[sc] || {}; G.cfg[sc][k] = el.type === 'checkbox' ? String(el.checked) : el.value.trim();
       await G.saveCfg(); if (CY.sound) CY.sound.apply(); U.renderRoom(true); U.renderClock();
     });
     const dsv = dlg.querySelector('#dsave'); if (dsv) dsv.onclick = () => U.saveDialog();

@@ -1,6 +1,6 @@
 /* 前台的响应层：收后台发来的状态表和策略，每个角色按自己的状态决定响应不响应，响应了就走过去、动手。
    后台只管产生：谁向谁发了什么请求，谁有什么位置愿望。前台管：这个请求合不合个人卡，对方此刻愿不愿意，怎么走，怎么做。
-   玩家自己（主角或看不见的成年人）不在这个流程里，找玩家的请求走原来的叫人流程。
+   主角闲置时参与家人之间的照护，玩家接手后停止相关请求。
    几率和权重在 templates/system.yaml，这是内部总体设置，不是玩家的 settings.ini。 */
 (function (CY) {
   const G = CY.game;
@@ -15,11 +15,11 @@
   const rnd = (a, b) => a + Math.random() * (b - a);
 
   /* ---------- 个人卡的判断，前台再核一遍，不全信后台 ---------- */
-  const eligibleTo = p => p && p.person.active !== false && p !== G.protagonist() && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty');
+  const eligibleTo = p => p && p.person.active !== false && !G.playerControls(p) && !G.isSleeping(p) && !G.flag(p, 'hospital') && !G.flag(p, 'outing') && !G.flag(p, 'offduty');
   /* 别人能为这个人的某个需求做的动作：能降低这个需求的，不是特殊动作 */
   const careAction = (p, need) => {
     let best = null, gain = 0;
-    for (const a of Object.values(G.actionsOf(p))) {
+    for (const a of Object.values(G.allActionsOf(p))) {
       if (a.selfonly || NO_AUTO.has(a.id) || a.away || a.outing) continue;
       const e = a.effect && a.effect[need];
       if (!(e > 0)) continue;
@@ -33,8 +33,9 @@
   const GO_ALONE = ['teen', 'adult', 'elder'];
   const valid = e => {
     const from = G.get(e.from), to = G.get(e.to);
-    if (!from || !to || from === G.protagonist() || to === G.protagonist()) return false;
-    if (e.kind === 'care') return to !== from && G.canHelp(to) && !!careAction(from, e.need);
+    if (!from || !to || G.playerControls(from) || G.playerControls(to)) return false;
+    if (e.kind === 'care') return from.person.active !== false && !G.flag(from, 'hospital') && !G.flag(from, 'outing') && to !== from && G.canHelp(to) && !!careAction(from, e.need);
+    if (from === G.protagonist() || to === G.protagonist()) return false;  /* 主角的自理沿用原流程，外出由玩家决定 */
     if (e.kind === 'self') return to === from && !!G.selfActFor(from, e.need);
     if (e.kind === 'go' && e.to === e.from && G.needsEscort(from)) return false;   /* 要人陪的人不会自己出门 */
     if (e.kind === 'go' && G.legsBad(from) && !G.unlocked('wheelchair')) return false;
@@ -50,7 +51,7 @@
       for (const k in r.needs || {}) if (k in p.state.needs) p.state.needs[k] = r.needs[k];
       if (r.mood !== undefined) p.state.mood = r.mood;
       if (r.frailty !== undefined) p.state.frailty = r.frailty;
-      if (r.want && !G.wants[p.id] && goAction(p, r.want.action) && eligibleTo(p)) {
+      if (r.want && p !== G.protagonist() && !G.wants[p.id] && goAction(p, r.want.action) && eligibleTo(p)) {
         G.wants[p.id] = { id: r.want.id, action: r.want.action, until: now + W.ttl_seconds * 1000 };
         G.toastFor(p, goAction(p, r.want.action).label + '…', 'soft');
         G.pop(p.id, 'ask', goAction(p, r.want.action).icon || '🚶');

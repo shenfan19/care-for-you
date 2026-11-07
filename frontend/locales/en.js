@@ -447,4 +447,6 @@ CY.i18n.register("en", {"tag.1": "Nothing here is urgent. Someone just wants you
 
 CY.i18n.register("en", {"share.choose_day":"Share a day","share.choose_person":"Share a character"});
 
-CY.i18n.register("en", {"share.game_label":"a little game"});
+CY.i18n.register("en", {"share.stats_note": "These statistics are from the current game save only and have no real-world significance.", "share.game_label": "A cozy browser game about caregiving"});
+
+CY.i18n.register("en", {"lbl.play.lead_auto":"Controlled character acts on their own","ini.play.lead_auto":"When enabled, your character looks after themselves and helps the family while idle. When disabled, adults who work return to their desk during work hours. Otherwise, your character stays put and can still receive care."});

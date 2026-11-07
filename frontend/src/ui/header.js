@@ -16,8 +16,7 @@
   /* 顶栏已经没有语言和明暗的快捷控件，都在设置里 */
   U.renderControls = function () {};
   U.syncTheme = U.applyTheme;
-  /* 标题和一句话：中文界面叫"照顾你"，其他语言是 Care for You；一句话每次打开随机一句，换语言不换句 */
-  /* 标签页标题：公开版是"照顾你 · Care for You"，开发者模式加一个 · dev，两个页面开在一起也分得清 */
+  /* 所有语言统一使用 Care for You，开发者模式的标签页标题加 · dev。 */
   U.pageTitle = () => t('app.title') + (G.DEVTOOLS ? ' · dev' : '');
   /* 一句话在语言包里是 tag.1，tag.2，……，有几句就有几句，每种语言句数和顺序一致；每隔 game.tagline_seconds 秒换一句不同的，换语言不换句，分享卡用当前这一句 */
   U.tagCount = () => { let n = 0; while (CY.i18n.has('tag.' + (n + 1))) n++; return n; };

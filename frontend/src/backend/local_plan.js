@@ -28,14 +28,14 @@
 
   L.plan = req => {
     const S = (CY.game.tpl && CY.game.tpl.system) || {}, A = S.agents || {}, R = A.request || {}, WT = A.want || {}, RW = A.role_weight || {};
-    const people = (req.people || []).filter(p => !p.protagonist), hours = (req.minutes || 0) / 60, hour = (req.world || {}).hour || 0;
+    const people = (req.people || []).filter(p => !p.protagonist || p.autonomous), hours = (req.minutes || 0) / 60, hour = (req.world || {}).hour || 0;
     const pending = req.pending || [], declined = req.declined || [];
     const has = (from, to, key) => pending.concat(declined).some(x => x.from === from && x.to === to && x.key === key);
     const states = [], strategies = [];
 
     /* 状态表：位置愿望 */
     for (const ps of people) {
-      if (ps.want || busy(ps)) continue;
+      if (ps.protagonist || ps.want || busy(ps)) continue;
       for (const row of WT.rows || []) {
         if (!rowFits(row, ps, hour) || Math.random() >= Math.min(1, (row.chance_per_hour || 0) * hours)) continue;
         states.push({ person: ps.id, want: { id: row.id, action: row.action } });
@@ -60,10 +60,10 @@
     for (const ps of people) {
       if (strategies.length >= room || ps.sleeping || ps.flags.hospital || ps.flags.outing) continue;
       /* 愿望：想去的地方，同伴或自己响应 */
-      if (ps.want) {
+      if (!ps.protagonist && ps.want) {
         if (Math.random() < Math.min(1, (R.go_rate_per_hour || 6) * scale * hours)) {
           const act = ps.want.action;
-          const t = wpick(targets(ps, q => q.id === ps.id ? ps.species === 'human' && GO_ALONE.includes(ps.stage) : !!q.abilities.help && !has(ps.id, q.id, act)));
+          const t = wpick(targets(ps, q => q.id === ps.id ? ps.species === 'human' && GO_ALONE.includes(ps.stage) : !q.protagonist && !!q.abilities.help && !has(ps.id, q.id, act)));
           if (t) { strategies.push({ from: ps.id, to: t.q.id, kind: 'go', action: act }); continue; }
         }
       }
@@ -71,7 +71,7 @@
       const needs = Object.keys(ps.needs).filter(k => ps.needs[k] < (R.below === undefined ? 0.45 : R.below)).sort((a, b) => ps.needs[a] - ps.needs[b]);   /* 水平低于门槛才算需要，最低的排前面 */
       if (!needs.length || Math.random() >= Math.min(1, (R.rate_per_hour || 20) * scale * hours)) continue;
       for (const k of needs) {
-        const t = wpick(targets(ps, q => q.id === ps.id ? ps.abilities.self_needs.includes(k) : ps.abilities.care_needs.includes(k) && !has(ps.id, q.id, k)));
+        const t = wpick(targets(ps, q => q.id === ps.id ? !ps.protagonist && ps.abilities.self_needs.includes(k) : ps.abilities.care_needs.includes(k) && !has(ps.id, q.id, k)));
         if (t) { strategies.push({ from: ps.id, to: t.q.id, kind: t.q.id === ps.id ? 'self' : 'care', need: k }); break; }
       }
     }

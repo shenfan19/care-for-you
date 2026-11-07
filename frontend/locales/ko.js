@@ -203,4 +203,6 @@ CY.i18n.register("ko", {"tag.1": "급한 일은 없어요. 그저 누군가 고�
 
 CY.i18n.register("ko", {"share.choose_day":"하루 공유","share.choose_person":"캐릭터 공유"});
 
-CY.i18n.register("ko", {"share.game_label":"작은 게임"});
+CY.i18n.register("ko", {"share.stats_note": "현재 게임 저장 데이터만의 통계이며 현실에서의 의미는 없습니다.", "share.game_label": "따뜻한 돌봄 웹 게임"});
+
+CY.i18n.register("ko", {"lbl.play.lead_auto":"조작 캐릭터의 자동 행동","ini.play.lead_auto":"켜면 조작하지 않을 때 캐릭터가 스스로를 돌보고 가족을 돕습니다. 끄면 일하는 성인은 근무 시간에 책상으로 돌아가고, 그 외에는 제자리에서 대기합니다. 가족의 돌봄은 계속 받을 수 있습니다."});
