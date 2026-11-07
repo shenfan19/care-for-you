@@ -158,7 +158,7 @@
     const link = (href, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer">${esc(text || href)}</a>`;
     const ISSUES = 'https://github.com/shenfan19/care-for-you/issues', GH = 'https://github.com/shenfan19/care-for-you';
     const sep = /^(zh|ja)/.test(CY.i18n.lang) ? '' : ' ';   /* 中日文句子之间不加空格，其他语言加 */
-    const PAGE = 'https://shenfan19.github.io', SITE = 'https://careforyou.dev', ITCH = 'https://shenfan19.itch.io/care-for-you', DOI = '10.5281/zenodo.23984050', LMSITE = 'https://lifematters.dev';
+    const PAGE = 'https://github.com/shenfan19', SITE = 'https://careforyou.dev', ITCH = 'https://shenfan19.itch.io/care-for-you', DOI = '10.5281/zenodo.23984050', LMSITE = 'https://lifematters.dev';
     const body = {
       /* 关于：简介，免责声明（第二项） */
       about: `<h3>${esc(t('about.h_intro'))}</h3>${para(['about.p1', 'about.how', 'about.p3'])}<h3>${esc(t('priv.h4'))}</h3>${para(['priv.p9', 'priv.p10'])}`,
