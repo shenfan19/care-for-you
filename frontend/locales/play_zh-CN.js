@@ -53,3 +53,4 @@ CY.i18n.register("zh-CN", {"author.main_site": "主站", "author.itch": "itch �
 CY.i18n.register("zh-CN", {"author.lm_dev": "目前仍在开发中。"});
 CY.i18n.register("zh-CN", {"author.lm_p1a": "Life Matters（LM）是我提出的一个开放研究项目，用 YAML 构造 LM format 格式，汇总部分医学、心理学、社会学研究成果，并以动力学模型描述日常生活中各个要素如何影响健康。格式公开，希望大家使用它、用它建模并分享，也欢迎合作。", "author.lm_p1b": "Care 的第二种引擎是 LM 的 JS 简化版，其中部分模型从 LM 的转换插件导出，并根据接口适配性与仿真效果做了少许调整。"});
 CY.i18n.register("zh-CN", {"author.intro": "我是 Fan Shen，这是我的个人项目，以 MIT 许可证发布，目前仍在继续开发中，欢迎意见和建议。", "author.cfy_p2": "为了尽量真实，游戏用了我个人研究项目中的一些模型和数据，数据结构和计算逻辑也由我自己设计。目前仿真效果有限，仅可用于体验，不建议作为参考。", "author.thanks_ai": "游戏的代码、文字、画面等部分都用 vibe coding 完成，感谢 AI 让我在业余时间实现了这个小游戏的设想。"});
+CY.i18n.register("zh-CN", {"author.intro": "我是 Fan Shen，从事动力系统建模与仿真研究，这是我的个人项目，以 MIT 许可证发布，目前仍在继续开发中，欢迎意见和建议。"});
