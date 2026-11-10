@@ -102,4 +102,4 @@ CY.i18n.register("ko", {"author.game": "게임", "author.cfy_p1": "이 게임은
 CY.i18n.register("ko", {"author.lm_more": "자세한 내용은"});
 CY.i18n.register("ko", {"author.main_site": "본 사이트", "author.itch": "itch 미러", "author.code": "소스 코드"});
 CY.i18n.register("ko", {"author.lm_dev": "현재도 개발 중입니다."});
-CY.i18n.register("ko", {"author.lm_p1a": "Life Matters(LM)는 제 주된 연구 프로젝트로, YAML로 LM format을 구성해 의학, 심리학, 사회학 연구 성과 일부를 모으고, 일상생활의 여러 요소가 건강에 어떤 영향을 주는지 동역학 모델로 기술합니다.", "author.lm_p1b": "Care의 두 번째 엔진은 LM의 JS 간소화 버전이며, 모델 일부는 LM의 변환 플러그인으로 내보낸 뒤 인터페이스 적합성과 시뮬레이션 결과에 맞춰 약간 조정했습니다."});
+CY.i18n.register("ko", {"author.lm_p1a": "Life Matters(LM)는 제가 제안한 열린 연구 프로젝트로, YAML로 LM format을 구성해 의학, 심리학, 사회학 연구 성과 일부를 모으고, 일상생활의 여러 요소가 건강에 어떤 영향을 주는지 동역학 모델로 기술합니다. 이 형식은 공개되어 있으며, 많은 분이 사용하고 모델을 만들어 공유하며 함께 연구하기를 바랍니다.", "author.lm_p1b": "Care의 두 번째 엔진은 LM의 JS 간소화 버전이며, 모델 일부는 LM의 변환 플러그인으로 내보낸 뒤 인터페이스 적합성과 시뮬레이션 결과에 맞춰 약간 조정했습니다."});

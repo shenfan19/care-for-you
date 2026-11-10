@@ -332,3 +332,7 @@ CY.i18n.register("zh-CN", {"share.choose_day":"分享某一天","share.choose_pe
 CY.i18n.register("zh-CN", {"share.stats_note": "仅为当前游戏存档的统计结果，不具有现实意义。", "share.game_label": "网页照护小游戏"});
 
 CY.i18n.register("zh-CN", {"lbl.play.lead_auto":"主控角色自动行动","ini.play.lead_auto":"开启时，闲置的主控角色会自理和照顾家人。关闭后，能办公的成年人在工作时段回书桌，其余情况原地待命，仍可接受照顾。"});
+
+CY.i18n.register("zh-CN", {"au.contrib": "贡献", "au.contrib_p1": "游戏里的角色、台词和情境是有意倾斜地选的：偏向日常照护里的小事，比如一杯水、一句话、一点陪伴，少写戏剧性的医疗场面。这是第一版的取舍，不代表照护里什么更重要。", "au.contrib_p2": "非常欢迎您提出建议和批评，也欢迎推荐新内容，或提供能让内容更贴近生活的数据和出处。角色、台词、角色卡、来客和翻译都是数据文件夹里的普通文件，不用写代码就能添加。", "au.contrib_p3": "被采用的内容会以您的署名在本页发布，姓名或笔名由您决定，作品的权利仍属于您。内容与游戏一样以 MIT 许可证发布，方便大家继续使用和改进。"});
+
+CY.i18n.register("zh-CN", {"author.tp": "The Teleporter（TP）也是 LM 的子项目，是一个时间旅行主题的经营游戏，同样由 LM 后端改进的引擎驱动。"});

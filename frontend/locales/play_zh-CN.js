@@ -51,4 +51,4 @@ CY.i18n.register("zh-CN", {"author.game": "游戏", "author.cfy_p1": "我做这�
 CY.i18n.register("zh-CN", {"author.lm_more": "详见"});
 CY.i18n.register("zh-CN", {"author.main_site": "主站", "author.itch": "itch 镜像", "author.code": "源码"});
 CY.i18n.register("zh-CN", {"author.lm_dev": "目前仍在开发中。"});
-CY.i18n.register("zh-CN", {"author.lm_p1a": "Life Matters（LM）是我的主要研究项目，用 YAML 构造 LM format 格式，汇总部分医学、心理学、社会学研究成果，并以动力学模型描述日常生活中各个要素如何影响健康。", "author.lm_p1b": "Care 的第二种引擎是 LM 的 JS 简化版，其中部分模型从 LM 的转换插件导出，并根据接口适配性与仿真效果做了少许调整。"});
+CY.i18n.register("zh-CN", {"author.lm_p1a": "Life Matters（LM）是我提出的一个开放研究项目，用 YAML 构造 LM format 格式，汇总部分医学、心理学、社会学研究成果，并以动力学模型描述日常生活中各个要素如何影响健康。格式公开，希望大家使用它、用它建模并分享，也欢迎合作。", "author.lm_p1b": "Care 的第二种引擎是 LM 的 JS 简化版，其中部分模型从 LM 的转换插件导出，并根据接口适配性与仿真效果做了少许调整。"});
