@@ -642,11 +642,12 @@
   /* 把一个动作的效果加到角色身上，scale 是效果的比例。玩家做和角色自己做都走这里 */
   /* 动作和选择带来的输入，攒着，下一次向积分引擎要状态时一起带过去 */
   const pulseBox = {};
-  G.pulse = (pid, key) => { if (key) (pulseBox[pid] = pulseBox[pid] || []).push(String(key)); };
-  G.takePulses = pid => { const l = pulseBox[pid] || []; delete pulseBox[pid]; return l; };
-  function applyEffects(p, a, scale) {
+  /* 每条带来源：player 玩家动作，dispatch 自动调度和家人自己做，event 随机事件和故事选择。积分后端按来源合并同一个输入 */
+  G.pulse = (pid, key, source) => { if (key) (pulseBox[pid] = pulseBox[pid] || []).push({ id: String(key), source }); };
+  G.takeActions = pid => { const l = pulseBox[pid] || []; delete pulseBox[pid]; return l; };
+  function applyEffects(p, a, scale, source) {
     const s = p.state, mods = G.traitMods(p);
-    G.pulse(p.id, a.id);
+    G.pulse(p.id, a.id, source);
     const bo = G.shopBoost(p, a);   /* 买的东西让这一次动作的效果更多，只管当次，不改需求涨落的速度 */
     for (const k in a.effect || {}) if (k in s.needs) s.needs[k] = clamp(s.needs[k] + a.effect[k] * scale * (a.effect[k] > 0 ? (mods.effect[k] || 1) * (bo.scale[k] || 1) * bo.all : 1));   /* 效果是水平的增量，正数是补上 */
     if (bo.mood) s.mood = clamp(s.mood + bo.mood);
@@ -660,7 +661,7 @@
   }
   /* 角色自己动手：效果打折，行动记进日志 */
   function selfAct(p, a, need, offline) {
-    applyEffects(p, a, G.E('game').self_act.efficiency);
+    applyEffects(p, a, G.E('game').self_act.efficiency, 'dispatch');
     G.bus.emit('care', { kind: 'self', actor: p.id, target: p.id, action: a.id, need });
     p.state.mood = clamp(p.state.mood + G.E('game').self_act.mood);
     p.story.self_total = (p.story.self_total || 0) + 1;
@@ -1018,7 +1019,7 @@
       return false;
     }
     G.nagN[pid] = 0; G.nagLogged[pid] = false;
-    applyEffects(p, a, 1);
+    applyEffects(p, a, 1, 'player');
     if (G.arcCare) G.arcCare(p, a);
     const meal = () => { if (a.household) { G.shareMeal(p, a, 1); if (G.useGroceries) G.useGroceries(p, a); } };   /* 做饭的结果在这次动作的记录之后写 */
     if (a.trip && G.startTrip) G.startTrip(a);
@@ -1111,7 +1112,7 @@
   function applyChoice(p, c, auto) {
     p.state.mood = clamp(p.state.mood + (c.mood || 0));
     p.state.frailty = clamp(p.state.frailty + (c.frailty || 0));
-    if (c.pulse) G.pulse(p.id, c.pulse);
+    if (c.pulse) G.pulse(p.id, c.pulse, 'event');
     const reply = G.fmt(c.reply, p);
     G.toastFor(p, reply, 'speech'); G.say(p.id, 'char', reply);
     G.logK(p.id, 'event', auto ? 'log.dinner_auto' : 'log.dinner', { name: p.person.name, label: c.label, reply });

@@ -99,7 +99,7 @@
     const from = G.get(e.from), to = G.get(e.to);
     if (G.need(from, e.need) < cfg().care_min_level) return true;
     const a = careAction(from, e.need); if (!a) return true;
-    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || cfg().respond.efficiency));
+    applyEffects(from, a, ((to.person.help && to.person.help.efficiency) || cfg().respond.efficiency), 'dispatch');
     G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
     from.state.mood = clamp(from.state.mood + cfg().care_mood);
     const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label });
@@ -119,7 +119,7 @@
       if (!eligibleTo(to) || !W || W.locationOf(to).place !== W.locationOf(from).place) return true;
       G.setFlag(to, 'outing', { minutes: G.outingMinutes(a.outing), place: a.outing.place, room: a.outing.room, mode: 'stand' });
     }
-    applyEffects(from, a, 1);
+    applyEffects(from, a, 1, 'dispatch');
     if (to !== from) G.bus.emit('care', { kind: 'family', actor: to.id, target: from.id, action: a.id });
     from.state.mood = clamp(from.state.mood + (a.mood === undefined ? cfg().go_mood_default : a.mood));
     if (to !== from) { const txt = t('log.assist', { who: to.person.name, name: from.person.name, label: a.label }); G.logK(from.id, 'care', 'log.assist', { who: to.person.name, name: from.person.name, label: G.refAct(a, from) }); G.toastFor(from, txt, 'soft'); }   /* 先记谁带谁出门，再记出门这件事 */

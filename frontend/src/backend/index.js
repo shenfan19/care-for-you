@@ -42,7 +42,7 @@
     const G = CY.game, P = CY.protocol, names = B.names();
     const req = { v: P.V, kind: 'drive', trigger, world: P.world(), minutes: extra.minutes || 0 };
     if (trigger === 'tick') {
-      req.people = G.people.filter(p => p.person.active !== false).map(p => { const s = P.person(p, { names }); s.pulses = G.takePulses ? G.takePulses(p.id) : []; return s; });
+      req.people = G.people.filter(p => p.person.active !== false).map(p => { const s = P.person(p, { names }); const acts = G.takeActions ? G.takeActions(p.id) : []; s.actions = acts; s.pulses = acts.map(a => a.id); return s; });
       req.expired = extra.expired || [];
     } else { req.person = P.person(extra.person, { names }); req.action = extra.action; }
     return req;

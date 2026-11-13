@@ -1,0 +1,5 @@
+# 适配层配置：共享核心的内部步长，和输入来源的优先级。核心不认识游戏，这些只属于适配层。
+# core_step_minutes：等于游戏一次推进的分钟数，改了它，疾病模型的数值节奏随之改变。
+core_step_minutes: 5
+# source_priority：同一个手柄有多个 level 写入时，取排在前面的来源。total 类不看优先级，直接求和。
+source_priority: [player, dispatch, event, preset]

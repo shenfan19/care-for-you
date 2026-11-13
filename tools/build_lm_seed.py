@@ -8,6 +8,11 @@ with open(os.path.join(SRC, 'classes.yaml'), encoding='utf-8') as f: out['templa
 for n in sorted(os.listdir(SRC)):
     if n.endswith('.yaml') and n != 'classes.yaml':
         with open(os.path.join(SRC, n), encoding='utf-8') as f: out['templates/lm/models/' + n] = f.read()
+with open(os.path.join(SRC, 'adapter_config.yaml'), encoding='utf-8') as f: out['templates/lm/adapter_config.yaml'] = f.read()
+AD = os.path.join(SRC, 'adapter')
+for n in sorted(os.listdir(AD)):
+    if n.endswith('.yaml'):
+        with open(os.path.join(AD, n), encoding='utf-8') as f: out['templates/lm/adapter/' + n] = f.read()
 head = '/* 浏览器里数值积分后端用的模型文件，由 tools/build_lm_seed.py 从 frontend/src/data/lm 生成，不要手改。载入时写进数据文件夹的 templates/lm。 */\n'
 body = '(function (CY) {\n  CY.lmSeed = %s;\n  const files = CY.seed.files;\n  CY.seed.files = function () { return Object.assign(files.call(this), CY.lmSeed); };\n})(globalThis.CY = globalThis.CY || {});\n' % json.dumps(out, ensure_ascii=False)
 open(os.path.join(ROOT, 'frontend', 'src', 'data', 'lm_seed.js'), 'w', encoding='utf-8', newline='\n').write(head + body)

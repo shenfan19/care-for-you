@@ -94,7 +94,7 @@
     for (const k of plan.tasks) {
       const who = get(k.cg), dep = get(k.target); if (!canAct(who) || !ok(dep) || G.need(dep, k.need) < C.act_at) continue;
       const a = careActionFor(dep, k.need, C); if (!a) continue;
-      applyEffects(dep, a, P.model.efficiency(C, G.need(who, 'rest')));
+      applyEffects(dep, a, P.model.efficiency(C, G.need(who, 'rest')), 'dispatch');
       dep.state.mood = clamp(dep.state.mood + C.care_mood);
       if (a.nap && G.isHuman(dep)) G.setFlag(dep, 'nap', { minutes: G.realMin(a.nap) });
       G.act[dep.id] = G.activityOf(dep);

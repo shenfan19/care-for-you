@@ -8,14 +8,14 @@ function loadLm(dir) {
   const ctx = vm.createContext({ console, Math, JSON, Promise, globalThis: null });
   ctx.globalThis = ctx;
   vm.runInContext(fs.readFileSync(path.join(root, 'vendor/js-yaml.min.js'), 'utf8'), ctx);
-  for (const f of ['core_convert.js', 'core_assign.js', 'lm.js']) vm.runInContext(fs.readFileSync(path.join(root, 'src/backend', f), 'utf8'), ctx);
+  for (const f of ['core_convert.js', 'core_assign.js', 'core_sources.js', 'lm.js']) vm.runInContext(fs.readFileSync(path.join(root, 'src/backend', f), 'utf8'), ctx);
   const CY = ctx.CY, y = ctx.jsyaml;
   if (!process.env.CARE_LEGACY_INTEGRATOR) CY.LMCore = require(path.join(root, 'src/backend/core_runtime/index.js')).LMCore;
   const base = dir || path.join(root, 'src/data/lm');
   const docs = fs.readdirSync(base).filter(f => f.endsWith('.yaml') && f !== 'classes.yaml').sort().map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
   const ad = path.join(base, 'adapter'), adapters = {};
   if (fs.existsSync(ad)) for (const f of fs.readdirSync(ad).filter(f => f.endsWith('.yaml'))) adapters[f] = y.load(fs.readFileSync(path.join(ad, f), 'utf8'));
-  CY.lm.build(CY.lm.mergeAdapters(docs, adapters), y.load(fs.readFileSync(path.join(base, 'classes.yaml'), 'utf8')));
+  CY.lm.build(CY.lm.mergeAdapters(docs, adapters), y.load(fs.readFileSync(path.join(base, 'classes.yaml'), 'utf8')), y.load(fs.readFileSync(path.join(base, 'adapter_config.yaml'), 'utf8')));
   return CY.lm;
 }
 

@@ -192,6 +192,7 @@ Each directive in the directives of a drive response has an op and a person. op 
 | needs | Need levels: keys are need names, values 0 to 1, 1 is fully satisfied (full stomach, fully hydrated, fully rested) and 0 is empty, four decimals. This is the same direction as the state variables of an LM model. Different species have different needs, and conditions add needs |
 | conditions | Array of condition ids |
 | cond_set | Per-condition settings the player chose, for example { "diabetes": { "severity": "advanced" } }. Empty object when none |
+| actions | Tick snapshots only: the same actions and story choices as pulses, each as { id, source }, where source is player, dispatch (automatic care and people helping themselves) or event (story choices). The integrator merges several sources writing one input: the highest priority wins for a level input, totals add. The priority list is data in templates/lm/adapter_config.yaml. When a snapshot has no actions, every id in pulses counts as a player action |
 | pulses | Tick snapshots only: the ids of the actions and story choices done since the last tick, for example ["sugar", "carb_heavy"]. Taken once, the next tick starts empty. A model may turn them into inputs |
 | traits | Array of trait ids, at most two |
 | voice | Voice id |
