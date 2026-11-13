@@ -1,0 +1,18 @@
+{
+ "notice": "Copied by plugins/game_bridge/tools/vendor.py. Do not edit these files; change the plugin and copy again.",
+ "source": "plugins/game_bridge/runtime",
+ "runtime_version": "0.1.0",
+ "contract_version": 1,
+ "vocabulary_version": 4,
+ "digest": "f25c36af319ca9f0d46c92e15650722f5273a705ebaeeea9cf1978dbb5a48cc5",
+ "files": {
+  "expr.js": "2f6df491868338925768db4b5f1de8b71ff0207242709970a620f13227daa699",
+  "index.js": "7d5f702d257007b49e138109361f41bf54931acb2cf946618c5eab301eea1023",
+  "lm_core.js": "0343c999b609bafa80694c3305ef3984686643c25f27604a8d24730a706d9ab1",
+  "lookup_core.js": "0edd1cba0cf7b91fcc103a8bab50b8c44abcfb0601dc5e0059a3aeda03e62d75",
+  "package.json": "1239d4d885dcad42201a27ed9324f8f0f760b78700d8db9ced39a511cffe7eae",
+  "version.js": "5d69476054c3dac7babc1953f19c9e3b7f693e93aad7f545f977921377ed6f0b",
+  "version.json": "f461f00bda25e167e15f0c6404d140ec58996b9b48bfa46118c57a1178445f25",
+  "vocabulary.json": "8ae85b3423912a31c7be6b2483211fe3b26faff50a818bfb0dfffb06adfe206b"
+ }
+}

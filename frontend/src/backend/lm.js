@@ -8,8 +8,9 @@
    variables 里 type 为 parameter 的当作参数。
    设置里 play.condition_models 为 true 时，即使后端选的是 builtin，也只为带疾病模型的角色积分疾病部分，其余仍由内置后端管。 */
 (function (CY) {
+  const HERE = typeof document !== 'undefined' && document.currentScript ? document.currentScript.src : null;   /* 动态 import 的相对路径要从这个脚本算 */
   const LM = CY.lm = { ready: false, error: null, lib: null, engine: null, loading: false };
-  const MAX_SUBSTEP_H = 0.25, MAX_SUBSTEPS = 720, RESYNC_EPS = 0.004;   /* 快照里的数保留四位小数，比这大的差就是游戏自己动了它 */
+  const MAX_SUBSTEP_H = 0.25, MAX_SUBSTEPS = 720, RESYNC_EPS = 0.004, CORE_STEP_MIN = 5;   /* 快照里的数保留四位小数，比这大的差就是游戏自己动了它 */
   const FUNCS = { min: Math.min, max: Math.max, abs: Math.abs, exp: Math.exp, log: Math.log, sqrt: Math.sqrt, pow: Math.pow, floor: Math.floor, tanh: Math.tanh, sin: Math.sin, cos: Math.cos };
   const pymod = (a, b) => a - b * Math.floor(a / b);
 
@@ -90,7 +91,7 @@
   const UNIT_PER_HOUR = { second: 3600, minute: 60, hour: 1, day: 1 / 24 };
   class Model {
     constructor(d, file) {
-      const md = d.metadata || {}; this.name = md.name || file.replace(/\.yaml$/, ''); this.condition = md.condition || null;
+      const md = d.metadata || {}; this.name = md.name || file.replace(/\.yaml$/, ''); this.condition = md.condition || null; this.doc = d;
       this.params = {}; for (const k in d.parameters || {}) this.params[k] = Number(d.parameters[k]);
       this.vars = {}; this.inputs = {};
       for (const k in d.variables || {}) {
@@ -195,7 +196,7 @@
       for (const n in lib.driveByName) for (const dr of lib.driveByName[n]) if (ok.has(dr.model) && (n === 'mood' || n === 'frailty' || (dr.kinds.includes(this.kind) && n in (snap.needs || {})))) { this.drives[n] = dr; break; }
       this.active = new Set(this.eligible.filter(m => m.condition || !Object.keys(m.drives).length || Object.keys(m.drives).some(n => n in this.drives)).map(m => m.name));
       this.emitted = {}; this.first = true; this.ageH = 0; this.clockH = 0;
-      this.windows = []; this.natClock = {}; this.history = {}; this.measured = {}; this.lastHistH = -1; this.lastEnv = null; this.revealNow = new Set();
+      this.cores = {}; this.windows = []; this.natClock = {}; this.history = {}; this.measured = {}; this.lastHistH = -1; this.lastEnv = null; this.revealNow = new Set();
     }
     activeModels() { return this.eligible.filter(m => this.active.has(m.name)); }
     gameValue(name, snap) { return name === 'mood' ? (snap.mood !== undefined ? snap.mood : 0.5) : name === 'frailty' ? (snap.frailty !== undefined ? snap.frailty : 0) : (snap.needs || {})[name]; }
@@ -228,7 +229,8 @@
       this.takePulses(snap);
       this.hourNow = world && world.hour !== undefined ? Number(world.hour) : 12;
       if (dt > 0) {
-        const all = this.activeModels(), act = all.filter(m => !m.fixedStepH), nat = all.filter(m => m.fixedStepH);
+        const all = this.activeModels(), viaCore = all.filter(m => this.coreOf(m)), rest = all.filter(m => !viaCore.includes(m));
+        const act = rest.filter(m => !m.fixedStepH), nat = rest.filter(m => m.fixedStepH);
         const maxH = Math.min(MAX_SUBSTEP_H, ...act.map(m => m.maxStepH));
         const n = Math.min(MAX_SUBSTEPS, Math.max(1, Math.ceil(dt / maxH))), h = dt / n;
         const hour0 = pymod(this.hourNow - dt, 24), env = this.baseEnv(snap), clock0 = this.clockH;
@@ -243,6 +245,7 @@
             this.natClock[m.name] += F;
           }
         }
+        this.stepCores(viaCore, env, dt, hour0, wd, clock0);
         this.ageH += dt;
         const keep = Math.max(0, ...nat.map(m => m.fixedStepH)) + 0.01;
         this.windows = this.windows.filter(w => w.until + keep > this.clockH);
@@ -254,6 +257,42 @@
       const out = [];
       for (const n in this.drives) { const v = this.gameValue(n, snap); if (v === undefined || v === null) continue; out.push([n, this.drives[n].value(this.state[this.drives[n].state])]); }
       return { drives: out, effects };
+    }
+    /* 交给共享核心的模型：转换一次，每个人每个模型一个核心实例。没有核心类或转换不了就返回 null，仍用旧积分器 */
+    coreOf(m) {
+      if (m.name in this.cores) return this.cores[m.name];
+      let cs = null;
+      if (CY.LMCore && CY.coreConvert) {
+        const conv = CY.coreConvert.convert(m, this, CORE_STEP_MIN);
+        if (conv) cs = { conv, core: new CY.LMCore({ model: conv.model, bridge: conv.bridge }), pend: 0, made: false };
+      }
+      return (this.cores[m.name] = cs);
+    }
+    /* 一次调用里，核心按固定步长走：每一步由适配层算出模型输入的水平和环境量，用手柄写进去，再把状态读回来。游戏侧改过的状态先赋值进核心 */
+    stepCores(models, env, dt, hour0, wd, clock0) {
+      for (const m of models) {
+        const cs = this.cores[m.name], core = cs.core;
+        if (!cs.made) { core.init({ v: 1, kind: 'init', subjects: [{ id: this.id, preset: null, overrides: Object.fromEntries(cs.conv.states.map(k => [k, this.state[k]])) }] }); cs.made = true; }
+        const cur = core.variables(this.id), diff = {};
+        for (const k of cs.conv.states) if (cur[k] !== this.state[k]) diff[k] = this.state[k];
+        if (Object.keys(diff).length) CY.coreAssign.set(core, this.id, diff, 'game');
+        const stepH = CORE_STEP_MIN / 60, avail = cs.pend + dt * 60, n = Math.floor(avail / CORE_STEP_MIN + 1e-9);
+        cs.pend = Math.max(0, avail - n * CORE_STEP_MIN);
+        for (let j = 0; j < n; j++) {
+          const hourJ = pymod(hour0 - (avail - dt * 60) / 60 + j * stepH, 24), tAbs = clock0 - (avail - dt * 60) / 60 + j * stepH, scratch = { hour: hourJ };
+          this.inputs(scratch, stepH, wd, [m], tAbs);
+          const handles = [];
+          for (const k of cs.conv.inputs) handles.push({ concept: 'care_in_' + k, mode: 'level', value: scratch[k] });
+          for (const k of cs.conv.envNames) {
+            let v = k === 'hour' ? hourJ : env[k];
+            if (v === undefined) v = k.startsWith('speed_') ? 1 : 0;
+            handles.push({ concept: 'care_env_' + k, mode: 'level', value: v });
+          }
+          core.step({ v: 1, kind: 'step', minutes: CORE_STEP_MIN, subjects: [{ id: this.id, handles }] });
+        }
+        const now = core.variables(this.id);
+        for (const k of cs.conv.states) this.state[k] = now[k];
+      }
     }
     /* 现在这一刻的完整变量环境，读数和效果都用它 */
     evaluate(snap) {
@@ -372,6 +411,8 @@
     if (LM.ready || LM.loading) return LM.ready;
     LM.loading = true;
     try {
+      /* 共享核心是 ES 模块，动态载入；测试环境由 harness 提前放好 CY.LMCore */
+      if (!CY.LMCore && HERE) CY.LMCore = (await import(new URL('core_runtime/index.js', HERE).href)).LMCore;
       const store = CY.store, T = CY.game.T(), docs = [];
       for (const p of Object.keys(T).filter(p => /^templates\/lm\/models\/[^/]+\.yaml$/.test(p)).sort()) docs.push([p.split('/').pop(), jsyaml.load(T[p])]);
       /* 玩家导入的疾病包在存档的 custom/lm/models 下 */

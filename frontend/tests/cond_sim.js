@@ -8,8 +8,9 @@ function loadLm(dir) {
   const ctx = vm.createContext({ console, Math, JSON, Promise, globalThis: null });
   ctx.globalThis = ctx;
   vm.runInContext(fs.readFileSync(path.join(root, 'vendor/js-yaml.min.js'), 'utf8'), ctx);
-  vm.runInContext(fs.readFileSync(path.join(root, 'src/backend/lm.js'), 'utf8'), ctx);
+  for (const f of ['core_convert.js', 'core_assign.js', 'lm.js']) vm.runInContext(fs.readFileSync(path.join(root, 'src/backend', f), 'utf8'), ctx);
   const CY = ctx.CY, y = ctx.jsyaml;
+  if (!process.env.CARE_LEGACY_INTEGRATOR) CY.LMCore = require(path.join(root, 'src/backend/core_runtime/index.js')).LMCore;
   const base = dir || path.join(root, 'src/data/lm');
   const docs = fs.readdirSync(base).filter(f => f.endsWith('.yaml') && f !== 'classes.yaml').sort().map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
   CY.lm.build(docs, y.load(fs.readFileSync(path.join(base, 'classes.yaml'), 'utf8')));
