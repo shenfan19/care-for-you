@@ -1,0 +1,36 @@
+# 适配层配置：这个模型在游戏里怎么用。drives 把模型状态对到游戏的需求，care 是动作、日程、预设、读数、效果。模型文件本身只剩 LM 格式，这里不属于模型。
+# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
+drives:
+  joint: { state: ar_pain, lo: 1.0, hi: 0.0, kinds: [human] }
+
+care:
+  max_step_minutes: 15
+  default_preset: moderate
+  presets:
+    mild:
+      params: { ar_k: 0.035, ar_flare_gain: 0.8 }
+    moderate:
+      params: { ar_k: 0.05, ar_flare_gain: 1.2 }
+    advanced:
+      params: { ar_k: 0.07, ar_flare_gain: 1.6 }
+  pulses:
+    heat: [{ var: ar_warm, add: 1.0 }]
+    selfheat: [{ var: ar_warm, add: 1.0 }]
+    massage: [{ var: ar_warm, add: 0.7 }]
+  readouts:
+    - id: joint_day
+      label: 今天关节的状况
+      label_en: Joints today
+      value: ar_flare
+      unit: ""
+      scale: [0, 1]
+      decimals: 2
+      bands:
+        - { upto: 0.35, tone: ok, word: 今天还好, word_en: A good day }
+        - { upto: 0.7, tone: watch, word: 有点僵, word_en: A bit stiff }
+        - { tone: alert, word: 今天不太舒服, word_en: A rough day }
+  effects:
+    mood: "-ar_m_gain * max(0.0, n_joint - 0.6)"
+  story:
+    intro: 关节炎的疼痛一阵好一阵坏，早晨更僵。热敷和按摩能缓一阵，不能根治。你不用把它治好，只是在 ta 疼的时候在旁边。
+    intro_en: Arthritis comes and goes, and mornings are stiffer. A warm pack or a massage eases it for a while, but nothing cures it. You do not have to fix it, only be there when it hurts.

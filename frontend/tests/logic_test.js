@@ -1129,7 +1129,8 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   {
     /* 浏览器里的积分后端自检：每一类角色空放十四天，状态不越界，没有 NaN；表达式解析和 Python 语法一致 */
     const LM = CY.lm, docs = Object.keys(CY.lmSeed).filter(p => p.startsWith('templates/lm/models/')).sort().map(p => [p.split('/').pop(), ctx.jsyaml.load(CY.lmSeed[p])]);
-    const lib = new LM.Library(docs, ctx.jsyaml.load(CY.lmSeed['templates/lm/classes.yaml']));
+    const adapters = Object.fromEntries(Object.keys(CY.lmSeed).filter(p => p.startsWith('templates/lm/adapter/')).map(p => [p.split('/').pop(), ctx.jsyaml.load(CY.lmSeed[p])]));
+    const lib = new LM.Library(LM.mergeAdapters(docs, adapters), ctx.jsyaml.load(CY.lmSeed['templates/lm/classes.yaml']));
     const ev = (src, env) => LM.compile(src, 't').fn(env || {});
     check('表达式：乘方右结合，一元负号，三元式，and or not，比较连写', ev('2 ** 3 ** 2') === 512 && ev('-2 ** 2') === -4 && ev('1 if 2 > 1 else 0') === 1 && ev('0 or 5') === 5 && ev('3 and 0') === 0 && ev('not 0') === 1 && ev('1 < 2 < 3') === 1 && ev('1 < 3 < 2') === 0 && ev('-7 % 3') === 2 && ev('min(3, 1, 2) + max(1, 4)') === 5);
     const probes = [];

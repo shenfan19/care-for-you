@@ -1,5 +1,5 @@
 /* 浏览器里跑的数值积分后端：把每个角色的需求，心情，虚弱度当作 LM 风格模型的状态变量，在页面里直接积分，不需要任何服务进程。
-   模型文件是数据文件夹 templates/lm 下的明文 YAML：models 里一个文件一个模型，classes.yaml 是类的派生。
+   模型文件是数据文件夹 templates/lm 下的明文 YAML：models 里一个文件一个模型，只有 LM 格式；adapter 里同名文件是游戏侧的 drives 与 care 配置；classes.yaml 是类的派生。
    方程是 Python 语法的表达式字符串，和 Life Matters 引擎的写法一致，这里用一个小的解析器求值，不用 eval。
    设置里 backend_provider 选 lm 就用它。它只管积分，事件，台词，谁向谁求助仍由内置后端管。
    疾病模型：模型文件的 metadata.condition 写疾病编号，只对得这个病的角色启用；方程可以带 condition 条件，step_unit 支持 minute，hour，day，
@@ -405,6 +405,12 @@
   }
   LM.Library = Library; LM.Engine = Engine; LM.compile = compile; LM.Person = Person;
 
+  /* 适配层配置：模型文件只有 LM 格式，drives 和 care 在同名的适配文件里，这里并进去。适配文件有就以它为准，没有就保留模型文件里自带的，玩家导入的转换包仍可以自带 */
+  LM.mergeAdapters = (docs, adapters) => docs.map(([file, d]) => {
+    const a = adapters && adapters[file]; if (!a) return [file, d];
+    const merged = Object.assign({}, d); delete merged.drives; delete merged.care;
+    return [file, Object.assign(merged, a.drives ? { drives: a.drives } : {}, a.care ? { care: a.care } : {})];
+  });
   /* 读模型：内置的在程序自带的 templates/lm，玩家导入的在存档的 custom/lm/models */
   LM.build = (docs, classes) => { LM.lib = new Library(docs, classes); LM.engine = new Engine(LM.lib, 'full'); LM.engineCond = new Engine(LM.lib, 'conditions'); LM.ready = true; LM.error = null; return LM.lib; };
   LM.load = async function () {
@@ -414,12 +420,14 @@
       /* 共享核心是 ES 模块，动态载入；测试环境由 harness 提前放好 CY.LMCore */
       if (!CY.LMCore && HERE) CY.LMCore = (await import(new URL('core_runtime/index.js', HERE).href)).LMCore;
       const store = CY.store, T = CY.game.T(), docs = [];
+      const adapters = {};
+      for (const p of Object.keys(T).filter(p => /^templates\/lm\/adapter\/[^/]+\.yaml$/.test(p))) adapters[p.split('/').pop()] = jsyaml.load(T[p]);
       for (const p of Object.keys(T).filter(p => /^templates\/lm\/models\/[^/]+\.yaml$/.test(p)).sort()) docs.push([p.split('/').pop(), jsyaml.load(T[p])]);
       /* 玩家导入的疾病包在存档的 custom/lm/models 下 */
       for (const p of (await store.list()).filter(p => /^custom\/lm\/models\/[^/]+\.yaml$/.test(p)).sort()) docs.push([p.split('/').pop(), await store.readYaml(p)]);
       const classes = T['templates/lm/classes.yaml'] ? jsyaml.load(T['templates/lm/classes.yaml']) : null;
       if (!docs.length || !classes) throw new Error('内置的疾病模型没有载入');
-      LM.build(docs, classes);
+      LM.build(LM.mergeAdapters(docs, adapters), classes);
     } catch (e) { LM.error = String(e && e.message || e); }
     LM.loading = false;
     return LM.ready;

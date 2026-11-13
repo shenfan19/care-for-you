@@ -55,38 +55,3 @@ equations:
     step_unit: hour
     dynamics:
       dp_low: "dp_low + step * dp_k * speed_lowmood * (1.0 + dp_company_gain * n_company) * (1.0 - dp_lift_cut * min(1.0, dp_lift)) * (1.0 - 0.6 * asleep)"
-
-# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
-drives:
-  lowmood: { state: dp_low, lo: 1.0, hi: 0.0, kinds: [human] }
-
-care:
-  max_step_minutes: 15
-  default_preset: moderate
-  presets:
-    mild:
-      params: { dp_k: 0.028 }
-    moderate:
-      params: { dp_k: 0.04 }
-    advanced:
-      params: { dp_k: 0.055 }
-  pulses:
-    listen: [{ var: dp_lift, add: 1.0 }]
-    walkout: [{ var: dp_lift, add: 1.0 }]
-  readouts:
-    - id: spirit
-      label: 今天的精神
-      label_en: Spirits today
-      value: "1.0 - dp_low"
-      unit: ""
-      scale: [0, 1]
-      decimals: 2
-      bands:
-        - { upto: 0.35, tone: alert, word: 提不起劲, word_en: Hard to get going }
-        - { upto: 0.65, tone: watch, word: 有点低落, word_en: A bit low }
-        - { tone: ok, word: 还不错, word_en: Doing alright }
-  effects:
-    mood: "-dp_m_gain * dp_low"
-  story:
-    intro: 情绪低落不是谁的错。ta 需要的常常不是办法，是有人安静地在旁边。陪着听一会儿，或者一起出去走走，低落会慢下来。如果 ta 一直这样，请让 ta 见专业的人。
-    intro_en: Low mood is nobody's fault. What helps is often not a solution but someone quietly nearby. Listening for a while, or walking out together, slows it down. If it stays this way, please help them see a professional.

@@ -171,9 +171,10 @@ check('不带病的人完全不被疾病引擎碰', (() => { const s = person([]
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../src/backend/lm.js'), 'utf8'), ctx);
   const y = ctx.jsyaml, CY = ctx.CY, base = path.join(__dirname, '../src/data/lm');
   const docs = fs.readdirSync(base).filter(f => /^cond_.*\.yaml$/.test(f)).map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
+  const adapters = Object.fromEntries(fs.readdirSync(path.join(base, 'adapter')).map(f => [f, y.load(fs.readFileSync(path.join(base, 'adapter', f), 'utf8'))]));
   for (const f of fs.readdirSync(path.join(fx, 'templates/lm/models'))) docs.push([f, y.load(fs.readFileSync(path.join(fx, 'templates/lm/models', f), 'utf8'))]);
   const classes = { version: 1, kinds: { human: 'human' }, classes: { organism: { params: {} }, human: { params: {} }, human_elder: { params: {} } }, conditions: {} };
-  CY.lm.build(docs, classes);
+  CY.lm.build(CY.lm.mergeAdapters(docs, adapters), classes);
   check('转换来的模型取代同病的手写模型', CY.lm.lib.modelsOfCondition('diabetes').map(m => m.name).join() === 'cond_diabetes_lm', CY.lm.lib.modelsOfCondition('diabetes').map(m => m.name).join());
   check('转换来的新疾病可以载入', CY.lm.lib.modelsOfCondition('htn_gout').length === 1);
   for (const cid of Object.keys(exp)) {

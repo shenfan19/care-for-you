@@ -1,0 +1,57 @@
+# 适配层配置：这个模型在游戏里怎么用。drives 把模型状态对到游戏的需求，care 是动作、日程、预设、读数、效果。模型文件本身只剩 LM 格式，这里不属于模型。
+# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
+drives:
+  sugar: { state: dm_check_debt, lo: 1.0, hi: 0.0, kinds: [human] }
+
+care:
+  max_step_minutes: 5
+  default_preset: moderate
+  presets:
+    mild:
+      params: { dm_sens: 0.7 }
+      state: { dm_glucose: 125.0, dm_avg: 125.0 }
+    moderate:
+      params: { dm_sens: 0.45 }
+      state: { dm_glucose: 140.0, dm_avg: 140.0 }
+    advanced:
+      params: { dm_sens: 0.3 }
+      state: { dm_glucose: 165.0, dm_avg: 165.0 }
+  schedule:
+    - { var: dm_carbs, hour: 7.5, minutes: 30, value: 45.0 }
+    - { var: dm_carbs, hour: 12.0, minutes: 30, value: 60.0 }
+    - { var: dm_carbs, hour: 18.5, minutes: 30, value: 60.0 }
+  pulses:
+    medicine: [{ var: dm_med, add: 1.0 }]
+    selfmed: [{ var: dm_med, add: 1.0 }]
+    carb_heavy: [{ var: dm_carbs, total: 25.0, minutes: 30 }]
+    carb_low: [{ var: dm_carbs, total: -20.0, minutes: 30 }]
+  readouts:
+    - id: glucose
+      label: 血糖
+      label_en: Blood glucose
+      value: dm_glucose
+      unit: mg/dL
+      scale: [60, 300]
+      reveal_by: [sugar, selfsugar]
+      bands:
+        - { upto: 69, tone: alert, word: 偏低，先吃点东西, word_en: "Low, have something to eat" }
+        - { upto: 140, tone: ok, word: 很平稳, word_en: Steady }
+        - { upto: 180, tone: watch, word: 稍微高了一点, word_en: A little high }
+        - { tone: alert, word: 偏高，晚饭清淡些, word_en: "High, keep dinner light" }
+    - id: glucose_avg
+      label: 近三天平均
+      label_en: Three-day average
+      value: dm_avg
+      unit: mg/dL
+      scale: [80, 250]
+      reveal_by: [sugar, selfsugar]
+      bands:
+        - { upto: 130, tone: ok, word: 控制得不错, word_en: Well controlled }
+        - { upto: 170, tone: watch, word: 还可以更好, word_en: Could be better }
+        - { tone: alert, word: 这几天偏高, word_en: Running high lately }
+  effects:
+    frailty: "dm_f_gain * dm_strain"
+    mood: "-dm_m_gain * max(0.0, (dm_glucose - 190.0) / 100.0)"
+  story:
+    intro: 糖尿病是慢病，不是急症。重要的是每天的小事：按时吃药，隔一阵测一次血糖，晚饭不要太重。测过血糖，才看得到数字；数字好的时候，ta 的心情也会跟着好一点。
+    intro_en: "Diabetes is a slow companion, not an emergency. What matters is the small daily things, taking the pills, checking the sugar now and then, keeping dinner from getting heavy. The number only shows after a check, and when it looks good, the mood follows."

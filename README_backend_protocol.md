@@ -236,7 +236,7 @@ Data folder templates/cards/card-id.yaml, one per typical kind of character. Car
 
 A condition (diabetes, high blood pressure, arthritis, low mood) can carry a model: a small LM-format YAML file that the game integrates in the browser, so that the person's numbers follow from what the carers do and what the day looks like. The same files can be written by hand or produced from a Life Matters model by the care_export plugin of the LM Reference Engine.
 
-- Where: data folder templates/lm/models. A file whose metadata.condition names a condition is used only for people who have that condition. The four shipped ones are frontend/src/data/lm/cond_*.yaml, and tools/build_lm_seed.py bundles them into lm_seed.js.
+- Where: data folder templates/lm/models for the model and templates/lm/adapter for the game's own configuration of it, one file of the same name each. A file whose metadata.condition names a condition is used only for people who have that condition. The four shipped ones are frontend/src/data/lm/cond_*.yaml with their adapters in frontend/src/data/lm/adapter, and tools/build_lm_seed.py bundles them into lm_seed.js.
 - Switch: settings play.condition_models, true by default. With backend_provider builtin, only the disease part of people who have a model is integrated and everything else stays with the built-in backend. With backend_provider lm the same models run next to the other LM models. A remote backend (http) is not touched.
 - Replacement: metadata.supersedes names the models this one replaces, so a model converted from Life Matters can take the place of the hand-written one for the same condition. Files with a newer metadata.version overwrite the older file in the data folder.
 
@@ -244,7 +244,7 @@ A condition (diabetes, high blood pressure, arthritis, low mood) can carry a mod
 
 LM format as read by the LM Reference Engine: parameters (or variables of type parameter), variables of type state and input, auxiliary, equations with step_unit second, minute, hour or day, an optional condition, a priority and dynamics. Expressions are the Python subset min, max, abs, exp, log, sqrt, pow, floor, tanh, sin, cos, if else, and, or, not, comparisons, ** and %. Names the game provides: step, hour, asleep, awake, age, health, inpatient, is_human, mood_now, need_max, mood_offset, frailty_vuln, n_<need> (the need now, 0 to 1), speed_<need> (the person's rate multiplier) and has_<condition>.
 
-Two sections are the game's own:
+Two sections are the game's own. They are kept in the adapter file of the same name, not in the model file, so the model file stays pure LM format; a converted model that carries them inline still works when there is no adapter file:
 
 | Section | Meaning |
 | --- | --- |

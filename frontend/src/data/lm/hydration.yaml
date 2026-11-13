@@ -44,8 +44,3 @@ equations:
     step_unit: hour
     dynamics:
       water_deficit: "water_deficit + step * water_loss_rate"
-
-# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
-drives:
-  thirst: { state: water_deficit, lo: 1.0, hi: 0.0, kinds: [human, animal] }
-  water: { state: water_deficit, lo: 1.0, hi: 0.0, kinds: [plant] }

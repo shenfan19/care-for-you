@@ -62,7 +62,3 @@ equations:
     step_unit: hour
     dynamics:
       glucose: "glucose + (glucose_base + glucose_meal_gain * satiety * (1.0 + glucose_impair) - glucose) * (1.0 - exp(-step / glucose_tau_h))"
-
-# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
-drives:
-  hunger: { state: satiety, lo: 0.0, hi: 1.0, kinds: [human, animal] }

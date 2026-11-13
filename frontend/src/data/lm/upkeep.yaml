@@ -53,13 +53,3 @@ equations:
       light_deficit: "light_deficit + step * k_sun * speed_sun"
       nutrient_deficit: "nutrient_deficit + step * k_fert * speed_fertilize"
       overgrowth: "overgrowth + step * k_prune * speed_prune"
-
-# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
-drives:
-  hygiene: { state: grime, lo: 1.0, hi: 0.0, kinds: [human] }
-  diaper: { state: diaper_load, lo: 1.0, hi: 0.0, kinds: [human] }
-  homework: { state: homework_left, lo: 1.0, hi: 0.0, kinds: [human] }
-  clean: { state: litter, lo: 1.0, hi: 0.0, kinds: [animal] }
-  sun: { state: light_deficit, lo: 1.0, hi: 0.0, kinds: [plant] }
-  fertilize: { state: nutrient_deficit, lo: 1.0, hi: 0.0, kinds: [plant] }
-  prune: { state: overgrowth, lo: 1.0, hi: 0.0, kinds: [plant] }

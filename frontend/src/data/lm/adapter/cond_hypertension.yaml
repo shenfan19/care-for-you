@@ -1,0 +1,44 @@
+# 适配层配置：这个模型在游戏里怎么用。drives 把模型状态对到游戏的需求，care 是动作、日程、预设、读数、效果。模型文件本身只剩 LM 格式，这里不属于模型。
+# 驱动：游戏里的状态是水平（1 满足，0 见底）。lo 和 hi 把模型变量映射到水平：变量是压力的，lo 写 1，hi 写 0，水平 = 1 - 压力；变量本身就是水平的，lo 写 0，hi 写 1。
+drives:
+  bp: { state: ht_check_debt, lo: 1.0, hi: 0.0, kinds: [human] }
+
+care:
+  max_step_minutes: 10
+  default_preset: moderate
+  presets:
+    mild:
+      params: { ht_base: 145.0, ht_med_gain: 14.0 }
+      state: { ht_bp: 132.0, ht_bp_avg: 132.0 }
+    moderate:
+      params: { ht_base: 155.0, ht_med_gain: 18.0 }
+      state: { ht_bp: 140.0, ht_bp_avg: 140.0 }
+    advanced:
+      params: { ht_base: 172.0, ht_med_gain: 22.0 }
+      state: { ht_bp: 155.0, ht_bp_avg: 155.0 }
+  schedule:
+    - { var: ht_salt_in, hour: 7.5, minutes: 30, value: 0.45, delivery: total }
+    - { var: ht_salt_in, hour: 12.0, minutes: 30, value: 0.6 }
+    - { var: ht_salt_in, hour: 18.5, minutes: 30, value: 0.6 }
+  pulses:
+    medicine: [{ var: ht_med, add: 1.0 }]
+    selfmed: [{ var: ht_med, add: 1.0 }]
+    salt_high: [{ var: ht_salt_in, total: 0.6, minutes: 30 }]
+    salt_low: [{ var: ht_salt_in, total: -0.4, minutes: 30 }]
+  readouts:
+    - id: bp
+      label: 血压
+      label_en: Blood pressure
+      value: ht_bp
+      unit: mmHg
+      scale: [100, 200]
+      reveal_by: [bp, selfbp]
+      bands:
+        - { upto: 129, tone: ok, word: 很平稳, word_en: Steady }
+        - { upto: 149, tone: watch, word: 稍微高了一点, word_en: A little high }
+        - { tone: alert, word: 偏高，今天少盐, word_en: "High, go easy on salt today" }
+  effects:
+    frailty: "ht_f_gain * ht_strain"
+  story:
+    intro: 高血压不会疼，所以最容易被忘记。药要按时吃，隔一阵量一次血压，饭菜里盐放得少一点。量过血压才看得到数字。
+    intro_en: High blood pressure does not hurt, which is why it is so easy to forget. The pills on time, a check now and then, a little less salt in the food. The number only shows after a check.
