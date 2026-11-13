@@ -62,6 +62,15 @@ Response:
 - An old backend that does not know hello can answer it like an ordinary request with {"v":1,"directives":[]}. The game then treats it as handling everything, and behaviour is exactly as before.
 - When the handshake fails (cannot connect or the response is invalid) the built-in backend is used this time and the game retries after 30 seconds.
 
+### Speaking the core interface
+
+A backend that is a computational core of the LM game bridge can say so in hello and then talk in concepts instead of game names. The contract is version 1 and is described in the game bridge plugin of the LM Reference Engine (docs/README_core_interface.md). An old backend that does nothing of this is not affected.
+
+- hello: add a `core` object, `{ "v": 1, "readouts": ["energy_deficit", ...], "handles": { "medication_dose": { "mode": "total" } } }`. readouts are the concepts the backend answers, handles are the concepts it accepts, each with mode level or total. Anything else in it is dropped. The key is called core because handles at the top level of hello already means events, strategies and lines.
+- drive, tick request: every character carries `handles`, a list of `{ concept, mode, value, source }`. It is made from the actions of that tick, which are also given as `actions` with their source. For a level handle the source of highest priority wins, for a total handle the values add. Only handles the backend declared are sent. Which action writes which concept is data in templates/lm/concepts.yaml, the priority is in templates/lm/adapter_config.yaml.
+- drive response: add `readouts`, `{ "<character id>": { "<concept>": 0.4 } }`. A value is 0 to 1, larger meaning worse. The game keeps only concepts the backend declared in hello and that concepts.yaml maps to a need, sets that need to one minus the value, and counts the need as driven by the backend, so the game stops growing it. Numbers are clamped, unknown characters are dropped. Directives and drives in the same response work as before.
+- The file concepts.yaml maps needs to concepts: hunger energy_deficit, thirst hydration_deficit, rest fatigue, sugar glycemic_level, bp blood_pressure_level, joint mobility_loss, company loneliness.
+
 ### drive, tick
 
 Request:

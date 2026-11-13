@@ -591,7 +591,7 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
   G.setNeed(babyS, 'hunger', 0.95); at(23); check('婴儿很饿时醒着', G.activityOf(babyS) === 'awake');
   /* 睡觉时的效果 */
   for (const p of G.people) p.person.active = false; K.person.active = true; E.person.active = true;
-  for (const p of [K, E]) p.state.needs = Object.fromEntries(Object.keys(p.state.needs).map(k => [k, 0.9])); at(23); G.setNeed(K, 'rest', 0.8); G.lastTick = Date.now() - 1000; G.nextAt = Date.now() + 1e9; G.tick();
+  for (const p of [K, E]) p.state.needs = Object.fromEntries(Object.keys(p.state.needs).map(k => [k, 0.9])); at(23); G.setNeed(K, 'rest', 0.8); G.nextAt = Date.now() + 1e9; for (let i = 0; i < 3; i++) { G.lastTick = Date.now() - 1000; G.tick(); }   /* 需求涨落的核心按一游戏分钟一步，不足一分钟的推进先攒着，所以多推几次 */
   check('睡着的人疲倦会下降', G.need(K, 'rest') < 0.8);
   G.req = {}; G.setNeed(K, 'thirst', 0.9); G.setNeed(E, 'thirst', 0.9); let reqs = 0; for (let i = 0; i < 200; i++) { G.req = {}; G.fire(); reqs += Object.keys(G.req).length; }
   check('睡着的人不会来打扰', reqs === 0);

@@ -1,0 +1,14 @@
+# 适配层配置：Care 的需求和核心接口里的概念怎么对应，以及动作怎么写成手柄。远程后端说核心接口时用它。
+# needs：需求名到读数概念。读数 0 到 1，越大越糟，需求水平是 1 减读数，所以这里不写方向。
+# actions：动作编号到手柄写入，mode 和概念的 mode 要一致。没有写的动作不发给远程核心。
+needs:
+  hunger: energy_deficit
+  thirst: hydration_deficit
+  rest: fatigue
+  sugar: glycemic_level
+  bp: blood_pressure_level
+  joint: mobility_loss
+  company: loneliness
+actions:
+  medicine: [{ concept: medication_dose, mode: total, value: 1 }]
+  selfmed: [{ concept: medication_dose, mode: total, value: 1 }]

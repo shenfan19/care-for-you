@@ -12,7 +12,7 @@ function loadLm(dir) {
   const CY = ctx.CY, y = ctx.jsyaml;
   if (!process.env.CARE_LEGACY_INTEGRATOR) CY.LMCore = require(path.join(root, 'src/backend/core_runtime/index.js')).LMCore;
   const base = dir || path.join(root, 'src/data/lm');
-  const docs = fs.readdirSync(base).filter(f => f.endsWith('.yaml') && f !== 'classes.yaml' && f !== 'adapter_config.yaml').sort().map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
+  const docs = fs.readdirSync(base).filter(f => f.endsWith('.yaml') && f !== 'classes.yaml' && f !== 'adapter_config.yaml' && f !== 'concepts.yaml').sort().map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
   const ad = path.join(base, 'adapter'), adapters = {};
   if (fs.existsSync(ad)) for (const f of fs.readdirSync(ad).filter(f => f.endsWith('.yaml'))) adapters[f] = y.load(fs.readFileSync(path.join(ad, f), 'utf8'));
   CY.lm.build(CY.lm.mergeAdapters(docs, adapters), y.load(fs.readFileSync(path.join(base, 'classes.yaml'), 'utf8')), y.load(fs.readFileSync(path.join(base, 'adapter_config.yaml'), 'utf8')));

@@ -745,15 +745,32 @@
       const prevAct = G.act[p.id];
       const act = G.act[p.id] = G.activityOf(p), sleeping = act === 'sleeping';
       const night = G.isNight();
+      const nc = CY.coreNeeds && CY.coreNeeds.ready() ? CY.coreNeeds : null;
+      /* 速率里除了时间以外的各个倍数：不同需求，时段，睡着，住院，外出，性格，物品，节律 */
+      const chain = k => boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? ND.sleeping_growth : 1) * (G.flag(p, 'hospital') ? ND.hospital_growth : 1) * (G.awayMult ? G.awayMult(p) : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1) * G.rhythm(p, k);
+      const cap = offline ? ND.offline_cap : 1, needsIn = {}, rates = {}, caps = {};
+      for (const k in p.state.needs) if (nc && nc.has(k)) needsIn[k] = G.need(p, k);
       for (const k in defs) {
         if (driven(p, k)) continue;
-        if (k === 'rest' && sleeping) { G.setNeed(p, 'rest', G.need(p, 'rest') - G.E('game').need_dynamics.rest_sleep_recovery * hp * shop.rest_sleep); continue; }
-        const grow = defs[k].rateNow * hp * boost * (k === 'rest' && night ? 2 : 1) * (sleeping ? G.E('game').need_dynamics.sleeping_growth : 1) * (G.flag(p, 'hospital') ? G.E('game').need_dynamics.hospital_growth : 1) * (G.awayMult ? G.awayMult(p) : 1) * (mods.rate[k] || 1) * ((p.person.need_rate || {})[k] || 1) * (shop.rate[k] || 1) * G.rhythm(p, k);
-        G.setNeed(p, k, Math.min(offline ? G.E('game').need_dynamics.offline_cap : 1, G.need(p, k) + grow));
+        const modeled = nc && nc.has(k);
+        if (k === 'rest' && sleeping) {
+          if (modeled) { rates[k] = -ND.rest_sleep_recovery * G.pace() * shop.rest_sleep; caps[k] = 1; } else G.setNeed(p, 'rest', G.need(p, 'rest') - ND.rest_sleep_recovery * hp * shop.rest_sleep);
+          continue;
+        }
+        if (modeled) { rates[k] = defs[k].rateNow * G.pace() * chain(k); caps[k] = cap; continue; }   /* 有模型的需求交给共享核心，没有的仍在这里涨 */
+        G.setNeed(p, k, Math.min(cap, G.need(p, k) + defs[k].rateNow * hp * chain(k)));
       }
-      if (!driven(p, 'mood')) {
-        let target = 1 - G.E('game').need_dynamics.mood_target_slope * G.maxNeed(p) + mods.mood_offset + shop.mood;
-        s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * G.E('game').need_dynamics.mood_relax));
+      const moodOn = !driven(p, 'mood');
+      if (nc) {
+        if (!moodOn && !Object.keys(rates).length) { /* 这个人的需求和心情都由别处推进，没有要算的 */ } else {
+        let other = 0; for (const k of Object.keys(p.state.needs)) if (!nc.has(k)) other = Math.max(other, G.need(p, k));
+        const out = nc.advance(p.id, gmin, { needs: needsIn, rates, caps, mood: s.mood, mood_on: moodOn ? 1 : 0, slope: ND.mood_target_slope, relax: ND.mood_relax, shift: mods.mood_offset + shop.mood, other_max: other });
+        for (const k in rates) G.setNeed(p, k, out.needs[k]);
+        if (moodOn) s.mood = out.mood;
+        }
+      } else if (moodOn) {
+        let target = 1 - ND.mood_target_slope * G.maxNeed(p) + mods.mood_offset + shop.mood;
+        s.mood = clamp(s.mood + (clamp(target) - s.mood) * Math.min(1, hours * ND.mood_relax));
       }
       if (offline) continue;
       if (prevAct === 'awake' && act === 'sleeping') G.toastFor(p, t('toast.sleep', { name: p.person.name }), 'soft');

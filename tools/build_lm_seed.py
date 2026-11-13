@@ -6,9 +6,11 @@ SRC = os.path.join(ROOT, 'frontend', 'src', 'data', 'lm')
 out = {}
 with open(os.path.join(SRC, 'classes.yaml'), encoding='utf-8') as f: out['templates/lm/classes.yaml'] = f.read()
 for n in sorted(os.listdir(SRC)):
-    if n.endswith('.yaml') and n not in ('classes.yaml', 'adapter_config.yaml'):
+    if n.endswith('.yaml') and n not in ('classes.yaml', 'adapter_config.yaml', 'concepts.yaml'):
         with open(os.path.join(SRC, n), encoding='utf-8') as f: out['templates/lm/models/' + n] = f.read()
 with open(os.path.join(SRC, 'adapter_config.yaml'), encoding='utf-8') as f: out['templates/lm/adapter_config.yaml'] = f.read()
+with open(os.path.join(SRC, 'rates', 'needs_rates.yaml'), encoding='utf-8') as f: out['templates/lm/rates/needs_rates.yaml'] = f.read()
+with open(os.path.join(SRC, 'concepts.yaml'), encoding='utf-8') as f: out['templates/lm/concepts.yaml'] = f.read()
 AD = os.path.join(SRC, 'adapter')
 for n in sorted(os.listdir(AD)):
     if n.endswith('.yaml'):

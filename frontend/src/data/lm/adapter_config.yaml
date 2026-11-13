@@ -3,3 +3,5 @@
 core_step_minutes: 5
 # source_priority：同一个手柄有多个 level 写入时，取排在前面的来源。total 类不看优先级，直接求和。
 source_priority: [player, dispatch, event, preset]
+# needs_step_minutes：需求与心情涨落那个模型的内部步长，取一游戏分钟，界面上的条一分钟动一次。
+needs_step_minutes: 1

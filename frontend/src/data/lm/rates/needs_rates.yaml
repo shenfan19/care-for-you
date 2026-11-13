@@ -1,0 +1,613 @@
+# 需求的涨落：每个需求一个压力状态，速率和上限是输入，由游戏侧适配层按角色、时段、性格、照顾等算好后写进来，模型本身没有游戏的数。
+# 压力在 0 到 1 之间，按速率每小时上涨，不超过上限；睡觉时的休息恢复用负速率表示。心情向 1 减斜率乘最大压力的目标松弛。
+# 这是 LM 格式的通用模型，没有 drives，不属于任何疾病或身体模型，由 core_needs.js 单独载入。
+metadata:
+  name: needs_rates
+  version: "1.0"
+  lm_format_version: "1.0"
+  description:
+    problem: |
+      一个角色的各项需求随时间累积，照顾让它回落，心情跟着最大的需求走。游戏里这些速率因角色、时段、性格、物品而不同。
+    method: |
+      - 每个需求的压力 p 每小时按输入速率上涨，取 0 到 1，再不超过输入上限。
+      - 心情每小时向目标靠拢，目标是 1 减斜率乘最大压力再加偏移，靠拢的比例是步长乘松弛系数，最大为 1。
+    limitations: |
+      - 速率由适配层给，本模型不决定速率的大小。
+      - 不含虚弱度的规则，那一条在游戏侧。
+  ratings:
+    importance: 0.5 - 游戏里每个角色都用
+    variable: 0.25 - 速率与参数由适配层按游戏数据给
+    equation: 0.25 - 线性累积加一阶松弛
+    simulation: 0.25 - 与游戏内置的涨落逐位对比过
+    optimization: 0.0 - 无决策目标
+    confidence: 0.25 - 只是把已有规则换了载体
+
+variables:
+  p_bp:
+    description: 需求 bp 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_bp:
+    description: 需求 bp 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_bp:
+    description: 需求 bp 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_breath:
+    description: 需求 breath 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_breath:
+    description: 需求 breath 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_breath:
+    description: 需求 breath 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_chest:
+    description: 需求 chest 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_chest:
+    description: 需求 chest 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_chest:
+    description: 需求 chest 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_clean:
+    description: 需求 clean 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_clean:
+    description: 需求 clean 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_clean:
+    description: 需求 clean 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_company:
+    description: 需求 company 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_company:
+    description: 需求 company 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_company:
+    description: 需求 company 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_diaper:
+    description: 需求 diaper 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_diaper:
+    description: 需求 diaper 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_diaper:
+    description: 需求 diaper 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_fertilize:
+    description: 需求 fertilize 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_fertilize:
+    description: 需求 fertilize 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_fertilize:
+    description: 需求 fertilize 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_fever:
+    description: 需求 fever 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_fever:
+    description: 需求 fever 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_fever:
+    description: 需求 fever 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_homework:
+    description: 需求 homework 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_homework:
+    description: 需求 homework 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_homework:
+    description: 需求 homework 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_humid:
+    description: 需求 humid 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_humid:
+    description: 需求 humid 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_humid:
+    description: 需求 humid 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_hunger:
+    description: 需求 hunger 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_hunger:
+    description: 需求 hunger 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_hunger:
+    description: 需求 hunger 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_hygiene:
+    description: 需求 hygiene 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_hygiene:
+    description: 需求 hygiene 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_hygiene:
+    description: 需求 hygiene 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_itch:
+    description: 需求 itch 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_itch:
+    description: 需求 itch 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_itch:
+    description: 需求 itch 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_joint:
+    description: 需求 joint 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_joint:
+    description: 需求 joint 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_joint:
+    description: 需求 joint 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_lowmood:
+    description: 需求 lowmood 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_lowmood:
+    description: 需求 lowmood 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_lowmood:
+    description: 需求 lowmood 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_medicine:
+    description: 需求 medicine 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_medicine:
+    description: 需求 medicine 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_medicine:
+    description: 需求 medicine 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_mobility:
+    description: 需求 mobility 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_mobility:
+    description: 需求 mobility 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_mobility:
+    description: 需求 mobility 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_nightmare:
+    description: 需求 nightmare 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_nightmare:
+    description: 需求 nightmare 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_nightmare:
+    description: 需求 nightmare 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_pain:
+    description: 需求 pain 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_pain:
+    description: 需求 pain 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_pain:
+    description: 需求 pain 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_play:
+    description: 需求 play 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_play:
+    description: 需求 play 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_play:
+    description: 需求 play 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_prune:
+    description: 需求 prune 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_prune:
+    description: 需求 prune 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_prune:
+    description: 需求 prune 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_reorient:
+    description: 需求 reorient 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_reorient:
+    description: 需求 reorient 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_reorient:
+    description: 需求 reorient 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_rest:
+    description: 需求 rest 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_rest:
+    description: 需求 rest 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_rest:
+    description: 需求 rest 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_sneeze:
+    description: 需求 sneeze 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_sneeze:
+    description: 需求 sneeze 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_sneeze:
+    description: 需求 sneeze 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_sugar:
+    description: 需求 sugar 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_sugar:
+    description: 需求 sugar 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_sugar:
+    description: 需求 sugar 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_sun:
+    description: 需求 sun 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_sun:
+    description: 需求 sun 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_sun:
+    description: 需求 sun 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_thirst:
+    description: 需求 thirst 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_thirst:
+    description: 需求 thirst 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_thirst:
+    description: 需求 thirst 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_toilet:
+    description: 需求 toilet 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_toilet:
+    description: 需求 toilet 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_toilet:
+    description: 需求 toilet 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_tremor:
+    description: 需求 tremor 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_tremor:
+    description: 需求 tremor 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_tremor:
+    description: 需求 tremor 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_veg:
+    description: 需求 veg 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_veg:
+    description: 需求 veg 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_veg:
+    description: 需求 veg 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_warmth:
+    description: 需求 warmth 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_warmth:
+    description: 需求 warmth 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_warmth:
+    description: 需求 warmth 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  p_water:
+    description: 需求 water 的压力。
+    value: 0.0
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  rate_water:
+    description: 需求 water 的压力每小时的涨速，负数是回落。
+    value: 0.0
+    unit: per hour
+    type: input
+  cap_water:
+    description: 需求 water 的压力上限。
+    value: 1.0
+    unit: fraction
+    type: input
+  mood_v:
+    description: 心情，0 到 1。
+    value: 0.5
+    unit: fraction
+    type: state
+    bounds: [0.0, 1.0]
+  mood_on:
+    description: 1 表示这一步由本模型推进心情，0 表示别处在管。
+    value: 0.0
+    unit: index
+    type: input
+  mood_slope:
+    description: 目标里最大压力的斜率。
+    value: 0.0
+    unit: index
+    type: input
+  mood_relax:
+    description: 每小时向目标靠拢的系数。
+    value: 0.0
+    unit: per hour
+    type: input
+  mood_shift:
+    description: 目标上的偏移，性格和物品给的。
+    value: 0.0
+    unit: fraction
+    type: input
+  other_max:
+    description: 本模型没有变量的需求里压力最大的那个。
+    value: 0.0
+    unit: fraction
+    type: input
+
+equations:
+  need_rise:
+    description: 每个需求的压力按速率涨，不超过上限，取 0 到 1。
+    priority: 40
+    step_unit: hour
+    dynamics:
+      p_bp: "max(0.0, min(1.0, min(cap_bp, p_bp + rate_bp * step)))"
+      p_breath: "max(0.0, min(1.0, min(cap_breath, p_breath + rate_breath * step)))"
+      p_chest: "max(0.0, min(1.0, min(cap_chest, p_chest + rate_chest * step)))"
+      p_clean: "max(0.0, min(1.0, min(cap_clean, p_clean + rate_clean * step)))"
+      p_company: "max(0.0, min(1.0, min(cap_company, p_company + rate_company * step)))"
+      p_diaper: "max(0.0, min(1.0, min(cap_diaper, p_diaper + rate_diaper * step)))"
+      p_fertilize: "max(0.0, min(1.0, min(cap_fertilize, p_fertilize + rate_fertilize * step)))"
+      p_fever: "max(0.0, min(1.0, min(cap_fever, p_fever + rate_fever * step)))"
+      p_homework: "max(0.0, min(1.0, min(cap_homework, p_homework + rate_homework * step)))"
+      p_humid: "max(0.0, min(1.0, min(cap_humid, p_humid + rate_humid * step)))"
+      p_hunger: "max(0.0, min(1.0, min(cap_hunger, p_hunger + rate_hunger * step)))"
+      p_hygiene: "max(0.0, min(1.0, min(cap_hygiene, p_hygiene + rate_hygiene * step)))"
+      p_itch: "max(0.0, min(1.0, min(cap_itch, p_itch + rate_itch * step)))"
+      p_joint: "max(0.0, min(1.0, min(cap_joint, p_joint + rate_joint * step)))"
+      p_lowmood: "max(0.0, min(1.0, min(cap_lowmood, p_lowmood + rate_lowmood * step)))"
+      p_medicine: "max(0.0, min(1.0, min(cap_medicine, p_medicine + rate_medicine * step)))"
+      p_mobility: "max(0.0, min(1.0, min(cap_mobility, p_mobility + rate_mobility * step)))"
+      p_nightmare: "max(0.0, min(1.0, min(cap_nightmare, p_nightmare + rate_nightmare * step)))"
+      p_pain: "max(0.0, min(1.0, min(cap_pain, p_pain + rate_pain * step)))"
+      p_play: "max(0.0, min(1.0, min(cap_play, p_play + rate_play * step)))"
+      p_prune: "max(0.0, min(1.0, min(cap_prune, p_prune + rate_prune * step)))"
+      p_reorient: "max(0.0, min(1.0, min(cap_reorient, p_reorient + rate_reorient * step)))"
+      p_rest: "max(0.0, min(1.0, min(cap_rest, p_rest + rate_rest * step)))"
+      p_sneeze: "max(0.0, min(1.0, min(cap_sneeze, p_sneeze + rate_sneeze * step)))"
+      p_sugar: "max(0.0, min(1.0, min(cap_sugar, p_sugar + rate_sugar * step)))"
+      p_sun: "max(0.0, min(1.0, min(cap_sun, p_sun + rate_sun * step)))"
+      p_thirst: "max(0.0, min(1.0, min(cap_thirst, p_thirst + rate_thirst * step)))"
+      p_toilet: "max(0.0, min(1.0, min(cap_toilet, p_toilet + rate_toilet * step)))"
+      p_tremor: "max(0.0, min(1.0, min(cap_tremor, p_tremor + rate_tremor * step)))"
+      p_veg: "max(0.0, min(1.0, min(cap_veg, p_veg + rate_veg * step)))"
+      p_warmth: "max(0.0, min(1.0, min(cap_warmth, p_warmth + rate_warmth * step)))"
+      p_water: "max(0.0, min(1.0, min(cap_water, p_water + rate_water * step)))"
+  mood_relax_dynamics:
+    description: 心情向目标松弛。
+    priority: 30
+    step_unit: hour
+    dynamics:
+      mood_v: "mood_v + mood_on * (min(1.0, max(0.0, 1.0 - mood_slope * max(other_max, p_bp, p_breath, p_chest, p_clean, p_company, p_diaper, p_fertilize, p_fever, p_homework, p_humid, p_hunger, p_hygiene, p_itch, p_joint, p_lowmood, p_medicine, p_mobility, p_nightmare, p_pain, p_play, p_prune, p_reorient, p_rest, p_sneeze, p_sugar, p_sun, p_thirst, p_toilet, p_tremor, p_veg, p_warmth, p_water) + mood_shift)) - mood_v) * min(1.0, step * mood_relax)"

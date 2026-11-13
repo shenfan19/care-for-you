@@ -27,7 +27,7 @@
     Object.assign(hs, { busy: true, url: u, t: Date.now() });
     B.pending++;
     CY.backendHttp.hello().then(r => {
-      B.caps = { url: u, name: String(r.name || '').slice(0, 48), version: String(r.version || '').slice(0, 24), handles: Object.assign({ events: true, strategies: true, lines: true }, r.handles && typeof r.handles === 'object' ? r.handles : {}) };
+      B.caps = { url: u, name: String(r.name || '').slice(0, 48), version: String(r.version || '').slice(0, 24), handles: Object.assign({ events: true, strategies: true, lines: true }, r.handles && typeof r.handles === 'object' ? r.handles : {}), core: CY.coreRemote ? CY.coreRemote.helloCore(r.core) : null };
       B.failed = false;
     }, e => { B.caps = null; fail(e); }).then(() => { hs.busy = false; B.pending--; });
   };
@@ -42,7 +42,7 @@
     const G = CY.game, P = CY.protocol, names = B.names();
     const req = { v: P.V, kind: 'drive', trigger, world: P.world(), minutes: extra.minutes || 0 };
     if (trigger === 'tick') {
-      req.people = G.people.filter(p => p.person.active !== false).map(p => { const s = P.person(p, { names }); const acts = G.takeActions ? G.takeActions(p.id) : []; s.actions = acts; s.pulses = acts.map(a => a.id); return s; });
+      req.people = G.people.filter(p => p.person.active !== false).map(p => { const s = P.person(p, { names }); const acts = G.takeActions ? G.takeActions(p.id) : []; s.actions = acts; if (B.caps && B.caps.core) s.handles = CY.coreRemote.handlesFor(acts, B.caps.core); s.pulses = acts.map(a => a.id); return s; });
       req.expired = extra.expired || [];
     } else { req.person = P.person(extra.person, { names }); req.action = extra.action; }
     return req;
@@ -89,7 +89,7 @@
     const compose = B.caps.handles.events === false;
     if (compose && req.trigger === 'action') return local();
     const base = compose ? local() : [];
-    return track(CY.backendHttp.drive(req)).then(r => { B.failed = false; B.noteDrives(r.drives); return base.concat(P.sanitize(r.directives)); }, e => { fail(e); B.driven = {}; return compose ? base : local(); });
+    return track(CY.backendHttp.drive(req)).then(r => { B.failed = false; const cr = B.caps && B.caps.core ? CY.coreRemote.fromReadouts(r.readouts, B.caps.core) : { directives: [], drives: {} }; B.noteDrives(Object.assign({}, cr.drives, r.drives)); return base.concat(P.sanitize(cr.directives.concat(r.directives || []))); }, e => { fail(e); B.driven = {}; return compose ? base : local(); });
   };
 
   /* 台词：先返回内置的，远程的回来了再通过 late 换上 */
