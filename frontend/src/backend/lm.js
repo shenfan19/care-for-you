@@ -196,7 +196,7 @@
       for (const n in lib.driveByName) for (const dr of lib.driveByName[n]) if (ok.has(dr.model) && (n === 'mood' || n === 'frailty' || (dr.kinds.includes(this.kind) && n in (snap.needs || {})))) { this.drives[n] = dr; break; }
       this.active = new Set(this.eligible.filter(m => m.condition || !Object.keys(m.drives).length || Object.keys(m.drives).some(n => n in this.drives)).map(m => m.name));
       this.emitted = {}; this.first = true; this.ageH = 0; this.clockH = 0;
-      this.cores = {}; this.windows = []; this.natClock = {}; this.history = {}; this.measured = {}; this.lastHistH = -1; this.lastEnv = null; this.revealNow = new Set();
+      this.units = null; this.windows = []; this.natClock = {}; this.history = {}; this.measured = {}; this.lastHistH = -1; this.lastEnv = null; this.revealNow = new Set();
     }
     activeModels() { return this.eligible.filter(m => this.active.has(m.name)); }
     gameValue(name, snap) { return name === 'mood' ? (snap.mood !== undefined ? snap.mood : 0.5) : name === 'frailty' ? (snap.frailty !== undefined ? snap.frailty : 0) : (snap.needs || {})[name]; }
@@ -231,7 +231,7 @@
       this.takePulses(snap);
       this.hourNow = world && world.hour !== undefined ? Number(world.hour) : 12;
       if (dt > 0) {
-        const all = this.activeModels(), viaCore = all.filter(m => this.coreOf(m)), rest = all.filter(m => !viaCore.includes(m));
+        const all = this.activeModels(), units = this.coreUnits(), viaCore = new Set(units.flatMap(u => u.models)), rest = all.filter(m => !viaCore.has(m));
         const act = rest.filter(m => !m.fixedStepH), nat = rest.filter(m => m.fixedStepH);
         const maxH = Math.min(MAX_SUBSTEP_H, ...act.map(m => m.maxStepH));
         const n = Math.min(MAX_SUBSTEPS, Math.max(1, Math.ceil(dt / maxH))), h = dt / n;
@@ -247,7 +247,7 @@
             this.natClock[m.name] += F;
           }
         }
-        this.stepCores(viaCore, env, dt, hour0, wd, clock0);
+        this.stepCores(units, env, dt, hour0, wd, clock0);
         this.ageH += dt;
         const keep = Math.max(0, ...nat.map(m => m.fixedStepH)) + 0.01;
         this.windows = this.windows.filter(w => w.until + keep > this.clockH);
@@ -260,39 +260,45 @@
       for (const n in this.drives) { const v = this.gameValue(n, snap); if (v === undefined || v === null) continue; out.push([n, this.drives[n].value(this.state[this.drives[n].state])]); }
       return { drives: out, effects };
     }
-    /* 交给共享核心的模型：转换一次，每个人每个模型一个核心实例。没有核心类或转换不了就返回 null，仍用旧积分器 */
-    coreOf(m) {
-      if (m.name in this.cores) return this.cores[m.name];
-      let cs = null;
-      if (CY.LMCore && CY.coreConvert) {
-        const conv = LM.config && CY.coreConvert.convert(m, this, LM.config.core_step_minutes);
-        if (conv) cs = { conv, core: new CY.LMCore({ model: conv.model, bridge: conv.bridge }), pend: 0, made: false };
+    /* 交给共享核心的单元：每个有疾病编号的模型一个，其余模型合成一个，互相按名字读变量。没有核心类或转换不了的单元不建，仍用旧积分器 */
+    coreUnits() {
+      if (this.units) return this.units;
+      this.units = []; this.corePend = 0;
+      if (CY.LMCore && CY.coreConvert && LM.config) {
+        const act = this.activeModels(), step = LM.config.core_step_minutes;
+        const add = ms => { const conv = ms.length && CY.coreConvert.convert(ms, this, step); if (conv) this.units.push({ models: ms, conv, core: new CY.LMCore({ model: conv.model, bridge: conv.bridge }), made: false }); };
+        for (const m of act.filter(m => m.condition)) add([m]);
+        add(act.filter(m => !m.condition));
       }
-      return (this.cores[m.name] = cs);
+      return this.units;
     }
     /* 一次调用里，核心按固定步长走：每一步由适配层算出模型输入的水平和环境量，用手柄写进去，再把状态读回来。游戏侧改过的状态先赋值进核心 */
-    stepCores(models, env, dt, hour0, wd, clock0) {
-      for (const m of models) {
-        const cs = this.cores[m.name], core = cs.core;
-        if (!cs.made) { core.init({ v: 1, kind: 'init', subjects: [{ id: this.id, preset: null, overrides: Object.fromEntries(cs.conv.states.map(k => [k, this.state[k]])) }] }); cs.made = true; }
+    stepCores(units, env, dt, hour0, wd, clock0) {
+      if (!units.length) return;
+      const stepMin = LM.config.core_step_minutes, stepH = stepMin / 60, avail = this.corePend + dt * 60, n = Math.floor(avail / stepMin + 1e-9), lag = (avail - dt * 60) / 60;
+      this.corePend = Math.max(0, avail - n * stepMin);
+      for (const u of units) {
+        const core = u.core;
+        if (!u.made) { core.init({ v: 1, kind: 'init', subjects: [{ id: this.id, preset: null, overrides: Object.fromEntries(u.conv.states.map(k => [k, this.state[k]])) }] }); u.made = true; }
         const cur = core.variables(this.id), diff = {};
-        for (const k of cs.conv.states) if (cur[k] !== this.state[k]) diff[k] = this.state[k];
+        for (const k of u.conv.states) if (cur[k] !== this.state[k]) diff[k] = this.state[k];
         if (Object.keys(diff).length) CY.coreAssign.set(core, this.id, diff, 'game');
-        const stepMin = LM.config.core_step_minutes, stepH = stepMin / 60, avail = cs.pend + dt * 60, n = Math.floor(avail / stepMin + 1e-9);
-        cs.pend = Math.max(0, avail - n * stepMin);
-        for (let j = 0; j < n; j++) {
-          const hourJ = pymod(hour0 - (avail - dt * 60) / 60 + j * stepH, 24), tAbs = clock0 - (avail - dt * 60) / 60 + j * stepH, put = this.coreInputs(m, hourJ, stepH, wd, tAbs);
+      }
+      for (let j = 0; j < n; j++) {
+        const hourJ = pymod(hour0 - lag + j * stepH, 24), tAbs = clock0 - lag + j * stepH, now = Object.assign({}, env);
+        /* 需求压力按这一步开始时的状态给，所有单元看到同一份 */
+        for (const k in this.drives) { const dr = this.drives[k], lv = dr.value(this.state[dr.state]); now['n_' + k] = k === 'mood' || k === 'frailty' ? lv : 1 - lv; }
+        for (const u of units) {
           const handles = [];
-          for (const k of cs.conv.inputs) handles.push({ concept: 'care_in_' + k, mode: 'level', value: put[k] });
-          for (const k of cs.conv.envNames) {
-            let v = k === 'hour' ? hourJ : env[k];
+          for (const m of u.models) { const put = this.coreInputs(m, hourJ, stepH, wd, tAbs); for (const k in m.inputs) handles.push({ concept: 'care_in_' + k, mode: 'level', value: put[k] }); }
+          for (const k of u.conv.envNames) {
+            let v = k === 'hour' ? hourJ : now[k];
             if (v === undefined) v = k.startsWith('speed_') ? 1 : 0;
             handles.push({ concept: 'care_env_' + k, mode: 'level', value: v });
           }
-          core.step({ v: 1, kind: 'step', minutes: stepMin, subjects: [{ id: this.id, handles }] });
+          u.core.step({ v: 1, kind: 'step', minutes: stepMin, subjects: [{ id: this.id, handles }] });
         }
-        const now = core.variables(this.id);
-        for (const k of cs.conv.states) this.state[k] = now[k];
+        for (const u of units) { const vals = u.core.variables(this.id); for (const k of u.conv.states) this.state[k] = vals[k]; }
       }
     }
     /* 现在这一刻的完整变量环境，读数和效果都用它 */

@@ -12,7 +12,7 @@ function loadLm(dir) {
   const CY = ctx.CY, y = ctx.jsyaml;
   if (!process.env.CARE_LEGACY_INTEGRATOR) CY.LMCore = require(path.join(root, 'src/backend/core_runtime/index.js')).LMCore;
   const base = dir || path.join(root, 'src/data/lm');
-  const docs = fs.readdirSync(base).filter(f => f.endsWith('.yaml') && f !== 'classes.yaml').sort().map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
+  const docs = fs.readdirSync(base).filter(f => f.endsWith('.yaml') && f !== 'classes.yaml' && f !== 'adapter_config.yaml').sort().map(f => [f, y.load(fs.readFileSync(path.join(base, f), 'utf8'))]);
   const ad = path.join(base, 'adapter'), adapters = {};
   if (fs.existsSync(ad)) for (const f of fs.readdirSync(ad).filter(f => f.endsWith('.yaml'))) adapters[f] = y.load(fs.readFileSync(path.join(ad, f), 'utf8'));
   CY.lm.build(CY.lm.mergeAdapters(docs, adapters), y.load(fs.readFileSync(path.join(base, 'classes.yaml'), 'utf8')), y.load(fs.readFileSync(path.join(base, 'adapter_config.yaml'), 'utf8')));
@@ -26,8 +26,8 @@ function person(conds, extra) {
 }
 
 /* 跑若干天。policy(dayMinute, dayIndex, snap) 返回这一刻要做的动作编号列表 */
-function run(lm, snap, days, policy, stepMin = 2) {
-  const eng = lm.engineCond, out = [];
+function run(lm, snap, days, policy, stepMin = 2, full = false) {
+  const eng = full ? lm.engine : lm.engineCond, out = [];
   let t = 0; const total = days * 1440;
   while (t < total) {
     const dayMin = t % 1440, hour = dayMin / 60;

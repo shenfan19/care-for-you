@@ -18,8 +18,21 @@ for (const conds of cases) {
     d(x.snap.mood, y.snap.mood); d(x.snap.frailty, y.snap.frailty);
     x.ro.forEach((r, j) => { if (r.value !== null) d(r.value, y.ro[j].value); });
   });
-  const p = now.engineCond.people.p1, viaCore = Object.entries(p.cores).filter(([, v]) => v).map(([k]) => k);
+  const p = now.engineCond.people.p1, viaCore = p.coreUnits().flatMap(u => u.models);
   ok(`${conds.join('+')} 共享核心与旧积分器一致`, mx <= TOL && viaCore.length === conds.length, `最大差 ${mx.toExponential(1)}，走核心的模型 ${viaCore.length}`);
+}
+/* 全模型模式：疾病模型加手写的身体，能量，水分，睡眠，社交，家务模型，各类角色，逐步一致 */
+{
+  const needs = { hunger: 0.8, thirst: 0.8, company: 0.8, medicine: 0.7, sugar: 0.8, bp: 0.8, joint: 0.8, lowmood: 0.8, rest: 0.8, play: 0.8, hygiene: 0.8, mobility: 0.8 };
+  const people = [['老年糖尿病人', { stage: 'elder', needs }, ['diabetes']], ['成年人', { stage: 'adult', needs }, []], ['婴儿', { stage: 'infant', needs: { hunger: 0.8, thirst: 0.8, diaper: 0.8, rest: 0.8, company: 0.8 } }, []],
+    ['猫', { species: 'cat', stage: 'adult', needs: { hunger: 0.8, thirst: 0.8, play: 0.8, litter: 0.8 } }, []], ['花', { species: 'flower', stage: 'adult', needs: { water: 0.8, sun: 0.8 } }, []]];
+  for (const [name, extra, conds] of people) {
+    const mkSnap = () => sim.person(conds, JSON.parse(JSON.stringify(extra)));
+    const a = sim.run(old, mkSnap(), DAYS, sim.carePolicy, STEP, true), b = sim.run(now, mkSnap(), DAYS, sim.carePolicy, STEP, true);
+    let mx = 0; a.forEach((x, i) => { const y = b[i], d = (p, q) => { mx = Math.max(mx, Math.abs(p - q)); }; for (const k in x.snap.needs) d(x.snap.needs[k], y.snap.needs[k]); d(x.snap.mood, y.snap.mood); d(x.snap.frailty, y.snap.frailty); });
+    const units = now.engine.people.p1.coreUnits();
+    ok(`全模型 ${name} 共享核心与旧积分器一致`, mx <= TOL && units.length > 0, `最大差 ${mx.toExponential(1)}，核心单元 ${units.length}`);
+  }
 }
 /* 输入来源合并：level 取优先级最高的来源，total 求和，来源不在配置里就报错 */
 {
@@ -38,6 +51,6 @@ for (const conds of cases) {
   p.windows.length = 0;
 }
 const oldP = old.engineCond.people.p1;
-ok('旧积分器对照确实没走核心', Object.values(oldP.cores).every(v => !v));
+ok('旧积分器对照确实没走核心', oldP.coreUnits().length === 0);
 console.log(bad ? `失败 ${bad} 项` : '全部通过');
 process.exit(bad ? 1 : 0);
