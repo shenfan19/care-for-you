@@ -114,7 +114,7 @@ CY.i18n.register("ja", {
 "trait.clingy_tip": "付き合いがほしくなるのが早い", "trait.independent_tip": "付き合いをあまり求めず、一人でもよく過ごせる", "trait.nightowl_tip": "寝るのも起きるのも遅い", "trait.earlybird_tip": "寝るのも起きるのも早い",
 "trait.picky_tip": "食事の効果が下がる", "trait.sickly_tip": "衰弱が早く進む", "trait.sturdy_tip": "衰弱が遅く進む", "trait.grumpy_tip": "気分が低くなりやすい", "trait.cheerful_tip": "気分が高くなりやすい", "trait.thirsty_tip": "喉の渇きが早く進む", "trait.hearty_tip": "空腹が早く進む",
 "act.sleeping": "眠っている", "act.awake": "起きている", "mood.great": "とても良い気分", "mood.ok": "まずまず", "mood.low": "落ち込んでいる", "mood.bad": "つらそう",
-"status.age": "{n}歳", "status.crying": "泣いている", "status.mood": "気分", "status.frailty": "衰弱", "status.needs": "欲求", "status.selfdo": "自分でできること、自立 {n}%", "status.selfnone": "自分では何もできない",
+"status.age": "{n}歳", "status.crying": "泣いている", "status.mood": "気分", "status.frailty": "衰弱", "status.needs": "欲求", "status.burdens": "負担、高いほど重い", "status.selfdo": "自分でできること、自立 {n}%", "status.selfnone": "自分では何もできない",
 "toast.sleep": "{name}は眠りについた。", "toast.paused": "時間は一時停止中です。", "toast.already": "すでに実行中：{what}。", "toast.too_many": "手がふさがりすぎです。まずいくつか終わらせましょう。", "toast.interrupt": "{prev}をいったん置いて{what}をします。終わったら戻ります。",
 "toast.started": "{what}を始めた。{min}分かかる。", "toast.nobody": "…",
 "log.self_did": "{name}が自分でやった：{label}", "log.self": "誰も来なかったので、{name}は自分で何とかした：{need}", "log.cry": "{name}が泣き出した：{need}", "log.healed": "{name}の{cond}が治った", "log.missed_need_helpless": "間に合わなかった。{name}は自分では何とかできなかった：{text}", "line.cry": "えーん…",

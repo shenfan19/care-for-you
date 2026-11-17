@@ -114,7 +114,7 @@ CY.i18n.register("ko", {
 "trait.clingy_tip": "곁에 있어 주길 더 빨리 원함", "trait.independent_tip": "곁을 덜 원하고 혼자서도 잘 지냄", "trait.nightowl_tip": "늦게 자고 늦게 일어남", "trait.earlybird_tip": "일찍 자고 일찍 일어남",
 "trait.picky_tip": "식사 효과가 줄어듦", "trait.sickly_tip": "쇠약이 더 빨리 진행됨", "trait.sturdy_tip": "쇠약이 더 느리게 진행됨", "trait.grumpy_tip": "기분이 가라앉기 쉬움", "trait.cheerful_tip": "기분이 좋아지기 쉬움", "trait.thirsty_tip": "목마름이 더 빨리 진행됨", "trait.hearty_tip": "배고픔이 더 빨리 진행됨",
 "act.sleeping": "자는 중", "act.awake": "깨어 있음", "mood.great": "기분 최고", "mood.ok": "괜찮음", "mood.low": "기운이 없음", "mood.bad": "많이 힘듦",
-"status.age": "{n}세", "status.crying": "울고 있음", "status.mood": "기분", "status.frailty": "쇠약", "status.needs": "욕구", "status.selfdo": "혼자 할 수 있는 것, 자립 {n}%", "status.selfnone": "혼자서는 아무것도 못 함",
+"status.age": "{n}세", "status.crying": "울고 있음", "status.mood": "기분", "status.frailty": "쇠약", "status.needs": "욕구", "status.burdens": "부담, 높을수록 무거움", "status.selfdo": "혼자 할 수 있는 것, 자립 {n}%", "status.selfnone": "혼자서는 아무것도 못 함",
 "toast.sleep": "{name}이(가) 잠들었다.", "toast.paused": "시간이 일시정지 상태입니다.", "toast.already": "이미 하는 중: {what}.", "toast.too_many": "손에 든 일이 너무 많습니다. 몇 가지를 먼저 끝내세요.", "toast.interrupt": "{prev}을(를) 잠시 미루고 {what}을(를) 합니다. 끝나면 다시 돌아옵니다.",
 "toast.started": "{what} 시작. {min}분 걸립니다.", "toast.nobody": "…",
 "log.self_did": "{name}이(가) 스스로 했다: {label}", "log.self": "아무도 오지 않아 {name}이(가) 혼자 처리했다: {need}", "log.cry": "{name}이(가) 울기 시작했다: {need}", "log.healed": "{name}의 {cond}이(가) 나았다", "log.missed_need_helpless": "놓쳤다. {name}은(는) 혼자 해결할 수 없었다: {text}", "line.cry": "으앙…",

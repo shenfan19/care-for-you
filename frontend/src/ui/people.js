@@ -59,7 +59,12 @@
     const pc = v => `<span class="pc mute">${Math.round(v * 100)}%</span>`;
     /* 指标先不对玩家显示，只在开发者模式里看。基础需求按正面的水平显示，最低的排前面；疾病类的暂按原样 */
     const dev = G.DEVTOOLS, val = k => G.level(p, k);
-    const bars = !dev ? '' : Object.keys(defs).sort((a, b) => G.level(p, a) - G.level(p, b)).map(k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.levelName(k, defs[k]))}</span><div class="bar${G.isLevel(k) ? '' : ' bad'}"><i style="width:${Math.round(val(k) * 100)}%"></i></div>${pc(val(k))}</div>`).join('');
+    /* 正面和负面分开两张表：基础需求是越高越好的水平，最低的排前面；疾病一类是越高越重的负担，最重的排前面 */
+    const bar = k => `<div class="srow2"><span class="l">${defs[k].icon || ''} ${esc(G.levelName(k, defs[k]))}</span><div class="bar${G.isLevel(k) ? '' : ' bad'}"><i style="width:${Math.round(val(k) * 100)}%"></i></div>${pc(val(k))}</div>`;
+    const keys = Object.keys(defs);
+    const good = keys.filter(k => G.isLevel(k)).sort((a, b) => val(a) - val(b)).map(bar).join('');
+    const bad = keys.filter(k => !G.isLevel(k)).sort((a, b) => val(b) - val(a)).map(bar).join('');
+    const bars = !dev ? '' : `<h3>${esc(t('status.needs'))}</h3>${good}${bad ? `<h3>${esc(t('status.burdens'))}</h3>${bad}` : ''}`;
     const selfs = Object.values(G.allActionsOf(p)).filter(a => G.canSelf(p, a)).map(a => `<span class="tag">${esc(a.label)}</span>`).join('');
     const made = (G.journal[p.id] ? Object.values(G.journal[p.id]).flat() : []).filter(e => e.type === 'self').slice(-3).reverse().map(e => `<div class="mute" style="font-size:12px">${esc(G.entryText(e))}</div>`).join('');
     const dlg = U.dialog(`<div class="statgrid"><div class="prev">${CY.avatar(p)}</div><div>
@@ -72,7 +77,7 @@
       ${dev ? `<div class="srow2"><span class="l">${esc(t('status.mood'))}</span><div class="bar mood"><i style="width:${Math.round(p.state.mood * 100)}%"></i></div>${pc(p.state.mood)}</div>
       <div class="srow2"><span class="l">Vigor</span><div class="bar"><i style="width:${Math.round(G.vigor(p) * 100)}%"></i></div>${pc(G.vigor(p))}</div>
       ${U.observeHtml(p)}
-      <h3>${esc(t('status.needs'))}</h3>${bars}` : ''}
+      ${bars}` : ''}
       <h3>${esc(dev ? t('status.selfdo', { n: Math.round(st.self_care * 100) }) : t('status.selfdo_plain'))}</h3><div>${selfs || `<span class="mute">${esc(t('status.selfnone'))}</span>`}</div>${made}
       ${!p.person.visitor && G.isHuman(p) && U.careStatsInline ? U.careStatsInline(p.id) : ''}
       <div class="row" style="justify-content:flex-end;margin-top:12px">${G.isHuman(p) && U.sharePersonCard ? `<button id="stshare">${esc(t('settle.share'))}</button>` : ''}<button id="stclose" class="primary">${esc(t('btn.close'))}</button></div></div></div>`, true);

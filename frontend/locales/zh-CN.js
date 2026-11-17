@@ -227,6 +227,7 @@ CY.i18n.register("zh-CN", {
  "status.mood": "心情",
  "status.frailty": "虚弱",
  "status.needs": "需求",
+ "status.burdens": "负担，越高越重",
  "status.selfdo": "自己能做的，自理 {n}%",
  "status.selfnone": "什么也不能自己做",
  "room.info": "看看{name}的状态",

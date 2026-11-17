@@ -318,6 +318,7 @@ CY.i18n.register("en", {
  "status.mood": "Mood",
  "status.frailty": "Frailty",
  "status.needs": "Needs",
+ "status.burdens": "Burdens, higher is heavier",
  "status.selfdo": "Can do alone, self-care {n}%",
  "status.selfnone": "Cannot do anything alone",
  "room.info": "See how {name} is doing",
