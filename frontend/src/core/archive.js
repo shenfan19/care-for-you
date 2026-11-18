@@ -91,7 +91,7 @@ Any new kind of record is simply a new yaml or csv file in these folders. A save
       if (name.includes('..') || name.startsWith('/') || !DATA_OK.test(name)) { rejected.push(name); continue; }
       if (e.data.length > 5 * 1024 * 1024) { rejected.push(name); continue; }
       const text = dec.decode(e.data);
-      if (name.endsWith('.yaml')) { try { jsyaml.load(text); } catch (x) { rejected.push(name); continue; } }
+      if (name.endsWith('.yaml')) { try { jsyaml.load(text, SAVE_YAML); } catch (x) { rejected.push(name); continue; } }
       if (name.endsWith('.csv') && !csvOk(text)) { rejected.push(name); continue; }
       files[name] = text;
     }
@@ -102,17 +102,17 @@ Any new kind of record is simply a new yaml or csv file in these folders. A save
     if (!files['settings.ini'] && !Object.keys(files).some(n => n.startsWith('people/'))) {
       const tpl = Object.keys(files).filter(n => /^custom\/(lm\/models|conditions)\/[^/]+\.yaml$/.test(n));
       if (!tpl.length || tpl.length !== Object.keys(files).filter(n => n !== 'README.txt').length) return { ok: false, error: 'empty' };
-      const names = tpl.map(n => { try { const d = jsyaml.load(files[n]) || {}; return (d.metadata && d.metadata.condition) || d.id || n; } catch (x) { return n; } });
+      const names = tpl.map(n => { try { const d = jsyaml.load(files[n], SAVE_YAML) || {}; return (d.metadata && d.metadata.condition) || d.id || n; } catch (x) { return n; } });
       return { ok: true, kind: 'pack', files, rejected, manifest, people: [], conditions: [...new Set(names)] };
     }
     const people = [...new Set(Object.keys(files).map(n => (n.match(/^people\/([^/]+)\//) || [])[1]).filter(Boolean))].map(id => {
-      let name = id; try { name = jsyaml.load(files[`people/${id}/person.yaml`] || '').name || id; } catch (x) {}
+      let name = id; try { name = jsyaml.load(files[`people/${id}/person.yaml`] || '', SAVE_YAML).name || id; } catch (x) {}
       return { id, name };
     });
     /* 存档里的关键数字和存盘时写下的校验对不上，说明被手改过：导入时提醒，分享卡片上会标「已编辑」 */
     let edited = false;
     try {
-      const w = jsyaml.load(files[CY.game.wpath('world.yaml')] || '') || {}, c = jsyaml.load(files[CY.game.wpath('calendar.yaml')] || '') || {};
+      const w = jsyaml.load(files[CY.game.wpath('world.yaml')] || '', SAVE_YAML) || {}, c = jsyaml.load(files[CY.game.wpath('calendar.yaml')] || '', SAVE_YAML) || {};
       if (w.sig && w.sig !== CY.game.sigOf(w.money, Object.keys(w.souv || {}).length, (c.days || []).length)) edited = true;
     } catch (x) {}
     return { ok: true, files, rejected, manifest, people, edited, migrated };

@@ -1,3 +1,5 @@
+/* 存档的读法：核心模式，不把像日期的字符串转成日期对象，也照样读 JSON；规则模板仍用默认读法 */
+const SAVE_YAML = { schema: jsyaml.CORE_SCHEMA };
 /* 存储：数据是一个文件夹里的明文文件。
    后端有两种：玩家选择的真实文件夹，或浏览器内部存储作备用。接口一样，读写的都是路径加文本。 */
 (function (CY) {
@@ -175,7 +177,7 @@
       return S.queue;
     },
     removeDir(p) { S.queue = S.queue.then(() => S.backend.removeDir(p)).catch(e => console.error('删除失败', p, e)); return S.queue; },
-    async readYaml(p) { const t = await S.read(p); if (t === null) return null; try { return jsyaml.load(t); } catch (e) { console.warn('YAML 读取失败', p, e); return null; } },
+    async readYaml(p) { const t = await S.read(p); if (t === null) return null; try { return jsyaml.load(t, SAVE_YAML); } catch (e) { console.warn('YAML 读取失败', p, e); return null; } },
     writeYaml: (p, o) => S.write(p, jsyaml.dump(o, { lineWidth: -1, noRefs: true })),
     async exportZip(extras) {
       const enc = new TextEncoder(), files = [];
