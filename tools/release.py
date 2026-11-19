@@ -15,6 +15,8 @@ import datetime, json, os, re, subprocess, sys, time, urllib.parse, urllib.reque
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 FRONT = os.path.join(ROOT, 'frontend')
+RELEASE_HISTORY = os.path.join(FRONT, 'src', 'data', 'release_history.js')
+HISTORY_PREFIX = '/* Release notes bundled by tools/release.py. */\nglobalThis.CY.releaseHistory = '
 SUITES = ['logic', 'play', 'dispatch', 'ledger', 'cond', 'qa_matrix', 'account']
 FOOTER = '\nMIT licensed. Art by Kenney (CC0), see the README for credits.\n'
 
@@ -64,6 +66,14 @@ def notes_text(args, prev):
     return 'Changes since %s:\n\n%s\n%s' % (prev or 'the start', log, FOOTER)
 
 
+def bundle_notes(version, notes, old_history):
+    history = json.loads(old_history.removeprefix(HISTORY_PREFIX).strip().removesuffix(';'))
+    date = re.search(r"released: '([^']+)'", read(os.path.join(FRONT, 'src', 'core', 'meta.js'))).group(1)
+    entries = [{'version': version, 'date': date, 'notes': notes}]
+    entries.extend(entry for entry in history if entry['version'] != version)
+    write(RELEASE_HISTORY, HISTORY_PREFIX + json.dumps(entries[:3], indent=2) + ';\n')
+
+
 def zenodo_record(tag):
     url = 'https://zenodo.org/api/records?q=%s&sort=mostrecent&size=5' % urllib.parse.quote('"care-for-you"')
     try:
@@ -92,6 +102,9 @@ def main():
     if run(['gh', 'auth', 'status'], capture_output=True).returncode:
         die('gh is not logged in')
 
+    old_history = read(RELEASE_HISTORY)
+    prev = out(['git', 'describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*'])
+    notes = notes_text(args, prev)
     changed = pos and version != current_version()
     if changed:
         set_version(version)
@@ -109,19 +122,17 @@ def main():
                 if r.returncode or bad or 'Error' in r.stderr:
                     die('test suite %s failed: %s' % (s, '; '.join(bad[:3]) or r.stderr[-300:]))
                 print('  %s ok' % s)
+        bundle_notes(version, notes, old_history)
         if run([sys.executable, 'tools/build_itch.py', zip_path]).returncode:
             die('building the zip failed')
-        prev = out(['git', 'describe', '--tags', '--abbrev=0', '--match', 'v*'])
-        notes = notes_text(args, prev)
         print('\n--- release %s, notes ---\n%s\n--- end ---' % (tag, notes))
         if not yes:
-            print('\nDry run only. %s would be committed, tagged, pushed and released with %s attached.' % ('The version change' if changed else 'The current commit', os.path.basename(zip_path)))
+            print('\nDry run only. The release files would be committed, tagged, pushed and released with %s attached.' % os.path.basename(zip_path))
             print('Run again with --yes to publish.')
             return
-        if changed:
-            run(['git', 'add', '-A'])
-            if run(['git', 'commit', '-m', 'release %s: version, citation metadata' % version]).returncode:
-                die('commit failed')
+        run(['git', 'add', '-A'])
+        if run(['git', 'commit', '-m', 'release %s: bundle release notes' % version]).returncode:
+            die('commit failed')
         run(['git', 'tag', '-a', tag, '-m', 'Care for You %s' % version])
         if run(['git', 'push', 'origin', 'main']).returncode or run(['git', 'push', 'origin', tag]).returncode:
             die('push failed, nothing was released')
@@ -142,6 +153,8 @@ def main():
                 return
         print('No Zenodo record yet. Check zenodo.org, and that the repository is switched on in its GitHub settings.')
     finally:
+        if not yes and read(RELEASE_HISTORY) != old_history:
+            write(RELEASE_HISTORY, old_history)
         if not yes and changed:
             run(['git', 'checkout', '--', '.'])   # a dry run leaves the tree as it was
         if os.path.exists(zip_path) and not yes:

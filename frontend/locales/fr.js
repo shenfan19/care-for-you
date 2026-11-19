@@ -1,5 +1,11 @@
 /* Pack de langue français. Les dialogues, la bibliothèque de phrases et les questions reviennent à l'anglais tant qu'il n'y a pas de pack de contenu français. */
 CY.i18n.register("fr", {
+  'au.contrib': "Contribuer",
+  'author.tp': "The Teleporter (TP) est aussi un sous-projet de LM. Ce jeu de gestion sur le voyage dans le temps utilise un moteur issu du système de simulation de LM.",
+  'about.tab_updates': "Notes de mise à jour",
+  'about.preview_title': "Version préliminaire",
+  'about.preview_project': "Ce jeu est la partie jouable de Life Matters (LM), un projet de recherche qui nous aide à développer le moteur de simulation. Il n’est pas nécessaire de connaître ces travaux pour jouer.",
+  'about.preview_changes': "À mesure que nous ajoutons des fonctionnalités, les règles, les effets des objets et les résultats des actions peuvent changer. Nous ferons notre possible pour préserver votre progression, mais une mise à jour importante peut rendre une ancienne sauvegarde inutilisable.",
 "app.title": "Care for You", "hdr.save": "Sauvegarde et téléchargement", "hdr.settings": "Réglages", "hdr.about": "À propos", "btn.add": "+ Ajouter", "btn.cancel": "Annuler", "btn.close": "Fermer", "btn.save": "Enregistrer", "btn.later": "Plus tard",
 "room.empty": "Personne ici pour l'instant.", "room.away": "Laisser {name} s'éloigner du bureau", "room.bar": "Humeur {mood} %  Fragilité {frail} %", "room.info": "Voir comment va {name}",
 "ask.own": "Votre réponse…", "ask.send": "Dire", "pick.reroll": "Aucune de celles-ci", "nudge.yes": "D'accord, j'y vais", "nudge.no": "Plus tard", "unit.sec": "{n} s", "unit.min": "{n} min", "unit.hour": "{n} h",

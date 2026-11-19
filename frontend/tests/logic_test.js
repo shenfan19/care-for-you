@@ -1237,13 +1237,24 @@ const store_write_cfg = () => CY.store.write('settings.ini', CY.ini.stringify(G.
     G.world.owned = {}; G.world.money = 200;
   }
   {
-    /* 朝向：站着的人按房间焦点和同屋的人看向某处，同一时段里不变；主角在书房办公始终看向书桌 */
+    /* 朝向：闲置时朝外，同一时段里不变；主角在书房办公时看向书桌 */
     {
       const W = CY.world, ppl = G.activePeople().filter(p => G.isHuman(p));
       const lay = W.layout('home');
       const f1 = ppl.map(p => W.facing(p, lay)), f2 = ppl.map(p => W.facing(p, lay));
       check('同一时段里朝向不来回变', JSON.stringify(f1) === JSON.stringify(f2));
       check('在家的人朝向只会是四个斜向之一，不在布局里的是空', ppl.every((p, i) => (lay.some(l => l.id === p.id) ? ['sw', 'se', 'ne', 'nw'].includes(f1[i]) : f1[i] === '')));
+      const minute = G.world.game_minutes;
+      const faceInKitchen = [];
+      for (let i = 0; i < 12; i++) {
+        G.world.game_minutes = minute + i * 120;
+        for (const p of ppl) {
+          const kitchen = [{ id: p.id, room: 'kitchen', place: 'home', gx: 7, gy: 7.5 }, { id: 'test-neighbor', room: 'kitchen', place: 'home', gx: 6, gy: 7 }];
+          faceInKitchen.push(W.facing(p, kitchen));
+        }
+      }
+      G.world.game_minutes = minute;
+      check('家具和同屋的人在背后时，闲置角色依然朝外', faceInKitchen.length > 0 && faceInKitchen.every(dir => dir === 'sw' || dir === 'se'));
       check('格子方向换算', W.dirOf(1, 0) === 'se' && W.dirOf(-1, 0) === 'nw' && W.dirOf(0, 1) === 'sw' && W.dirOf(0, -1) === 'ne');
       const pet = G.activePeople().find(p => !G.isHuman(p));
       if (pet) check('宠物不走朝向规则', W.facing(pet, lay) === '');

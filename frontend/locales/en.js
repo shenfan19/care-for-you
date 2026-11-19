@@ -1,5 +1,8 @@
 /* English language pack. Characters' lines, the saying library and the question bank are content packs in the templates folder and are still Chinese; labels fall back to the template text when a key is missing. */
 CY.i18n.register('en', {
+  'about.preview_title': "Early version",
+  'about.preview_project': "This game is a playable front end for Life Matters (LM), a research project that helps us develop the simulation engine. You don’t need to understand the research to enjoy the game.",
+  'about.preview_changes': "As we add features, the rules and what items or actions do may change. We’ll try to carry your progress forward, but a major update may make an older save unusable.",
   'app.title': 'Care for You',
             'hdr.save': 'Save & download',   'hdr.settings': 'Settings', 'hdr.about': 'About',
       'btn.status': 'Status', 'status.selfdo_plain': 'Can do alone', 'btn.add': '+ Add', 'btn.cancel': 'Cancel', 'btn.close': 'Close', 'btn.save': 'Save', 'btn.later': 'Later',
@@ -158,6 +161,7 @@ CY.i18n.register('en', {
 });
 
 CY.i18n.register("en", {
+  'about.tab_updates': "Update notes",
      "unit.min": "{n} min",
  "unit.hour": "{n} h",
 

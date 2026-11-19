@@ -146,6 +146,10 @@ button.danger { color:#c0453d; border-color:#c0453d; } button.danger:disabled { 
 .chips.inl { display:inline-flex; margin:0; }
 .foot { margin-top:36px; font-size:12px; text-align:center; }
 .aboutbody { max-height:56vh; overflow:auto; font-size:14px; } .aboutbody p { margin:0 0 10px; }
+.release-notes { margin:8px 0; }
+.release-notes section + section { border-top:1px solid var(--line); margin-top:12px; padding-top:8px; }
+.release-notes h4 { margin:0 0 4px; }
+.release-notes pre { margin:4px 0; font:inherit; white-space:pre-wrap; overflow-wrap:anywhere; }
 .clock { font-variant-numeric:tabular-nums; }
 
 :root { color-scheme:light; } :root[data-theme=dark] { color-scheme:dark; }
@@ -240,6 +244,7 @@ button.danger { color:#b3261e; }
 header h1.brand { display:flex; align-items:center; gap:10px; margin:0; font-family:Georgia, "Palatino Linotype", "Songti SC", "Noto Serif CJK SC", serif; font-style:italic; font-weight:600; font-size:38px; letter-spacing:.5px; line-height:1.1; }
 header h1.brand .mark { width:44px; height:44px; flex:none; }
 header h1.brand em { font-size:.58em; color:var(--accent); font-weight:500; margin:0 .08em; }
+header .brand-version { font:600 12px/1.2 system-ui,sans-serif; color:var(--mute); white-space:nowrap; letter-spacing:normal; }
 @media (max-width: 640px) { header h1.brand { font-size:30px; } header h1.brand .mark { width:36px; height:36px; } }
 header { align-items:center; }
 

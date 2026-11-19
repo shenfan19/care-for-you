@@ -1,5 +1,11 @@
 /* 日本語の言語パック。セリフやフレーズ集、質問集は、日本語のコンテンツパックができるまで英語になります。 */
 CY.i18n.register("ja", {
+  'au.contrib': "貢献",
+  'author.tp': "The Teleporter（TP）も LM のサブプロジェクトです。時間旅行を題材にした経営ゲームで、LM のバックエンドを改良したエンジンで動きます。",
+  'about.tab_updates': "更新履歴",
+  'about.preview_title': "開発初期のバージョンについて",
+  'about.preview_project': "このゲームは、研究プロジェクト Life Matters（LM）の遊べるフロントエンドで、シミュレーションエンジンの開発にも役立てています。研究の内容を知らなくても楽しめます。",
+  'about.preview_changes': "機能が増えるにつれて、ルールやアイテムの効果、行動の結果が変わることがあります。進行状況はできる限り引き継げるようにしますが、大きな更新では古いセーブデータが使えなくなる場合があります。",
 "app.title": "Care for You", "hdr.save": "保存とダウンロード", "hdr.settings": "設定", "hdr.about": "このアプリについて", "btn.add": "＋ 追加", "btn.cancel": "キャンセル", "btn.close": "閉じる", "btn.save": "保存", "btn.later": "あとで",
 "room.empty": "まだ誰もいません。", "room.away": "{name}をデスクから離れさせる", "room.bar": "気分 {mood}%　衰弱 {frail}%", "room.info": "{name}の様子を見る",
 "ask.own": "自分の言葉で…", "ask.send": "言う", "pick.reroll": "どれも違う", "nudge.yes": "うん、行く", "nudge.no": "あとで", "unit.sec": "{n}秒", "unit.min": "{n}分", "unit.hour": "{n}時間",

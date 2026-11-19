@@ -17,7 +17,7 @@
   U.renderControls = function () {};
   U.syncTheme = U.applyTheme;
   /* 所有语言统一使用 Care for You，开发者模式的标签页标题加 · dev。 */
-  U.pageTitle = () => t('app.title') + (G.DEVTOOLS ? ' · dev' : '');
+  U.pageTitle = () => t('app.title') + ' · v' + CY.meta.version + (G.DEVTOOLS ? ' · dev' : '');
   /* 一句话在语言包里是 tag.1，tag.2，……，有几句就有几句，每种语言句数和顺序一致；每隔 game.tagline_seconds 秒换一句不同的，换语言不换句，分享卡用当前这一句 */
   U.tagCount = () => { let n = 0; while (CY.i18n.has('tag.' + (n + 1))) n++; return n; };
   U.nextTagline = () => {
@@ -31,7 +31,7 @@
   U.startTagline = () => { clearInterval(U._tagT); U._tagT = setInterval(U.nextTagline, G.E('game').tagline_seconds * 1000); };
   U.renderBrand = function () {
     const name = t('brand.name'), bt = $('brandTxt');
-    if (bt) bt.innerHTML = (name === 'Care for You' ? 'Care <em>for</em> You' : esc(name)) + (G.DEVTOOLS ? ' <span class="devtag">dev</span>' : '');
+    if (bt) bt.innerHTML = (name === 'Care for You' ? 'Care <em>for</em> You' : esc(name)) + ` <span class="brand-version">v${esc(CY.meta.version)}</span>` + (G.DEVTOOLS ? ' <span class="devtag">dev</span>' : '');
     const tg = $('tagline'); if (tg) { if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * U.tagCount()); tg.textContent = t('tag.' + (U.tagN + 1)); }
   };
   U.applyLang = async function () {

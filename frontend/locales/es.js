@@ -1,5 +1,11 @@
 /* Paquete de idioma español. Los diálogos, la biblioteca de frases y las preguntas siguen en inglés hasta que exista un paquete de contenido en español. */
 CY.i18n.register("es", {
+  'au.contrib': "Colaboración",
+  'author.tp': "The Teleporter (TP) también forma parte de LM. Es un juego de gestión sobre viajes en el tiempo que usa un motor desarrollado a partir del backend de LM.",
+  'about.tab_updates': "Notas de actualización",
+  'about.preview_title': "Versión temprana",
+  'about.preview_project': "Este juego es la parte jugable de Life Matters (LM), un proyecto de investigación que nos ayuda a desarrollar el motor de simulación. No hace falta conocer la investigación para jugar.",
+  'about.preview_changes': "A medida que añadamos funciones, pueden cambiar las reglas, los efectos de los objetos y los resultados de las acciones. Intentaremos conservar tu progreso, pero una actualización importante puede volver incompatible una partida guardada.",
 "app.title": "Care for You", "hdr.save": "Guardar y descargar", "hdr.settings": "Ajustes", "hdr.about": "Acerca de", "btn.add": "+ Añadir", "btn.cancel": "Cancelar", "btn.close": "Cerrar", "btn.save": "Guardar", "btn.later": "Luego",
 "room.empty": "Todavía no hay nadie.", "room.away": "Dejar que {name} se aparte del escritorio", "room.bar": "Ánimo {mood}%  Fragilidad {frail}%", "room.info": "Ver cómo está {name}",
 "ask.own": "Tu respuesta…", "ask.send": "Decir", "pick.reroll": "Ninguna de estas", "nudge.yes": "Vale, voy", "nudge.no": "Luego", "unit.sec": "{n} s", "unit.min": "{n} min", "unit.hour": "{n} h",

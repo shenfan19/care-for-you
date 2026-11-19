@@ -1,5 +1,8 @@
 /* 简体中文语言包。需求名、动作名、疾病名以模板 YAML 里的中文为准，所以这里不重复。设置项的说明以 ini.js 里的中文为准。 */
 CY.i18n.register('zh-CN', {
+  'about.preview_title': "关于早期版本",
+  'about.preview_project': "这是 Life Matters（LM）研究项目面向玩家的小游戏，也帮助我们开发模拟引擎。不用了解研究内容，也可以直接玩。",
+  'about.preview_changes': "随着功能增加，游戏规则、道具效果和操作结果都可能变化。我们会尽量保留你的进度，但遇到较大的更新，旧存档可能无法继续使用。",
   'app.title': 'Care for You',
             'hdr.save': '存档与下载',   'hdr.settings': '设置', 'hdr.about': '关于',
       'btn.status': '状态', 'status.selfdo_plain': '自己能做的', 'btn.add': '＋ 添加', 'btn.cancel': '取消', 'btn.close': '关闭', 'btn.save': '保存', 'btn.later': '待会儿',
@@ -119,6 +122,7 @@ CY.i18n.register('zh-CN', {
 });
 
 CY.i18n.register("zh-CN", {
+  'about.tab_updates': "更新日志",
      "unit.min": "{n} 分钟",
  "unit.hour": "{n} 小时",
 

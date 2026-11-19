@@ -1,5 +1,11 @@
 /* 한국어 언어 팩입니다. 대사, 말 모음, 질문 모음은 한국어 콘텐츠 팩이 생기기 전까지 영어로 나옵니다. */
 CY.i18n.register("ko", {
+  'au.contrib': "기여",
+  'author.tp': "The Teleporter(TP)도 LM의 하위 프로젝트입니다. 시간 여행을 소재로 한 경영 게임으로, LM 백엔드를 개량한 엔진을 사용합니다.",
+  'about.tab_updates': "업데이트 기록",
+  'about.preview_title': "초기 버전 안내",
+  'about.preview_project': "이 게임은 연구 프로젝트 Life Matters(LM)를 플레이할 수 있도록 만든 프런트엔드로, 시뮬레이션 엔진 개발에도 쓰입니다. 연구 내용을 몰라도 게임을 즐길 수 있습니다.",
+  'about.preview_changes': "기능이 추가되면서 규칙, 아이템 효과, 행동 결과가 달라질 수 있습니다. 진행 상황은 최대한 유지하겠지만, 큰 업데이트 뒤에는 이전 저장 파일을 사용하지 못할 수도 있습니다.",
 "app.title": "Care for You", "hdr.save": "저장과 다운로드", "hdr.settings": "설정", "hdr.about": "정보", "btn.add": "+ 추가", "btn.cancel": "취소", "btn.close": "닫기", "btn.save": "저장", "btn.later": "나중에",
 "room.empty": "아직 아무도 없습니다.", "room.away": "{name}을(를) 잠시 자리에서 물러나게 하기", "room.bar": "기분 {mood}%  쇠약 {frail}%", "room.info": "{name}의 상태 보기",
 "ask.own": "직접 말하기…", "ask.send": "말하기", "pick.reroll": "이 중에 없어요", "nudge.yes": "응, 갈게", "nudge.no": "나중에", "unit.sec": "{n}초", "unit.min": "{n}분", "unit.hour": "{n}시간",
