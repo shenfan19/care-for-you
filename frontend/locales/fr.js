@@ -1,7 +1,7 @@
 /* Pack de langue français. Les dialogues, la bibliothèque de phrases et les questions reviennent à l'anglais tant qu'il n'y a pas de pack de contenu français. */
 CY.i18n.register("fr", {
   'au.contrib': "Contribuer",
-  'author.tp': "The Teleporter (TP) est aussi un sous-projet de LM. Ce jeu de gestion sur le voyage dans le temps utilise un moteur issu du système de simulation de LM.",
+  'author.past': "{past} est aussi un sous-projet de LM. Ce jeu de gestion sur le voyage dans le temps utilise un moteur issu du système de simulation de LM.",
   'about.tab_updates': "Notes de mise à jour",
   'about.preview_title': "Version préliminaire",
   'about.preview_project': "Ce jeu est la partie jouable de Life Matters (LM), un projet de recherche qui nous aide à développer le moteur de simulation. Il n’est pas nécessaire de connaître ces travaux pour jouer.",

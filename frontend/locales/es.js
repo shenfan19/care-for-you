@@ -1,7 +1,7 @@
 /* Paquete de idioma español. Los diálogos, la biblioteca de frases y las preguntas siguen en inglés hasta que exista un paquete de contenido en español. */
 CY.i18n.register("es", {
   'au.contrib': "Colaboración",
-  'author.tp': "The Teleporter (TP) también forma parte de LM. Es un juego de gestión sobre viajes en el tiempo que usa un motor desarrollado a partir del backend de LM.",
+  'author.past': "{past} también forma parte de LM. Es un juego de gestión sobre viajes en el tiempo que usa un motor desarrollado a partir del backend de LM.",
   'about.tab_updates': "Notas de actualización",
   'about.preview_title': "Versión temprana",
   'about.preview_project': "Este juego es la parte jugable de Life Matters (LM), un proyecto de investigación que nos ayuda a desarrollar el motor de simulación. No hace falta conocer la investigación para jugar.",

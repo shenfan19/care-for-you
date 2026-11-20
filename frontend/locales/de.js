@@ -1,7 +1,7 @@
 /* Deutsches Sprachpaket. Dialoge, Satzsammlung und Fragen bleiben Englisch, bis es ein deutsches Inhaltspaket gibt. */
 CY.i18n.register("de", {
   'au.contrib': "Mitwirken",
-  'author.tp': "The Teleporter (TP) ist ebenfalls ein Teilprojekt von LM. Das Managementspiel rund um Zeitreisen nutzt eine aus dem LM-Backend weiterentwickelte Engine.",
+  'author.past': "{past} ist ebenfalls ein Teilprojekt von LM. Das Managementspiel rund um Zeitreisen nutzt eine aus dem LM-Backend weiterentwickelte Engine.",
   'about.tab_updates': "Versionshinweise",
   'about.preview_title': "Frühe Version",
   'about.preview_project': "Dieses Spiel ist der spielbare Teil von Life Matters (LM), einem Forschungsprojekt, das uns bei der Entwicklung der Simulationsengine hilft. Zum Spielen musst du die Forschung nicht kennen.",

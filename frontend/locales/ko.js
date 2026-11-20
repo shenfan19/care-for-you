@@ -1,7 +1,7 @@
 /* 한국어 언어 팩입니다. 대사, 말 모음, 질문 모음은 한국어 콘텐츠 팩이 생기기 전까지 영어로 나옵니다. */
 CY.i18n.register("ko", {
   'au.contrib': "기여",
-  'author.tp': "The Teleporter(TP)도 LM의 하위 프로젝트입니다. 시간 여행을 소재로 한 경영 게임으로, LM 백엔드를 개량한 엔진을 사용합니다.",
+  'author.past': "{past}도 LM의 하위 프로젝트입니다. 시간 여행을 소재로 한 경영 게임으로, LM 백엔드를 개량한 엔진을 사용합니다.",
   'about.tab_updates': "업데이트 기록",
   'about.preview_title': "초기 버전 안내",
   'about.preview_project': "이 게임은 연구 프로젝트 Life Matters(LM)를 플레이할 수 있도록 만든 프런트엔드로, 시뮬레이션 엔진 개발에도 쓰입니다. 연구 내용을 몰라도 게임을 즐길 수 있습니다.",

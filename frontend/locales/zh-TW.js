@@ -1,7 +1,7 @@
 /* 繁體中文語言包，由簡體中文轉換並按台灣用語調整。 */
 CY.i18n.register("zh-TW", {
   'au.contrib': "貢獻",
-  'author.tp': "The Teleporter（TP）也是 LM 的子專案，是一款以時間旅行為主題的經營遊戲，同樣由 LM 後端改進的引擎驅動。",
+  'author.past': "{past}也是 LM 的子專案，是一款以時間旅行為主題的經營遊戲，同樣由 LM 後端改進的引擎驅動。",
   'about.tab_updates': "更新日誌",
   'about.preview_title': "關於早期版本",
   'about.preview_project': "這是 Life Matters（LM）研究計畫面向玩家的遊戲，也協助我們開發模擬引擎。不必了解研究內容，也可以直接玩。",
