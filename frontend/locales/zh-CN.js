@@ -1,7 +1,6 @@
 /* 简体中文语言包。需求名、动作名、疾病名以模板 YAML 里的中文为准，所以这里不重复。设置项的说明以 ini.js 里的中文为准。 */
 CY.i18n.register('zh-CN', {
   'about.preview_title': "关于早期版本",
-  'about.preview_project': "这是 Life Matters（LM）研究项目面向玩家的小游戏，也帮助我们开发模拟引擎。不用了解研究内容，也可以直接玩。",
   'about.preview_changes': "随着功能增加，游戏规则、道具效果和操作结果都可能变化。我们会尽量保留你的进度，但遇到较大的更新，旧存档可能无法继续使用。",
   'app.title': 'Care for You',
             'hdr.save': '存档与下载',   'hdr.settings': '设置', 'hdr.about': '关于',
@@ -308,7 +307,7 @@ CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天", "brand.name": "Care for 
 CY.i18n.register("zh-CN", {"corner.day": "第 {n} 天"});
 CY.i18n.register("zh-CN", {"lbl.interrupt.countdown_seconds": "提醒倒计时，秒", "lbl.economy.work_hours": "工作时段", "lbl.audio.music_volume": "背景音乐", "lbl.audio.sfx_volume": "音效", });
 CY.i18n.register("zh-CN", {"about.p1": "Care for You 是一个在网页里玩的小游戏。家里有老人、宝宝、猫狗、花草，你一边工作，他们会不定时来叫你一声：要杯水，说句话，陪一会儿。你停下手，照看一下，再回去做自己的事。没有分数，没有失败，不用下载，不用账号。", "about.how": "点一个人看他想要什么，按住动作键，等圆圈走满就做完了。点窗体右上角的时间可以调快慢。开着标签页放在一边做自己的事就行。", "about.title": "关于 Care for You"});
-CY.i18n.register("zh-CN", {"about.tab_data": "数据驱动", "data.intro": "角色什么时候要什么，说什么话，都是数据决定的，不是写死在程序里的。驱动方式有三种，现在只有第一种是完整可用的，默认也只用第一种。", "data.h1": "一，概率查表，已完成，默认", "data.p1": "每个人的需求按各自的速度增长，什么时候出事、说哪句话、谁帮谁，都是查明文文件里的表和概率。文件在数据文件夹里，用记事本改了就生效。也可以换成你自己的程序，接口公开。", "data.h2": "二，数值积分，未完成", "data.p2": "把需求、心情和身体当成连续变化的数值，按方程一步步推进，而不是查表。目前只有一个可以自己运行的实验后端，还没有接进游戏的界面，也没有经过验证，不建议当真。", "data.h3": "三，AI 接入，未完成", "data.p3": "AI 接入让外部的 AI 服务来改写台词，默认关闭，目前只是实验。只有你在高级设置里打开并填入服务地址，才会把角色的名字、身份和当前情绪等少量内容发给你选的服务，你回答过的话默认不发。服务由第三方提供，怎么处理数据由它的政策决定。密钥明文存在设置文件里，不要把设置文件分享给别人，存档下载默认不含密钥。", "priv.p3": "网页本身是静态的，默认不会把你的游戏数据发到任何地方。只有你自己在高级设置里打开远程后端或 AI 接入才会发送，发什么见\"数据驱动\"一页。", "cred.p3": "画面素材来自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
+CY.i18n.register("zh-CN", {"about.tab_data": "数据驱动", "data.intro": "角色什么时候要什么，说什么话，都是数据决定的，不是写死在程序里的。驱动方式有三种，现在只有第一种是完整可用的，默认也只用第一种。", "data.h1": "一，概率查表，已完成，默认", "data.p1": "每个人的需求按各自的速度增长，什么时候出事、说哪句话、谁帮谁，都是查明文文件里的表和概率。文件在数据文件夹里，用记事本改了就生效。也可以换成你自己的程序，接口公开。", "data.h2": "二，数值积分，未完成", "data.p2": "把需求、心情和身体当成连续变化的数值，按方程一步步推进，而不是查表。目前只有一个可以自己运行的实验后端，还没有接进游戏的界面，也没有经过验证，不建议当真。", "data.h3": "三，AI 接入，未完成", "data.p3": "AI 接入让外部的 AI 服务来改写台词，默认关闭，目前只是实验。只有你在高级设置里打开并填入服务地址，才会把角色的名字、身份和当前情绪等少量内容发给你选的服务，你回答过的话默认不发。服务由第三方提供，怎么处理数据由它的政策决定。密钥明文存在设置文件里，不要把设置文件分享给别人，存档下载默认不含密钥。", "priv.p3": "游戏默认不会发送你的游玩数据。只有你在高级设置中开启可选的联网功能时，所选服务才会收到该功能所需的数据，例如角色状态或对话上下文。", "cred.p3": "画面素材来自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
 CY.i18n.register("zh-CN", {"about.tab_data": "数据与隐私", "data.head": "数据怎么驱动", "about.p4": "还在打磨，欢迎意见和建议。", "au.issues": "意见与问题", "au.mail": "邮件", "au.credits": "致谢"});
 CY.i18n.register("zh-CN", {"cred.p3": "画面素材来自 Kenney（CC0 1.0，kenney.nl）：Furniture Kit、Mini Characters、Cube Pets、Car Kit、City Kit Commercial、Food Kit、Mini Market。"});
 CY.i18n.register("zh-CN", {"data.h2": "二，数值积分，实验阶段", "data.p2": "把需求、心情和身体当成连续变化的数值，按方程一步步积分，直接在浏览器里算，模型是数据文件夹里的明文 YAML。在高级设置里把后端改成 lm 就能用。只管需求、心情和虚弱度，事件和台词仍由查表决定。数值没有经过验证，不建议当真。"});
@@ -340,4 +339,4 @@ CY.i18n.register("zh-CN", {"lbl.play.lead_auto":"主控角色自动行动","ini.
 
 CY.i18n.register("zh-CN", {"au.contrib": "贡献", "au.contrib_p1": "游戏里的角色、台词和情境是有意倾斜地选的：偏向日常照护里的小事，比如一杯水、一句话、一点陪伴，少写戏剧性的医疗场面。这是第一版的取舍，不代表照护里什么更重要。", "au.contrib_p2": "非常欢迎您提出建议和批评，也欢迎推荐新内容，或提供能让内容更贴近生活的数据和出处。角色、台词、角色卡、来客和翻译都是数据文件夹里的普通文件，不用写代码就能添加。", "au.contrib_p3": "被采用的内容会以您的署名在本页发布，姓名或笔名由您决定，作品的权利仍属于您。内容与游戏一样以 MIT 许可证发布，方便大家继续使用和改进。"});
 
-CY.i18n.register("zh-CN", {"author.past": "{past}也是 LM 的子项目，是一个时间旅行主题的经营游戏，同样由 LM 后端改进的引擎驱动。"});
+CY.i18n.register("zh-CN", {"author.past": "我还做了时间旅行经营游戏 {past}。"});
