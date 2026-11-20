@@ -123,6 +123,10 @@ flowchart LR
 - Verification: the LM engine, the plugin's reference evaluator and the game's engine are compared on the same converted models. The results are in the plugin's documentation.
 - The model file format is in the Disease models section of [README_backend_protocol.md](../README_backend_protocol.md). The plugin and its recipes are in `plugins/care_export` of the Life Matters Reference Engine.
 
+## Titles and sharing
+
+Every interface uses Care for You for the game header, browser tab and the title of both day and character share cards. The subtitle 宜室宜家 appears in About and the README guides for Simplified Chinese, Traditional Chinese, Japanese and Korean. The author page uses the English names of linked projects.
+
 ## 6. Where to read next
 
 | Question | Open |

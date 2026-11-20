@@ -16,8 +16,8 @@
   /* 顶栏已经没有语言和明暗的快捷控件，都在设置里 */
   U.renderControls = function () {};
   U.syncTheme = U.applyTheme;
-  /* 所有语言统一使用 Care for You，开发者模式的标签页标题加 · dev。 */
-  U.pageTitle = () => t('app.title') + ' · v' + CY.meta.version + (G.DEVTOOLS ? ' · dev' : '');
+  /* 所有语言的标题用英文原名，开发者模式的标签页标题加 · dev。 */
+  U.pageTitle = () => CY.meta.app + ' · v' + CY.meta.version + (G.DEVTOOLS ? ' · dev' : '');
   /* 一句话在语言包里是 tag.1，tag.2，……，有几句就有几句，每种语言句数和顺序一致；每隔 game.tagline_seconds 秒换一句不同的，换语言不换句，分享卡用当前这一句 */
   U.tagCount = () => { let n = 0; while (CY.i18n.has('tag.' + (n + 1))) n++; return n; };
   U.nextTagline = () => {

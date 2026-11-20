@@ -57,7 +57,7 @@
     return { rows, size };
   };
 
-  /* 共用标题区：左侧是标题、游戏类型和短句，右侧是主站二维码及网址。 */
+  /* 共用标题区：左侧是英文标题、游戏类型和短句，右侧是主站二维码及网址。 */
   function frame(canvas, W, H) {
     const v = palette(), ctx = canvas.getContext('2d');
     canvas.width = W; canvas.height = H;
@@ -69,7 +69,7 @@
     ctx.font = `26px ${FONT}`;
     const tagRows = chartLines(ctx, t('tag.' + (U.tagN + 1)), 560);
     const titleY = qrY + qrSize / 2 - 2, labelY = titleY + 47;
-    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 64px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText(t('app.title'), 130, titleY);
+    ctx.fillStyle = v('--accent'); ctx.font = `italic 600 64px Georgia, "Songti SC", "Noto Serif CJK SC", serif`; ctx.fillText(CY.meta.app, 130, titleY);
     ctx.fillStyle = v('--mute'); ctx.font = `24px ${FONT}`;
     ctx.fillText(t('share.game_label'), 130, labelY, 560);
     ctx.fillStyle = v('--mute'); ctx.font = `26px ${FONT}`;

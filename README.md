@@ -1,5 +1,7 @@
 # Care for You
 
+[简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
+
 Pause for a moment and look after the people at home.
 
 ![Care for You](media/screenshot_home.png)
@@ -47,7 +49,7 @@ Everything is stored on your own device as plain files. No account is needed, an
 
 ## Status
 
-Early version, currently 0.73. Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
+Early version, currently 0.73.2. See the [changelog](CHANGELOG.md). Expect rough edges, especially on phone-sized screens. Feedback and bug reports are welcome as [issues](https://github.com/shenfan19/care-for-you/issues).
 
 ## Not a health product
 
