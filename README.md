@@ -77,6 +77,20 @@ All backends use the same JSON interface, described in [README_backend_protocol.
 
 Every character type and every visitor is one plain YAML file. Identifiers such as `id`, `species`, `voice` and `pronoun` (`he`, `she`, `it`) are English codes, and every name or line of text is an object with one entry per interface language: `frontend/src/data/cards` for the household types and `frontend/src/data/visitors` for the visitors. Edit or add a file, then run `node tools/build_cards.js` to pack them into the scripts the page loads. The page has no build step of its own and still opens straight from `index.html`.
 
+### Deploy to Cloudflare
+
+CARE uses Cloudflare Workers Builds with static assets, like Past. Cloudflare runs `node tools/predeploy.js` on every push to `main`: it packs the card and config YAML into the scripts the page loads and stops the deployment if a check fails. The packed scripts stay in the repository, so the game still opens straight from `frontend/index.html`.
+
+| Setting | Value |
+| --- | --- |
+| Worker name | `care-for-you` |
+| Production branch | `main` |
+| Root directory | Repository root |
+| Build command | `node tools/predeploy.js` |
+| Deploy command | `npx wrangler deploy` |
+
+`wrangler.jsonc` sets `frontend/` as the static assets directory, and `frontend/.assetsignore` leaves out the card sources, tests and other files the page does not load.
+
 ### Tests
 
 ```

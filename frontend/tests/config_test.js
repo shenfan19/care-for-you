@@ -6,7 +6,7 @@ const jsyaml = require('../vendor/js-yaml.min.js');
 const Pol = require('../src/core/dispatch_policy.js');
 let fails = 0;
 const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失败 ') + n + (x ? '  ' + x : '')); };
-const read = f => fs.readFileSync(path.join(__dirname, '..', 'config', 'templates', f), 'utf8');
+const read = f => fs.readFileSync(path.join(__dirname, '..', 'config', 'templates', f), 'utf8').replace(/\r\n/g, '\n'); // 和 build_config 一样统一成 LF，比较的是内容不是换行符
 (async () => {
   CY.i18n.set('zh-CN');
   await G.load();

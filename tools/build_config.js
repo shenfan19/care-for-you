@@ -14,7 +14,7 @@ const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => (e.isD
 const files = walk(base).sort();
 const map = {};
 for (const f of files) {
-  const rel = 'templates/' + path.relative(base, f).split(path.sep).join('/'), text = fs.readFileSync(f, 'utf8');
+  const rel = 'templates/' + path.relative(base, f).split(path.sep).join('/'), text = fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n'); // 换行统一成 LF，Windows 和 Cloudflare 的 Linux 打出同一份结果
   let doc; try { doc = jsyaml.load(text); } catch (e) { fail(`${rel} 不是合法的 YAML：${e.message}`); }
   if (!doc || typeof doc !== 'object') fail(`${rel} 是空的`);
   if (typeof doc.version !== 'number') fail(`${rel} 缺少数字 version，改了内容要把它加一，旧存档才会更新`);
