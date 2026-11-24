@@ -34,7 +34,7 @@
   };
 
   /* 来客介绍：名字，时代，领域，来源，留下的纪念品，和一个去维基百科搜索的链接。那句广为流传的话要等到拿到纪念品之后才显示，免得替玩家猜了需求 */
-  const WIKI = { 'zh-CN': 'zh', 'zh-TW': 'zh', en: 'en', ja: 'ja', ko: 'ko', fr: 'fr', es: 'es', de: 'de' };
+  const WIKI = { 'zh-CN': 'zh', 'zh-TW': 'zh', en: 'en', ja: 'ja', ko: 'ko', fr: 'fr', es: 'es', de: 'de', ru: 'ru' };
   U.visitorIntroHtml = p => (p && p.person.visitor ? `<div style="margin:0 0 6px">${esc(U.favStars(p.person.visitor.fav))}${p.person.visitor.ok ? ' · ' + esc(t('gift.fav_ok')) : ''}</div>` : '') + U.visitorCardHtml(p && p.person.visitor && G.visitorCard(p));
   U.visitorCardHtml = c => {
     if (!c) return '';

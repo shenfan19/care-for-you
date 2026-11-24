@@ -21,7 +21,7 @@ It is meant to sit in a tab beside your work. Nothing is urgent, nothing is puni
 - Care is done by pressing and holding an action. There are no countdown penalties and no failure states.
 - A calm, quiet loop: questions you can answer in your own words, small events, festivals and anniversaries on an in-game calendar, and a shop where the money you earn at the desk buys beds, daily goods, decorations and gifts for visitors.
 - A front door in the house: historical and literary visitors stay for a few days, you try to work out what they need, and they leave a keepsake for the cabinet. A short summary of every day goes into a calendar you can browse. See [docs/visitors.md](docs/visitors.md).
-- Eight interface languages, with dialogue in each: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch.
+- Nine interface languages: English, 简体中文, 繁體中文, Français, 日本語, 한국어, Español, Deutsch and Русский. Dialogue and visitors are written in the first eight; Russian reads them in English for now.
 - Characters, rules and lines are plain files you can open and edit, and so are the saves.
 
 ## How to play

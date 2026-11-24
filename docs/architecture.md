@@ -94,7 +94,7 @@ Fields in a save are only ever added, never renamed or removed, so a newer versi
 | `frontend/src/backend` | Protocol and back end | Protocol and checks (`protocol.js`), routing and handshake (`index.js`), built-in events and strategy (`local.js`, `local_plan.js`), remote transport (`http.js`, `api.js`), disease model engine (`lm.js`) |
 | `frontend/src/world` | Front end | Places, the isometric house, scenes, avatars |
 | `frontend/src/ui` | Front end | Interface |
-| `frontend/src/data`, `frontend/locales` | Data | Seed data and rules, eight languages |
+| `frontend/src/data`, `frontend/locales` | Data | Seed data and rules, nine interface languages, dialogue in eight |
 | `frontend/lab.html` | Tool | A page that edits a disease model and shows its curves, no server needed |
 | `backend_basic`, `backend_lm_ai` | Back end | The two optional remote back ends |
 

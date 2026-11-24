@@ -4,11 +4,13 @@
 
 ### 中文
 
+- 加入俄语界面：设置、开局、商店、日历、结算和关于都有俄语，角色名称也有俄语；台词和来客暂时显示英文。
 - 网站部署时由 Cloudflare 运行 `node tools/predeploy.js`，自动把卡片和配置的 YAML 打包成页面读取的脚本，检查不通过就不部署。
 - 打包配置时把换行统一成 LF，Windows 和 Linux 上打出的脚本完全一致。
 
 ### English
 
+- Added a Russian interface: settings, the opening, the shop, the calendar, the day summary and About are in Russian, and so are the character names; dialogue and visitors show in English for now.
 - Cloudflare now runs `node tools/predeploy.js` when it deploys the site: it packs the card and config YAML into the scripts the page loads and stops the deployment if a check fails.
 - Config packing normalizes line endings to LF, so Windows and Linux produce the same scripts.
 

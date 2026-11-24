@@ -132,10 +132,10 @@ const check = (n, c, x) => { if (!c) fails++; console.log((c ? '通过 ' : '失�
     }
     {
       const P = CY.i18n.packs, want = Object.keys(P.en).filter(k => /^(settle\.|cal\.|visit\.|start\.|share\.|acct\.|gift\.|shop\.cabinet|meet\.|visitor\.|title\.|corner\.|field\.|add\.no_bed)/.test(k)), miss = {};
-      for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) { const m = want.filter(k => P.en[k] !== '' && !(P[l] && P[l][k])); if (m.length) miss[l] = m.slice(0, 5).join(); }
-      check('八种语言的玩法文字和卡片文字齐全', Object.keys(miss).length === 0, JSON.stringify(miss));
+      for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW', 'ru']) { const m = want.filter(k => P.en[k] !== '' && !(P[l] && P[l][k]) && !(l === 'ru' && /^(visitor\.|meet\.|visit\.fam\.|visit\.ask\.)/.test(k))); if (m.length) miss[l] = m.slice(0, 5).join(); }
+      check('各语言的玩法文字和卡片文字齐全，俄语的来客内容回退英文不查', Object.keys(miss).length === 0, JSON.stringify(miss));
       const ph = [], hold = s => [...new Set(String(s).match(/\{[a-z_]+\}/g) || [])].sort().join();
-      for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW']) for (const k of want) if (P[l] && P[l][k] && hold(P[l][k]) !== hold(P.en[k])) ph.push(l + ':' + k);
+      for (const l of ['de', 'es', 'fr', 'ja', 'ko', 'zh-TW', 'ru']) for (const k of want) if (P[l] && P[l][k] && hold(P[l][k]) !== hold(P.en[k])) ph.push(l + ':' + k);
       check('各语言译文里的占位符和英文一致', ph.length === 0, ph.slice(0, 6).join());
     }
     /* 对话关系：来客不参与家人的闲聊和问答，外甥女不叫主角妈妈，邻居老人不讲"你小时候"，来客有自己的名言 */

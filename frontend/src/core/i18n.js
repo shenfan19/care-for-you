@@ -2,7 +2,7 @@
    数据里的标签，比如需求名和动作名，写在模板 YAML 里，中文以 YAML 为准，其他语言用语言包里同名键覆盖，没有就回退到 YAML 的写法。
    台词、说话库、问答库这类内容是内容包，换语言就是换 templates 里对应的文件。 */
 (function (CY) {
-  const I = CY.i18n = { lang: 'zh-CN', fallback: 'zh-CN', packs: {}, names: { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English', fr: 'Français', ja: '日本語', ko: '한국어', es: 'Español', de: 'Deutsch' } };
+  const I = CY.i18n = { lang: 'zh-CN', fallback: 'zh-CN', packs: {}, names: { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', en: 'English', fr: 'Français', ja: '日本語', ko: '한국어', es: 'Español', de: 'Deutsch', ru: 'Русский' } };
   I.register = (lang, dict) => { I.packs[lang] = Object.assign(I.packs[lang] || {}, dict); };
   /* 访客卡片的译文包：每张卡一行 [名字, 时代, 纪念品, 临别一句, 暗示一, 暗示二, 满足时], 到来和离开的句子用语言自己的模板拼出来，个别卡用第八项 o 覆盖。
      模板里 {n} 是名字，{s} 是纪念品，{q} 是临别一句。纪念品和名字放在冒号后面，各语言不用处理冠词和格 */
