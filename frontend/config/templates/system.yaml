@@ -1,4 +1,4 @@
-version: 14
+version: 15
 # 内部总体设置。改了以后重新载入页面生效。玩家个人的偏好在 settings.ini，不在这里。
 plan:
   interval_seconds: 20        # 前台每隔多少秒向后台要一次状态和策略
@@ -109,3 +109,5 @@ dispatch:                   # 看护调度：全家统一决定谁看护谁、�
   meal_gap: 180             # 两顿饭之间至少隔这么多游戏分钟
   cook_minutes: 45          # 做一顿饭占手上的活这么久
   lactating: [mom, wife, young_woman]   # 母乳喂养时，只有这些人能喂婴儿
+pulse:                      # 共用匿名计数服务 pulse.lifematters.dev：第一次来到时要一个名次，显示在标语下面；服务连不上就不显示
+  arrive_key: act:arrive    # 事件名，须符合服务里 care 站点登记的格式

@@ -28,11 +28,24 @@
     tg.style.opacity = '0';
     setTimeout(() => { tg.textContent = t('tag.' + (U.tagN + 1)); tg.style.opacity = ''; }, 600);
   };
+  /* 标语下面的名次：第一次来到时向共用计数服务要一个，之后由服务脚本存在浏览器里；拿不到就不显示 */
+  U.renderPulse = () => {
+    const el = $('pulseRank'); if (!el) return;
+    if (U._pulseRank) { el.textContent = t('hdr.pulse_rank', { n: U._pulseRank }); return; }
+    /* 计数脚本和游戏配置谁先到都有可能：页面 load 和标题重画时各看一次，两样都在才去要 */
+    if (U._pulseAsked || !globalThis.LMPulse || !(G.tpl && G.tpl.system)) return;
+    U._pulseAsked = true;
+    globalThis.LMPulse.event(G.S('pulse').arrive_key).then(r => {
+      if (r && r.rank) { U._pulseRank = r.rank; U.renderPulse(); }
+    });
+  };
+  if (globalThis.addEventListener) globalThis.addEventListener('load', () => U.renderPulse());
   U.startTagline = () => { clearInterval(U._tagT); U._tagT = setInterval(U.nextTagline, G.E('game').tagline_seconds * 1000); };
   U.renderBrand = function () {
     const name = t('brand.name'), bt = $('brandTxt');
     if (bt) bt.innerHTML = (name === 'Care for You' ? 'Care <em>for</em> You' : esc(name)) + ` <span class="brand-version">v${esc(CY.meta.version)}</span>` + (G.DEVTOOLS ? ' <span class="devtag">dev</span>' : '');
     const tg = $('tagline'); if (tg) { if (U.tagN === undefined) U.tagN = Math.floor(Math.random() * U.tagCount()); tg.textContent = t('tag.' + (U.tagN + 1)); }
+    U.renderPulse();
   };
   U.applyLang = async function () {
     U.closePopover();
